@@ -4,6 +4,7 @@
   "license": "MIT",
   "main": "build/index.js",
   "types": "build/index.d.ts",
+  "type": "module",
   "engines": {
     "node": "^18.0.0",
     "yarn": ">=1.22.0"
@@ -11,15 +12,27 @@
   "scripts": {
     "test": "mocha",
     "clean": "rm -rf build",
-    "build": "tsc",
+    "build": "tsc && vite build",
     "start": "node -r source-map-support/register build",
-    "start:dev": "node -r esbuild-register src",
+    "start:dev": "vite",
     "format:fix": "prettier --write .",
     "format": "prettier --check .",
     "lint:fix": "yarn lint --fix",
-    "lint": "eslint --ext .ts,.tsx --max-warnings 0 src",
+    "lint": "eslint . --ext .ts,.tsx --max-warnings 0 src",
+    "preview": "vite preview",
     "typecheck": "tsc --noEmit"
   },
-  "dependencies": {},
-  "devDependencies": {}
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.15",
+    "@types/react-dom": "^18.2.7",
+    "@vitejs/plugin-react-swc": "^3.3.2",
+    "eslint-plugin-react": "^7.33.2",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-react-refresh": "^0.4.3",
+    "vite": "^4.4.5"
+  }
 }
