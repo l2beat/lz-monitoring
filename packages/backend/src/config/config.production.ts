@@ -8,7 +8,7 @@ export function getProductionConfig(env: Env): Config {
     name: 'LZMonitoring/Production',
     logger: {
       logLevel: 'INFO',
-      format: 'pretty',
+      format: 'json',
       utc: true,
     },
     database: {

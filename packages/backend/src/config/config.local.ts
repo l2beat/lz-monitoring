@@ -12,7 +12,7 @@ export function getLocalConfig(env: Env): Config {
       colors: true,
     },
     database: {
-      connection: env.optionalString('LOCAL_DB_URL'),
+      connection: env.string('LOCAL_DB_URL'),
       freshStart: env.boolean('FRESH_START', false),
     },
     api: {

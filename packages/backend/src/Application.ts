@@ -28,10 +28,6 @@ export class Application {
     )
 
     this.start = async () => {
-      logger.for(this).info('Starting')
-
-      await apiServer.listen()
-
       if (config.database.freshStart) {
         await database.rollbackAll()
       }
@@ -40,6 +36,8 @@ export class Application {
       for (const module of modules) {
         await module?.start?.()
       }
+
+      await apiServer.listen()
     }
   }
 }
