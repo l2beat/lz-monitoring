@@ -2,17 +2,18 @@
   "name": "@lz/frontend",
   "version": "0.1.0",
   "license": "MIT",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "build/index.js",
+  "types": "build/index.d.ts",
   "engines": {
     "node": "^18.0.0",
     "yarn": ">=1.22.0"
   },
   "scripts": {
     "test": "mocha",
-    "clean": "rm -rf dist",
+    "clean": "rm -rf build",
     "build": "tsc",
-    "start": "node -r esbuild-register src/",
+    "start": "node -r source-map-support/register build",
+    "start:dev": "node -r esbuild-register src",
     "format:fix": "prettier --write .",
     "format": "prettier --check .",
     "lint:fix": "yarn lint --fix",

@@ -2,23 +2,42 @@
   "name": "@lz/backend",
   "version": "0.1.0",
   "license": "MIT",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "build/index.js",
+  "types": "build/index.d.ts",
   "engines": {
     "node": "^18.0.0",
     "yarn": ">=1.22.0"
   },
   "scripts": {
     "test": "mocha",
-    "clean": "rm -rf dist",
+    "clean": "rm -rf build",
     "build": "tsc",
-    "start": "node -r esbuild-register src/",
+    "start": "node -r source-map-support/register build",
+    "start:dev": "ts-node-dev --respawn --transpile-only src/index.ts",
     "format:fix": "prettier --write .",
     "format": "prettier --check .",
     "lint:fix": "yarn lint --fix",
     "lint": "eslint --ext .ts,.tsx --max-warnings 0 src",
     "typecheck": "tsc --noEmit"
   },
-  "dependencies": {},
-  "devDependencies": {}
+  "dependencies": {
+    "@koa/router": "^12.0.0",
+    "@l2beat/backend-tools": "^0.3.0-canary.20230802T090238",
+    "knex": "^2.5.1",
+    "koa": "^2.14.2",
+    "koa-conditional-get": "^3.0.0",
+    "koa-etag": "^4.0.0",
+    "pg": "^8.11.3",
+    "source-map-support": "^0.5.21"
+  },
+  "devDependencies": {
+    "@types/knex": "^0.16.1",
+    "@types/koa": "^2.13.8",
+    "@types/koa-conditional-get": "^2.0.0",
+    "@types/koa-etag": "^3.0.0",
+    "@types/koa__router": "^12.0.0",
+    "@types/supertest": "^2.0.12",
+    "supertest": "^6.3.3",
+    "ts-node-dev": "^2.0.0"
+  }
 }
