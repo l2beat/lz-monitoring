@@ -2,7 +2,9 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "outDir": "build",
-    "incremental": true
+    "incremental": true,
+    "declaration": false,
+    "declarationMap": false
   },
   "include": ["src"]
 }
