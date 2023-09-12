@@ -1,0 +1,26 @@
+{
+  "name": "@lz/libs",
+  "version": "0.0.0",
+  "license": "MIT",
+  "main": "build/index.js",
+  "types": "build/index.d.ts",
+  "engines": {
+    "node": "^18.0.0",
+    "yarn": ">=1.22.0"
+  },
+  "scripts": {
+    "test": "mocha",
+    "clean": "rm -rf build",
+    "build": "tsc",
+    "format:fix": "prettier --write .",
+    "format": "prettier --check .",
+    "lint:fix": "yarn lint --fix",
+    "lint": "eslint --ext .ts,.tsx --max-warnings 0 src",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "ethers": "^6.7.1",
+    "@l2beat/backend-tools": "0.3.0"
+  },
+  "devDependencies": {}
+}
