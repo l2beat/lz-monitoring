@@ -135,8 +135,6 @@ describe(BlockNumberRepository.name, () => {
       timestamp: start.add(i - range.length, 'hours'), // ascending timestamps
     }))
 
-    console.dir({ blocks }, { depth: null })
-
     await repository.addMany(blocks)
 
     expect(await repository.getAllInRange(13, 17)).toEqual(blocks.slice(3, 8))
