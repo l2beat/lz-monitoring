@@ -1,5 +1,4 @@
 export {}
-
 declare module 'knex/types/tables' {
   interface BlockNumberRow {
     unix_timestamp: Date
