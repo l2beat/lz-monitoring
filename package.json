@@ -14,7 +14,8 @@
     "format": "wsrun -ecam format",
     "lint:fix": "wsrun -ecam lint:fix",
     "lint": "wsrun -ecam lint",
-    "typecheck": "wsrun -ecam typecheck"
+    "typecheck": "wsrun -ecam typecheck",
+    "start": "cd packages/backend && yarn start"
   },
   "workspaces": {
     "packages": [
