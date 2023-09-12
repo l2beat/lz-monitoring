@@ -2,15 +2,15 @@
   "name": "@lz/libs",
   "version": "0.0.0",
   "license": "MIT",
-  "main": "build/index.js",
-  "types": "build/index.d.ts",
+  "main": "dust/index.js",
+  "types": "dist/index.d.ts",
   "engines": {
     "node": "^18.0.0",
     "yarn": ">=1.22.0"
   },
   "scripts": {
     "test": "mocha",
-    "clean": "rm -rf build",
+    "clean": "rm -rf dist",
     "build": "tsc",
     "format:fix": "prettier --write .",
     "format": "prettier --check .",
