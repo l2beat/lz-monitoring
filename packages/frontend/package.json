@@ -2,24 +2,41 @@
   "name": "@lz/frontend",
   "version": "0.1.0",
   "license": "MIT",
-  "main": "build/index.js",
-  "types": "build/index.d.ts",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "type": "module",
   "engines": {
     "node": "^18.0.0",
     "yarn": ">=1.22.0"
   },
   "scripts": {
     "test": "mocha",
-    "clean": "rm -rf build",
-    "build": "tsc",
-    "start": "node -r source-map-support/register build",
-    "start:dev": "node -r esbuild-register src",
+    "clean": "rm -rf dist",
+    "build": "tsc && vite build",
+    "dev": "vite",
     "format:fix": "prettier --write .",
     "format": "prettier --check .",
     "lint:fix": "yarn lint --fix",
-    "lint": "eslint --ext .ts,.tsx --max-warnings 0 src",
+    "lint": "eslint . --ext .ts,.tsx --max-warnings 0 src",
+    "preview": "vite preview",
     "typecheck": "tsc --noEmit"
   },
-  "dependencies": {},
-  "devDependencies": {}
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.15",
+    "@types/react-dom": "^18.2.7",
+    "@vitejs/plugin-react-swc": "^3.3.2",
+    "autoprefixer": "^10.4.15",
+    "eslint-plugin-react": "^7.33.2",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-react-refresh": "^0.4.3",
+    "postcss": "^8.4.29",
+    "postcss-import": "^15.1.0",
+    "prettier-plugin-tailwindcss": "^0.5.4",
+    "tailwindcss": "^3.3.3",
+    "vite": "^4.4.5"
+  }
 }
