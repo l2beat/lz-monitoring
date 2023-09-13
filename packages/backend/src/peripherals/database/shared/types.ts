@@ -5,7 +5,14 @@ declare module 'knex/types/tables' {
     block_number: number
   }
 
+  interface IndexerStateRow {
+    id: string
+    height: number
+    last_updated: Date
+  }
+
   interface Tables {
     block_numbers: BlockNumberRow
+    indexer_states: IndexerStateRow
   }
 }
