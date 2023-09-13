@@ -1,4 +1,5 @@
 export * from './Bytes'
 export * from './EthereumAddress'
+export * from './Hash256'
 export * from './RateLimitedProvider'
 export * from './UnixTime'

@@ -11,8 +11,14 @@ declare module 'knex/types/tables' {
     last_updated: Date
   }
 
+  interface DiscoveryRow {
+    one_row_id: true
+    discovery_json_blob: string
+  }
+
   interface Tables {
     block_numbers: BlockNumberRow
     indexer_states: IndexerStateRow
+    discovery: DiscoveryRow
   }
 }
