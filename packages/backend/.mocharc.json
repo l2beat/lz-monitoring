@@ -4,5 +4,6 @@
   "watchExtensions": "ts",
   "extension": "ts",
   "file": "src/test/setup.ts",
-  "reporterOption": "maxDiffSize=0"
+  "reporterOption": "maxDiffSize=0",
+  "exit": true
 }

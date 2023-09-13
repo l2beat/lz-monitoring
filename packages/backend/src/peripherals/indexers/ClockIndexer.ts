@@ -1,0 +1,20 @@
+import { Logger } from '@l2beat/backend-tools'
+import { RootIndexer } from '@l2beat/uif'
+
+export class ClockIndexer extends RootIndexer {
+  constructor(
+    protected override readonly logger: Logger,
+    private readonly tickInterval: number,
+  ) {
+    super(logger.for('ClockIndexer'))
+  }
+  override async start(): Promise<void> {
+    await super.start()
+    setInterval(() => this.requestTick(), this.tickInterval)
+  }
+
+  tick(): Promise<number> {
+    console.log('ticking')
+    return Promise.resolve(Date.now())
+  }
+}
