@@ -14,7 +14,6 @@ export class ClockIndexer extends RootIndexer {
   }
 
   tick(): Promise<number> {
-    console.log('ticking')
     return Promise.resolve(Date.now())
   }
 }
