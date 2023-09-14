@@ -52,15 +52,18 @@ describe(BlockNumberRepository.name, () => {
     expect(actual).toEqual([])
   })
 
-  it('deletes all records after a block number', async () => {
+  it('deletes all records after a block timestamp', async () => {
+    const now = UnixTime.now()
     const range = new Array(10).fill(null).map((_, i) => i + 1)
-    const records = range.map(mockRecord)
+    const records = range.map((r) => mockRecord(r, now))
     await repository.addMany(records)
 
-    await repository.deleteAfter(5)
+    await repository.deleteAfter(now.add(5, 'hours'))
 
     const actual = await repository.getAll()
-    expect(actual).toEqual(records.filter((r) => r.blockNumber <= 5))
+    expect(actual).toEqual(
+      records.filter((r) => r.timestamp.lte(now.add(5, 'hours'))),
+    )
   })
 
   it('gets by number', async () => {
@@ -94,7 +97,7 @@ describe(BlockNumberRepository.name, () => {
       .map((_, i) => i + 1)
       .slice(9) // 10 ... 20 inclusive
 
-    const blocks = range.map(mockRecord)
+    const blocks = range.map((r) => mockRecord(r))
 
     await repository.addMany(blocks)
 
@@ -102,10 +105,11 @@ describe(BlockNumberRepository.name, () => {
   })
 })
 
-function mockRecord(blockNumber: number): BlockNumberRecord {
+function mockRecord(blockNumber: number, now?: UnixTime): BlockNumberRecord {
+  const baseNow = now ?? UnixTime.now()
   return {
     blockNumber,
     blockHash: Hash256('0x' + blockNumber.toString(16).padStart(64, '0')),
-    timestamp: UnixTime.now().add(blockNumber, 'hours'),
+    timestamp: baseNow.add(blockNumber, 'hours'),
   }
 }

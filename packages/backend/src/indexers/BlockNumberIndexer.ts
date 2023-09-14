@@ -50,11 +50,11 @@ export class BlockNumberIndexer extends ChildIndexer {
       return toTimestamp
     }
 
-    return await this.advanceChain(this.lastKnownNumber + 1)
+    return this.advanceChain(this.lastKnownNumber + 1)
   }
 
   async invalidate(to: number): Promise<number> {
-    await this.blockRepository.deleteAfter(to)
+    await this.blockRepository.deleteAfter(new UnixTime(to))
     return to
   }
 

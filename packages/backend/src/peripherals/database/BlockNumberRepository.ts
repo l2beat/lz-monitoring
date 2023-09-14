@@ -71,10 +71,10 @@ export class BlockNumberRepository extends BaseRepository {
     return knex('block_numbers').delete()
   }
 
-  async deleteAfter(blockNumber: number): Promise<number> {
+  async deleteAfter(blockTimestamp: UnixTime): Promise<number> {
     const knex = await this.knex()
     return knex('block_numbers')
-      .where('block_number', '>', blockNumber)
+      .where('unix_timestamp', '>', blockTimestamp.toDate())
       .delete()
   }
 }
