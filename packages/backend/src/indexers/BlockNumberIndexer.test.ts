@@ -1,6 +1,6 @@
 import { assert, Logger } from '@l2beat/backend-tools'
 import { Hash256, UnixTime } from '@lz/libs'
-import { expect, mockFn, mockObject } from 'earl'
+import { expect, mockObject } from 'earl'
 
 import {
   BlockchainClient,
@@ -74,8 +74,11 @@ describe(BlockNumberIndexer.name, () => {
     })
 
     it('downloads a new block and returns its timestamp with reorg', async () => {
-      const memoryBlockNumberRepository = mockBlockNumberRepository([
-        blockToRecord(BLOCKS[1]!),
+      const [genesisBlock, firstBlock] = BLOCKS
+
+      const fakeBlockNumberRepository = mockBlockNumberRepository([
+        blockToRecord(genesisBlock!),
+        blockToRecord(firstBlock!),
       ])
 
       const reorgedBlock = {
@@ -84,19 +87,20 @@ describe(BlockNumberIndexer.name, () => {
         parentHash: HASH1,
         timestamp: 1500,
       }
+
+      const fakeBlockchainClient = mockBlockchainClient(BLOCKS)
+
+      // Simulate reorg
+      fakeBlockchainClient.getBlock.resolvesToOnce(reorgedBlock)
+
       const reorgedBlockRecord: BlockNumberRecord = {
         blockNumber: reorgedBlock.number,
         blockHash: Hash256(reorgedBlock.hash),
         timestamp: new UnixTime(reorgedBlock.timestamp),
       }
       const blockNumberIndexer = new BlockNumberIndexer(
-        mockObject<BlockchainClient>({
-          getBlockNumberAtOrBefore,
-          getBlock: mockFn(async (number: number) =>
-            mockBlock(number),
-          ).resolvesToOnce(reorgedBlock),
-        }),
-        memoryBlockNumberRepository,
+        fakeBlockchainClient,
+        fakeBlockNumberRepository,
         mockObject<IndexerStateRepository>({
           findById: async () => ({ id: 'BlockNumberIndexer', height: 1 }),
         }),
@@ -111,13 +115,13 @@ describe(BlockNumberIndexer.name, () => {
 
       // saves block to database
       expect(await blockNumberIndexer.update(0, 2000)).toEqual(1500)
-      expect(memoryBlockNumberRepository.add).toHaveBeenCalledWith(
+      expect(fakeBlockNumberRepository.add).toHaveBeenCalledWith(
         reorgedBlockRecord,
       )
 
       expect(await blockNumberIndexer.update(0, 3000)).toEqual(1000)
       expect(await blockNumberIndexer.update(1000, 3000)).toEqual(3000)
-      expect(memoryBlockNumberRepository.addMany).toHaveBeenCalledTimes(1)
+      expect(fakeBlockNumberRepository.addMany).toHaveBeenCalledTimes(1)
 
       const block2 = BLOCKS[2]
       const block3 = BLOCKS[3]
@@ -125,7 +129,7 @@ describe(BlockNumberIndexer.name, () => {
       assert(block2)
       assert(block3)
 
-      expect(memoryBlockNumberRepository.addMany).toHaveBeenNthCalledWith(
+      expect(fakeBlockNumberRepository.addMany).toHaveBeenNthCalledWith(
         1,
         [block2, block3].map(blockToRecord),
       )
@@ -171,41 +175,6 @@ const BLOCKS: BlockFromClient[] = [
     timestamp: 4000,
   },
 ]
-
-function mockBlockRecord(blockNumber: number): BlockNumberRecord | undefined {
-  if (blockNumber === 0) {
-    return
-  }
-  const block = BLOCKS.find((b) => b.number === blockNumber)
-  assert(block, `Block not found for given number: ${blockNumber}`)
-  return {
-    blockNumber: block.number,
-    blockHash: Hash256(block.hash),
-    timestamp: new UnixTime(block.timestamp),
-  }
-}
-
-function mockBlock(blockId: number | Hash256): BlockFromClient {
-  console.log('mockBlock', blockId)
-  if (typeof blockId === 'number') {
-    const block = BLOCKS.find((b) => b.number === blockId)
-    assert(block, `Block not found for given number: ${blockId}`)
-    return block
-  }
-
-  const block = BLOCKS.find((b) => b.hash === blockId.toString())
-  assert(block, `Block not found for given hash: ${blockId}`)
-  return block
-}
-
-function getBlockNumberAtOrBefore(timestamp: UnixTime): Promise<number> {
-  const block = BLOCKS.filter((b) => b.timestamp <= timestamp.toNumber())
-    .sort((a, b) => b.timestamp - a.timestamp)
-    .shift()
-  assert(block, `Block not found for given timestamp: ${timestamp.toString()}`)
-  console.log('getBlockNumberAtOrBefore', timestamp.toString(), block.number)
-  return Promise.resolve(block.number)
-}
 
 function mockBlockNumberRepository(initialStorage: BlockNumberRecord[] = []) {
   const blockNumberStorage: BlockNumberRecord[] = [...initialStorage]
