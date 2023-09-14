@@ -1,7 +1,17 @@
-import { Logger } from '@l2beat/backend-tools'
-import { Bytes, EthereumAddress, RateLimitedProvider, UnixTime } from '@lz/libs'
+import { assert, Logger } from '@l2beat/backend-tools'
+import {
+  Bytes,
+  EthereumAddress,
+  Hash256,
+  RateLimitedProvider,
+  UnixTime,
+} from '@lz/libs'
 import { Block, Log, Provider } from 'ethers'
 
+export type BlockFromClient = Pick<
+  Block,
+  'timestamp' | 'number' | 'parentHash'
+> & { hash: string }
 export class BlockchainClient {
   private readonly provider: RateLimitedProvider
 
@@ -37,10 +47,6 @@ export class BlockchainClient {
     ): Promise<{ timestamp: number }> => {
       const block = await this.getBlock(number)
 
-      if (!block) {
-        throw new Error(`Block not found for given number: ${number}`)
-      }
-
       return {
         timestamp: block.timestamp,
       }
@@ -49,8 +55,16 @@ export class BlockchainClient {
     return getBlockNumberAtOrBefore(timestamp, start, end, getBlockTimestamp)
   }
 
-  async getBlock(blockNumber: number): Promise<Block | null> {
-    return this.provider.getBlock(blockNumber)
+  async getBlock(blockId: number | Hash256): Promise<BlockFromClient> {
+    const block = await this.provider.getBlock(blockId)
+    assert(block, `Block not found for given number: ${blockId}`)
+    assert(block.hash, `Block hash not found for given number: ${blockId}`)
+    return {
+      timestamp: block.timestamp,
+      number: block.number,
+      parentHash: block.parentHash,
+      hash: block.hash,
+    }
   }
 
   async call(parameters: CallParameters, blockTag: BlockTag): Promise<Bytes> {

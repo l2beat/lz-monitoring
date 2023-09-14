@@ -1,5 +1,5 @@
 import { Logger } from '@l2beat/backend-tools'
-import { UnixTime } from '@lz/libs'
+import { Hash256, UnixTime } from '@lz/libs'
 import type { BlockNumberRow } from 'knex/types/tables'
 
 import { BaseRepository, CheckConvention } from './shared/BaseRepository'
@@ -8,12 +8,20 @@ import { Database } from './shared/Database'
 export interface BlockNumberRecord {
   timestamp: UnixTime
   blockNumber: number
+  blockHash: Hash256
 }
 
 export class BlockNumberRepository extends BaseRepository {
   constructor(database: Database, logger: Logger) {
     super(database, logger)
     this.autoWrap<CheckConvention<BlockNumberRepository>>(this)
+  }
+
+  async add(record: BlockNumberRecord): Promise<number> {
+    const row = toRow(record)
+    const knex = await this.knex()
+    await knex('block_numbers').insert(row).returning('block_number')
+    return row.block_number
   }
 
   async addMany(records: BlockNumberRecord[]): Promise<number[]> {
@@ -74,6 +82,7 @@ export class BlockNumberRepository extends BaseRepository {
 function toRow(record: BlockNumberRecord): BlockNumberRow {
   return {
     block_number: record.blockNumber,
+    block_hash: record.blockHash,
     unix_timestamp: record.timestamp.toDate(),
   }
 }
@@ -81,6 +90,7 @@ function toRow(record: BlockNumberRecord): BlockNumberRow {
 function toRecord(row: BlockNumberRow): BlockNumberRecord {
   return {
     blockNumber: row.block_number,
+    blockHash: Hash256(row.block_hash),
     timestamp: UnixTime.fromDate(row.unix_timestamp),
   }
 }

@@ -1,5 +1,5 @@
 import { Logger } from '@l2beat/backend-tools'
-import { UnixTime } from '@lz/libs'
+import { Hash256, UnixTime } from '@lz/libs'
 import { expect } from 'earl'
 
 import { setupDatabaseTestSuite } from '../../test/database'
@@ -16,10 +16,7 @@ describe(BlockNumberRepository.name, () => {
   afterEach(() => repository.deleteAll())
 
   it('adds single record and queries it', async () => {
-    const record: BlockNumberRecord = {
-      blockNumber: 1,
-      timestamp: UnixTime.now(),
-    }
+    const record = mockRecord(1)
 
     await repository.addMany([record])
 
@@ -35,18 +32,9 @@ describe(BlockNumberRepository.name, () => {
 
   it('adds multiple records and queries them', async () => {
     const records: BlockNumberRecord[] = [
-      {
-        blockNumber: 1,
-        timestamp: UnixTime.now().add(-2, 'hours'),
-      },
-      {
-        blockNumber: 2,
-        timestamp: UnixTime.now().add(-1, 'hours'),
-      },
-      {
-        blockNumber: 3,
-        timestamp: UnixTime.now(),
-      },
+      mockRecord(1),
+      mockRecord(2),
+      mockRecord(3),
     ]
 
     await repository.addMany(records)
@@ -56,16 +44,7 @@ describe(BlockNumberRepository.name, () => {
   })
 
   it('deletes all records', async () => {
-    await repository.addMany([
-      {
-        blockNumber: 1,
-        timestamp: UnixTime.now().add(-1, 'hours'),
-      },
-      {
-        blockNumber: 2,
-        timestamp: UnixTime.now(),
-      },
-    ])
+    await repository.addMany([mockRecord(1), mockRecord(2)])
 
     await repository.deleteAll()
 
@@ -74,12 +53,8 @@ describe(BlockNumberRepository.name, () => {
   })
 
   it('deletes all records after a block number', async () => {
-    const start = UnixTime.now()
     const range = new Array(10).fill(null).map((_, i) => i + 1)
-    const records: BlockNumberRecord[] = range.map((i) => ({
-      timestamp: start.add(i - range.length, 'hours'), // ascending timestamps
-      blockNumber: i,
-    }))
+    const records = range.map(mockRecord)
     await repository.addMany(records)
 
     await repository.deleteAfter(5)
@@ -89,10 +64,7 @@ describe(BlockNumberRepository.name, () => {
   })
 
   it('gets by number', async () => {
-    const record: BlockNumberRecord = {
-      blockNumber: 1,
-      timestamp: UnixTime.now(),
-    }
+    const record = mockRecord(1)
 
     await repository.addMany([record])
 
@@ -102,41 +74,38 @@ describe(BlockNumberRepository.name, () => {
   })
 
   it('gets last by number', async () => {
-    const start = UnixTime.now()
     expect(await repository.findLast()).toEqual(undefined)
 
-    const block = { blockNumber: 11813208, timestamp: start }
+    const block = mockRecord(69420)
     await repository.addMany([block])
 
     expect(await repository.findLast()).toEqual(block)
 
-    const earlierBlock = {
-      blockNumber: 11813206,
-      timestamp: start.add(-1, 'hours'),
-    }
-    const laterBlock = {
-      blockNumber: 11813209,
-      timestamp: start.add(1, 'hours'),
-    }
+    const earlierBlock = mockRecord(69419)
+    const laterBlock = mockRecord(69421)
     await repository.addMany([laterBlock, earlierBlock])
 
     expect(await repository.findLast()).toEqual(laterBlock)
   })
 
   it('gets all blocks in range between given numbers (inclusive)', async () => {
-    const start = UnixTime.now()
     const range = new Array(20)
       .fill(null)
       .map((_, i) => i + 1)
       .slice(9) // 10 ... 20 inclusive
 
-    const blocks = range.map((i) => ({
-      blockNumber: i,
-      timestamp: start.add(i - range.length, 'hours'), // ascending timestamps
-    }))
+    const blocks = range.map(mockRecord)
 
     await repository.addMany(blocks)
 
     expect(await repository.getAllInRange(13, 17)).toEqual(blocks.slice(3, 8))
   })
 })
+
+function mockRecord(blockNumber: number): BlockNumberRecord {
+  return {
+    blockNumber,
+    blockHash: Hash256('0x' + blockNumber.toString(16).padStart(64, '0')),
+    timestamp: UnixTime.now().add(blockNumber, 'hours'),
+  }
+}

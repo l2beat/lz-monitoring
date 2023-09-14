@@ -14,6 +14,10 @@ export class ClockIndexer extends RootIndexer {
   }
 
   tick(): Promise<number> {
-    return Promise.resolve(Date.now())
+    return Promise.resolve(getTimeSeconds())
   }
+}
+
+function getTimeSeconds(): number {
+  return Math.floor(Date.now() / 1000)
 }

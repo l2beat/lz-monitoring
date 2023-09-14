@@ -3,6 +3,7 @@ import { Logger } from '@l2beat/backend-tools'
 import { ApiServer } from './api/ApiServer'
 import { Config } from './config'
 import { ApplicationModule } from './modules/ApplicationModule'
+import { createEthereumDiscoveryModule } from './modules/EthereumDiscoveryModule'
 import { createHealthModule } from './modules/HealthModule'
 import { Database } from './peripherals/database/shared/Database'
 
@@ -19,6 +20,7 @@ export class Application {
 
     const modules: (ApplicationModule | undefined)[] = [
       createHealthModule(config),
+      createEthereumDiscoveryModule(database, logger),
     ]
 
     const apiServer = new ApiServer(
