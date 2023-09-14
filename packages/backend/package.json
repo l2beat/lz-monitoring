@@ -34,6 +34,7 @@
     "source-map-support": "^0.5.21"
   },
   "devDependencies": {
+    "@l2beat/discovery-types": "^0.1.0",
     "@sinonjs/fake-timers": "^11.1.0",
     "@types/knex": "^0.16.1",
     "@types/koa": "^2.13.8",
