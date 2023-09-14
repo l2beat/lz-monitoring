@@ -197,30 +197,16 @@ function mockBlockNumberRepository(initialStorage: BlockNumberRecord[] = []) {
   const blockNumberStorage: BlockNumberRecord[] = [...initialStorage]
 
   return mockObject<BlockNumberRepository>({
-    findByNumber: async (number) => {
-      const result = blockNumberStorage.find(
-        (bnr) => bnr.blockNumber === number,
-      )
-
-      console.dir({ method: 'findByNumber', number, result })
-      return result
-    },
-    findLast: async () => {
-      const result = blockNumberStorage.at(-1)
-      console.dir({ method: 'findLast', result })
-      return result
-    },
+    findByNumber: async (number) =>
+      blockNumberStorage.find((bnr) => bnr.blockNumber === number),
+    findLast: async () => blockNumberStorage.at(-1),
     addMany: async (blocks: BlockNumberRecord[]) => {
       blockNumberStorage.push(...blocks)
-      const result = blocks.map((b) => b.blockNumber)
-      console.dir({ method: 'addMany', blocks, result })
-      return result
+      return blocks.map((b) => b.blockNumber)
     },
     add: async (block: BlockNumberRecord) => {
       blockNumberStorage.push(block)
-      const result = block.blockNumber
-      console.dir({ method: 'add', block })
-      return result
+      return block.blockNumber
     },
   })
 }
@@ -239,8 +225,6 @@ function mockBlockchainClient(blocks: BlockFromClient[]) {
         `Block not found for given timestamp: ${timestamp.toString()}`,
       )
 
-      console.dir({ method: 'getBlockNumberAtOrBefore', timestamp, block })
-
       return Promise.resolve(block.number)
     },
     getBlock: async (blockId) => {
@@ -248,13 +232,10 @@ function mockBlockchainClient(blocks: BlockFromClient[]) {
         const block = blockchainBlocks.find((b) => b.number === blockId)
         assert(block, `Block not found for given number: ${blockId}`)
 
-        console.dir({ method: 'getBlock#number', blockId, block })
-
         return block
       }
 
       const block = blockchainBlocks.find((b) => b.hash === blockId.toString())
-      console.dir({ method: 'getBlock#hash', blockId, block })
       assert(block, `Block not found for given hash: ${blockId}`)
       return block
     },
@@ -265,11 +246,7 @@ function mockIndexerStateRepository(initialState: IndexerStateRecord[] = []) {
   const states: IndexerStateRecord[] = [...initialState]
 
   return mockObject<IndexerStateRepository>({
-    findById: async (id) => {
-      const result = states.find((s) => s.id === id)
-      console.dir({ method: 'findById', id, result })
-      return result
-    },
+    findById: async (id) => states.find((s) => s.id === id),
     addOrUpdate: async (record) => {
       const presentState = states.find((s) => s.id === record.id)
 
