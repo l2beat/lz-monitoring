@@ -152,6 +152,36 @@ describe(BlockNumberIndexer.name, () => {
       )
     })
   })
+  describe(BlockNumberIndexer.prototype.invalidate.name, () => {
+    it('invalidates data after invalidation point by passing timestamp to repository', async () => {
+      const INVALIDATION_BLOCK_INDEX = Math.floor(BLOCKS.length / 2)
+      const INVALIDATION_TIMESTAMP = BLOCKS[INVALIDATION_BLOCK_INDEX]!.timestamp
+
+      const fakeBlockchainClient = mockBlockchainClient(BLOCKS)
+      const fakeBlockNumberRepository = mockBlockNumberRepository(
+        BLOCKS.map(blockToRecord),
+      )
+      const fakeIndexerStateRepository = mockIndexerStateRepository()
+
+      const blockNumberIndexer = new BlockNumberIndexer(
+        fakeBlockchainClient,
+        fakeBlockNumberRepository,
+        fakeIndexerStateRepository,
+        0,
+        mockObject<ClockIndexer>({
+          subscribe: () => {},
+        }),
+        Logger.SILENT,
+      )
+
+      expect(
+        await blockNumberIndexer.invalidate(INVALIDATION_TIMESTAMP),
+      ).toEqual(INVALIDATION_TIMESTAMP)
+      expect(fakeBlockNumberRepository.deleteAfter).toHaveBeenCalledWith(
+        new UnixTime(INVALIDATION_TIMESTAMP),
+      )
+    })
+  })
 })
 
 const HASH0 = Hash256.random()
@@ -207,6 +237,10 @@ function mockBlockNumberRepository(initialStorage: BlockNumberRecord[] = []) {
     add: async (block: BlockNumberRecord) => {
       blockNumberStorage.push(block)
       return block.blockNumber
+    },
+    deleteAfter: async (blockTimestamp) => {
+      // Implementation doesn't matter here
+      return blockTimestamp.toNumber()
     },
   })
 }
