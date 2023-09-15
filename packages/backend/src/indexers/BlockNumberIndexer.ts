@@ -12,8 +12,19 @@ import { ClockIndexer } from './ClockIndexer'
 
 export class BlockNumberIndexer extends ChildIndexer {
   private lastKnownNumber = 0
-  private reorgedBlocks = [] as BlockNumberRecord[]
-  private readonly id: string
+
+  /**
+   * List of reorged blocks
+   * Servers as a cross-reference between the consecutive updates
+   */
+  private reorgedBlocks: BlockNumberRecord[] = []
+
+  /**
+   * ID for the indexer
+   * Used for state persistency using designated persistent storage
+   * @notice Must be unique across all the indexers
+   */
+  private readonly id = 'BlockNumberIndexer'
 
   constructor(
     private readonly blockchainClient: BlockchainClient,
@@ -24,11 +35,11 @@ export class BlockNumberIndexer extends ChildIndexer {
     logger: Logger,
   ) {
     super(logger, [clockIndexer])
-    this.id = 'BlockDownloader' // this should be unique across all indexers
   }
 
   override async start(): Promise<void> {
     await super.start()
+
     this.lastKnownNumber =
       (await this.blockRepository.findLast())?.blockNumber ?? this.startBlock
   }
@@ -46,6 +57,7 @@ export class BlockNumberIndexer extends ChildIndexer {
     const tip = await this.blockchainClient.getBlockNumberAtOrBefore(
       new UnixTime(toTimestamp),
     )
+
     if (tip <= this.lastKnownNumber) {
       return toTimestamp
     }
@@ -55,9 +67,13 @@ export class BlockNumberIndexer extends ChildIndexer {
 
   async invalidate(to: number): Promise<number> {
     await this.blockRepository.deleteAfter(new UnixTime(to))
+
     return to
   }
 
+  /**
+   *
+   */
   private async advanceChain(blockNumber: number): Promise<number> {
     let [block, parent] = await Promise.all([
       this.blockchainClient.getBlock(blockNumber),
@@ -93,6 +109,7 @@ export class BlockNumberIndexer extends ChildIndexer {
       blockHash: Hash256(block.hash),
       timestamp: new UnixTime(block.timestamp),
     }
+
     await this.blockRepository.add(record)
     this.lastKnownNumber = block.number
 
@@ -121,6 +138,7 @@ export class BlockNumberIndexer extends ChildIndexer {
       timestamp: new UnixTime(downloaded.timestamp),
     }
     await this.blockRepository.add(record)
+
     return record
   }
 }
