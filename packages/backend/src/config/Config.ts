@@ -30,8 +30,9 @@ export interface HealthConfig {
 }
 
 export interface EthereumDiscoveryModuleConfig {
+  clockIntervalMs: number
   rpcUrl: string
   etherscanApiKey: string
   etherscanMinTimestamp: UnixTime
-  config: DiscoveryConfig
+  discovery: DiscoveryConfig
 }

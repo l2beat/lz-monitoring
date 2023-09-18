@@ -26,12 +26,13 @@ export function getLocalConfig(env: Env): Config {
       commitSha: getGitCommitSha(),
     },
     ethereumDiscovery: {
+      clockIntervalMs: env.integer('CLOCK_INTERVAL_MS', 10 * 1000),
       rpcUrl: env.string('ETHEREUM_RPC_URL'),
       etherscanApiKey: env.string('ETHERSCAN_API_KEY'),
       etherscanMinTimestamp: new UnixTime(
         env.integer('ETHERSCAN_MIN_TIMESTAMP', 0),
       ),
-      config: discoveryConfig,
+      discovery: discoveryConfig,
     },
   }
 }

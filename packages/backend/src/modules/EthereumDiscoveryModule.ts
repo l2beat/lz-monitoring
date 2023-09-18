@@ -39,7 +39,10 @@ export function createEthereumDiscoveryModule(
   const blockchainClient = new BlockchainClient(provider, logger)
   const discoveryEngine = createDiscoveryEngine(provider, config)
 
-  const clockIndexer = new ClockIndexer(logger, 10 * 100000)
+  const clockIndexer = new ClockIndexer(
+    logger,
+    config.ethereumDiscovery.clockIntervalMs,
+  )
   const blockNumberIndexer = new BlockNumberIndexer(
     blockchainClient,
     blockRepository,
@@ -51,7 +54,7 @@ export function createEthereumDiscoveryModule(
 
   const discoveryIndexer = new DiscoveryIndexer(
     discoveryEngine,
-    config.ethereumDiscovery.config,
+    config.ethereumDiscovery.discovery,
     blockRepository,
     discoverRepository,
     indexerRepository,
