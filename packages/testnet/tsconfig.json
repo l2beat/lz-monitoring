@@ -1,7 +1,9 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "outDir": "dist"
+    "outDir": "dist",
+    // Ganache is naughty
+    "skipLibCheck": true
   },
   "include": ["src"]
 }
