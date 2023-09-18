@@ -26,8 +26,11 @@ export function getLocalConfig(env: Env): Config {
       commitSha: getGitCommitSha(),
     },
     ethereumDiscovery: {
+      // This is an arbitrary number so we do not start too far in the past.
+      startBlock: env.integer('START_BLOCK', 18127698),
       clockIntervalMs: env.integer('CLOCK_INTERVAL_MS', 10 * 1000),
       rpcUrl: env.string('ETHEREUM_RPC_URL'),
+      etherscanApiUrl: 'https://api.etherscan.io/api',
       etherscanApiKey: env.string('ETHERSCAN_API_KEY'),
       etherscanMinTimestamp: new UnixTime(
         env.integer('ETHERSCAN_MIN_TIMESTAMP', 0),

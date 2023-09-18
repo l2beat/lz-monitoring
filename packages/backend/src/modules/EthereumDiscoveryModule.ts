@@ -47,7 +47,7 @@ export function createEthereumDiscoveryModule(
     blockchainClient,
     blockRepository,
     indexerRepository,
-    18127698,
+    config.ethereumDiscovery.startBlock,
     clockIndexer,
     logger,
   )
@@ -79,7 +79,7 @@ function createDiscoveryEngine(
   const httpClient = new HttpClient()
   const discoveryClient = new EtherscanLikeClient(
     httpClient,
-    'https://api.etherscan.io/api',
+    config.ethereumDiscovery.etherscanApiUrl,
     config.ethereumDiscovery.etherscanApiKey,
     config.ethereumDiscovery.etherscanMinTimestamp,
   )
