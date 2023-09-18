@@ -63,7 +63,7 @@ describe(DiscoveryIndexer.name, () => {
       })
       const BLOCK_NUMBER = 10
 
-      const disocoveryIndexer = new DiscoveryIndexer(
+      const discoveryIndexer = new DiscoveryIndexer(
         discoveryEngine,
         config,
         mockObject<BlockNumberRepository>({
@@ -77,7 +77,7 @@ describe(DiscoveryIndexer.name, () => {
         }),
       )
 
-      expect(await disocoveryIndexer.invalidate(1000)).toEqual(1000)
+      expect(await discoveryIndexer.invalidate(1000)).toEqual(1000)
       expect(discoveryEngine.discover).toHaveBeenCalledTimes(1)
       expect(discoveryEngine.discover).toHaveBeenNthCalledWith(
         1,

@@ -1,9 +1,10 @@
-import { Logger } from '@l2beat/backend-tools'
+import { assert, Logger } from '@l2beat/backend-tools'
 import {
   DiscoveryConfig,
   DiscoveryEngine,
   toDiscoveryOutput,
 } from '@l2beat/discovery'
+import type { DiscoveryOutput } from '@l2beat/discovery-types'
 import { ChildIndexer } from '@l2beat/uif'
 import { UnixTime } from '@lz/libs'
 
@@ -50,6 +51,12 @@ export class DiscoveryIndexer extends ChildIndexer {
       blockNumber,
       analysis,
     )
+
+    assert(
+      !hasErrors(discoveryOutput),
+      'Errors in discovery output ' + errorsToString(discoveryOutput),
+    )
+
     await this.discoveryRepository.addOrUpdate({ discoveryOutput })
     this.logger.info('Discovery finished', { blockNumber })
 
@@ -71,4 +78,22 @@ export class DiscoveryIndexer extends ChildIndexer {
   async setSafeHeight(height: number): Promise<void> {
     await this.indexerStateRepository.addOrUpdate({ id: this.id, height })
   }
+}
+
+function hasErrors(discoveryOutput: DiscoveryOutput): boolean {
+  return discoveryOutput.contracts.some((x) => x.errors !== undefined)
+}
+
+function errorsToString(discoveryOutput: DiscoveryOutput): string {
+  const errors: string[] = []
+  for (const contract of discoveryOutput.contracts) {
+    if (contract.errors) {
+      errors.push(
+        `contract: ${contract.name}(${contract.address.toString()}), errors: ` +
+          JSON.stringify(contract.errors),
+      )
+    }
+  }
+
+  return errors.join('\n')
 }
