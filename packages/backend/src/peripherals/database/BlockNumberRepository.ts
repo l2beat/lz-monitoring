@@ -58,6 +58,15 @@ export class BlockNumberRepository extends BaseRepository {
     return row && toRecord(row)
   }
 
+  async findAtOrBefore(timestamp: UnixTime): Promise<number | undefined> {
+    const knex = await this.knex()
+    const row = await knex('block_numbers')
+      .where('unix_timestamp', '<=', timestamp.toDate())
+      .orderBy('block_number', 'desc')
+      .first()
+    return row?.block_number
+  }
+
   async findByNumber(number: number): Promise<BlockNumberRecord | undefined> {
     const knex = await this.knex()
     const row = await knex('block_numbers')
