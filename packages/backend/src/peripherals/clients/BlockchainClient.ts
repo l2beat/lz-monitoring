@@ -6,17 +6,17 @@ import {
   RateLimitedProvider,
   UnixTime,
 } from '@lz/libs'
-import { Block, Log, Provider } from 'ethers'
+import { providers } from 'ethers'
 
 export type BlockFromClient = Pick<
-  Block,
+  providers.Block,
   'timestamp' | 'number' | 'parentHash'
 > & { hash: string }
 export class BlockchainClient {
   private readonly provider: RateLimitedProvider
 
   constructor(
-    provider: Provider,
+    provider: providers.Provider,
     private readonly logger: Logger,
     callsPerMinute = Infinity,
   ) {
@@ -33,7 +33,8 @@ export class BlockchainClient {
     holder: EthereumAddress,
     blockTag: BlockTag,
   ): Promise<bigint> {
-    return this.provider.getBalance(holder.toString(), blockTag)
+    const result = await this.provider.getBalance(holder.toString(), blockTag)
+    return BigInt(result.toString())
   }
 
   async getBlockNumberAtOrBefore(
@@ -68,15 +69,17 @@ export class BlockchainClient {
   }
 
   async call(parameters: CallParameters, blockTag: BlockTag): Promise<Bytes> {
-    const bytes = await this.provider.call({
-      from: parameters.from?.toString(),
-      to: parameters.to.toString(),
-      gasLimit: parameters.gas,
-      gasPrice: parameters.gasPrice,
-      value: parameters.value,
-      data: parameters.data?.toString(),
+    const bytes = await this.provider.call(
+      {
+        from: parameters.from?.toString(),
+        to: parameters.to.toString(),
+        gasLimit: parameters.gas,
+        gasPrice: parameters.gasPrice,
+        value: parameters.value,
+        data: parameters.data?.toString(),
+      },
       blockTag,
-    })
+    )
     return Bytes.fromHex(bytes)
   }
 
@@ -88,7 +91,7 @@ export class BlockchainClient {
     topic: string,
     fromBlock: number,
     toBlock: number,
-  ): Promise<Log[]> {
+  ): Promise<providers.Log[]> {
     this.logger.debug('Getting all logs', {
       address: address.toString(),
       topic,

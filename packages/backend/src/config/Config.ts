@@ -1,4 +1,7 @@
 import { LoggerOptions } from '@l2beat/backend-tools'
+import { DiscoveryConfig } from '@l2beat/discovery'
+// eslint-disable-next-line import/no-internal-modules
+import { UnixTime } from '@l2beat/discovery/dist/utils/UnixTime'
 import { Knex } from 'knex'
 
 export interface Config {
@@ -8,6 +11,7 @@ export interface Config {
   readonly logger: Pick<LoggerOptions, 'logLevel' | 'format'> &
     Partial<LoggerOptions>
   readonly health: HealthConfig
+  readonly ethereumDiscovery: EthereumDiscoveryModuleConfig
 }
 
 export interface ApiConfig {
@@ -23,4 +27,14 @@ export interface HealthConfig {
   readonly releasedAt?: string
   readonly startedAt: string
   readonly commitSha?: string
+}
+
+export interface EthereumDiscoveryModuleConfig {
+  startBlock: number
+  clockIntervalMs: number
+  rpcUrl: string
+  etherscanApiUrl: string
+  etherscanApiKey: string
+  etherscanMinTimestamp: UnixTime
+  discovery: DiscoveryConfig
 }
