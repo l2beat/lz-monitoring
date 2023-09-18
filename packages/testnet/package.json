@@ -18,6 +18,9 @@
     "lint": "eslint --ext .ts,.tsx --max-warnings 0 src",
     "typecheck": "tsc --noEmit"
   },
-  "dependencies": {},
+  "dependencies": {
+    "@l2beat/backend-tools": "^0.3.0",
+    "ganache": "^7.9.1"
+  },
   "devDependencies": {}
 }
