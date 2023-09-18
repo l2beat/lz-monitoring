@@ -1,5 +1,5 @@
 import { Logger } from '@l2beat/backend-tools'
-import { JsonRpcProvider } from 'ethers'
+import { providers } from 'ethers'
 
 import { BlockNumberIndexer } from '../indexers/BlockNumberIndexer'
 import { ClockIndexer } from '../indexers/ClockIndexer'
@@ -16,7 +16,7 @@ export function createEthereumDiscoveryModule(
   const blockRepository = new BlockNumberRepository(database, logger)
   const indexerRepository = new IndexerStateRepository(database, logger)
 
-  const provider = new JsonRpcProvider(
+  const provider = new providers.JsonRpcProvider(
     'https://eth-mainnet.g.alchemy.com/v2/CLeXrqsc9lGb40KK9gRIbhQKGiakgp-S',
   )
   const blockchainClient = new BlockchainClient(provider, logger)

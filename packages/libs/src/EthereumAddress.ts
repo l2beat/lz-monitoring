@@ -1,4 +1,4 @@
-import { getAddress, ZeroAddress } from 'ethers'
+import { constants, utils } from 'ethers'
 
 export type EthereumAddress = string & {
   _EthereumAddressBrand: string
@@ -6,13 +6,13 @@ export type EthereumAddress = string & {
 
 export function EthereumAddress(value: string): EthereumAddress {
   try {
-    return getAddress(value) as unknown as EthereumAddress
+    return utils.getAddress(value) as unknown as EthereumAddress
   } catch {
     throw new TypeError('Invalid EthereumAddress')
   }
 }
 
-EthereumAddress.ZERO = EthereumAddress(ZeroAddress)
+EthereumAddress.ZERO = EthereumAddress(constants.AddressZero)
 
 EthereumAddress.check = function check(value: string) {
   try {
@@ -37,9 +37,9 @@ EthereumAddress.inOrder = function inOrder(
 }
 
 EthereumAddress.random = function random() {
-  const digit = (): string | undefined =>
-    '0123456789abcdef'[Math.floor(Math.random() * 16)]
-
+  const digit = (): string =>
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    '0123456789abcdef'[Math.floor(Math.random() * 16)]!
   return EthereumAddress('0x' + Array.from({ length: 40 }).map(digit).join(''))
 }
 

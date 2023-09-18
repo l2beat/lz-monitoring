@@ -1,14 +1,14 @@
 import { Logger } from '@l2beat/backend-tools'
 import { EthereumAddress } from '@lz/libs'
 import { expect, mockFn, mockObject } from 'earl'
-import { Provider } from 'ethers'
+import { providers } from 'ethers'
 
 import { BlockchainClient } from './BlockchainClient'
 
 describe(BlockchainClient.name, () => {
   describe(BlockchainClient.prototype.getAllLogs.name, () => {
     it('divides on two calls', async () => {
-      const provider = mockObject<Provider>({
+      const provider = mockObject<providers.Provider>({
         call: mockFn(),
         getBlock: mockFn(),
         getBlockNumber: mockFn(),
@@ -47,7 +47,7 @@ describe(BlockchainClient.name, () => {
     })
 
     it('correctly divides range of two', async () => {
-      const provider = mockObject<Provider>({
+      const provider = mockObject<providers.Provider>({
         call: mockFn(),
         getBlock: mockFn(),
         getBlockNumber: mockFn(),
@@ -86,7 +86,7 @@ describe(BlockchainClient.name, () => {
     })
 
     it('fromBlock === toBlock', async () => {
-      const provider = mockObject<Provider>({
+      const provider = mockObject<providers.Provider>({
         call: mockFn(),
         getBlock: mockFn(),
         getBlockNumber: mockFn(),

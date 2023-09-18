@@ -1,16 +1,16 @@
 import { RateLimiter } from '@l2beat/backend-tools'
-import { Provider } from 'ethers'
+import { providers } from 'ethers'
 
 export class RateLimitedProvider {
   private readonly rateLimiter: RateLimiter
-  call: Provider['call']
-  getBlock: Provider['getBlock']
-  getBlockNumber: Provider['getBlockNumber']
-  getLogs: Provider['getLogs']
-  getBalance: Provider['getBalance']
+  call: providers.Provider['call']
+  getBlock: providers.Provider['getBlock']
+  getBlockNumber: providers.Provider['getBlockNumber']
+  getLogs: providers.Provider['getLogs']
+  getBalance: providers.Provider['getBalance']
 
   constructor(
-    private readonly provider: Provider,
+    private readonly provider: providers.Provider,
     callsPerMinute: number,
   ) {
     this.rateLimiter = new RateLimiter({ callsPerMinute })
