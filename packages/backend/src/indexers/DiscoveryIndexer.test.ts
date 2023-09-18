@@ -41,7 +41,7 @@ describe(DiscoveryIndexer.name, () => {
         discoveryOutput: {
           version: 2,
           name: 'test',
-          configHash: configHash,
+          configHash: config.hash,
           chain: 'ethereum',
           blockNumber: 1,
           contracts: [],
@@ -89,7 +89,7 @@ describe(DiscoveryIndexer.name, () => {
         discoveryOutput: {
           version: 2,
           name: 'test',
-          configHash: configHash,
+          configHash: config.hash,
           chain: 'ethereum',
           blockNumber: BLOCK_NUMBER,
           contracts: [],
@@ -100,8 +100,10 @@ describe(DiscoveryIndexer.name, () => {
     })
   })
 })
-const configHash = Hash256.random()
+
 function mockConfig() {
+  const configHash = Hash256.random()
+
   return mockObject<DiscoveryConfig>({
     name: 'test',
     chainId: ChainId.ETHEREUM,
