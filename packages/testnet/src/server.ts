@@ -1,5 +1,5 @@
 import { Logger } from '@l2beat/backend-tools'
-import ganache from 'ganache'
+import Ganache from 'ganache'
 
 import { NodeConfiguration } from './config'
 
@@ -8,7 +8,8 @@ export { getTestnet }
 function getTestnet(logger: Logger) {
   return function (options: NodeConfiguration) {
     const testnetLogger = logger.for('LOCAL TESTNET')
-    const server = ganache.server(options)
+    const server = Ganache.server(options)
+    const { provider } = server
 
     async function boot() {
       await server.listen(options.port)
@@ -20,9 +21,12 @@ function getTestnet(logger: Logger) {
       testnetLogger.info('Destroyed')
     }
 
-    const { provider } = server
+    // async function mine(opts?: GanacheType.Ethereum.MineOptions) {
+    //   await provider.request({ method: 'evm_mine', params: opts ? [opts] : [] })
+    // }
 
     return {
+      // mine,
       boot,
       destroy,
       provider,
