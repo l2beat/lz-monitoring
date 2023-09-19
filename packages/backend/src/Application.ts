@@ -1,4 +1,6 @@
 import { Logger } from '@l2beat/backend-tools'
+import { getTestnet } from '@lz/testnet'
+import { providers } from 'ethers'
 
 import { ApiServer } from './api/ApiServer'
 import { Config } from './config'
@@ -45,6 +47,23 @@ export class Application {
       }
 
       await apiServer.listen()
+
+      const testnet = getTestnet(logger)({
+        port: 3002,
+        logging: { quiet: true },
+      })
+      await testnet.boot()
+      const provider = new providers.JsonRpcProvider('http://localhost:3002')
+
+      const block1 = await provider.getBlock('latest')
+      logger.info('Got block from ganache', { block1 })
+
+      await testnet.mine({ blocks: 10 })
+
+      const block2 = await provider.getBlock('latest')
+      logger.info('Got block from ganache', { block2 })
+
+      await testnet.destroy()
     }
   }
 }
