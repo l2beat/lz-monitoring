@@ -3,10 +3,10 @@ import { RootIndexer } from '@l2beat/uif'
 
 export class ClockIndexer extends RootIndexer {
   constructor(
-    protected override readonly logger: Logger,
+    logger: Logger,
     private readonly tickInterval: number,
   ) {
-    super(logger.for('ClockIndexer'))
+    super(logger)
   }
   override async start(): Promise<void> {
     await super.start()

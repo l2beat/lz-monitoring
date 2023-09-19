@@ -1,9 +1,9 @@
 import { constants, utils } from 'ethers'
 
-export type EthereumAddress = string & {
+// eslint-disable-next-line @typescript-eslint/ban-types
+export interface EthereumAddress extends String {
   _EthereumAddressBrand: string
 }
-
 export function EthereumAddress(value: string): EthereumAddress {
   try {
     return utils.getAddress(value) as unknown as EthereumAddress
