@@ -3,14 +3,7 @@
   "compilerOptions": {
     "outDir": "dist",
     // Ganache is naughty
-    // "skipLibCheck": true
-    "strictNullChecks": true,
-    "strictBindCallApply": true,
-    "strictFunctionTypes": true,
-    // "strictPropertyInitialization": true,
-    "noImplicitAny": true,
-    "noImplicitThis": true,
-    "useUnknownInCatchVariables": true
+    "skipLibCheck": true
   },
   "include": ["src"]
 }

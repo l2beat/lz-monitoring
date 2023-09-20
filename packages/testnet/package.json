@@ -9,6 +9,7 @@
     "yarn": ">=1.22.0"
   },
   "scripts": {
+    "start": "node -r source-map-support/register dist/run.js",
     "test": "mocha",
     "clean": "rm -rf dist",
     "build": "tsc",
@@ -18,9 +19,13 @@
     "lint": "eslint --ext .ts,.tsx --max-warnings 0 src",
     "typecheck": "tsc --noEmit"
   },
+  "bin": {
+    "lz-testnet": "./bin.js"
+  },
   "dependencies": {
-    "@l2beat/backend-tools": "^0.3.0",
-    "ganache": "^7.9.1"
+    "@l2beat/backend-tools": "0.3.0",
+    "ethers": "5.7.2",
+    "ganache": "7.9.1"
   },
   "devDependencies": {}
 }
