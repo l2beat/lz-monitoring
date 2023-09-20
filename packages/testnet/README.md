@@ -12,6 +12,22 @@ or you can use it as a library - see `Server Suite`
 For raw server use `getTestnetServer`.
 For bundle with providers and wallets use `getTestnet`
 
+If you are using in-process server - you have to start server manually by calling `boot` method once setup.
+
+```ts
+const testnet = getTestnet(Logger.SILENT)({
+  port: 8000,
+})
+
+await testnet.boot()
+```
+
+and would be great to stop it by calling `destroy` method.
+
+```ts
+await testnet.destroy()
+```
+
 ## Utils
 
 Utils are attachable to server and provider to extends its functionalities.
