@@ -20,7 +20,8 @@
     "lint": "eslint --ext .ts,.tsx --max-warnings 0 src",
     "typecheck": "tsc --noEmit",
     "clear:db-dump": "rm -rf scripts/db",
-    "update:db-dump": "cd scripts && bash update_cache.sh"
+    "update:db-dump": "cd scripts && bash update_cache.sh",
+    "start:testnet": "lz-testnet"
   },
   "dependencies": {
     "@koa/cors": "^4.0.0",
