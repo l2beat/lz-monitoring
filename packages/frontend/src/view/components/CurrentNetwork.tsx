@@ -4,7 +4,7 @@ interface CurrentNetworkProps {
 
 export function CurrentNetwork(props: CurrentNetworkProps): JSX.Element {
   return (
-    <section className="bg-gray-900 p-6">
+    <section className="mb-12 bg-gray-900 p-6">
       <div className="mb-6">
         {/* TODO: This will be a dropdown */}
         <label className="mb-4 text-xs text-gray-500">Current network</label>
