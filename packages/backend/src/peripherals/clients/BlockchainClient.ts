@@ -8,10 +8,10 @@ import {
 } from '@lz/libs'
 import { providers } from 'ethers'
 
-export type BlockFromClient = Pick<
-  providers.Block,
-  'timestamp' | 'number' | 'parentHash'
-> & { hash: string }
+export type BlockFromClient = Pick<providers.Block, 'timestamp' | 'number'> & {
+  hash: Hash256
+  parentHash: Hash256
+}
 export class BlockchainClient {
   private readonly provider: RateLimitedProvider
 
@@ -57,14 +57,15 @@ export class BlockchainClient {
   }
 
   async getBlock(blockId: number | Hash256): Promise<BlockFromClient> {
-    const block = await this.provider.getBlock(blockId)
-    assert(block, `Block not found for given number: ${blockId}`)
-    assert(block.hash, `Block hash not found for given number: ${blockId}`)
+    const blockTag = typeof blockId === 'number' ? blockId : blockId.toString()
+    const block = await this.provider.getBlock(blockTag)
+    assert(block, `Block not found for given number: ${blockTag}`)
+    assert(block.hash, `Block hash not found for given number: ${blockTag}`)
     return {
       timestamp: block.timestamp,
       number: block.number,
-      parentHash: block.parentHash,
-      hash: block.hash,
+      parentHash: Hash256(block.parentHash),
+      hash: Hash256(block.hash),
     }
   }
 

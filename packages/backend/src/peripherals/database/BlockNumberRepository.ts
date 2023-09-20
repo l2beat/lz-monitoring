@@ -91,7 +91,7 @@ export class BlockNumberRepository extends BaseRepository {
 function toRow(record: BlockNumberRecord): BlockNumberRow {
   return {
     block_number: record.blockNumber,
-    block_hash: record.blockHash,
+    block_hash: record.blockHash.toString(),
     unix_timestamp: record.timestamp.toDate(),
   }
 }

@@ -1,6 +1,6 @@
 import { Logger } from '@l2beat/backend-tools'
 import { ChildIndexer } from '@l2beat/uif'
-import { Hash256, UnixTime } from '@lz/libs'
+import { UnixTime } from '@lz/libs'
 
 import { BlockchainClient } from '../peripherals/clients/BlockchainClient'
 import {
@@ -80,14 +80,14 @@ export class BlockNumberIndexer extends ChildIndexer {
       this.getKnownBlock(blockNumber - 1),
     ])
 
-    if (Hash256(block.parentHash) !== parent.blockHash) {
+    if (block.parentHash !== parent.blockHash) {
       const changed = [block]
 
       let current = blockNumber
-      while (Hash256(block.parentHash) !== parent.blockHash) {
+      while (block.parentHash !== parent.blockHash) {
         current--
         ;[block, parent] = await Promise.all([
-          this.blockchainClient.getBlock(Hash256(block.parentHash)),
+          this.blockchainClient.getBlock(block.parentHash),
           this.getKnownBlock(current - 1),
         ])
         changed.push(block)
@@ -96,7 +96,7 @@ export class BlockNumberIndexer extends ChildIndexer {
       this.reorgedBlocks = changed.reverse().map((block) => {
         return {
           blockNumber: block.number,
-          blockHash: Hash256(block.hash),
+          blockHash: block.hash,
           timestamp: new UnixTime(block.timestamp),
         }
       })
@@ -106,7 +106,7 @@ export class BlockNumberIndexer extends ChildIndexer {
 
     const record: BlockNumberRecord = {
       blockNumber: block.number,
-      blockHash: Hash256(block.hash),
+      blockHash: block.hash,
       timestamp: new UnixTime(block.timestamp),
     }
 
@@ -134,7 +134,7 @@ export class BlockNumberIndexer extends ChildIndexer {
 
     const record: BlockNumberRecord = {
       blockNumber: downloaded.number,
-      blockHash: Hash256(downloaded.hash),
+      blockHash: downloaded.hash,
       timestamp: new UnixTime(downloaded.timestamp),
     }
     await this.blockRepository.add(record)
