@@ -4,6 +4,7 @@ import { constants, utils } from 'ethers'
 export interface EthereumAddress extends String {
   _EthereumAddressBrand: string
 }
+
 export function EthereumAddress(value: string): EthereumAddress {
   try {
     return utils.getAddress(value) as unknown as EthereumAddress
