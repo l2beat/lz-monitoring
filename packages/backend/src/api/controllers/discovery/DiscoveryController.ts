@@ -30,9 +30,7 @@ export class DiscoveryController {
       return
     }
 
-    const { discoveryOutput } = discovery
-
-    return toDiscoveryApi(discoveryOutput)
+    return toDiscoveryApi(discovery.discoveryOutput)
   }
 
   async getRawDiscovery(): Promise<DiscoveryOutput | undefined> {
