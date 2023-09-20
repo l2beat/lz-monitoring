@@ -19,8 +19,9 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@l2beat/backend-tools": "0.3.0",
     "ethers": "^5.7.2",
-    "@l2beat/backend-tools": "0.3.0"
+    "zod": "^3.22.2"
   },
   "devDependencies": {}
 }

@@ -87,13 +87,13 @@ describe(BlockNumberIndexer.name, () => {
 
       const reorgedBlock = {
         number: 2,
-        hash: Hash256.random().toString(),
+        hash: Hash256.random(),
         parentHash: HASH1,
         timestamp: 1500,
       }
       const reorgedBlockRecord: BlockNumberRecord = {
         blockNumber: reorgedBlock.number,
-        blockHash: Hash256(reorgedBlock.hash),
+        blockHash: reorgedBlock.hash,
         timestamp: new UnixTime(reorgedBlock.timestamp),
       }
 
@@ -183,7 +183,7 @@ describe(BlockNumberIndexer.name, () => {
     })
   })
 })
-
+const HASH_ZERO = Hash256('0x' + '0'.repeat(64))
 const HASH0 = Hash256.random()
 const HASH1 = Hash256.random()
 const HASH2 = Hash256.random()
@@ -193,32 +193,32 @@ const HASH4 = Hash256.random()
 const BLOCKS: BlockFromClient[] = [
   {
     number: 0,
-    hash: HASH0.toString(),
-    parentHash: '',
+    hash: HASH0,
+    parentHash: HASH_ZERO,
     timestamp: 0,
   },
   {
     number: 1,
-    hash: HASH1.toString(),
-    parentHash: HASH0.toString(),
+    hash: HASH1,
+    parentHash: HASH0,
     timestamp: 1000,
   },
   {
     number: 2,
-    hash: HASH2.toString(),
-    parentHash: HASH1.toString(),
+    hash: HASH2,
+    parentHash: HASH1,
     timestamp: 2000,
   },
   {
     number: 3,
-    hash: HASH3.toString(),
-    parentHash: HASH2.toString(),
+    hash: HASH3,
+    parentHash: HASH2,
     timestamp: 3000,
   },
   {
     number: 4,
-    hash: HASH4.toString(),
-    parentHash: HASH3.toString(),
+    hash: HASH4,
+    parentHash: HASH3,
     timestamp: 4000,
   },
 ]
@@ -269,8 +269,8 @@ function mockBlockchainClient(blocks: BlockFromClient[]) {
         return block
       }
 
-      const block = blockchainBlocks.find((b) => b.hash === blockId.toString())
-      assert(block, `Block not found for given hash: ${blockId}`)
+      const block = blockchainBlocks.find((b) => b.hash === blockId)
+      assert(block, `Block not found for given hash: ${blockId.toString()}`)
       return block
     },
   })
@@ -299,7 +299,7 @@ function mockIndexerStateRepository(initialState: IndexerStateRecord[] = []) {
 function blockToRecord(blockFromClient: BlockFromClient): BlockNumberRecord {
   return {
     blockNumber: blockFromClient.number,
-    blockHash: Hash256(blockFromClient.hash),
+    blockHash: blockFromClient.hash,
     timestamp: new UnixTime(blockFromClient.timestamp),
   }
 }

@@ -12,6 +12,8 @@ import {
 } from '@l2beat/discovery'
 import { providers } from 'ethers'
 
+import { DiscoveryController } from '../api/controllers/discovery/DiscoveryController'
+import { createDiscoveryRouter } from '../api/routes/discovery'
 import { Config } from '../config'
 import { BlockNumberIndexer } from '../indexers/BlockNumberIndexer'
 import { ClockIndexer } from '../indexers/ClockIndexer'
@@ -62,8 +64,11 @@ export function createEthereumDiscoveryModule(
     blockNumberIndexer,
   )
 
+  const discoveryController = new DiscoveryController(discoverRepository)
+  const discoveryRouter = createDiscoveryRouter(discoveryController)
+
   return {
-    routers: [],
+    routers: [discoveryRouter],
     start: async () => {
       await clockIndexer.start()
       await blockNumberIndexer.start()
