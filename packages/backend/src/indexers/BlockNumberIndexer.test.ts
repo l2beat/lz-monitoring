@@ -270,7 +270,7 @@ function mockBlockchainClient(blocks: BlockFromClient[]) {
       }
 
       const block = blockchainBlocks.find((b) => b.hash === blockId)
-      assert(block, `Block not found for given hash: ${blockId}`)
+      assert(block, `Block not found for given hash: ${blockId.toString()}`)
       return block
     },
   })
