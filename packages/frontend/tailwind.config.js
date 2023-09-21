@@ -19,15 +19,24 @@ module.exports = {
       gray: {
         500: '#868686',
         600: '#626262',
+        700: '#292929',
+        750: '#262626',
         800: '#161616',
         900: '#0D0D0D',
       },
       orange: {
         400: '#FFB36D',
       },
+      green: {
+        400: '#CDED71',
+      },
       black: '#000000',
       white: '#FFFFFF',
     },
+    zIndex: {
+      dropdown: 100,
+    },
   },
-  plugins: [],
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  plugins: [require('@headlessui/tailwindcss')({ prefix: 'ui' })],
 }
