@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 
 import { CurrentNetwork } from './view/components/CurrentNetwork'
 import { EndpointContract } from './view/components/EndpointContract'
+import { LzMultisig } from './view/components/LayerZeroMultisig'
 import { Layout } from './view/components/Layout'
 import { Navbar } from './view/components/Navbar'
 import { ULNv2Contract } from './view/components/ULNv2Contract'
@@ -31,6 +32,7 @@ export function App(): JSX.Element {
         <CurrentNetwork latestBlock={data?.blockNumber} />
         <EndpointContract {...data?.contracts.endpoint} />
         <ULNv2Contract {...data?.contracts.ulnV2} />
+        <LzMultisig {...data?.contracts.lzMultisig} />
       </Layout>
     </>
   )

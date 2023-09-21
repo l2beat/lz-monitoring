@@ -24,12 +24,9 @@ module.exports = {
         800: '#161616',
         900: '#0D0D0D',
       },
-      orange: {
-        400: '#FFB36D',
-      },
-      green: {
-        400: '#CDED71',
-      },
+      orange: '#FFB36D',
+      green: '#CDED71',
+      blue: '#71EDDE',
       black: '#000000',
       white: '#FFFFFF',
     },
