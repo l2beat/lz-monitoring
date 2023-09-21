@@ -15,10 +15,10 @@ export function CurrentNetwork(props: CurrentNetworkProps): JSX.Element {
           { label: 'chain ID', value: 1 },
           { label: 'LZ chain ID', value: 101 },
           { label: 'Latest block', value: props.latestBlock },
-        ].map(({ label, value }) => (
+        ].map(({ label, value }, i) => (
           <div
             className="flex flex-1 flex-col  items-center gap-3 bg-gray-800 pb-8 pt-6"
-            key={label}
+            key={i}
           >
             <label className="mb-3 text-xs text-gray-500">{label}:</label>
             {/* TODO: add loading state */}

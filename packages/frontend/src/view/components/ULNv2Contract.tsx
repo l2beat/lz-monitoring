@@ -13,9 +13,9 @@ interface EndpointContractProps {
 
 export function ULNv2Contract(props: EndpointContractProps): JSX.Element {
   return (
-    <section className="mx-6 mb-12 border-t border-green bg-gray-900">
+    <section className="border-green mx-6 mb-12 border-t bg-gray-900">
       <div className="flex items-center justify-between p-8">
-        <h2 className="text-2xl text-lg font-medium text-green">
+        <h2 className="text-2xl text-green text-lg font-medium">
           UltraLightNodeV2
         </h2>
         <span className="font-mono text-gray-600">{props.address}</span>
@@ -28,8 +28,11 @@ export function ULNv2Contract(props: EndpointContractProps): JSX.Element {
           label: 'LayerZero token',
           value: props.layerZeroToken,
         },
-      ].map(({ label, value }) => (
-        <div className="flex border-y border-black bg-gray-800 px-8 py-3">
+      ].map(({ label, value }, i) => (
+        <div
+          className="flex border-y border-black bg-gray-800 px-8 py-3"
+          key={i}
+        >
           <span className="w-[214px] font-medium text-gray-500">{label}</span>
           <span className="font-mono">{value}</span>
         </div>
@@ -88,12 +91,12 @@ function RemoteChainComponent({
           label: 'Supported outbound proof',
           value: selectedChain?.supportedOutboundProof,
         },
-      ].map(({ label, value }) => (
-        <div className="mb-0.5 flex items-center">
+      ].map(({ label, value }, i) => (
+        <div className="mb-0.5 flex items-center" key={i}>
           <span className="w-[214px] shrink-0 font-medium text-gray-500">
             {label}
           </span>
-          <pre className="grow overflow-auto border border-gray-700 bg-gray-900 p-6 font-mono text-gray-500">
+          <pre className="border-gray-700 grow overflow-auto border bg-gray-900 p-6 font-mono text-gray-500">
             {JSON.stringify(value, null, 2)}
           </pre>
         </div>
