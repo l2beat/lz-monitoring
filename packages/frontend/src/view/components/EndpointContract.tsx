@@ -10,9 +10,9 @@ interface EndpointContractProps {
 
 export function EndpointContract(props: EndpointContractProps): JSX.Element {
   return (
-    <section className="border-orange mx-6 mb-12 border-t bg-gray-900">
+    <section className="mx-6 mb-12 border-t border-orange bg-gray-900">
       <div className="flex items-center justify-between p-8">
-        <h2 className="text-2xl text-orange text-lg font-medium">Endpoint</h2>
+        <h2 className="text-2xl text-lg font-medium text-orange">Endpoint</h2>
         <span className="font-mono text-gray-600">{props.address}</span>
       </div>
 
