@@ -14,6 +14,7 @@
     "clean": "rm -rf dist",
     "build": "tsc && vite build",
     "dev": "vite",
+    "dev:local": "VITE_DEPLOYMENT_ENV=local vite",
     "format:fix": "prettier --write .",
     "format": "prettier --check .",
     "lint:fix": "yarn lint --fix",
