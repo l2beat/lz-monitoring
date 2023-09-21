@@ -4,16 +4,18 @@ declare module 'knex/types/tables' {
     unix_timestamp: Date
     block_number: number
     block_hash: string
+    chain_id: number
   }
 
   interface IndexerStateRow {
     id: string
     height: number
     last_updated: Date
+    chain_id: number
   }
 
   interface DiscoveryRow {
-    one_row_id: true
+    chain_id: number
     discovery_json_blob: string
   }
 

@@ -19,6 +19,7 @@ describe(DiscoveryIndexer.name, () => {
       const discoveryRepository = mockObject<DiscoveryRepository>({
         addOrUpdate: async () => true,
       })
+      const chainId = ChainId.ETHEREUM
 
       const disocoveryIndexer = new DiscoveryIndexer(
         discoveryEngine,
@@ -28,6 +29,7 @@ describe(DiscoveryIndexer.name, () => {
         }),
         discoveryRepository,
         mockObject<IndexerStateRepository>(),
+        chainId,
         Logger.SILENT,
         mockObject<BlockNumberIndexer>({
           subscribe: () => {},
@@ -38,6 +40,7 @@ describe(DiscoveryIndexer.name, () => {
       expect(discoveryEngine.discover).toHaveBeenCalledTimes(1)
       expect(discoveryEngine.discover).toHaveBeenNthCalledWith(1, config, 1)
       expect(discoveryRepository.addOrUpdate).toHaveBeenNthCalledWith(1, {
+        chainId,
         discoveryOutput: {
           version: 2,
           name: 'test',
@@ -54,6 +57,7 @@ describe(DiscoveryIndexer.name, () => {
 
   describe(DiscoveryIndexer.prototype.invalidate.name, () => {
     it('should run discovery on the targetHeight', async () => {
+      const chainId = ChainId.ETHEREUM
       const config = mockConfig()
       const discoveryEngine = mockObject<DiscoveryEngine>({
         discover: async () => [],
@@ -71,6 +75,7 @@ describe(DiscoveryIndexer.name, () => {
         }),
         discoveryRepository,
         mockObject<IndexerStateRepository>(),
+        chainId,
         Logger.SILENT,
         mockObject<BlockNumberIndexer>({
           subscribe: () => {},
@@ -86,6 +91,7 @@ describe(DiscoveryIndexer.name, () => {
       )
       expect(discoveryRepository.addOrUpdate).toHaveBeenCalledTimes(1)
       expect(discoveryRepository.addOrUpdate).toHaveBeenNthCalledWith(1, {
+        chainId,
         discoveryOutput: {
           version: 2,
           name: 'test',

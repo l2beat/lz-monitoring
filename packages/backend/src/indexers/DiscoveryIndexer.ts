@@ -6,7 +6,7 @@ import {
 } from '@l2beat/discovery'
 import type { DiscoveryOutput } from '@l2beat/discovery-types'
 import { ChildIndexer } from '@l2beat/uif'
-import { UnixTime } from '@lz/libs'
+import { ChainId, UnixTime } from '@lz/libs'
 
 import { BlockNumberRepository } from '../peripherals/database/BlockNumberRepository'
 import { DiscoveryRepository } from '../peripherals/database/DiscoveryRepository'
@@ -21,10 +21,11 @@ export class DiscoveryIndexer extends ChildIndexer {
     private readonly blockNumberRepository: BlockNumberRepository,
     private readonly discoveryRepository: DiscoveryRepository,
     private readonly indexerStateRepository: IndexerStateRepository,
+    private readonly chainId: ChainId,
     logger: Logger,
     blockNumberIndexer: BlockNumberIndexer,
   ) {
-    super(logger, [blockNumberIndexer])
+    super(logger.tag(ChainId.getName(chainId)), [blockNumberIndexer])
   }
 
   async update(_fromTimestamp: number, toTimestamp: number): Promise<number> {
@@ -36,7 +37,10 @@ export class DiscoveryIndexer extends ChildIndexer {
 
   private async runAndSaveDiscovery(timestamp: UnixTime): Promise<UnixTime> {
     const blockNumber =
-      (await this.blockNumberRepository.findAtOrBefore(timestamp)) ?? 0
+      (await this.blockNumberRepository.findAtOrBefore(
+        timestamp,
+        this.chainId,
+      )) ?? 21426799
     this.logger.info('Running discovery', { blockNumber })
 
     const analysis = await this.discoveryEngine.discover(
@@ -57,7 +61,10 @@ export class DiscoveryIndexer extends ChildIndexer {
       'Errors in discovery output ' + errorsToString(discoveryOutput),
     )
 
-    await this.discoveryRepository.addOrUpdate({ discoveryOutput })
+    await this.discoveryRepository.addOrUpdate({
+      discoveryOutput,
+      chainId: this.chainId,
+    })
     this.logger.info('Discovery finished', { blockNumber })
 
     return timestamp
@@ -71,12 +78,19 @@ export class DiscoveryIndexer extends ChildIndexer {
   }
 
   async getSafeHeight(): Promise<number> {
-    const state = await this.indexerStateRepository.findById(this.id)
-    return state?.height ?? 0
+    const state = await this.indexerStateRepository.findById(
+      this.id,
+      this.chainId,
+    )
+    return state?.height ?? 21426799
   }
 
   async setSafeHeight(height: number): Promise<void> {
-    await this.indexerStateRepository.addOrUpdate({ id: this.id, height })
+    await this.indexerStateRepository.addOrUpdate({
+      id: this.id,
+      height,
+      chainId: this.chainId,
+    })
   }
 }
 

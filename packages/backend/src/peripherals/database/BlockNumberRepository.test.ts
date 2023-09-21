@@ -1,5 +1,5 @@
 import { Logger } from '@l2beat/backend-tools'
-import { Hash256, UnixTime } from '@lz/libs'
+import { ChainId, Hash256, UnixTime } from '@lz/libs'
 import { expect } from 'earl'
 
 import { setupDatabaseTestSuite } from '../../test/database'
@@ -58,7 +58,7 @@ describe(BlockNumberRepository.name, () => {
     const records = range.map((r) => mockRecord(r, now))
     await repository.addMany(records)
 
-    await repository.deleteAfter(now.add(5, 'hours'))
+    await repository.deleteAfter(now.add(5, 'hours'), ChainId.ETHEREUM)
 
     const actual = await repository.getAll()
     expect(actual).toEqual(
@@ -71,24 +71,28 @@ describe(BlockNumberRepository.name, () => {
 
     await repository.addMany([record])
 
-    expect(await repository.findByNumber(record.blockNumber)).toEqual(record)
+    expect(
+      await repository.findByNumber(record.blockNumber, record.chainId),
+    ).toEqual(record)
 
-    expect(await repository.findByNumber(2)).toEqual(undefined)
+    expect(await repository.findByNumber(2, ChainId.ETHEREUM)).toEqual(
+      undefined,
+    )
   })
 
   it('gets last by number', async () => {
-    expect(await repository.findLast()).toEqual(undefined)
+    expect(await repository.findLast(ChainId.ETHEREUM)).toEqual(undefined)
 
     const block = mockRecord(69420)
     await repository.addMany([block])
 
-    expect(await repository.findLast()).toEqual(block)
+    expect(await repository.findLast(ChainId.ETHEREUM)).toEqual(block)
 
     const earlierBlock = mockRecord(69419)
     const laterBlock = mockRecord(69421)
     await repository.addMany([laterBlock, earlierBlock])
 
-    expect(await repository.findLast()).toEqual(laterBlock)
+    expect(await repository.findLast(ChainId.ETHEREUM)).toEqual(laterBlock)
   })
 
   it('gets all blocks in range between given numbers (inclusive)', async () => {
@@ -111,5 +115,6 @@ function mockRecord(blockNumber: number, now?: UnixTime): BlockNumberRecord {
     blockNumber,
     blockHash: Hash256('0x' + blockNumber.toString(16).padStart(64, '0')),
     timestamp: baseNow.add(blockNumber, 'hours'),
+    chainId: ChainId.ETHEREUM,
   }
 }

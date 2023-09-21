@@ -11,7 +11,10 @@ export interface Config {
   readonly logger: Pick<LoggerOptions, 'logLevel' | 'format'> &
     Partial<LoggerOptions>
   readonly health: HealthConfig
-  readonly ethereumDiscovery: EthereumDiscoveryModuleConfig
+  readonly discovery: {
+    readonly ethereum: EthereumLikDiscoveryConfig
+    readonly arbitrum: EthereumLikDiscoveryConfig
+  }
 }
 
 export interface ApiConfig {
@@ -29,12 +32,12 @@ export interface HealthConfig {
   readonly commitSha?: string
 }
 
-export interface EthereumDiscoveryModuleConfig {
+export interface EthereumLikDiscoveryConfig {
   startBlock: number
   clockIntervalMs: number
   rpcUrl: string
-  etherscanApiUrl: string
-  etherscanApiKey: string
-  etherscanMinTimestamp: UnixTime
+  blockExplorerApiUrl: string
+  blockExplorerApiKey: string
+  blockExplorerMinTimestamp: UnixTime
   discovery: DiscoveryConfig
 }

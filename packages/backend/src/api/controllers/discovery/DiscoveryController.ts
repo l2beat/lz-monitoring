@@ -24,7 +24,7 @@ export class DiscoveryController {
   constructor(private readonly discoveryRepository: DiscoveryRepository) {}
 
   async getDiscovery(): Promise<DiscoveryApi | undefined> {
-    const discovery = await this.discoveryRepository.find()
+    const discovery = await this.discoveryRepository.find(ChainId.ETHEREUM)
 
     if (!discovery) {
       return
@@ -34,7 +34,7 @@ export class DiscoveryController {
   }
 
   async getRawDiscovery(): Promise<DiscoveryOutput | undefined> {
-    const discovery = await this.discoveryRepository.find()
+    const discovery = await this.discoveryRepository.find(ChainId.ETHEREUM)
 
     if (!discovery) {
       return

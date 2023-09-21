@@ -10,6 +10,7 @@ import {
   ProxyDetector,
   SourceCodeService,
 } from '@l2beat/discovery'
+import { ChainId } from '@lz/libs'
 import { providers } from 'ethers'
 
 import { DiscoveryController } from '../api/controllers/discovery/DiscoveryController'
@@ -35,31 +36,33 @@ export function createEthereumDiscoveryModule(
   const discoverRepository = new DiscoveryRepository(database, logger)
 
   const provider = new providers.JsonRpcProvider(
-    config.ethereumDiscovery.rpcUrl,
+    config.discovery.ethereum.rpcUrl,
   )
 
   const blockchainClient = new BlockchainClient(provider, logger)
-  const discoveryEngine = createDiscoveryEngine(provider, config)
+  const discoveryEngine = createDiscoveryEngine(provider, config, 'ethereum')
 
   const clockIndexer = new ClockIndexer(
     logger,
-    config.ethereumDiscovery.clockIntervalMs,
+    config.discovery.ethereum.clockIntervalMs,
   )
   const blockNumberIndexer = new BlockNumberIndexer(
     blockchainClient,
     blockRepository,
     indexerRepository,
-    config.ethereumDiscovery.startBlock,
+    config.discovery.ethereum.startBlock,
+    ChainId.ETHEREUM,
     clockIndexer,
     logger,
   )
 
   const discoveryIndexer = new DiscoveryIndexer(
     discoveryEngine,
-    config.ethereumDiscovery.discovery,
+    config.discovery.ethereum.discovery,
     blockRepository,
     discoverRepository,
     indexerRepository,
+    ChainId.ETHEREUM,
     logger,
     blockNumberIndexer,
   )
@@ -77,16 +80,17 @@ export function createEthereumDiscoveryModule(
   }
 }
 
-function createDiscoveryEngine(
+export function createDiscoveryEngine(
   provider: providers.Provider,
   config: Config,
+  chain: keyof Config['discovery'],
 ): DiscoveryEngine {
   const httpClient = new HttpClient()
   const discoveryClient = new EtherscanLikeClient(
     httpClient,
-    config.ethereumDiscovery.etherscanApiUrl,
-    config.ethereumDiscovery.etherscanApiKey,
-    config.ethereumDiscovery.etherscanMinTimestamp,
+    config.discovery[chain].blockExplorerApiUrl,
+    config.discovery[chain].blockExplorerApiKey,
+    config.discovery[chain].blockExplorerMinTimestamp,
   )
   const discoveryProvider = new DiscoveryProvider(provider, discoveryClient)
   const discoveryLogger = DiscoveryLogger.SILENT
