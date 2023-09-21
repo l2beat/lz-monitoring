@@ -9,13 +9,15 @@
   "scripts": {
     "clean": "wsrun -recsm clean",
     "build": "wsrun -recsm build",
+    "build:dependencies": "wsrun -p @lz/libs -recsm build",
     "test": "wsrun -ecam test",
     "format:fix": "wsrun -ecam format:fix",
     "format": "wsrun -ecam format",
     "lint:fix": "wsrun -ecam lint:fix",
     "lint": "wsrun -ecam lint",
     "typecheck": "wsrun -ecam typecheck",
-    "start": "cd packages/backend && yarn start"
+    "start": "cd packages/backend && yarn start",
+    "start:backend": "yarn start"
   },
   "workspaces": {
     "packages": [
