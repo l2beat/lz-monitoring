@@ -149,7 +149,7 @@ const arbitrumRawConfig = createConfigFromTemplate({
     stargateMultisig: '0x65bb797c2B9830d891D87288F029ed8dACc19705', // FIXME: not sure
     layerZeroRelayer: '0x177d36dbe2271a4ddb2ad8304d82628eb921d790', // FIXME: not sure
     layerZeroOracle: '0x5a54fe5234E811466D5366846283323c954310B2', // FIXME: not sure
-    layerZeroMultisig: '0xCDa8e3ADD00c95E5035617F970096118Ca2F4C92', // FIXME: not sure
+    layerZeroMultisig: '0xFE22f5D2755b06b9149656C5793Cb15A08d09847',
   },
 })
 
