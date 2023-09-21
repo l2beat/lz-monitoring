@@ -1,3 +1,4 @@
+import cors from '@koa/cors'
 import Router from '@koa/router'
 import { Logger } from '@l2beat/backend-tools'
 import Koa, { Context } from 'koa'
@@ -18,6 +19,7 @@ export class ApiServer {
     this.logger = this.logger.for(this)
     this.app = new Koa()
 
+    this.app.use(cors({ origin: '*' }))
     this.app.use(createApiLogger(this.logger))
     this.app.use(conditional())
     this.app.use(etag())

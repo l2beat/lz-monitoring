@@ -21,6 +21,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@koa/cors": "^4.0.0",
     "@koa/router": "^12.0.0",
     "@l2beat/backend-tools": "^0.3.0",
     "@l2beat/discovery": "^0.2.1",
@@ -41,6 +42,7 @@
     "@types/koa": "^2.13.8",
     "@types/koa-conditional-get": "^2.0.0",
     "@types/koa-etag": "^3.0.0",
+    "@types/koa__cors": "^4.0.1",
     "@types/koa__router": "^12.0.0",
     "@types/node-fetch": "^2.6.5",
     "@types/sinon": "^10.0.16",
