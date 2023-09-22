@@ -22,7 +22,6 @@ export function Dropdown(props: DropdownProps): JSX.Element {
   )
 
   function onChange(option: DropdownOption): void {
-    console.log('here', option)
     setSelectedOption(option)
     props.onChange(option)
   }
