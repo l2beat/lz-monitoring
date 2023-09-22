@@ -13,7 +13,8 @@
     "test": "mocha",
     "clean": "rm -rf dist",
     "build": "tsc && vite build",
-    "dev": "vite",
+    "dev": "vite --mode staging",
+    "dev:local": "vite",
     "format:fix": "prettier --write .",
     "format": "prettier --check .",
     "lint:fix": "yarn lint --fix",
@@ -22,6 +23,10 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@headlessui/react": "^1.7.17",
+    "@headlessui/tailwindcss": "^0.2.0",
+    "@lz/libs": "*",
+    "classnames": "^2.3.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
