@@ -1,12 +1,8 @@
 import { assert, Logger } from '@l2beat/backend-tools'
-import {
-  Bytes,
-  EthereumAddress,
-  Hash256,
-  RateLimitedProvider,
-  UnixTime,
-} from '@lz/libs'
+import { Bytes, EthereumAddress, Hash256, UnixTime } from '@lz/libs'
 import { providers } from 'ethers'
+
+import { RateLimitedProvider } from '../../utils/RateLimitedProvider'
 
 export type BlockFromClient = Pick<providers.Block, 'timestamp' | 'number'> & {
   hash: Hash256
