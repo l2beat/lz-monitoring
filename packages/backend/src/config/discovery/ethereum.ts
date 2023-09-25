@@ -8,7 +8,7 @@ export { ethereumDiscoveryConfig }
 const ethereumRawConfig = createConfigFromTemplate({
   chain: ChainId.ETHEREUM,
   initialAddresses: [
-    '0x4D73AdB72bC3DD368966edD0f0b2148401A178E2', // STG
+    '0x4D73AdB72bC3DD368966edD0f0b2148401A178E2', // UltraLightNodeV2
   ],
   addresses: {
     ultraLightNodeV2: '0x4D73AdB72bC3DD368966edD0f0b2148401A178E2',
