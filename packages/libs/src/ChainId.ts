@@ -34,13 +34,11 @@ ChainId.getAll = function (): ChainId[] {
   return Object.keys(CHAIN_IDS).map((c) => ChainId(+c))
 }
 
-type ChainIds = typeof CHAIN_IDS
-
 /**
  * Only to use when defining ChainId.ETHEREUM etc. constants.
  * Will save you from typos, but is annoying to work with strings.
  */
-function chainIdFromName(name: ChainIds[keyof ChainIds]): ChainId {
+function chainIdFromName(name: SupportedChainName): ChainId {
   const entry = Object.entries(CHAIN_IDS).find(([_, v]) => v === name)
   if (!entry) {
     throw new TypeError('Programmer error: Invalid chain name: ' + name)
@@ -61,6 +59,9 @@ const CHAIN_IDS = {
   1101: 'polygon-zkevm',
   100: 'gnosis',
 } as const
+
+export type SupportedChainId = keyof typeof CHAIN_IDS
+export type SupportedChainName = (typeof CHAIN_IDS)[SupportedChainId]
 
 ChainId.ETHEREUM = chainIdFromName('ethereum')
 ChainId.ARBITRUM = chainIdFromName('arbitrum')
