@@ -43,7 +43,7 @@ export function getProductionConfig(env: Env): Config {
         discovery: ethereumDiscoveryConfig,
       },
       arbitrum: {
-        startBlock: env.integer('START_BLOCK', 18127698),
+        startBlock: env.integer('START_BLOCK', 134410848),
         clockIntervalMs: env.integer('CLOCK_INTERVAL_MS', 10 * 1000),
         rpcUrl: env.string('ARBITRUM_RPC_URL'),
         blockExplorerApiUrl: 'https://api.arbiscan.io/api',
