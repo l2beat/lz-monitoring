@@ -5,7 +5,6 @@ import { UnixTime } from '@l2beat/discovery/dist/utils/UnixTime'
 import { Config } from './Config'
 import { arbitrumDiscoveryConfig } from './discovery/arbitrum'
 import { ethereumDiscoveryConfig } from './discovery/ethereum'
-import {} from './discoveryConfig'
 import { getGitCommitSha } from './getGitCommitSha'
 
 export function getProductionConfig(env: Env): Config {
