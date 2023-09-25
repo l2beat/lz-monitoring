@@ -40,7 +40,7 @@ export class DiscoveryIndexer extends ChildIndexer {
       (await this.blockNumberRepository.findAtOrBefore(
         timestamp,
         this.chainId,
-      )) ?? 21426799
+      )) ?? 0
     this.logger.info('Running discovery', { blockNumber })
 
     const analysis = await this.discoveryEngine.discover(
@@ -82,7 +82,8 @@ export class DiscoveryIndexer extends ChildIndexer {
       this.id,
       this.chainId,
     )
-    return state?.height ?? 21426799
+
+    return state?.height ?? 0
   }
 
   async setSafeHeight(height: number): Promise<void> {
