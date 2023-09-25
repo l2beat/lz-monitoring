@@ -3,10 +3,9 @@ import { Env, LoggerOptions } from '@l2beat/backend-tools'
 import { UnixTime } from '@l2beat/discovery/dist/utils/UnixTime'
 
 import { Config } from './Config'
-import {
-  arbitrumDiscoveryConfig,
-  ethereumDiscoveryConfig,
-} from './discoveryConfig'
+import { arbitrumDiscoveryConfig } from './discovery/arbitrum'
+import { ethereumDiscoveryConfig } from './discovery/ethereum'
+import {} from './discoveryConfig'
 import { getGitCommitSha } from './getGitCommitSha'
 
 export function getLocalConfig(env: Env): Config {
@@ -47,8 +46,9 @@ export function getLocalConfig(env: Env): Config {
         rpcUrl: env.string('ARBITRUM_RPC_URL'),
         blockExplorerApiUrl: 'https://api.arbiscan.io/api',
         blockExplorerApiKey: env.string('ARBISCAN_API_KEY'),
-        blockExplorerMinTimestamp: new UnixTime(
-          env.integer('ARBISCAN_MIN_TIMESTAMP', 0),
+        // ~ Timestamp of block number 0 on Arbitrum
+        blockExplorerMinTimestamp: UnixTime.fromDate(
+          new Date('2021-05-28T22:15:00Z'),
         ),
         discovery: arbitrumDiscoveryConfig,
       },

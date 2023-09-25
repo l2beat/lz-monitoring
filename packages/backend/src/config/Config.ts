@@ -12,8 +12,8 @@ export interface Config {
     Partial<LoggerOptions>
   readonly health: HealthConfig
   readonly discovery: {
-    readonly ethereum: EthereumLikDiscoveryConfig
-    readonly arbitrum: EthereumLikDiscoveryConfig
+    readonly ethereum: EthereumLikeDiscoveryConfig
+    readonly arbitrum: EthereumLikeDiscoveryConfig
   }
 }
 
@@ -32,7 +32,7 @@ export interface HealthConfig {
   readonly commitSha?: string
 }
 
-export interface EthereumLikDiscoveryConfig {
+export interface EthereumLikeDiscoveryConfig {
   startBlock: number
   clockIntervalMs: number
   rpcUrl: string
