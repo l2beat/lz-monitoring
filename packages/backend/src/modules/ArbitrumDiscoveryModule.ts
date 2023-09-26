@@ -32,6 +32,7 @@ export function createArbitrumDiscoveryModule(
 
   const clockIndexer = new ClockIndexer(
     logger,
+    ChainId.ARBITRUM,
     config.discovery.arbitrum.clockIntervalMs,
   )
   const blockNumberIndexer = new BlockNumberIndexer(

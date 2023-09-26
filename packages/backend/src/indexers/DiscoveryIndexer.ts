@@ -71,10 +71,8 @@ export class DiscoveryIndexer extends ChildIndexer {
   }
 
   override async invalidate(targetHeight: number): Promise<number> {
-    const invalidatedToTimestamp = await this.runAndSaveDiscovery(
-      new UnixTime(targetHeight),
-    )
-    return invalidatedToTimestamp.toNumber()
+    // Noop
+    return Promise.resolve(targetHeight)
   }
 
   async getSafeHeight(): Promise<number> {

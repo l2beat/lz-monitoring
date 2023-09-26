@@ -44,6 +44,7 @@ export function createEthereumDiscoveryModule(
 
   const clockIndexer = new ClockIndexer(
     logger,
+    ChainId.ETHEREUM,
     config.discovery.ethereum.clockIntervalMs,
   )
   const blockNumberIndexer = new BlockNumberIndexer(
