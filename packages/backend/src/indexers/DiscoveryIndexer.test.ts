@@ -56,7 +56,7 @@ describe(DiscoveryIndexer.name, () => {
   })
 
   describe(DiscoveryIndexer.prototype.invalidate.name, () => {
-    it('should run discovery on the targetHeight', async () => {
+    it('should not run discovery on the targetHeight', async () => {
       const chainId = ChainId.ETHEREUM
       const config = mockConfig()
       const discoveryEngine = mockObject<DiscoveryEngine>({
@@ -83,26 +83,7 @@ describe(DiscoveryIndexer.name, () => {
       )
 
       expect(await discoveryIndexer.invalidate(1000)).toEqual(1000)
-      expect(discoveryEngine.discover).toHaveBeenCalledTimes(1)
-      expect(discoveryEngine.discover).toHaveBeenNthCalledWith(
-        1,
-        config,
-        BLOCK_NUMBER,
-      )
-      expect(discoveryRepository.addOrUpdate).toHaveBeenCalledTimes(1)
-      expect(discoveryRepository.addOrUpdate).toHaveBeenNthCalledWith(1, {
-        chainId,
-        discoveryOutput: {
-          version: 2,
-          name: 'test',
-          configHash: config.hash,
-          chain: 'ethereum',
-          blockNumber: BLOCK_NUMBER,
-          contracts: [],
-          eoas: [],
-          abis: {},
-        },
-      })
+      expect(discoveryEngine.discover).toHaveBeenCalledTimes(0)
     })
   })
 })
