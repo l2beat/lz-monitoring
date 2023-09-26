@@ -23,8 +23,8 @@ import {
 export class DiscoveryController {
   constructor(private readonly discoveryRepository: DiscoveryRepository) {}
 
-  async getDiscovery(): Promise<DiscoveryApi | undefined> {
-    const discovery = await this.discoveryRepository.find(ChainId.ETHEREUM)
+  async getDiscovery(chainId: ChainId): Promise<DiscoveryApi | undefined> {
+    const discovery = await this.discoveryRepository.find(chainId)
 
     if (!discovery) {
       return
@@ -33,8 +33,10 @@ export class DiscoveryController {
     return toDiscoveryApi(discovery.discoveryOutput)
   }
 
-  async getRawDiscovery(): Promise<DiscoveryOutput | undefined> {
-    const discovery = await this.discoveryRepository.find(ChainId.ETHEREUM)
+  async getRawDiscovery(
+    chainId: ChainId,
+  ): Promise<DiscoveryOutput | undefined> {
+    const discovery = await this.discoveryRepository.find(chainId)
 
     if (!discovery) {
       return

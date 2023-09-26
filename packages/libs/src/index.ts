@@ -1,3 +1,4 @@
+export * from './branded'
 export * from './Bytes'
 export * from './bytes32ToAddress'
 export * from './ChainId'
