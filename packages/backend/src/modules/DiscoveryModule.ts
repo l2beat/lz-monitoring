@@ -1,0 +1,151 @@
+import { Logger } from '@l2beat/backend-tools'
+import { ChainId } from '@lz/libs'
+import { providers } from 'ethers'
+
+import { DiscoveryController } from '../api/controllers/discovery/DiscoveryController'
+import { createDiscoveryRouter } from '../api/routes/discovery'
+import { Config } from '../config'
+import { EthereumLikeDiscoveryConfig } from '../config/Config'
+import { BlockNumberIndexer } from '../indexers/BlockNumberIndexer'
+import { ClockIndexer } from '../indexers/ClockIndexer'
+import { DiscoveryIndexer } from '../indexers/DiscoveryIndexer'
+import { BlockchainClient } from '../peripherals/clients/BlockchainClient'
+import { BlockNumberRepository } from '../peripherals/database/BlockNumberRepository'
+import { DiscoveryRepository } from '../peripherals/database/DiscoveryRepository'
+import { IndexerStateRepository } from '../peripherals/database/IndexerStateRepository'
+import { Database } from '../peripherals/database/shared/Database'
+import { ApplicationModule } from './ApplicationModule'
+import { createDiscoveryEngine } from './EthereumDiscoveryModule'
+
+type AvailableConfigs = keyof Config['discovery']['modules']
+
+interface DiscoverySubmoduleDependencies {
+  logger: Logger
+  config: EthereumLikeDiscoveryConfig
+  repositories: {
+    blockNumber: BlockNumberRepository
+    indexerState: IndexerStateRepository
+    discovery: DiscoveryRepository
+  }
+  clockIndexer: ClockIndexer
+}
+
+interface DiscoveryModuleDependencies {
+  database: Database
+  logger: Logger
+  config: Config
+}
+
+export function createDiscoveryModule({
+  database,
+  logger,
+  config,
+}: DiscoveryModuleDependencies): ApplicationModule {
+  const blockRepository = new BlockNumberRepository(database, logger)
+  const indexerRepository = new IndexerStateRepository(database, logger)
+  const discoverRepository = new DiscoveryRepository(database, logger)
+
+  const clockIndexer = new ClockIndexer(
+    logger,
+    config.discovery.clock.tickIntervalMs,
+  )
+
+  const availableChainConfigs = Object.keys(
+    config.discovery.modules,
+  ) as AvailableConfigs[]
+
+  const modules = availableChainConfigs.flatMap((chainName) => {
+    const moduleConfig = config.discovery.modules[chainName]
+
+    console.dir({ moduleConfig, chainName })
+
+    // Might be disabled
+    if (!moduleConfig) {
+      return []
+    }
+
+    return createDiscoverySubmodule(
+      {
+        logger,
+        clockIndexer,
+        repositories: {
+          blockNumber: blockRepository,
+          indexerState: indexerRepository,
+          discovery: discoverRepository,
+        },
+        config: moduleConfig,
+      },
+      chainName,
+    )
+  })
+
+  const discoveryController = new DiscoveryController(discoverRepository)
+  const discoveryRouter = createDiscoveryRouter(discoveryController)
+
+  return {
+    routers: [discoveryRouter],
+    start: async () => {
+      const statusLogger = logger.for('DiscoveryModule')
+
+      statusLogger.info('Starting discovery module')
+
+      await clockIndexer.start()
+
+      for (const module of modules) {
+        await module.start?.()
+      }
+
+      statusLogger.info('Main discovery module started')
+    },
+  }
+}
+
+export function createDiscoverySubmodule(
+  {
+    logger,
+    config,
+    repositories,
+    clockIndexer,
+  }: DiscoverySubmoduleDependencies,
+  chain: keyof Config['discovery']['modules'],
+): ApplicationModule {
+  const chainId = ChainId.fromName(chain)
+
+  const provider = new providers.JsonRpcProvider(config.rpcUrl)
+  const blockchainClient = new BlockchainClient(provider, logger)
+
+  const discoveryEngine = createDiscoveryEngine(provider, config)
+
+  const blockNumberIndexer = new BlockNumberIndexer(
+    blockchainClient,
+    repositories.blockNumber,
+    repositories.indexerState,
+    config.startBlock,
+    chainId,
+    clockIndexer,
+    logger,
+  )
+
+  const discoveryIndexer = new DiscoveryIndexer(
+    discoveryEngine,
+    config.discovery,
+    repositories.blockNumber,
+    repositories.discovery,
+    repositories.indexerState,
+    chainId,
+    logger,
+    blockNumberIndexer,
+  )
+
+  return {
+    start: async () => {
+      const statusLogger = logger.for('DiscoveryModule').tag(chain)
+      statusLogger.info(`Starting discovery submodule`)
+
+      await blockNumberIndexer.start()
+      await discoveryIndexer.start()
+
+      statusLogger.info(`Discovery submodule  started`)
+    },
+  }
+}

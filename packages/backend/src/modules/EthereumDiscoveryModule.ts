@@ -16,6 +16,7 @@ import { providers } from 'ethers'
 import { DiscoveryController } from '../api/controllers/discovery/DiscoveryController'
 import { createDiscoveryRouter } from '../api/routes/discovery'
 import { Config } from '../config'
+import { EthereumLikeDiscoveryConfig } from '../config/Config'
 import { BlockNumberIndexer } from '../indexers/BlockNumberIndexer'
 import { ClockIndexer } from '../indexers/ClockIndexer'
 import { DiscoveryIndexer } from '../indexers/DiscoveryIndexer'
@@ -83,16 +84,17 @@ export function createEthereumDiscoveryModule(
 
 export function createDiscoveryEngine(
   provider: providers.Provider,
-  config: Config,
-  chain: keyof Config['discovery'],
+  config: EthereumLikeDiscoveryConfig,
 ): DiscoveryEngine {
   const httpClient = new HttpClient()
+
   const discoveryClient = new EtherscanLikeClient(
     httpClient,
-    config.discovery[chain].blockExplorerApiUrl,
-    config.discovery[chain].blockExplorerApiKey,
-    config.discovery[chain].blockExplorerMinTimestamp,
+    config.blockExplorerApiUrl,
+    config.blockExplorerApiKey,
+    config.blockExplorerMinTimestamp,
   )
+
   const discoveryProvider = new DiscoveryProvider(provider, discoveryClient)
   const discoveryLogger = DiscoveryLogger.SILENT
 
