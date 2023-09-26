@@ -4,7 +4,6 @@ import { RootIndexer } from '@l2beat/uif'
 export class ClockIndexer extends RootIndexer {
   constructor(
     logger: Logger,
-
     private readonly tickInterval: number,
   ) {
     super(logger)
