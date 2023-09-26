@@ -67,8 +67,6 @@ export function createDiscoveryModule({
   const modules = availableChainConfigs.flatMap((chainName) => {
     const moduleConfig = config.discovery.modules[chainName]
 
-    console.dir({ moduleConfig, chainName })
-
     // Might be disabled
     if (!moduleConfig) {
       return []
