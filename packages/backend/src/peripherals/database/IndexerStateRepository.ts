@@ -1,4 +1,5 @@
 import { Logger } from '@l2beat/backend-tools'
+import { ChainId } from '@lz/libs'
 import type { IndexerStateRow } from 'knex/types/tables'
 
 import { BaseRepository, CheckConvention } from './shared/BaseRepository'
@@ -7,6 +8,7 @@ import { Database } from './shared/Database'
 export interface IndexerStateRecord {
   id: string // TODO: Maybe branded string?
   height: number
+  chainId: ChainId
 }
 
 export class IndexerStateRepository extends BaseRepository {
@@ -18,13 +20,22 @@ export class IndexerStateRepository extends BaseRepository {
   async addOrUpdate(record: IndexerStateRecord): Promise<string> {
     const row = toRow(record)
     const knex = await this.knex()
-    await knex('indexer_states').insert(row).onConflict('id').merge()
+    await knex('indexer_states')
+      .insert(row)
+      .onConflict(['id', 'chain_id'])
+      .merge()
     return record.id
   }
 
-  async findById(id: string): Promise<IndexerStateRecord | undefined> {
+  async findById(
+    id: string,
+    chainId: ChainId,
+  ): Promise<IndexerStateRecord | undefined> {
     const knex = await this.knex()
-    const row = await knex('indexer_states').where('id', id).first()
+    const row = await knex('indexer_states')
+      .where('id', id)
+      .andWhere('chain_id', Number(chainId))
+      .first()
     return row && toRecord(row)
   }
 
@@ -45,6 +56,7 @@ function toRow(record: IndexerStateRecord): IndexerStateRow {
     id: record.id,
     height: record.height,
     last_updated: new Date(),
+    chain_id: Number(record.chainId),
   }
 }
 
@@ -52,5 +64,6 @@ function toRecord(row: IndexerStateRow): IndexerStateRecord {
   return {
     id: row.id,
     height: row.height,
+    chainId: ChainId(row.chain_id),
   }
 }

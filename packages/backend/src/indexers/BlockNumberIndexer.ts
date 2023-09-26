@@ -1,6 +1,6 @@
 import { Logger } from '@l2beat/backend-tools'
 import { ChildIndexer } from '@l2beat/uif'
-import { UnixTime } from '@lz/libs'
+import { ChainId, UnixTime } from '@lz/libs'
 
 import { BlockchainClient } from '../peripherals/clients/BlockchainClient'
 import {
@@ -31,17 +31,19 @@ export class BlockNumberIndexer extends ChildIndexer {
     private readonly blockRepository: BlockNumberRepository,
     private readonly indexerRepository: IndexerStateRepository,
     private readonly startBlock: number,
+    private readonly chainId: ChainId,
     clockIndexer: ClockIndexer,
     logger: Logger,
   ) {
-    super(logger, [clockIndexer])
+    super(logger.tag(ChainId.getName(chainId)), [clockIndexer])
   }
 
   override async start(): Promise<void> {
     await super.start()
 
     this.lastKnownNumber =
-      (await this.blockRepository.findLast())?.blockNumber ?? this.startBlock
+      (await this.blockRepository.findLast(this.chainId))?.blockNumber ??
+      this.startBlock
   }
 
   async update(_fromTimestamp: number, toTimestamp: number): Promise<number> {
@@ -66,7 +68,7 @@ export class BlockNumberIndexer extends ChildIndexer {
   }
 
   async invalidate(to: number): Promise<number> {
-    await this.blockRepository.deleteAfter(new UnixTime(to))
+    await this.blockRepository.deleteAfter(new UnixTime(to), this.chainId)
 
     return to
   }
@@ -98,6 +100,7 @@ export class BlockNumberIndexer extends ChildIndexer {
           blockNumber: block.number,
           blockHash: block.hash,
           timestamp: new UnixTime(block.timestamp),
+          chainId: this.chainId,
         }
       })
 
@@ -108,6 +111,7 @@ export class BlockNumberIndexer extends ChildIndexer {
       blockNumber: block.number,
       blockHash: block.hash,
       timestamp: new UnixTime(block.timestamp),
+      chainId: this.chainId,
     }
 
     await this.blockRepository.add(record)
@@ -117,16 +121,23 @@ export class BlockNumberIndexer extends ChildIndexer {
   }
 
   async setSafeHeight(height: number): Promise<void> {
-    await this.indexerRepository.addOrUpdate({ id: this.id, height })
+    await this.indexerRepository.addOrUpdate({
+      id: this.id,
+      height,
+      chainId: this.chainId,
+    })
   }
 
   async getSafeHeight(): Promise<number> {
-    const record = await this.indexerRepository.findById(this.id)
+    const record = await this.indexerRepository.findById(this.id, this.chainId)
     return record?.height ?? 0
   }
 
   private async getKnownBlock(blockNumber: number): Promise<BlockNumberRecord> {
-    const known = await this.blockRepository.findByNumber(blockNumber)
+    const known = await this.blockRepository.findByNumber(
+      blockNumber,
+      this.chainId,
+    )
     if (known) {
       return known
     }
@@ -136,6 +147,7 @@ export class BlockNumberIndexer extends ChildIndexer {
       blockNumber: downloaded.number,
       blockHash: downloaded.hash,
       timestamp: new UnixTime(downloaded.timestamp),
+      chainId: this.chainId,
     }
     await this.blockRepository.add(record)
 

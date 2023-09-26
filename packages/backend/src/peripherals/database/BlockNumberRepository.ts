@@ -1,5 +1,5 @@
 import { Logger } from '@l2beat/backend-tools'
-import { Hash256, UnixTime } from '@lz/libs'
+import { ChainId, Hash256, UnixTime } from '@lz/libs'
 import type { BlockNumberRow } from 'knex/types/tables'
 
 import { BaseRepository, CheckConvention } from './shared/BaseRepository'
@@ -9,6 +9,7 @@ export interface BlockNumberRecord {
   timestamp: UnixTime
   blockNumber: number
   blockHash: Hash256
+  chainId: ChainId
 }
 
 export class BlockNumberRepository extends BaseRepository {
@@ -18,18 +19,31 @@ export class BlockNumberRepository extends BaseRepository {
   }
 
   async add(record: BlockNumberRecord): Promise<number> {
+    this.logger.warn('adding', { record })
     const row = toRow(record)
     const knex = await this.knex()
-    await knex('block_numbers').insert(row).returning('block_number')
+    await knex('block_numbers')
+      .insert(row)
+      .returning('block_number')
+      .onConflict(['unix_timestamp', 'chain_id'])
+      .merge()
+
     return row.block_number
   }
 
   async addMany(records: BlockNumberRecord[]): Promise<number[]> {
+    this.logger.warn('addingMany', {
+      len: records.length,
+      unique: new Set(records.map((r) => r.blockNumber)).size,
+    })
+
     const rows: BlockNumberRow[] = records.map(toRow)
     const knex = await this.knex()
     const result = await knex('block_numbers')
       .insert(rows)
       .returning('block_number')
+      .onConflict(['unix_timestamp', 'chain_id'])
+      .merge()
 
     return result.map((x) => x.block_number)
   }
@@ -50,27 +64,36 @@ export class BlockNumberRepository extends BaseRepository {
     return rows.map(toRecord)
   }
 
-  async findLast(): Promise<BlockNumberRecord | undefined> {
+  async findLast(chainId: ChainId): Promise<BlockNumberRecord | undefined> {
     const knex = await this.knex()
     const row = await knex('block_numbers')
+      .where({ chain_id: Number(chainId) })
       .orderBy('block_number', 'desc')
       .first()
     return row && toRecord(row)
   }
 
-  async findAtOrBefore(timestamp: UnixTime): Promise<number | undefined> {
+  async findAtOrBefore(
+    timestamp: UnixTime,
+    chainId: ChainId,
+  ): Promise<number | undefined> {
     const knex = await this.knex()
     const row = await knex('block_numbers')
       .where('unix_timestamp', '<=', timestamp.toDate())
+      .andWhere('chain_id', '=', Number(chainId))
       .orderBy('block_number', 'desc')
       .first()
     return row?.block_number
   }
 
-  async findByNumber(number: number): Promise<BlockNumberRecord | undefined> {
+  async findByNumber(
+    number: number,
+    chainId: ChainId,
+  ): Promise<BlockNumberRecord | undefined> {
     const knex = await this.knex()
     const row = await knex('block_numbers')
       .where('block_number', number)
+      .andWhere('chain_id', Number(chainId))
       .first()
     return row && toRecord(row)
   }
@@ -80,10 +103,14 @@ export class BlockNumberRepository extends BaseRepository {
     return knex('block_numbers').delete()
   }
 
-  async deleteAfter(blockTimestamp: UnixTime): Promise<number> {
+  async deleteAfter(
+    blockTimestamp: UnixTime,
+    chainId: ChainId,
+  ): Promise<number> {
     const knex = await this.knex()
     return knex('block_numbers')
       .where('unix_timestamp', '>', blockTimestamp.toDate())
+      .andWhere('chain_id', Number(chainId))
       .delete()
   }
 }
@@ -93,6 +120,7 @@ function toRow(record: BlockNumberRecord): BlockNumberRow {
     block_number: record.blockNumber,
     block_hash: record.blockHash.toString(),
     unix_timestamp: record.timestamp.toDate(),
+    chain_id: Number(record.chainId),
   }
 }
 
@@ -101,5 +129,6 @@ function toRecord(row: BlockNumberRow): BlockNumberRecord {
     blockNumber: row.block_number,
     blockHash: Hash256(row.block_hash),
     timestamp: UnixTime.fromDate(row.unix_timestamp),
+    chainId: ChainId(row.chain_id),
   }
 }

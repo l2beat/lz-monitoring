@@ -1,4 +1,5 @@
 import { Logger } from '@l2beat/backend-tools'
+import { ChainId } from '@lz/libs'
 import { expect } from 'earl'
 
 import { setupDatabaseTestSuite } from '../../test/database'
@@ -7,6 +8,7 @@ import { IndexerStateRepository } from './IndexerStateRepository'
 describe(IndexerStateRepository.name, () => {
   const { database } = setupDatabaseTestSuite()
   const repository = new IndexerStateRepository(database, Logger.SILENT)
+  const chainId = ChainId.ETHEREUM
 
   before(() => repository.deleteAll())
   afterEach(() => repository.deleteAll())
@@ -15,6 +17,7 @@ describe(IndexerStateRepository.name, () => {
     const record = {
       id: 'id',
       height: 1,
+      chainId,
     }
 
     await repository.addOrUpdate(record)
@@ -28,6 +31,7 @@ describe(IndexerStateRepository.name, () => {
     const record = {
       id: 'id',
       height: 1,
+      chainId,
     }
 
     await repository.addOrUpdate(record)
@@ -42,17 +46,19 @@ describe(IndexerStateRepository.name, () => {
     const record = {
       id: 'id',
       height: 1,
+      chainId,
     }
 
     const record2 = {
       id: 'id2',
       height: 2,
+      chainId,
     }
 
     await repository.addOrUpdate(record)
     await repository.addOrUpdate(record2)
 
-    const actual = await repository.findById('id2')
+    const actual = await repository.findById('id2', chainId)
 
     expect(actual).toEqual(record2)
   })
@@ -61,10 +67,12 @@ describe(IndexerStateRepository.name, () => {
     await repository.addOrUpdate({
       id: 'id',
       height: 1,
+      chainId,
     })
     await repository.addOrUpdate({
       id: 'id2',
       height: 2,
+      chainId,
     })
 
     await repository.deleteAll()
