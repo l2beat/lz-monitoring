@@ -29,8 +29,8 @@ export function getLocalConfig(env: Env): Config {
     discovery: {
       ethereum: {
         // This is an arbitrary number so we do not start too far in the past.
-        startBlock: env.integer('START_BLOCK', 18127698),
-        clockIntervalMs: env.integer('CLOCK_INTERVAL_MS', 10 * 1000),
+        startBlock: env.integer('ETHEREUM_START_BLOCK', 18127698),
+        clockIntervalMs: env.integer('ETHEREUM_CLOCK_INTERVAL_MS', 10 * 1000),
         rpcUrl: env.string('ETHEREUM_RPC_URL'),
         blockExplorerApiUrl: 'https://api.etherscan.io/api',
         blockExplorerApiKey: env.string('ETHERSCAN_API_KEY'),
@@ -40,8 +40,8 @@ export function getLocalConfig(env: Env): Config {
         discovery: ethereumDiscoveryConfig,
       },
       arbitrum: {
-        startBlock: env.integer('START_BLOCK', 133212747),
-        clockIntervalMs: env.integer('CLOCK_INTERVAL_MS', 10 * 1000),
+        startBlock: env.integer('ARBITRUM_START_BLOCK', 133212747),
+        clockIntervalMs: env.integer('ARBITRUM_CLOCK_INTERVAL_MS', 10 * 1000),
         rpcUrl: env.string('ARBITRUM_RPC_URL'),
         blockExplorerApiUrl: 'https://api.arbiscan.io/api',
         blockExplorerApiKey: env.string('ARBISCAN_API_KEY'),
