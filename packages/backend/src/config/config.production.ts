@@ -35,7 +35,7 @@ export function getProductionConfig(env: Env): Config {
         tickIntervalMs: env.integer('CLOCK_TICK_INTERVAL_MS', 10 * 1000),
       },
       modules: {
-        ethereum: env.boolean('ETHEREUM_DISCOVERY_ENABLED', false) && {
+        ethereum: env.boolean('ETHEREUM_DISCOVERY_ENABLED', true) && {
           // This is an arbitrary number so we do not start too far in the past.
           startBlock: env.integer('ETHEREUM_START_BLOCK', 18127698),
           rpcUrl: env.string('ETHEREUM_RPC_URL'),
@@ -46,7 +46,7 @@ export function getProductionConfig(env: Env): Config {
           ),
           discovery: ethereumDiscoveryConfig,
         },
-        arbitrum: env.boolean('ARBITRUM_DISCOVERY_ENABLED', false) && {
+        arbitrum: env.boolean('ARBITRUM_DISCOVERY_ENABLED', true) && {
           startBlock: env.integer('ARBITRUM_START_BLOCK', 133212747),
           rpcUrl: env.string('ARBITRUM_RPC_URL'),
           blockExplorerApiUrl: 'https://api.arbiscan.io/api',
@@ -60,7 +60,7 @@ export function getProductionConfig(env: Env): Config {
           ),
           discovery: arbitrumDiscoveryConfig,
         },
-        optimism: env.boolean('OPTIMISM_DISCOVERY_ENABLED', false) && {
+        optimism: env.boolean('OPTIMISM_DISCOVERY_ENABLED', true) && {
           startBlock: env.integer('OPTIMISM_START_BLOCK', 109983712),
           rpcUrl: env.string('OPTIMISM_RPC_URL'),
           blockExplorerApiUrl: 'https://api-optimistic.etherscan.io/api',
