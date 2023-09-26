@@ -1,4 +1,15 @@
 import { Logger } from '@l2beat/backend-tools'
+import {
+  AddressAnalyzer,
+  DiscoveryEngine,
+  DiscoveryLogger,
+  DiscoveryProvider,
+  EtherscanLikeClient,
+  HandlerExecutor,
+  HttpClient,
+  ProxyDetector,
+  SourceCodeService,
+} from '@l2beat/discovery'
 import { ChainId } from '@lz/libs'
 import { providers } from 'ethers'
 
@@ -15,7 +26,6 @@ import { DiscoveryRepository } from '../peripherals/database/DiscoveryRepository
 import { IndexerStateRepository } from '../peripherals/database/IndexerStateRepository'
 import { Database } from '../peripherals/database/shared/Database'
 import { ApplicationModule } from './ApplicationModule'
-import { createDiscoveryEngine } from './EthereumDiscoveryModule'
 
 type AvailableConfigs = keyof Config['discovery']['modules']
 
@@ -148,4 +158,36 @@ export function createDiscoverySubmodule(
       statusLogger.info(`Discovery submodule  started`)
     },
   }
+}
+
+function createDiscoveryEngine(
+  provider: providers.Provider,
+  config: EthereumLikeDiscoveryConfig,
+): DiscoveryEngine {
+  const httpClient = new HttpClient()
+
+  const discoveryClient = new EtherscanLikeClient(
+    httpClient,
+    config.blockExplorerApiUrl,
+    config.blockExplorerApiKey,
+    config.blockExplorerMinTimestamp,
+  )
+
+  const discoveryProvider = new DiscoveryProvider(provider, discoveryClient)
+  const discoveryLogger = DiscoveryLogger.SILENT
+
+  const proxyDetector = new ProxyDetector(discoveryProvider, discoveryLogger)
+  const sourceCodeService = new SourceCodeService(discoveryProvider)
+  const handlerExecutor = new HandlerExecutor(
+    discoveryProvider,
+    discoveryLogger,
+  )
+  const addressAnalyzer = new AddressAnalyzer(
+    discoveryProvider,
+    proxyDetector,
+    sourceCodeService,
+    handlerExecutor,
+    discoveryLogger,
+  )
+  return new DiscoveryEngine(addressAnalyzer, discoveryLogger)
 }
