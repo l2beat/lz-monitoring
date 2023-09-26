@@ -51,6 +51,8 @@ export function createDiscoveryModule({
   logger,
   config,
 }: DiscoveryModuleDependencies): ApplicationModule {
+  const statusLogger = logger.for('DiscoveryModule')
+
   const blockRepository = new BlockNumberRepository(database, logger)
   const indexerRepository = new IndexerStateRepository(database, logger)
   const discoverRepository = new DiscoveryRepository(database, logger)
@@ -69,6 +71,7 @@ export function createDiscoveryModule({
 
     // Might be disabled
     if (!moduleConfig) {
+      statusLogger.warn('Discovery submodule disabled', { chainName })
       return []
     }
 
@@ -93,8 +96,6 @@ export function createDiscoveryModule({
   return {
     routers: [discoveryRouter],
     start: async () => {
-      const statusLogger = logger.for('DiscoveryModule')
-
       statusLogger.info('Starting discovery module')
 
       await clockIndexer.start()
