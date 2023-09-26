@@ -12,8 +12,14 @@ export interface Config {
     Partial<LoggerOptions>
   readonly health: HealthConfig
   readonly discovery: {
-    readonly ethereum: EthereumLikeDiscoveryConfig
-    readonly arbitrum: EthereumLikeDiscoveryConfig
+    readonly clock: {
+      readonly tickIntervalMs: number
+    }
+    readonly modules: {
+      readonly ethereum: false | EthereumLikeDiscoveryConfig
+      readonly arbitrum: false | EthereumLikeDiscoveryConfig
+      readonly optimism: false | EthereumLikeDiscoveryConfig
+    }
   }
 }
 
@@ -34,7 +40,6 @@ export interface HealthConfig {
 
 export interface EthereumLikeDiscoveryConfig {
   startBlock: number
-  clockIntervalMs: number
   rpcUrl: string
   blockExplorerApiUrl: string
   blockExplorerApiKey: string

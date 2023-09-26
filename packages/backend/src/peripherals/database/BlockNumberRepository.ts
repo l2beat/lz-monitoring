@@ -19,7 +19,6 @@ export class BlockNumberRepository extends BaseRepository {
   }
 
   async add(record: BlockNumberRecord): Promise<number> {
-    this.logger.warn('adding', { record })
     const row = toRow(record)
     const knex = await this.knex()
     await knex('block_numbers')
@@ -32,11 +31,6 @@ export class BlockNumberRepository extends BaseRepository {
   }
 
   async addMany(records: BlockNumberRecord[]): Promise<number[]> {
-    this.logger.warn('addingMany', {
-      len: records.length,
-      unique: new Set(records.map((r) => r.blockNumber)).size,
-    })
-
     const rows: BlockNumberRow[] = records.map(toRow)
     const knex = await this.knex()
     const result = await knex('block_numbers')
