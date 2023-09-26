@@ -18,6 +18,7 @@ export interface Config {
     readonly modules: {
       readonly ethereum: false | EthereumLikeDiscoveryConfig
       readonly arbitrum: false | EthereumLikeDiscoveryConfig
+      readonly optimism: false | EthereumLikeDiscoveryConfig
     }
   }
 }
