@@ -64,7 +64,9 @@ export function createDiscoveryRouter(
         params: z.object({ chainId: stringAs((s) => ChainId(+s)) }),
       }),
       async (ctx): Promise<void> => {
-        const data = await discoveryController.getDiscovery(ctx.params.chainId)
+        const data = await discoveryController.getRawDiscovery(
+          ctx.params.chainId,
+        )
 
         if (!data) {
           ctx.status = 404
