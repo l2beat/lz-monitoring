@@ -1,6 +1,5 @@
 import { Logger } from '@l2beat/backend-tools'
 import { ChildIndexer } from '@l2beat/uif'
-import { ChainId } from '@lz/libs'
 import { install, InstalledClock } from '@sinonjs/fake-timers'
 import { expect } from 'earl'
 import { spy } from 'sinon'
@@ -22,11 +21,7 @@ describe(ClockIndexer.name, () => {
     const tickInterval = 10 * 1000 // 10s
     const expectedUpdateCount = 5
 
-    const clockIndexer = new ClockIndexer(
-      Logger.SILENT,
-      ChainId.ETHEREUM,
-      tickInterval,
-    )
+    const clockIndexer = new ClockIndexer(Logger.SILENT, tickInterval)
 
     const testChildIndexer = new TestChildIndexer(Logger.SILENT, [clockIndexer])
 
