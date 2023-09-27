@@ -1,4 +1,4 @@
-import { DiscoveryApi } from '@lz/libs'
+import { ChainId, DiscoveryApi } from '@lz/libs'
 import { useEffect, useState } from 'react'
 
 import { config } from './config'
@@ -11,26 +11,36 @@ import { ULNv2Contract } from './view/components/ULNv2Contract'
 
 export function App(): JSX.Element {
   const [data, setData] = useState<DiscoveryApi | null>(null)
+  const [chainId, setChainId] = useState<ChainId>(ChainId.ETHEREUM)
 
   useEffect(() => {
     async function fetchData(): Promise<void> {
-      const result = await fetch(config.apiUrl + 'discovery')
+      const result = await fetch(
+        config.apiUrl + 'discovery/' + ChainId.getName(chainId),
+      )
       const data = await result.text()
       const parsed = DiscoveryApi.parse(JSON.parse(data))
       setData(parsed)
     }
 
     void fetchData()
-    setInterval(() => {
+    const interval = setInterval(() => {
       void fetchData()
     }, 10 * 1000)
-  }, [])
+
+    return () => clearInterval(interval)
+  }, [chainId])
 
   return (
     <>
       <Navbar />
       <Layout>
-        <CurrentNetwork latestBlock={data?.blockNumber} />
+        <CurrentNetwork
+          latestBlock={data?.blockNumber}
+          chainId={chainId}
+          setChainId={setChainId}
+          availableChains={config.availableChains}
+        />
         <EndpointContract {...data?.contracts.endpoint} />
         <ULNv2Contract {...data?.contracts.ulnV2} />
         <LzMultisig {...data?.contracts.lzMultisig} />

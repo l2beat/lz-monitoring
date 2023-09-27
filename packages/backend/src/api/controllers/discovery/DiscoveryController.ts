@@ -9,10 +9,10 @@ import {
   ChainId,
   DiscoveryApi,
   EthereumAddress,
+  getChainIdFromLzId,
   RemoteChain,
 } from '@lz/libs'
 
-import { getChainIdFromLzId } from '../../../config/chainConfig'
 import { DiscoveryRepository } from '../../../peripherals/database/DiscoveryRepository'
 import {
   getAddressFromValue,

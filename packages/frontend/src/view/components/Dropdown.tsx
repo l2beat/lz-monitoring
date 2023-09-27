@@ -36,7 +36,7 @@ export function Dropdown(props: DropdownProps): JSX.Element {
               !selectedOption && 'text-gray-500',
             )}
           >
-            {selectedOption?.value ?? 'Select an option'}
+            {selectedOption?.label ?? 'Select an option'}
             <span className="h-10 w-10 shrink-0 bg-white p-1">
               <DropdownArrowIcon
                 className={cx(open && 'rotate-180', 'transition-all')}
@@ -48,8 +48,8 @@ export function Dropdown(props: DropdownProps): JSX.Element {
               <Listbox.Option
                 key={option.value}
                 value={option}
-                className="font-mono ui-active:bg-black ui-active:text-white 
-                          ui-not-active:bg-white ui-not-active:text-black"
+                className="mr-10 pl-6 font-mono ui-active:bg-white ui-active:text-black 
+                          ui-not-active:bg-black ui-not-active:text-white"
               >
                 {option.label}
               </Listbox.Option>
