@@ -1,5 +1,5 @@
 import { ChainId, DiscoveryApi } from '@lz/libs'
-import { useCallback, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 
 export { useDiscoveryApi }
 
@@ -17,24 +17,25 @@ function useDiscoveryApi({
   const [data, setData] = useState<DiscoveryApi | null>(null)
   const [chainId, setChainId] = useState<ChainId>(initialChainId)
 
-  // Do we need to memoize this with deps?
-  const callback = useCallback(async () => {
-    const result = await fetch(apiUrl + 'discovery/' + ChainId.getName(chainId))
-    const data = await result.text()
-    const parsed = DiscoveryApi.parse(JSON.parse(data))
-    setData(parsed)
-  }, [apiUrl, chainId])
-
   useEffect(() => {
+    async function fetchData() {
+      const result = await fetch(
+        apiUrl + 'discovery/' + ChainId.getName(chainId),
+      )
+      const data = await result.text()
+      const parsed = DiscoveryApi.parse(JSON.parse(data))
+      setData(parsed)
+    }
+
     // Refresh on change
-    void callback()
+    void fetchData()
 
     const fetchDataInterval = setInterval(() => {
-      void callback()
+      void fetchData()
     }, intervalMs)
 
     return () => clearInterval(fetchDataInterval)
-  }, [chainId, intervalMs, callback])
+  }, [chainId, intervalMs, apiUrl])
 
   return [data, setChainId] as const
 }
