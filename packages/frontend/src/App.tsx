@@ -11,11 +11,17 @@ import { Navbar } from './view/components/Navbar'
 import { ULNv2Contract } from './view/components/ULNv2Contract'
 
 export function App(): JSX.Element {
-  const [paramChain, setParamChain] = useChainQueryParam()
+  const [paramChain, setParamChain] = useChainQueryParam(ChainId.ETHEREUM)
   const [discoveryResponse, setRequestChainId] = useDiscoveryApi({
     apiUrl: config.apiUrl,
-    initialChainId: paramChain ?? ChainId.ETHEREUM,
+    initialChainId: paramChain,
   })
+
+  // Restrict valid chains only to those that are turned on
+  // i.e bsc is a valid chain name but it is not turned on
+  if (!config.availableChains.includes(paramChain)) {
+    setChain(ChainId.ETHEREUM)
+  }
 
   function setChain(chain: ChainId) {
     setParamChain(chain)
@@ -28,7 +34,7 @@ export function App(): JSX.Element {
       <Layout>
         <CurrentNetwork
           latestBlock={discoveryResponse?.blockNumber}
-          chainId={paramChain ?? ChainId.ETHEREUM}
+          chainId={paramChain}
           setChainId={setChain}
           availableChains={config.availableChains}
         />

@@ -14,8 +14,6 @@ function serialize(chainId: ChainId): string | null {
   }
 }
 
-const fallback = ChainId.ETHEREUM
-
 function deserialize(value: string): ChainId | null {
   try {
     return ChainId.fromName(value)
@@ -25,20 +23,15 @@ function deserialize(value: string): ChainId | null {
 }
 
 // We can do that in the generic way such as `useSerializableQueryParam<T>` but it's not needed for now
-function useChainQueryParam() {
+function useChainQueryParam(fallback: ChainId) {
   const [currentParam, setCurrentParam] = useQueryParam(paramName)
 
-  const [deserializedParam, setDeserializedParam] = useState<ChainId | null>(
-    currentParam ? deserialize(currentParam) : fallback,
+  const [deserializedParam, setDeserializedParam] = useState<ChainId>(
+    currentParam ? deserialize(currentParam) ?? fallback : fallback,
   )
 
   useEffect(() => {
-    if (deserializedParam !== null) {
-      setCurrentParam(serialize(deserializedParam))
-      return
-    }
-    // In case of invalid param we fallback to the default one
-    setCurrentParam(ChainId.getName(fallback))
+    setCurrentParam(serialize(deserializedParam))
     // Do we need to add `setCurrentParam` to deps?
   }, [deserializedParam, setCurrentParam])
 
