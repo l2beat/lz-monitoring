@@ -17,15 +17,15 @@ export function App(): JSX.Element {
     initialChainId: paramChain,
   })
 
+  function setChain(chain: ChainId) {
+    setParamChain(chain)
+    setRequestChainId(chain)
+  }
+
   // Restrict valid chains only to those that are turned on
   // i.e bsc is a valid chain name but it is not turned on
   if (!config.availableChains.includes(paramChain)) {
     setChain(ChainId.ETHEREUM)
-  }
-
-  function setChain(chain: ChainId) {
-    setParamChain(chain)
-    setRequestChainId(chain)
   }
 
   return (
