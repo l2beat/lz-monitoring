@@ -18,7 +18,7 @@ function useDiscoveryApi({
   const [chainId, setChainId] = useState<ChainId>(initialChainId)
 
   // Do we need to memoize this with deps?
-  const callback = useCallback(async (): Promise<void> => {
+  const callback = useCallback(async () => {
     const result = await fetch(apiUrl + 'discovery/' + ChainId.getName(chainId))
     const data = await result.text()
     const parsed = DiscoveryApi.parse(JSON.parse(data))
