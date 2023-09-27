@@ -1,7 +1,7 @@
 import { ChainId } from '@lz/libs'
 import { useEffect, useState } from 'react'
 
-import { useQueryParam } from './useQueryParams'
+import { useQueryParam } from './useQueryParam'
 
 export { useChainQueryParam }
 

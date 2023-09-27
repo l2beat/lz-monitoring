@@ -10,7 +10,6 @@ function useQueryParam(paramName: string) {
   const [param, setParam] = useState(currentParam)
 
   useEffect(() => {
-    console.dir({ param, paramName })
     const searchParams = new URLSearchParams(window.location.search)
 
     if (param !== null) {
