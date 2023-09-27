@@ -12,14 +12,14 @@ import { ULNv2Contract } from './view/components/ULNv2Contract'
 
 export function App(): JSX.Element {
   const [paramChain, setParamChain] = useChainQueryParam()
-  const [discoveryResponse, getRequestChainId] = useDiscoveryApi({
+  const [discoveryResponse, setRequestChainId] = useDiscoveryApi({
     apiUrl: config.apiUrl,
     initialChainId: paramChain ?? ChainId.ETHEREUM,
   })
 
   function setChain(chain: ChainId) {
     setParamChain(chain)
-    getRequestChainId(chain)
+    setRequestChainId(chain)
   }
 
   return (
