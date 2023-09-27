@@ -1,7 +1,7 @@
 import { Env, LoggerOptions } from '@l2beat/backend-tools'
 
-import { getCommonDiscoveryConfig } from './config.common'
 import { Config } from './Config'
+import { getCommonDiscoveryConfig } from './config.common'
 import { getGitCommitSha } from './getGitCommitSha'
 
 export function getLocalConfig(env: Env): Config {
