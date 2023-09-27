@@ -205,20 +205,24 @@ function getRemoteChains(ulnV2: ContractParameters): RemoteChain[] {
 
 function getLzMultisig(
   discoveryOutput: DiscoveryOutput,
-): DiscoveryApi['contracts']['lzMultisig'] {
-  const lzMultisig = getContractByName('LayerZero Multisig', discoveryOutput)
+): DiscoveryApi['contracts']['lzMultisig'] | undefined {
+  try {
+    const lzMultisig = getContractByName('LayerZero Multisig', discoveryOutput)
 
-  const ownersRaw = getContractValue(lzMultisig, 'getOwners')
-  assert(Array.isArray(ownersRaw), 'Owners is not an array')
-  const owners = ownersRaw.map((owner) => {
-    assert(typeof owner === 'string', 'Owner is not a string')
-    return EthereumAddress(owner)
-  })
+    const ownersRaw = getContractValue(lzMultisig, 'getOwners')
+    assert(Array.isArray(ownersRaw), 'Owners is not an array')
+    const owners = ownersRaw.map((owner) => {
+      assert(typeof owner === 'string', 'Owner is not a string')
+      return EthereumAddress(owner)
+    })
 
-  return {
-    name: 'LayerZero Multisig',
-    address: lzMultisig.address,
-    owners,
-    threshold: getContractValue(lzMultisig, 'getThreshold'),
+    return {
+      name: 'LayerZero Multisig',
+      address: lzMultisig.address,
+      owners,
+      threshold: getContractValue(lzMultisig, 'getThreshold'),
+    }
+  } catch (e) {
+    return
   }
 }

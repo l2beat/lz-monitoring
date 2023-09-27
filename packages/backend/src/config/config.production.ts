@@ -4,8 +4,12 @@ import { UnixTime } from '@l2beat/discovery/dist/utils/UnixTime'
 
 import { Config } from './Config'
 import { arbitrumDiscoveryConfig } from './discovery/arbitrum'
+import { baseDiscoveryConfig } from './discovery/base'
+import { bscDiscoveryConfig } from './discovery/bsc'
 import { ethereumDiscoveryConfig } from './discovery/ethereum'
 import { optimismDiscoveryConfig } from './discovery/optimism'
+import { polygonPosDiscoveryConfig } from './discovery/polygon-pos'
+import { polygonZkEvmDiscoveryConfig } from './discovery/polygon-zkevm'
 import { getGitCommitSha } from './getGitCommitSha'
 
 export function getProductionConfig(env: Env): Config {
@@ -73,6 +77,63 @@ export function getProductionConfig(env: Env): Config {
             ),
           ),
           discovery: optimismDiscoveryConfig,
+        },
+        bsc: env.boolean('BSC_DISCOVERY_ENABLED', false) && {
+          startBlock: env.integer('BSC_START_BLOCK', 20783073),
+          rpcUrl: env.string('BSC_RPC_URL'),
+          blockExplorerApiUrl: 'https://api.bscscan.com/api',
+          blockExplorerApiKey: env.string('BSCSCAN_API_KEY'),
+          blockExplorerMinTimestamp: new UnixTime(
+            env.integer(
+              'BSCSCAN_MIN_TIMESTAMP',
+              new Date('2020-08-29T03:25:00Z').getTime() / 1000,
+            ),
+          ),
+          discovery: bscDiscoveryConfig,
+        },
+        'polygon-pos': env.boolean('POLYGON_POS_DISCOVERY_ENABLED', false) && {
+          startBlock: env.integer('POLYGON_POS_START_BLOCK', 48049992),
+          rpcUrl: env.string('POLYGON_POS_RPC_URL'),
+          blockExplorerApiUrl: 'https://api.polygonscan.com/api',
+          blockExplorerApiKey: env.string('POLYGONSCAN_POS_API_KEY'),
+          // ~ Timestamp of block number 0 on Polygon-PoS
+          blockExplorerMinTimestamp: new UnixTime(
+            env.integer(
+              'POLYGONSCAN_POS_MIN_TIMESTAMP',
+              new Date('2020-05-30T07:48:00Z').getTime() / 1000,
+            ),
+          ),
+          discovery: polygonPosDiscoveryConfig,
+        },
+        base: env.boolean('BASE_DISCOVERY_ENABLED', false) && {
+          startBlock: env.integer('BASE_START_BLOCK', 4526481),
+          rpcUrl: env.string('BASE_RPC_URL'),
+          blockExplorerApiUrl: 'https://api.basescan.org/api',
+          blockExplorerApiKey: env.string('BASESCAN_API_KEY'),
+          blockExplorerMinTimestamp: new UnixTime(
+            env.integer(
+              'BASESCAN_MIN_TIMESTAMP',
+              new Date('2023-06-15T12:36:00Z').getTime() / 1000,
+            ),
+          ),
+          discovery: baseDiscoveryConfig,
+        },
+        'polygon-zkevm': env.boolean(
+          'POLYGON_ZKEVM_DISCOVERY_ENABLED',
+          false,
+        ) && {
+          startBlock: env.integer('POLYGON_ZKEVM_START_BLOCK', 5793888),
+          rpcUrl: env.string('POLYGON_ZKEVM_RPC_URL'),
+          blockExplorerApiUrl: 'https://api-zkevm.polygonscan.com/api',
+          blockExplorerApiKey: env.string('POLYGONSCAN_ZKEVM_API_KEY'),
+          // ~ Timestamp of block number 0 on Base
+          blockExplorerMinTimestamp: new UnixTime(
+            env.integer(
+              'POLYGONSCAN_ZKEVM_MIN_TIMESTAMP',
+              new Date('2023-06-15T12:36:00Z').getTime() / 1000,
+            ),
+          ),
+          discovery: polygonZkEvmDiscoveryConfig,
         },
       },
     },

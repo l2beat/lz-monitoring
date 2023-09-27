@@ -21,6 +21,14 @@ export interface Config {
       readonly ethereum: false | EthereumLikeDiscoveryConfig
       readonly arbitrum: false | EthereumLikeDiscoveryConfig
       readonly optimism: false | EthereumLikeDiscoveryConfig
+      readonly 'polygon-pos': false | EthereumLikeDiscoveryConfig
+      readonly base: false | EthereumLikeDiscoveryConfig
+      readonly 'polygon-zkevm': false | EthereumLikeDiscoveryConfig
+      readonly bsc?: false | EthereumLikeDiscoveryConfig // No alchemy
+      readonly avalanche?: false | EthereumLikeDiscoveryConfig // No alchemy
+      readonly celo?: false | EthereumLikeDiscoveryConfig // No alchemy
+      readonly linea?: false | EthereumLikeDiscoveryConfig // No alchemy
+      readonly gnosis?: false | EthereumLikeDiscoveryConfig // No alchemy
     }
   }
 }
