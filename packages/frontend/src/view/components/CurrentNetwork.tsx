@@ -10,9 +10,9 @@ interface CurrentNetworkProps {
 }
 
 export function CurrentNetwork(props: CurrentNetworkProps): JSX.Element {
-  const options = props.availableChains.map((chainId) => ({
-    label: ChainId.getName(chainId),
-    value: ChainId.getName(chainId),
+  const options = props.availableChains.map((availableChainId) => ({
+    label: ChainId.getName(availableChainId),
+    value: ChainId.getName(availableChainId),
   }))
 
   function onChange(option: DropdownOption): void {
