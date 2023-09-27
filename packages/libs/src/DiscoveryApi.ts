@@ -1,7 +1,7 @@
 import { z } from 'zod'
 
 import { branded } from './branded'
-import { ChainId } from './ChainId'
+import { ChainId } from './chainId/ChainId'
 import { EthereumAddress } from './EthereumAddress'
 
 const DefaultAdapterParams = z.object({

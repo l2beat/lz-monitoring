@@ -42,7 +42,7 @@ export function createDiscoveryRouter(
     '/discovery/:chainId',
     withTypedContext(
       z.object({
-        params: z.object({ chainId: stringAs((s) => ChainId(+s)) }),
+        params: z.object({ chainId: stringAs((s) => ChainId.fromName(s)) }),
       }),
       async (ctx): Promise<void> => {
         const data = await discoveryController.getDiscovery(ctx.params.chainId)
@@ -61,7 +61,7 @@ export function createDiscoveryRouter(
     '/discovery/raw/:chainId',
     withTypedContext(
       z.object({
-        params: z.object({ chainId: stringAs((s) => ChainId(+s)) }),
+        params: z.object({ chainId: stringAs((s) => ChainId.fromName(s)) }),
       }),
       async (ctx): Promise<void> => {
         const data = await discoveryController.getRawDiscovery(

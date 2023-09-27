@@ -1,6 +1,6 @@
-import { ChainId } from '@lz/libs'
-
 // source: https://layerzero.gitbook.io/docs/technical-reference/mainnet/supported-chain-ids
+
+import { ChainId } from './ChainId'
 
 const CHAIN_IDS = [
   { lzChainId: 101, chainId: ChainId.ETHEREUM },
@@ -17,4 +17,8 @@ const CHAIN_IDS = [
 
 export function getChainIdFromLzId(lzChainId: number): ChainId | undefined {
   return CHAIN_IDS.find((c) => c.lzChainId === lzChainId)?.chainId
+}
+
+export function getLzIdFromChainId(chainId: ChainId): number | undefined {
+  return CHAIN_IDS.find((c) => c.chainId === chainId)?.lzChainId
 }

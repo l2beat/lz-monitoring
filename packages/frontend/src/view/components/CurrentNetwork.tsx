@@ -1,19 +1,43 @@
+import { ChainId, getLzIdFromChainId } from '@lz/libs'
+
+import { Dropdown, DropdownOption } from './Dropdown'
+
 interface CurrentNetworkProps {
+  chainId: ChainId
+  setChainId: (chainId: ChainId) => void
+  availableChains: ChainId[]
   latestBlock?: number
 }
 
 export function CurrentNetwork(props: CurrentNetworkProps): JSX.Element {
+  const options = props.availableChains.map((availableChainId) => ({
+    label: ChainId.getName(availableChainId),
+    value: ChainId.getName(availableChainId),
+  }))
+
+  function onChange(option: DropdownOption): void {
+    const chainId = ChainId.fromName(option.value)
+    props.setChainId(chainId)
+  }
+
+  const defaultValue = options.find(
+    (option) => option.value === ChainId.getName(props.chainId),
+  )
+
   return (
     <section className="mb-12 bg-gray-900 p-6">
       <div className="mb-6">
-        {/* TODO: This will be a dropdown */}
-        <label className="mb-4 text-xs text-gray-500">Current network</label>
-        <h2 className="bg-gray-800 px-8 py-4 font-mono">Ethereum</h2>
+        <label className="mb-4 text-xs text-gray-500">Select network</label>
+        <Dropdown
+          defaultValue={defaultValue}
+          onChange={onChange}
+          options={options}
+        />
       </div>
       <div className="flex gap-6">
         {[
-          { label: 'chain ID', value: 1 },
-          { label: 'LZ chain ID', value: 101 },
+          { label: 'chain ID', value: props.chainId.toString() },
+          { label: 'LZ chain ID', value: getLzIdFromChainId(props.chainId) },
           { label: 'Latest block', value: props.latestBlock },
         ].map(({ label, value }, i) => (
           <div

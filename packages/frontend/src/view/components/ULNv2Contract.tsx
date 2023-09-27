@@ -1,6 +1,6 @@
-import { EthereumAddress, RemoteChain } from '@lz/libs'
-import { useState } from 'react'
+import { ChainId, EthereumAddress, RemoteChain } from '@lz/libs'
 
+import { useChainQueryParam } from '../../hooks/useChainQueryParam'
 import { Dropdown, DropdownOption } from './Dropdown'
 
 interface EndpointContractProps {
@@ -48,22 +48,30 @@ interface RemoteChainProps {
 function RemoteChainComponent({
   remoteChains,
 }: RemoteChainProps): JSX.Element | null {
-  const [selectedChain, setSelectedChain] = useState<RemoteChain | null>(null)
+  const [selectedChain, setSelectedChain] = useChainQueryParam({
+    fallback: ChainId.ETHEREUM,
+    paramName: 'remote-chain',
+  })
 
   function onDropdownSelect(option: DropdownOption): void {
     const chain = remoteChains?.find((chain) => chain.name === option.value)
 
-    if (!chain) return
+    if (!chain) {
+      return
+    }
 
-    setSelectedChain(chain)
+    setSelectedChain(ChainId.fromName(chain.name))
   }
 
-  if (!remoteChains) return null
+  if (!remoteChains) {
+    return null
+  }
 
-  const dropdownOptions = remoteChains.map((chain) => ({
-    label: chain.name,
-    value: chain.name,
-  }))
+  const dropdownOptions = remoteChains.map(toDropdownOption)
+
+  const remoteChain = remoteChains.find(
+    (chain) => chain.name === ChainId.getName(selectedChain),
+  )
 
   return (
     <div className="border-y border-black bg-gray-800 px-8 py-3">
@@ -72,24 +80,28 @@ function RemoteChainComponent({
           Remote chain
         </span>
         <Dropdown
+          defaultValue={toDropdownOption(selectedChain)}
           options={dropdownOptions}
           onChange={onDropdownSelect}
           className="grow self-stretch"
         />
       </div>
       {[
-        { label: 'Default app config', value: selectedChain?.defaultAppConfig },
+        {
+          label: 'Default app config',
+          value: remoteChain?.defaultAppConfig,
+        },
         {
           label: 'Default adapter params',
-          value: selectedChain?.defaultAdapterParams,
+          value: remoteChain?.defaultAdapterParams,
         },
         {
           label: 'Inbound proof library',
-          value: selectedChain?.inboundProofLibrary,
+          value: remoteChain?.inboundProofLibrary,
         },
         {
           label: 'Supported outbound proof',
-          value: selectedChain?.supportedOutboundProof,
+          value: remoteChain?.supportedOutboundProof,
         },
       ].map(({ label, value }, i) => (
         <div className="mb-0.5 flex items-center" key={i}>
@@ -105,8 +117,23 @@ function RemoteChainComponent({
         <span className="w-[214px] shrink-0 font-medium text-gray-500">
           Ultra light node
         </span>
-        <span className="p-6 font-mono">{selectedChain?.uln}</span>
+        <span className="p-6 font-mono">{remoteChain?.uln}</span>
       </div>
     </div>
   )
+}
+
+function toDropdownOption(chain: RemoteChain | ChainId): DropdownOption {
+  if (ChainId.isChainId(chain)) {
+    const name = ChainId.getName(chain)
+    return {
+      label: name,
+      value: name,
+    }
+  }
+
+  return {
+    label: chain.name,
+    value: chain.name,
+  }
 }

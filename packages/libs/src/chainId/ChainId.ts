@@ -34,6 +34,10 @@ ChainId.getAll = function (): ChainId[] {
   return Object.keys(CHAIN_IDS).map((c) => ChainId(+c))
 }
 
+ChainId.isChainId = function (value: unknown): value is ChainId {
+  return ChainId.getAll().includes(value as ChainId)
+}
+
 /**
  * Only to use when defining ChainId.ETHEREUM etc. constants.
  * Will save you from typos, but is annoying to work with strings.
