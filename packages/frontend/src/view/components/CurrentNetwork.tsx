@@ -12,16 +12,16 @@ interface CurrentNetworkProps {
 export function CurrentNetwork(props: CurrentNetworkProps): JSX.Element {
   const options = props.availableChains.map((chainId) => ({
     label: ChainId.getName(chainId),
-    value: chainId.toString(),
+    value: ChainId.getName(chainId),
   }))
 
   function onChange(option: DropdownOption): void {
-    const chainId = ChainId(+option.value)
+    const chainId = ChainId.fromName(option.value)
     props.setChainId(chainId)
   }
 
   const defaultValue = options.find(
-    (option) => option.value === props.chainId.toString(),
+    (option) => option.value === ChainId.getName(props.chainId),
   )
 
   return (
