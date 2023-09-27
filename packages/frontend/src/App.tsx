@@ -1,7 +1,8 @@
-import { ChainId, DiscoveryApi } from '@lz/libs'
-import { useEffect, useState } from 'react'
+import { ChainId } from '@lz/libs'
 
 import { config } from './config'
+import { useChainQueryParam } from './hooks/useChainQueryParam'
+import { useDiscoveryApi } from './hooks/useDiscoveryApi'
 import { CurrentNetwork } from './view/components/CurrentNetwork'
 import { EndpointContract } from './view/components/EndpointContract'
 import { LzMultisig } from './view/components/LayerZeroMultisig'
@@ -10,40 +11,30 @@ import { Navbar } from './view/components/Navbar'
 import { ULNv2Contract } from './view/components/ULNv2Contract'
 
 export function App(): JSX.Element {
-  const [data, setData] = useState<DiscoveryApi | null>(null)
-  const [chainId, setChainId] = useState<ChainId>(ChainId.ETHEREUM)
+  const [paramChain, setParamChain] = useChainQueryParam()
+  const [discoveryResponse, getRequestChainId] = useDiscoveryApi({
+    apiUrl: config.apiUrl,
+    initialChainId: paramChain ?? ChainId.ETHEREUM,
+  })
 
-  useEffect(() => {
-    async function fetchData(): Promise<void> {
-      const result = await fetch(
-        config.apiUrl + 'discovery/' + ChainId.getName(chainId),
-      )
-      const data = await result.text()
-      const parsed = DiscoveryApi.parse(JSON.parse(data))
-      setData(parsed)
-    }
-
-    void fetchData()
-    const interval = setInterval(() => {
-      void fetchData()
-    }, 10 * 1000)
-
-    return () => clearInterval(interval)
-  }, [chainId])
+  function setChain(chain: ChainId) {
+    setParamChain(chain)
+    getRequestChainId(chain)
+  }
 
   return (
     <>
       <Navbar />
       <Layout>
         <CurrentNetwork
-          latestBlock={data?.blockNumber}
-          chainId={chainId}
-          setChainId={setChainId}
+          latestBlock={discoveryResponse?.blockNumber}
+          chainId={paramChain ?? ChainId.ETHEREUM}
+          setChainId={setChain}
           availableChains={config.availableChains}
         />
-        <EndpointContract {...data?.contracts.endpoint} />
-        <ULNv2Contract {...data?.contracts.ulnV2} />
-        <LzMultisig {...data?.contracts.lzMultisig} />
+        <EndpointContract {...discoveryResponse?.contracts.endpoint} />
+        <ULNv2Contract {...discoveryResponse?.contracts.ulnV2} />
+        <LzMultisig {...discoveryResponse?.contracts.lzMultisig} />
       </Layout>
     </>
   )
