@@ -11,7 +11,10 @@ import { Navbar } from './view/components/Navbar'
 import { ULNv2Contract } from './view/components/ULNv2Contract'
 
 export function App(): JSX.Element {
-  const [paramChain, setParamChain] = useChainQueryParam(ChainId.ETHEREUM)
+  const [paramChain, setParamChain] = useChainQueryParam({
+    fallback: ChainId.ETHEREUM,
+    paramName: 'chain',
+  })
   const [discoveryResponse, setRequestChainId] = useDiscoveryApi({
     apiUrl: config.apiUrl,
     initialChainId: paramChain,

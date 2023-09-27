@@ -16,6 +16,9 @@ function useQueryParam(paramName: string) {
       searchParams.set(paramName, param)
     }
 
+    // Pretty order
+    searchParams.sort()
+
     window.history.replaceState(
       {},
       '',

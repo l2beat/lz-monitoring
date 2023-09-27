@@ -1,6 +1,6 @@
 import { ChainId, EthereumAddress, RemoteChain } from '@lz/libs'
-import { useState } from 'react'
 
+import { useChainQueryParam } from '../../hooks/useChainQueryParam'
 import { Dropdown, DropdownOption } from './Dropdown'
 
 interface EndpointContractProps {
@@ -48,25 +48,29 @@ interface RemoteChainProps {
 function RemoteChainComponent({
   remoteChains,
 }: RemoteChainProps): JSX.Element | null {
-  const [selectedChain, setSelectedChain] = useState<ChainId | null>(null)
+  const [selectedChain, setSelectedChain] = useChainQueryParam({
+    fallback: ChainId.ETHEREUM,
+    paramName: 'remote-chain',
+  })
 
   function onDropdownSelect(option: DropdownOption): void {
     const chain = remoteChains?.find((chain) => chain.name === option.value)
 
-    if (!chain) return
+    if (!chain) {
+      return
+    }
 
     setSelectedChain(ChainId.fromName(chain.name))
   }
 
-  if (!remoteChains) return null
+  if (!remoteChains) {
+    return null
+  }
 
-  const dropdownOptions = remoteChains.map((chain) => ({
-    label: chain.name,
-    value: chain.name,
-  }))
+  const dropdownOptions = remoteChains.map(toDropdownOption)
 
   const remoteChain = remoteChains.find(
-    (chain) => selectedChain && chain.name === ChainId.getName(selectedChain),
+    (chain) => chain.name === ChainId.getName(selectedChain),
   )
 
   return (
@@ -76,6 +80,7 @@ function RemoteChainComponent({
           Remote chain
         </span>
         <Dropdown
+          defaultValue={toDropdownOption(selectedChain)}
           options={dropdownOptions}
           onChange={onDropdownSelect}
           className="grow self-stretch"
@@ -116,4 +121,20 @@ function RemoteChainComponent({
       </div>
     </div>
   )
+}
+
+function toDropdownOption(chain: RemoteChain | ChainId): DropdownOption {
+  // Arbitrary property to differentiate between RemoteChain and ChainId
+  if (ChainId.isChainId(chain)) {
+    const name = ChainId.getName(chain)
+    return {
+      label: name,
+      value: name,
+    }
+  }
+
+  return {
+    label: chain.name,
+    value: chain.name,
+  }
 }

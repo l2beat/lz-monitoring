@@ -5,7 +5,6 @@ import { useQueryParam } from './useQueryParam'
 
 export { useChainQueryParam }
 
-const paramName = 'chain'
 function serialize(chainId: ChainId): string | null {
   try {
     return ChainId.getName(chainId)
@@ -22,8 +21,23 @@ function deserialize(value: string): ChainId | null {
   }
 }
 
+interface UseChainQueryParamOptions {
+  /**
+   * Chain ID to use if the query param is not set
+   */
+  fallback: ChainId
+
+  /**
+   * Key used to store the query param
+   */
+  paramName: string
+}
+
 // We can do that in the generic way such as `useSerializableQueryParam<T>` but it's not needed for now
-function useChainQueryParam(fallback: ChainId) {
+function useChainQueryParam({
+  fallback,
+  paramName,
+}: UseChainQueryParamOptions) {
   const [currentParam, setCurrentParam] = useQueryParam(paramName)
 
   const [deserializedParam, setDeserializedParam] = useState<ChainId>(
