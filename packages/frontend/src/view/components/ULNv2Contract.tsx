@@ -124,7 +124,6 @@ function RemoteChainComponent({
 }
 
 function toDropdownOption(chain: RemoteChain | ChainId): DropdownOption {
-  // Arbitrary property to differentiate between RemoteChain and ChainId
   if (ChainId.isChainId(chain)) {
     const name = ChainId.getName(chain)
     return {
