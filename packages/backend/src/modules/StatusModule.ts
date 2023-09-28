@@ -19,8 +19,6 @@ export function createStatusModule(
 ): ApplicationModule {
   const chains = Object.keys(config.discovery.modules) as AvailableConfigs[]
 
-  console.dir({ chains })
-
   const blockRepository = new BlockNumberRepository(database, logger)
   const indexerRepository = new IndexerStateRepository(database, logger)
   const discoverRepository = new DiscoveryRepository(database, logger)
