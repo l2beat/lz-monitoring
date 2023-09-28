@@ -12,11 +12,17 @@ import { IndexerStateRepository } from '../peripherals/database/IndexerStateRepo
 import { Database } from '../peripherals/database/shared/Database'
 import { ApplicationModule } from './ApplicationModule'
 
-export function createStatusModule(
-  database: Database,
-  logger: Logger,
-  config: Config,
-): ApplicationModule {
+interface StatusModuleDependencies {
+  database: Database
+  logger: Logger
+  config: Config
+}
+
+export function createStatusModule({
+  database,
+  logger,
+  config,
+}: StatusModuleDependencies): ApplicationModule {
   const chains = Object.keys(config.discovery.modules) as AvailableConfigs[]
 
   const blockRepository = new BlockNumberRepository(database, logger)
@@ -47,7 +53,9 @@ export function createStatusModule(
     discoverRepository,
     indexerRepository,
   )
+
   const statusRouter = createStatusRouter(statusController)
+
   return {
     routers: [statusRouter],
   }

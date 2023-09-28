@@ -22,7 +22,7 @@ export class Application {
     const modules: (ApplicationModule | undefined)[] = [
       createHealthModule(config),
       createDiscoveryModule({ database, logger, config }),
-      createStatusModule(database, logger, config),
+      createStatusModule({ database, logger, config }),
     ]
 
     const apiServer = new ApiServer(
