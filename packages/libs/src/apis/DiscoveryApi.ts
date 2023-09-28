@@ -1,8 +1,8 @@
 import { z } from 'zod'
 
-import { branded } from './branded'
-import { ChainId } from './chainId/ChainId'
-import { EthereumAddress } from './EthereumAddress'
+import { ChainId } from '../chainId/ChainId'
+import { branded } from '../utils/branded'
+import { EthereumAddress } from '../utils/EthereumAddress'
 
 const DefaultAdapterParams = z.object({
   proofType: z.number(),

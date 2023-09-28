@@ -16,7 +16,7 @@ import { providers } from 'ethers'
 import { DiscoveryController } from '../api/controllers/discovery/DiscoveryController'
 import { createDiscoveryRouter } from '../api/routes/discovery'
 import { Config } from '../config'
-import { EthereumLikeDiscoveryConfig } from '../config/Config'
+import { AvailableConfigs, EthereumLikeDiscoveryConfig } from '../config/Config'
 import { BlockNumberIndexer } from '../indexers/BlockNumberIndexer'
 import { ClockIndexer } from '../indexers/ClockIndexer'
 import { DiscoveryIndexer } from '../indexers/DiscoveryIndexer'
@@ -26,8 +26,6 @@ import { DiscoveryRepository } from '../peripherals/database/DiscoveryRepository
 import { IndexerStateRepository } from '../peripherals/database/IndexerStateRepository'
 import { Database } from '../peripherals/database/shared/Database'
 import { ApplicationModule } from './ApplicationModule'
-
-type AvailableConfigs = keyof Config['discovery']['modules']
 
 interface DiscoverySubmoduleDependencies {
   logger: Logger

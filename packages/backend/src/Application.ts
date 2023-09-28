@@ -5,6 +5,7 @@ import { Config } from './config'
 import { ApplicationModule } from './modules/ApplicationModule'
 import { createDiscoveryModule } from './modules/DiscoveryModule'
 import { createHealthModule } from './modules/HealthModule'
+import { createStatusModule } from './modules/StatusModule'
 import { Database } from './peripherals/database/shared/Database'
 
 // TODO: Error reporting
@@ -21,6 +22,7 @@ export class Application {
     const modules: (ApplicationModule | undefined)[] = [
       createHealthModule(config),
       createDiscoveryModule({ database, logger, config }),
+      createStatusModule(database, logger, config),
     ]
 
     const apiServer = new ApiServer(
