@@ -4,15 +4,19 @@ import { ChainId } from '../chainId/ChainId'
 import { Hash256, UnixTime } from '../utils'
 import { branded } from '../utils/branded'
 
-export type { DiscoveryStatus }
+export {
+  CommonDiscoveryStatus,
+  DiscoveryDisabledStatus,
+  DiscoveryEnabledStatus,
+  DiscoveryStatus,
+  DiscoveryStatusResponse,
+}
 
-const DiscoveryStatus = z.object({
+type CommonDiscoveryStatus = z.infer<typeof CommonDiscoveryStatus>
+
+const CommonDiscoveryStatus = z.object({
   chainName: z.string(),
   chainId: branded(z.number(), ChainId),
-  node: z.object({
-    blockNumber: z.number(),
-    blockTimestamp: z.number(),
-  }),
   lastIndexedBlock: z
     .object({
       timestamp: branded(z.number(), (t) => new UnixTime(t)),
@@ -29,11 +33,40 @@ const DiscoveryStatus = z.object({
       chainId: branded(z.number(), ChainId),
     }),
   ),
-  delay: z.object({
-    discovery: z.number().nullable(),
-    blocks: z.number().nullable(),
-    offset: z.number().nullable(),
-  }),
 })
 
+type DiscoveryEnabledStatus = z.infer<typeof DiscoveryEnabledStatus>
+
+const DiscoveryEnabledStatus = z
+  .object({
+    state: z.literal('enabled'),
+    node: z.object({
+      blockNumber: z.number(),
+      blockTimestamp: z.number(),
+    }),
+    delays: z.object({
+      discovery: z.number(),
+      blocks: z.number(),
+      offset: z.number(),
+    }),
+  })
+  .merge(CommonDiscoveryStatus)
+
+type DiscoveryDisabledStatus = z.infer<typeof DiscoveryDisabledStatus>
+
+const DiscoveryDisabledStatus = z
+  .object({
+    state: z.literal('disabled'),
+  })
+  .merge(CommonDiscoveryStatus)
+
+const DiscoveryStatus = z.discriminatedUnion('state', [
+  DiscoveryEnabledStatus,
+  DiscoveryDisabledStatus,
+])
+
 type DiscoveryStatus = z.infer<typeof DiscoveryStatus>
+
+const DiscoveryStatusResponse = z.array(DiscoveryStatus)
+
+type DiscoveryStatusResponse = z.infer<typeof DiscoveryStatusResponse>
