@@ -205,7 +205,7 @@ function getRemoteChains(ulnV2: ContractParameters): RemoteChain[] {
 
 function getLzMultisig(
   discoveryOutput: DiscoveryOutput,
-): DiscoveryApi['contracts']['lzMultisig'] | undefined {
+): DiscoveryApi['contracts']['lzMultisig'] | null {
   try {
     const lzMultisig = getContractByName('LayerZero Multisig', discoveryOutput)
 
@@ -223,6 +223,6 @@ function getLzMultisig(
       threshold: getContractValue(lzMultisig, 'getThreshold'),
     }
   } catch (e) {
-    return
+    return null
   }
 }

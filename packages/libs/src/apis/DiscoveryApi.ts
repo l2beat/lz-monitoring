@@ -53,14 +53,14 @@ export const DiscoveryApi = z.object({
       layerZeroToken: branded(z.string(), EthereumAddress),
       remoteChains: z.array(RemoteChain),
     }),
-    lzMultisig: z.optional(
-      z.object({
+    lzMultisig: z
+      .object({
         name: z.literal('LayerZero Multisig'),
         address: branded(z.string(), EthereumAddress),
         owners: z.array(branded(z.string(), EthereumAddress)),
         threshold: z.number(),
-      }),
-    ),
+      })
+      .nullable(),
   }),
 })
 export type DiscoveryApi = z.infer<typeof DiscoveryApi>
