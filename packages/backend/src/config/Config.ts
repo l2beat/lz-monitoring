@@ -4,6 +4,8 @@ import { DiscoveryConfig } from '@l2beat/discovery'
 import { UnixTime } from '@l2beat/discovery/dist/utils/UnixTime'
 import { Knex } from 'knex'
 
+export type AvailableConfigs = keyof Config['discovery']['modules']
+
 export interface Config {
   readonly name: string
   readonly api: ApiConfig
