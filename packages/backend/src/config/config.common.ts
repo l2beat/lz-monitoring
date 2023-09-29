@@ -6,7 +6,6 @@ import { UnixTime } from '@l2beat/discovery/dist/utils/UnixTime'
 import { Config, EthereumLikeDiscoveryConfig } from './Config'
 import { arbitrumDiscoveryConfig } from './discovery/arbitrum'
 import { baseDiscoveryConfig } from './discovery/base'
-import { bscDiscoveryConfig } from './discovery/bsc'
 import { ethereumDiscoveryConfig } from './discovery/ethereum'
 import { optimismDiscoveryConfig } from './discovery/optimism'
 import { polygonPosDiscoveryConfig } from './discovery/polygon-pos'
@@ -67,15 +66,6 @@ export function getCommonDiscoveryConfig(env: Env): Config['discovery'] {
         blockExplorerApiUrl: 'https://api.basescan.org/api',
         blockExplorerMinTimestamp: new Date('2023-06-15T12:36:00Z'),
         discoveryConfig: baseDiscoveryConfig,
-      }),
-
-      bsc: createConfig({
-        chainNamePrefix: 'BSC',
-        startBlock: 20783073,
-        blockExplorerPrefix: 'BSCSCAN',
-        blockExplorerApiUrl: 'https://api.bscscan.com/api',
-        blockExplorerMinTimestamp: new Date('2021-09-01T00:00:00Z'),
-        discoveryConfig: bscDiscoveryConfig,
       }),
     },
   }
