@@ -17,7 +17,7 @@ export function StatusSection(props: Props) {
 
   return (
     <section className={cx('mb-12 border-t bg-gray-900 p-6', borderColor)}>
-      {typeof moduleHealth !== 'string' && (
+      {moduleHealth.health === 'unhealthy' && (
         <div className="pb-5">
           {moduleHealth.warnings.map((warning) => (
             <div className="text-[#F5C842]">⚠️ {warning}</div>

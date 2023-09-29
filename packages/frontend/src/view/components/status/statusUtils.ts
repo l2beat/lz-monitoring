@@ -1,6 +1,6 @@
 import { DiscoveryStatus } from '@lz/libs'
 
-export type { Health, HealthWithWarnings }
+export type { Health, ModuleHealthStatus }
 export { capitalizeFirstLetter, getOverallHealth, healthToBorder }
 
 function capitalizeFirstLetter(str: string): string {
@@ -8,14 +8,17 @@ function capitalizeFirstLetter(str: string): string {
 }
 
 type Health = 'healthy' | 'unhealthy'
-interface HealthWithWarnings {
-  health: 'unhealthy'
-  warnings: string[]
-}
 
-type HealthStatus = 'healthy' | HealthWithWarnings
+type ModuleHealthStatus =
+  | {
+      health: 'unhealthy'
+      warnings: string[]
+    }
+  | {
+      health: 'healthy'
+    }
 
-function getOverallHealth(status: DiscoveryStatus): HealthStatus {
+function getOverallHealth(status: DiscoveryStatus): ModuleHealthStatus {
   const warnings: string[] = []
 
   if (status.state === 'disabled') {
@@ -30,9 +33,11 @@ function getOverallHealth(status: DiscoveryStatus): HealthStatus {
     return { health: 'unhealthy', warnings }
   }
 
-  return 'healthy'
+  return {
+    health: 'healthy',
+  }
 }
 
-function healthToBorder(health: HealthStatus) {
-  return health === 'healthy' ? 'border-[#A3C65B]' : 'border-[#F5C842]'
+function healthToBorder(health: ModuleHealthStatus) {
+  return health.health === 'healthy' ? 'border-[#A3C65B]' : 'border-[#F5C842]'
 }

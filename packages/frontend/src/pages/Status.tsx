@@ -57,8 +57,7 @@ export function Status(): JSX.Element {
 
 function getMinimalHealth(systemState: DiscoveryStatus[]): Health {
   const anyUnhealthy = systemState.some(
-    // Fix this ugh
-    (chainStatus) => typeof getOverallHealth(chainStatus) === 'string',
+    (chainStatus) => getOverallHealth(chainStatus).health === 'unhealthy',
   )
 
   return anyUnhealthy ? 'unhealthy' : 'healthy'
