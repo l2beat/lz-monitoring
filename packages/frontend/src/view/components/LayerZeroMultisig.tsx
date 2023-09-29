@@ -11,6 +11,7 @@ export function LzMultisig({
   address,
   threshold,
 }: LzMultisigProps): JSX.Element {
+  // Currently lack of multisig data is dictated either lack of support for multisig for given chain or we lack some data (this must be addressed in the future)
   const hasData = address && threshold && owners
 
   return (
@@ -19,9 +20,13 @@ export function LzMultisig({
         <h2 className="text-2xl text-lg font-medium text-blue">
           LayerZero Multisig
         </h2>
-        <span className="font-mono text-gray-600">
-          {address ?? 'Chain does not support multisig wallet'}
-        </span>
+        {address ? (
+          <span className="font-mono text-gray-600">{address}</span>
+        ) : (
+          <span className="font-mono text-gray-600">
+            This chain does not support LayerZero Multisig
+          </span>
+        )}
       </div>
 
       {hasData && (
