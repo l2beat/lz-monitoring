@@ -8,12 +8,6 @@ export function Delays({
 }: {
   delays: DiscoveryEnabledStatus['delays']
 }) {
-  const hasData = blocks && offset && discovery
-
-  if (!hasData) {
-    return <SubsectionHeader title="Delays" subtitle="Data is missing" />
-  }
-
   return (
     <div>
       <SubsectionHeader title="Delays" />
