@@ -13,7 +13,7 @@ const avalancheRawConfig = createConfigFromTemplate({
   addresses: {
     ultraLightNodeV2: '0x4D73AdB72bC3DD368966edD0f0b2148401A178E2',
     endpoint: '0x3c2269811836af69497E5F486A85D7316753cf62',
-    layerZeroMultisig: '0xcE958C3Fb6fbeCAA5eef1E4dAbD13418bc1ba483', // FIXME: Not sure
+    layerZeroMultisig: '0xcE958C3Fb6fbeCAA5eef1E4dAbD13418bc1ba483',
   },
 })
 
