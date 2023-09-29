@@ -31,7 +31,7 @@ export function Status(): JSX.Element {
   const systemIcon = systemHealth === 'healthy' ? '🟢' : '⚠️'
 
   const systemHealthColor =
-    systemHealth === 'healthy' ? 'ext-[#63f542]' : 'text-[#f5c842]'
+    systemHealth === 'healthy' ? 'text-[#63f542]' : 'text-[#f5c842]'
 
   return (
     <>
