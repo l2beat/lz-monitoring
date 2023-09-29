@@ -94,7 +94,7 @@ export class BlockNumberIndexer extends ChildIndexer {
       return toTimestamp
     }
 
-    return this.advanceChain(tip)
+    return this.advanceChain(this.lastKnownNumber + 1)
   }
 
   async invalidate(to: number): Promise<number> {
