@@ -5,7 +5,8 @@ import { config } from '../config'
 import { useStatusApi } from '../hooks/useStatusApi'
 import { Layout } from '../view/components/Layout'
 import { Navbar } from '../view/components/Navbar'
-import { Health, StatusSection } from '../view/components/StatusSection'
+import { StatusSection } from '../view/components/status/StatusSection'
+import { getOverallHealth, Health } from '../view/components/status/statusUtils'
 
 export function Status(): JSX.Element {
   const [status] = useStatusApi({ apiUrl: config.apiUrl })
@@ -56,7 +57,8 @@ export function Status(): JSX.Element {
 
 function getMinimalHealth(systemState: DiscoveryStatus[]): Health {
   const anyUnhealthy = systemState.some(
-    (chainStatus) => chainStatus.state === 'disabled',
+    // Fix this ugh
+    (chainStatus) => typeof getOverallHealth(chainStatus) === 'string',
   )
 
   return anyUnhealthy ? 'unhealthy' : 'healthy'
