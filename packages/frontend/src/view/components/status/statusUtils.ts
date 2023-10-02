@@ -26,7 +26,9 @@ function getOverallHealth(status: DiscoveryStatus): ModuleHealthStatus {
   }
 
   if (status.state === 'enabled' && status.delays.discovery > 50) {
-    warnings.push('Discovery is lagging behind the tip for more than 50 blocks')
+    warnings.push(
+      `Discovery is lagging behind the tip for more than 50 blocks (${status.delays.discovery} blocks)`,
+    )
   }
 
   if (warnings.length > 0) {
