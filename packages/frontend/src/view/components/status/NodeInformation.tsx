@@ -1,28 +1,33 @@
-import { DiscoveryEnabledStatus } from '@lz/libs'
+import { DiscoveryStatus } from '@lz/libs'
 
 import { Row } from './Row'
 import { SubsectionHeader } from './SubsectionHeader'
 
-export function NodeInformation({
-  nodeInfo,
-}: {
-  nodeInfo: DiscoveryEnabledStatus['node'] | null
-}) {
-  if (!nodeInfo) {
+export function NodeInformation({ status }: { status: DiscoveryStatus }) {
+  if (status.state === 'disabled') {
     return (
-      <SubsectionHeader title="Node information" subtitle="Data is missing" />
+      <SubsectionHeader title="Node information" subtitle="Module is offline" />
     )
   }
 
-  const prettyTimestamp = `${nodeInfo.blockTimestamp} / ${new Date(
-    nodeInfo.blockTimestamp * 1000,
+  if (!status.node) {
+    return (
+      <SubsectionHeader
+        title="Node information"
+        subtitle="Node did not respond"
+      />
+    )
+  }
+
+  const prettyTimestamp = `${status.node.blockTimestamp} / ${new Date(
+    status.node.blockTimestamp * 1000,
   ).toUTCString()}`
 
   return (
-    <div>
+    <>
       <SubsectionHeader title="Node information" />
-      <Row label="Node latest block" value={nodeInfo.blockNumber} />
+      <Row label="Node latest block" value={status.node.blockNumber} />
       <Row label="Node latest timestamp" value={prettyTimestamp} />
-    </div>
+    </>
   )
 }

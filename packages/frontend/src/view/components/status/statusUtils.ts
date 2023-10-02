@@ -25,10 +25,22 @@ function getOverallHealth(status: DiscoveryStatus): ModuleHealthStatus {
     warnings.push('Discovery is disabled')
   }
 
-  if (status.state === 'enabled' && status.delays.discovery > 50) {
+  if (
+    status.state === 'enabled' &&
+    status.delays &&
+    status.delays.discovery > 50
+  ) {
     warnings.push(
       `Discovery is lagging behind the tip for more than 50 blocks (${status.delays.discovery} blocks)`,
     )
+  }
+
+  if (status.state === 'enabled' && !status.node) {
+    warnings.push('Node is not responding')
+  }
+
+  if (status.state === 'enabled' && status.indexerStates.length === 0) {
+    warnings.push('No indexer reported its status yet')
   }
 
   if (warnings.length > 0) {

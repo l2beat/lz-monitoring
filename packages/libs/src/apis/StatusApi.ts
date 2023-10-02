@@ -17,14 +17,14 @@ type CommonDiscoveryStatus = z.infer<typeof CommonDiscoveryStatus>
 const CommonDiscoveryStatus = z.object({
   chainName: z.string(),
   chainId: branded(z.number(), ChainId),
-  lastIndexedBlock: z
-    .object({
+  lastIndexedBlock: z.nullable(
+    z.object({
       timestamp: branded(z.number(), (t) => new UnixTime(t)),
       blockNumber: z.number(),
       blockHash: branded(z.string(), Hash256),
       chainId: branded(z.number(), ChainId),
-    })
-    .nullable(),
+    }),
+  ),
   lastDiscoveredBlock: z.number().nullable(),
   indexerStates: z.array(
     z.object({
@@ -40,15 +40,19 @@ type DiscoveryEnabledStatus = z.infer<typeof DiscoveryEnabledStatus>
 const DiscoveryEnabledStatus = z
   .object({
     state: z.literal('enabled'),
-    node: z.object({
-      blockNumber: z.number(),
-      blockTimestamp: z.number(),
-    }),
-    delays: z.object({
-      discovery: z.number(),
-      blocks: z.number(),
-      offset: z.number(),
-    }),
+    node: z.nullable(
+      z.object({
+        blockNumber: z.number(),
+        blockTimestamp: z.number(),
+      }),
+    ),
+    delays: z.nullable(
+      z.object({
+        discovery: z.number(),
+        blocks: z.number(),
+        offset: z.number(),
+      }),
+    ),
   })
   .merge(CommonDiscoveryStatus)
 

@@ -3,16 +3,12 @@ import { DiscoveryStatus } from '@lz/libs'
 import { Row } from './Row'
 import { SubsectionHeader } from './SubsectionHeader'
 
-export function LatestIndexerStates({
-  indexerStates,
-}: {
-  indexerStates: DiscoveryStatus['indexerStates']
-}) {
-  if (indexerStates.length === 0) {
+export function LatestIndexerStates({ status }: { status: DiscoveryStatus }) {
+  if (status.indexerStates.length === 0) {
     return (
       <SubsectionHeader
         title="Latest indexer states"
-        subtitle="Data is missing"
+        subtitle="No indexer reported its state"
       />
     )
   }
@@ -20,7 +16,7 @@ export function LatestIndexerStates({
   return (
     <>
       <SubsectionHeader title="Latest indexer states" />
-      {indexerStates.map((state) => {
+      {status.indexerStates.map((state) => {
         const prettyTimestamp = `${state.height} / ${new Date(
           state.height * 1000,
         ).toUTCString()}`

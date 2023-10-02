@@ -1,4 +1,10 @@
-import { ChainId, CommonDiscoveryStatus, DiscoveryStatus } from '@lz/libs'
+import {
+  ChainId,
+  CommonDiscoveryStatus,
+  DiscoveryDisabledStatus,
+  DiscoveryEnabledStatus,
+  DiscoveryStatus,
+} from '@lz/libs'
 import { providers } from 'ethers'
 
 import { BlockNumberRepository } from '../../peripherals/database/BlockNumberRepository'
@@ -32,21 +38,65 @@ export class StatusController {
         const commonChainData = await this.getCommonStatus(chainId)
 
         // If enabled, get metrics against the node
-        const onChainData =
-          chainModuleStatus.state === 'enabled'
-            ? await getOnChainMetrics(
-                chainModuleStatus.provider,
-                commonChainData.lastDiscoveredBlock ?? undefined,
-                commonChainData.lastIndexedBlock?.blockNumber,
-              )
-            : {}
+        if (chainModuleStatus.state === 'disabled') {
+          const disabledStatus: DiscoveryDisabledStatus = {
+            state: chainModuleStatus.state,
+            ...commonChainData,
+          }
 
-        return {
+          return disabledStatus
+        }
+
+        const latestNodeBlock = await this.getLatestNodeBlock(
+          chainModuleStatus.provider,
+        )
+
+        // Discovery enabled but node did not respond
+        if (!latestNodeBlock) {
+          const disabledStatus: DiscoveryEnabledStatus = {
+            state: chainModuleStatus.state,
+            ...commonChainData,
+            delays: null,
+            node: null,
+          }
+
+          return disabledStatus
+        }
+
+        const { lastDiscoveredBlock, lastIndexedBlock } = commonChainData
+
+        // Node's fine but haven't discovered any blocks yet
+        if (!lastDiscoveredBlock || !lastIndexedBlock) {
+          const disabledStatus: DiscoveryEnabledStatus = {
+            state: chainModuleStatus.state,
+            ...commonChainData,
+            delays: null,
+            node: {
+              blockNumber: latestNodeBlock.number,
+              blockTimestamp: latestNodeBlock.timestamp,
+            },
+          }
+
+          return disabledStatus
+        }
+
+        const delaysAgainstNode = this.getDelays(
+          latestNodeBlock.number,
+          lastDiscoveredBlock,
+          lastIndexedBlock.blockNumber,
+        )
+
+        const enabledStatus: DiscoveryEnabledStatus = {
           state: chainModuleStatus.state,
           ...commonChainData,
-          ...onChainData,
-          // 'state' discriminator is type-naughty
-        } as DiscoveryStatus
+          delays: delaysAgainstNode,
+          node: {
+            blockNumber: latestNodeBlock.number,
+            blockTimestamp: latestNodeBlock.timestamp,
+          },
+        }
+
+        return enabledStatus
       }),
     )
 
@@ -74,42 +124,26 @@ export class StatusController {
       indexerStates,
     }
   }
-}
 
-// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-async function getOnChainMetrics(
-  provider: providers.Provider,
-  lastDiscoveredBlock?: number,
-  lastIndexedBlock?: number,
-) {
-  try {
-    const latestNodeBlock = await provider.getBlock('latest')
-    const latestNodeBlockNumber = latestNodeBlock.number
-    const latestNodeBlockTimestamp = latestNodeBlock.timestamp
-
-    const discoveryDelay = lastDiscoveredBlock
-      ? latestNodeBlock.number - lastDiscoveredBlock
-      : null
-
-    const blockDelay = lastIndexedBlock
-      ? latestNodeBlock.number - lastIndexedBlock
-      : null
-
-    const indexingOffset =
-      discoveryDelay && blockDelay ? discoveryDelay - blockDelay : null
-
-    return {
-      node: {
-        blockNumber: latestNodeBlockNumber,
-        blockTimestamp: latestNodeBlockTimestamp,
-      },
-      delays: {
-        discovery: discoveryDelay,
-        blocks: blockDelay,
-        offset: indexingOffset,
-      },
+  private async getLatestNodeBlock(
+    provider: providers.Provider,
+  ): Promise<providers.Block | null> {
+    try {
+      return await provider.getBlock('latest')
+    } catch {
+      return null
     }
-  } catch (e) {
-    return null
+  }
+
+  private getDelays(
+    lastNodeBlock: number,
+    lastDiscoveredBlock: number,
+    lastIndexedBlock: number,
+  ): NonNullable<DiscoveryEnabledStatus['delays']> {
+    return {
+      discovery: lastNodeBlock - lastDiscoveredBlock,
+      blocks: lastNodeBlock - lastIndexedBlock,
+      offset: lastIndexedBlock - lastDiscoveredBlock,
+    }
   }
 }
