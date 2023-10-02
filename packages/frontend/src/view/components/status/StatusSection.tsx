@@ -26,8 +26,10 @@ export function StatusSection(props: Props) {
     <section className={cx('mb-12 border-t bg-gray-900 p-6', borderColor)}>
       {moduleHealth.health === 'unhealthy' && (
         <div className="mb-8">
-          {moduleHealth.warnings.map((warning) => (
-            <div className="my-1 text-[#F5C842]">⚠️ {warning}</div>
+          {moduleHealth.warnings.map((warning, i) => (
+            <div key={i} className="my-1 text-[#F5C842]">
+              ⚠️ {warning}
+            </div>
           ))}
         </div>
       )}

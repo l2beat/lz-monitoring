@@ -20,7 +20,7 @@ export function LatestIndexerStates({ status }: { status: DiscoveryStatus }) {
         const prettyTimestamp = `${state.height} / ${new Date(
           state.height * 1000,
         ).toUTCString()}`
-        return <Row label={state.id} value={prettyTimestamp} />
+        return <Row label={state.id} key={state.id} value={prettyTimestamp} />
       })}
     </>
   )

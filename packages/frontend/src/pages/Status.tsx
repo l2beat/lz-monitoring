@@ -47,8 +47,8 @@ export function Status(): JSX.Element {
             </span>
           </div>
         </div>
-        {status.map((chainStatus) => (
-          <StatusSection status={chainStatus} />
+        {status.map((chainStatus, i) => (
+          <StatusSection key={i} status={chainStatus} />
         ))}
       </Layout>
     </>
