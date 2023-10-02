@@ -37,7 +37,6 @@ export class StatusController {
 
         const commonChainData = await this.getCommonStatus(chainId)
 
-        // If enabled, get metrics against the node
         if (chainModuleStatus.state === 'disabled') {
           const disabledStatus: DiscoveryDisabledStatus = {
             state: chainModuleStatus.state,
