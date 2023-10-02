@@ -219,6 +219,7 @@ describe(StatusController.name, () => {
           })
         })
       })
+
       describe('node unhealthy at query time', () => {
         it('returns status excluding delays and node information', async () => {
           const deps = mockDeps()
