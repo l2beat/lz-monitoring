@@ -20,7 +20,7 @@ import { ChainModuleStatus, StatusController } from './StatusController'
 
 describe(StatusController.name, () => {
   describe('module disabled', () => {
-    describe('indexers have not ran yet', () => {
+    describe('indexers have not run yet', () => {
       it('returns only basic information about the module', async () => {
         const chainModuleStatuses: ChainModuleStatus[] = [
           {
@@ -99,7 +99,7 @@ describe(StatusController.name, () => {
   })
 
   describe('module enabled', () => {
-    describe('indexers have not ran yet', () => {
+    describe('indexers have not run yet', () => {
       describe('node healthy at query time', () => {
         it('returns basic information and node-related data excluding latest block-related data', async () => {
           const deps = mockDeps()
