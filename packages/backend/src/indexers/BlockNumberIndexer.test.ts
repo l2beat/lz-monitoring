@@ -19,7 +19,159 @@ import { ClockIndexer } from './ClockIndexer'
 
 describe(BlockNumberIndexer.name, () => {
   describe(BlockNumberIndexer.prototype.update.name, () => {
-    it('downloads a new block and returns its timestamp without reorg', async () => {
+    describe('when skipReorgs is false', () => {
+      it('downloads a new block and returns its timestamp without reorg', async () => {
+        const chainId = ChainId.ETHEREUM
+        const [genesisBlock] = BLOCKS
+        const fakeBlockchainClient = mockBlockchainClient(BLOCKS)
+        const fakeBlockNumberRepository = mockBlockNumberRepository([
+          blockToRecord(genesisBlock!),
+        ])
+        const fakeIndexerStateRepository = mockIndexerStateRepository()
+
+        const blockNumberIndexer = new BlockNumberIndexer(
+          fakeBlockchainClient,
+          fakeBlockNumberRepository,
+          fakeIndexerStateRepository,
+          0,
+          chainId,
+          mockObject<ClockIndexer>({
+            subscribe: () => {},
+          }),
+          Logger.SILENT,
+          false,
+        )
+
+        /**
+         * First run with genesis block already in the database
+         * won't fetch a new block
+         */
+        expect(await blockNumberIndexer.update(0, 1)).toEqual(1)
+        expect(
+          fakeBlockchainClient.getBlockNumberAtOrBefore,
+        ).toHaveBeenCalledWith(new UnixTime(1))
+        expect(fakeBlockchainClient.getBlock).not.toHaveBeenCalled()
+
+        /**
+         * Second run with missing blocks in the database
+         * will attempt to fetch next single block from BLOCKS - no. 1, timestamp: 1000
+         * @see BLOCKS
+         */
+        expect(await blockNumberIndexer.update(0, 2000)).toEqual(1000)
+        expect(
+          fakeBlockchainClient.getBlockNumberAtOrBefore,
+        ).toHaveBeenCalledWith(new UnixTime(2000))
+        expect(fakeBlockchainClient.getBlock).toHaveBeenCalledWith(1)
+        expect(fakeBlockNumberRepository.findByNumber).toHaveBeenCalledWith(
+          0,
+          chainId,
+        )
+
+        /**
+         * Third run with missing blocks in the database
+         * will attempt to fetch next single block from BLOCKS - no. 2, timestamp: 2000
+         * @see BLOCKS
+         */
+        expect(await blockNumberIndexer.update(1000, 2000)).toEqual(2000)
+        expect(
+          fakeBlockchainClient.getBlockNumberAtOrBefore,
+        ).toHaveBeenCalledWith(new UnixTime(2000))
+        expect(fakeBlockchainClient.getBlock).toHaveBeenCalledWith(2)
+        expect(fakeBlockNumberRepository.findByNumber).toHaveBeenCalledWith(
+          1,
+          chainId,
+        )
+      })
+
+      it('downloads a new block and returns its timestamp with reorg', async () => {
+        const chainId = ChainId.ETHEREUM
+        const [genesisBlock, firstBlock, secondBlock, thirdBlock] = BLOCKS
+
+        const fakeBlockNumberRepository = mockBlockNumberRepository([
+          blockToRecord(genesisBlock!),
+          blockToRecord(firstBlock!),
+        ])
+
+        const fakeIndexerStateRepository = mockIndexerStateRepository()
+
+        const fakeBlockchainClient = mockBlockchainClient(BLOCKS)
+
+        const reorgedBlock = {
+          number: 2,
+          hash: Hash256.random(),
+          parentHash: HASH1,
+          timestamp: 1500,
+        }
+        const reorgedBlockRecord: BlockNumberRecord = {
+          blockNumber: reorgedBlock.number,
+          blockHash: reorgedBlock.hash,
+          timestamp: new UnixTime(reorgedBlock.timestamp),
+          chainId,
+        }
+
+        // Simulate reorg
+        fakeBlockchainClient.getBlock.resolvesToOnce(reorgedBlock)
+
+        const blockNumberIndexer = new BlockNumberIndexer(
+          fakeBlockchainClient,
+          fakeBlockNumberRepository,
+          fakeIndexerStateRepository,
+          1,
+          chainId,
+          mockObject<ClockIndexer>({
+            subscribe: () => {},
+          }),
+          Logger.DEBUG,
+          false,
+        )
+
+        await blockNumberIndexer.start()
+
+        // Saves blocks to database + diff process
+        expect(await blockNumberIndexer.update(0, 2000)).toEqual(1500)
+
+        expect(fakeBlockNumberRepository.findLast).toHaveBeenCalledTimes(1)
+        expect(
+          fakeBlockchainClient.getBlockNumberAtOrBefore,
+        ).toHaveBeenCalledWith(new UnixTime(2000))
+        expect(fakeBlockNumberRepository.findByNumber).toHaveBeenCalledWith(
+          1,
+          chainId,
+        )
+        expect(fakeBlockNumberRepository.add).toHaveBeenCalledWith(
+          reorgedBlockRecord,
+        )
+
+        expect(await blockNumberIndexer.update(0, 3000)).toEqual(1000)
+
+        expect(
+          fakeBlockchainClient.getBlockNumberAtOrBefore,
+        ).toHaveBeenCalledWith(new UnixTime(3000))
+        expect(fakeBlockchainClient.getBlock).toHaveBeenCalledWith(
+          thirdBlock!.number,
+        )
+        expect(fakeBlockNumberRepository.findByNumber).toHaveBeenCalledWith(
+          secondBlock!.number,
+          chainId,
+        )
+        expect(fakeBlockchainClient.getBlock).toHaveBeenCalledWith(
+          blockToRecord(secondBlock!).blockHash,
+        )
+        expect(fakeBlockNumberRepository.findByNumber).toHaveBeenCalledWith(
+          firstBlock!.number,
+          chainId,
+        )
+
+        expect(await blockNumberIndexer.update(1000, 3000)).toEqual(3000)
+        expect(fakeBlockNumberRepository.addMany).toHaveBeenCalledTimes(1)
+
+        expect(fakeBlockNumberRepository.addMany).toHaveBeenNthCalledWith(
+          1,
+          [secondBlock!, thirdBlock!].map(blockToRecord),
+        )
+      })
+    })
+    it('when skipReorgs is true just downloads the block at or before', async () => {
       const chainId = ChainId.ETHEREUM
       const [genesisBlock] = BLOCKS
       const fakeBlockchainClient = mockBlockchainClient(BLOCKS)
@@ -38,134 +190,10 @@ describe(BlockNumberIndexer.name, () => {
           subscribe: () => {},
         }),
         Logger.SILENT,
+        false,
       )
 
-      /**
-       * First run with genesis block already in the database
-       * won't fetch a new block
-       */
-      expect(await blockNumberIndexer.update(0, 1)).toEqual(1)
-      expect(
-        fakeBlockchainClient.getBlockNumberAtOrBefore,
-      ).toHaveBeenCalledWith(new UnixTime(1))
-      expect(fakeBlockchainClient.getBlock).not.toHaveBeenCalled()
-
-      /**
-       * Second run with missing blocks in the database
-       * will attempt to fetch next single block from BLOCKS - no. 1, timestamp: 1000
-       * @see BLOCKS
-       */
-      expect(await blockNumberIndexer.update(0, 2000)).toEqual(1000)
-      expect(
-        fakeBlockchainClient.getBlockNumberAtOrBefore,
-      ).toHaveBeenCalledWith(new UnixTime(2000))
-      expect(fakeBlockchainClient.getBlock).toHaveBeenCalledWith(1)
-      expect(fakeBlockNumberRepository.findByNumber).toHaveBeenCalledWith(
-        0,
-        chainId,
-      )
-
-      /**
-       * Third run with missing blocks in the database
-       * will attempt to fetch next single block from BLOCKS - no. 2, timestamp: 2000
-       * @see BLOCKS
-       */
-      expect(await blockNumberIndexer.update(1000, 2000)).toEqual(2000)
-      expect(
-        fakeBlockchainClient.getBlockNumberAtOrBefore,
-      ).toHaveBeenCalledWith(new UnixTime(2000))
-      expect(fakeBlockchainClient.getBlock).toHaveBeenCalledWith(2)
-      expect(fakeBlockNumberRepository.findByNumber).toHaveBeenCalledWith(
-        1,
-        chainId,
-      )
-    })
-
-    it('downloads a new block and returns its timestamp with reorg', async () => {
-      const chainId = ChainId.ETHEREUM
-      const [genesisBlock, firstBlock, secondBlock, thirdBlock] = BLOCKS
-
-      const fakeBlockNumberRepository = mockBlockNumberRepository([
-        blockToRecord(genesisBlock!),
-        blockToRecord(firstBlock!),
-      ])
-
-      const fakeIndexerStateRepository = mockIndexerStateRepository()
-
-      const fakeBlockchainClient = mockBlockchainClient(BLOCKS)
-
-      const reorgedBlock = {
-        number: 2,
-        hash: Hash256.random(),
-        parentHash: HASH1,
-        timestamp: 1500,
-      }
-      const reorgedBlockRecord: BlockNumberRecord = {
-        blockNumber: reorgedBlock.number,
-        blockHash: reorgedBlock.hash,
-        timestamp: new UnixTime(reorgedBlock.timestamp),
-        chainId,
-      }
-
-      // Simulate reorg
-      fakeBlockchainClient.getBlock.resolvesToOnce(reorgedBlock)
-
-      const blockNumberIndexer = new BlockNumberIndexer(
-        fakeBlockchainClient,
-        fakeBlockNumberRepository,
-        fakeIndexerStateRepository,
-        1,
-        chainId,
-        mockObject<ClockIndexer>({
-          subscribe: () => {},
-        }),
-        Logger.DEBUG,
-      )
-
-      await blockNumberIndexer.start()
-
-      // Saves blocks to database + diff process
-      expect(await blockNumberIndexer.update(0, 2000)).toEqual(1500)
-
-      expect(fakeBlockNumberRepository.findLast).toHaveBeenCalledTimes(1)
-      expect(
-        fakeBlockchainClient.getBlockNumberAtOrBefore,
-      ).toHaveBeenCalledWith(new UnixTime(2000))
-      expect(fakeBlockNumberRepository.findByNumber).toHaveBeenCalledWith(
-        1,
-        chainId,
-      )
-      expect(fakeBlockNumberRepository.add).toHaveBeenCalledWith(
-        reorgedBlockRecord,
-      )
-
-      expect(await blockNumberIndexer.update(0, 3000)).toEqual(1000)
-
-      expect(
-        fakeBlockchainClient.getBlockNumberAtOrBefore,
-      ).toHaveBeenCalledWith(new UnixTime(3000))
-      expect(fakeBlockchainClient.getBlock).toHaveBeenCalledWith(
-        thirdBlock!.number,
-      )
-      expect(fakeBlockNumberRepository.findByNumber).toHaveBeenCalledWith(
-        secondBlock!.number,
-        chainId,
-      )
-      expect(fakeBlockchainClient.getBlock).toHaveBeenCalledWith(
-        blockToRecord(secondBlock!).blockHash,
-      )
-      expect(fakeBlockNumberRepository.findByNumber).toHaveBeenCalledWith(
-        firstBlock!.number,
-        chainId,
-      )
-
-      expect(await blockNumberIndexer.update(1000, 3000)).toEqual(3000)
-      expect(fakeBlockNumberRepository.addMany).toHaveBeenCalledTimes(1)
-
-      expect(fakeBlockNumberRepository.addMany).toHaveBeenNthCalledWith(
-        1,
-        [secondBlock!, thirdBlock!].map(blockToRecord),
-      )
+      expect(await blockNumberIndexer.update(0, 5)).toEqual(5)
     })
   })
   describe(BlockNumberIndexer.prototype.invalidate.name, () => {

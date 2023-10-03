@@ -14,6 +14,17 @@ export class BlockNumberIndexer extends ChildIndexer {
   private lastKnownNumber = 0
 
   /**
+   * Whether to skip reorgs
+   * If true, the indexer will not update the database with reorged blocks
+   * This is true for now, as we have problems with BlockNumberIndexer lagging behind
+   * on Arbitrum and Optimism
+   * This changes the behavior of the indexer, as it only downloads the latest block
+   * I am keeping this as a temporary solution as we probably want to have support for
+   * reorgs in the future, but we need to fix the lagging problem first.
+   */
+  private readonly skipReorgs: boolean = true
+
+  /**
    * List of reorged blocks
    * Servers as a cross-reference between the consecutive updates
    */
@@ -34,8 +45,10 @@ export class BlockNumberIndexer extends ChildIndexer {
     private readonly chainId: ChainId,
     clockIndexer: ClockIndexer,
     logger: Logger,
+    skipReorgs?: boolean,
   ) {
     super(logger.tag(ChainId.getName(chainId)), [clockIndexer])
+    this.skipReorgs = skipReorgs ?? this.skipReorgs
   }
 
   override async start(): Promise<void> {
@@ -47,6 +60,23 @@ export class BlockNumberIndexer extends ChildIndexer {
   }
 
   async update(_fromTimestamp: number, toTimestamp: number): Promise<number> {
+    if (this.skipReorgs) {
+      const tip = await this.blockchainClient.getBlockNumberAtOrBefore(
+        new UnixTime(toTimestamp),
+      )
+      const block = await this.blockchainClient.getBlock(tip)
+
+      const record = {
+        blockNumber: block.number,
+        blockHash: block.hash,
+        timestamp: new UnixTime(block.timestamp),
+        chainId: this.chainId,
+      }
+      await this.blockRepository.add(record)
+
+      return block.timestamp
+    }
+
     if (this.reorgedBlocks.length > 0) {
       // we do not need to check if lastKnown < to because we are sure that
       // those blocks are from the past

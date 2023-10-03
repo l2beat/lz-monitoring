@@ -118,7 +118,7 @@ export function createDiscoverySubmodule(
 ): ApplicationModule {
   const chainId = ChainId.fromName(chain)
 
-  const provider = new providers.JsonRpcProvider(config.rpcUrl)
+  const provider = new providers.StaticJsonRpcProvider(config.rpcUrl)
   const blockchainClient = new BlockchainClient(provider, logger)
 
   const discoveryEngine = createDiscoveryEngine(provider, config)
