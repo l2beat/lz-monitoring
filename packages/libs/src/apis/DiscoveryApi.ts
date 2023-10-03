@@ -4,10 +4,12 @@ import { ChainId } from '../chainId/ChainId'
 import { branded } from '../utils/branded'
 import { EthereumAddress } from '../utils/EthereumAddress'
 
-const DefaultAdapterParams = z.object({
-  proofType: z.number(),
-  adapterParams: z.string(),
-})
+const DefaultAdapterParams = z.array(
+  z.object({
+    proofType: z.number(),
+    adapterParams: z.string(),
+  }),
+)
 export type DefaultAdapterParams = z.infer<typeof DefaultAdapterParams>
 
 const DefaultAppConfig = z.object({

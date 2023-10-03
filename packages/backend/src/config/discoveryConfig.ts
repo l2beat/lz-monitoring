@@ -47,13 +47,6 @@ function createConfigFromTemplate(
       },
       UltraLightNodeV2: {
         fields: {
-          chainAddressSizeMap: {
-            type: 'stateFromEvent',
-            event: 'SetChainAddressSize',
-            returnParams: ['chainId', 'size'],
-            groupBy: 'chainId',
-            onlyValue: true,
-          },
           ulnLookup: {
             type: 'stateFromEvent',
             event: 'SetRemoteUln',
@@ -80,6 +73,7 @@ function createConfigFromTemplate(
             event: 'SetDefaultAdapterParamsForChainId',
             returnParams: ['chainId', 'proofType', 'adapterParams'],
             groupBy: 'chainId',
+            multipleInGroup: true,
             onlyValue: true,
           },
           inboundProofLibrary: {
@@ -98,13 +92,6 @@ function createConfigFromTemplate(
             groupBy: 'chainId',
             onlyValue: true,
             multipleInGroup: true,
-          },
-          INBOUND_LIBRARIES: {
-            type: 'arrayFromOneEvent',
-            event:
-              'event AddInboundProofLibraryForChain(uint16 indexed chainId, address lib)',
-            valueKey: 'lib',
-            ignoreRelative: true,
           },
         },
       },
