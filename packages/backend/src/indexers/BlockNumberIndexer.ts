@@ -103,9 +103,6 @@ export class BlockNumberIndexer extends ChildIndexer {
     return to
   }
 
-  /**
-   *
-   */
   private async advanceChain(blockNumber: number): Promise<number> {
     let [block, parent] = await Promise.all([
       this.blockchainClient.getBlock(blockNumber),

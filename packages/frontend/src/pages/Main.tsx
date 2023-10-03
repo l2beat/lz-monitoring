@@ -1,16 +1,16 @@
 import { ChainId } from '@lz/libs'
 
-import { config } from './config'
-import { useChainQueryParam } from './hooks/useChainQueryParam'
-import { useDiscoveryApi } from './hooks/useDiscoveryApi'
-import { CurrentNetwork } from './view/components/CurrentNetwork'
-import { EndpointContract } from './view/components/EndpointContract'
-import { LzMultisig } from './view/components/LayerZeroMultisig'
-import { Layout } from './view/components/Layout'
-import { Navbar } from './view/components/Navbar'
-import { ULNv2Contract } from './view/components/ULNv2Contract'
+import { config } from '../config'
+import { useChainQueryParam } from '../hooks/useChainQueryParam'
+import { useDiscoveryApi } from '../hooks/useDiscoveryApi'
+import { CurrentNetwork } from '../view/components/CurrentNetwork'
+import { EndpointContract } from '../view/components/EndpointContract'
+import { LzMultisig } from '../view/components/LayerZeroMultisig'
+import { Layout } from '../view/components/Layout'
+import { Navbar } from '../view/components/Navbar'
+import { ULNv2Contract } from '../view/components/ULNv2Contract'
 
-export function App(): JSX.Element {
+export function Main(): JSX.Element {
   const [paramChain, setParamChain] = useChainQueryParam({
     fallback: ChainId.ETHEREUM,
     paramName: 'chain',

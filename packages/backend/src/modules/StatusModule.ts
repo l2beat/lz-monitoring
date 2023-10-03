@@ -2,7 +2,10 @@ import { Logger } from '@l2beat/backend-tools'
 import { ChainId } from '@lz/libs'
 import { providers } from 'ethers'
 
-import { StatusController } from '../api/controllers/StatusController'
+import {
+  ChainModuleStatus,
+  StatusController,
+} from '../api/controllers/StatusController'
 import { createStatusRouter } from '../api/routes/status'
 import { Config } from '../config'
 import { AvailableConfigs } from '../config/Config'
@@ -29,11 +32,15 @@ export function createStatusModule({
   const indexerRepository = new IndexerStateRepository(database, logger)
   const discoverRepository = new DiscoveryRepository(database, logger)
 
-  const enabledProviders = chains.flatMap((chainName) => {
+  const chainModuleStatuses: ChainModuleStatus[] = chains.map((chainName) => {
     const moduleConfig = config.discovery.modules[chainName]
+    const chainId = ChainId.fromName(chainName)
 
     if (!moduleConfig) {
-      return []
+      return {
+        state: 'disabled',
+        chainId,
+      }
     }
 
     const provider = new providers.StaticJsonRpcProvider(
@@ -42,13 +49,14 @@ export function createStatusModule({
     )
 
     return {
+      state: 'enabled',
       provider,
       chainId: ChainId.fromName(chainName),
     }
   })
 
   const statusController = new StatusController(
-    enabledProviders,
+    chainModuleStatuses,
     blockRepository,
     discoverRepository,
     indexerRepository,
