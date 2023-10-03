@@ -10,6 +10,7 @@ export class ClockIndexer extends RootIndexer {
   }
   override async start(): Promise<void> {
     await super.start()
+    this.requestTick()
     setInterval(() => this.requestTick(), this.tickInterval)
   }
 
