@@ -60,7 +60,6 @@ export class BlockNumberIndexer extends ChildIndexer {
   }
 
   async update(_fromTimestamp: number, toTimestamp: number): Promise<number> {
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (this.skipReorgs) {
       const tip = await this.blockchainClient.getBlockNumberAtOrBefore(
         new UnixTime(toTimestamp),
