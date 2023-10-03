@@ -74,7 +74,7 @@ export class BlockNumberIndexer extends ChildIndexer {
       }
       await this.blockRepository.add(record)
 
-      return block.timestamp
+      return toTimestamp
     }
 
     if (this.reorgedBlocks.length > 0) {
