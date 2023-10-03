@@ -1,12 +1,9 @@
-import { DiscoveryStatus } from '@lz/libs'
-import cx from 'classnames'
-
 import { config } from '../config'
 import { useStatusApi } from '../hooks/useStatusApi'
 import { Layout } from '../view/components/Layout'
 import { Navbar } from '../view/components/Navbar'
+import { OverallHealth } from '../view/components/status/OverallHealth'
 import { StatusSection } from '../view/components/status/StatusSection'
-import { getOverallHealth, Health } from '../view/components/status/statusUtils'
 
 export function Status(): JSX.Element {
   const [status] = useStatusApi({ apiUrl: config.apiUrl })
@@ -27,25 +24,13 @@ export function Status(): JSX.Element {
     )
   }
 
-  const systemHealth = getMinimalHealth(status)
-
-  const systemIcon = systemHealth === 'healthy' ? '🟢' : '⚠️'
-
-  const systemHealthColor =
-    systemHealth === 'healthy' ? 'text-[#63f542]' : 'text-[#f5c842]'
-
   return (
     <>
       <Navbar />
       <Layout>
         <div className="flex justify-between">
           <div className="mb-12 text-xxl font-bold">System health & status</div>
-          <div>
-            <span>System is </span>
-            <span className={cx('font-bold', systemHealthColor)}>
-              {systemHealth} {systemIcon}
-            </span>
-          </div>
+          <OverallHealth status={status} />
         </div>
         {status.map((chainStatus, i) => (
           <StatusSection key={i} status={chainStatus} />
@@ -53,12 +38,4 @@ export function Status(): JSX.Element {
       </Layout>
     </>
   )
-}
-
-function getMinimalHealth(systemState: DiscoveryStatus[]): Health {
-  const anyUnhealthy = systemState.some(
-    (chainStatus) => getOverallHealth(chainStatus).health === 'unhealthy',
-  )
-
-  return anyUnhealthy ? 'unhealthy' : 'healthy'
 }
