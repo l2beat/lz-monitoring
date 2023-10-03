@@ -106,7 +106,7 @@ function getRemoteChains(ulnV2: ContractParameters): RemoteChain[] {
   const remoteChainsMap: RemoteChain[] = []
 
   const defaultAdapterParams = getContractValue<
-    Partial<Record<number, { proofType: number; adapterParams: string }>>
+    Partial<Record<number, { proofType: number; adapterParams: string }[]>>
   >(ulnV2, 'defaultAdapterParams')
 
   const defaultAppConfig = getContractValue<
@@ -130,11 +130,18 @@ function getRemoteChains(ulnV2: ContractParameters): RemoteChain[] {
     const lzChainIdNumber = Number(lzChainId)
     const chainId = getChainIdFromLzId(lzChainIdNumber)
     if (!chainId) continue
-    const adapterParams = defaultAdapterParams[lzChainIdNumber]
+    let adapterParams = defaultAdapterParams[lzChainIdNumber]
     assert(
       adapterParams !== undefined,
       'Adapter params not found for chain ' + lzChainId,
     )
+
+    // Some chains have multiple proof types
+    // But some have just one
+    // So we need to normalize it to an array
+    if (!Array.isArray(adapterParams)) {
+      adapterParams = [adapterParams]
+    }
 
     const appConfig = defaultAppConfig[lzChainIdNumber]
     assert(appConfig, 'App config not found for chain ' + lzChainId)
