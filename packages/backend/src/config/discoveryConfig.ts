@@ -10,7 +10,7 @@ interface TemplateVariables {
   addresses: {
     ultraLightNodeV2: string
     endpoint: string
-    layerZeroMultisig: string
+    layerZeroMultisig?: string
   }
 }
 
@@ -19,6 +19,13 @@ function createConfigFromTemplate(
 ): RawDiscoveryConfig {
   const { chain, initialAddresses, addresses } = templateConfig
 
+  // Since some on-chain LZs does not support multisig
+  const multisigNameEntry = addresses.layerZeroMultisig
+    ? {
+        [addresses.layerZeroMultisig]: 'LayerZero Multisig',
+      }
+    : {}
+
   return {
     name: 'layerzero',
     chain,
@@ -26,7 +33,7 @@ function createConfigFromTemplate(
     names: {
       [addresses.ultraLightNodeV2]: 'UltraLightNodeV2',
       [addresses.endpoint]: 'Endpoint',
-      [addresses.layerZeroMultisig]: 'LayerZero Multisig',
+      ...multisigNameEntry,
     },
     overrides: {
       Endpoint: {
@@ -42,6 +49,7 @@ function createConfigFromTemplate(
           },
         },
       },
+      // Maybe we should remove that if there is no multisig support?
       'LayerZero Multisig': {
         ignoreInWatchMode: ['nonce'],
       },
