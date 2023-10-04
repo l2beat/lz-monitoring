@@ -19,9 +19,15 @@ declare module 'knex/types/tables' {
     discovery_json_blob: string
   }
 
+  interface DiscoveryCacheRow {
+    key: string
+    value: string
+  }
+
   interface Tables {
     block_numbers: BlockNumberRow
     indexer_states: IndexerStateRow
     discovery: DiscoveryRow
+    discovery_cache: DiscoveryCacheRow
   }
 }

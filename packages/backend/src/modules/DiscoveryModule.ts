@@ -23,10 +23,11 @@ import { ClockIndexer } from '../indexers/ClockIndexer'
 import { DiscoveryIndexer } from '../indexers/DiscoveryIndexer'
 import { BlockchainClient } from '../peripherals/clients/BlockchainClient'
 import { BlockNumberRepository } from '../peripherals/database/BlockNumberRepository'
+import { DiscoveryCacheRepository } from '../peripherals/database/DiscoveryCacheRepository'
 import { DiscoveryRepository } from '../peripherals/database/DiscoveryRepository'
 import { IndexerStateRepository } from '../peripherals/database/IndexerStateRepository'
 import { Database } from '../peripherals/database/shared/Database'
-import { InMemoryDiscoveryCache } from '../peripherals/discovery/DiscoveryCache'
+import { DatabaseDiscoveryCache } from '../peripherals/discovery/DiscoveryCache'
 import { ApplicationModule } from './ApplicationModule'
 
 interface DiscoverySubmoduleDependencies {
@@ -36,6 +37,7 @@ interface DiscoverySubmoduleDependencies {
     blockNumber: BlockNumberRepository
     indexerState: IndexerStateRepository
     discovery: DiscoveryRepository
+    discoveryCache: DiscoveryCacheRepository
   }
   clockIndexer: ClockIndexer
 }
@@ -56,6 +58,10 @@ export function createDiscoveryModule({
   const blockRepository = new BlockNumberRepository(database, logger)
   const indexerRepository = new IndexerStateRepository(database, logger)
   const discoverRepository = new DiscoveryRepository(database, logger)
+  const discoveryCacheRepository = new DiscoveryCacheRepository(
+    database,
+    logger,
+  )
 
   const clockIndexer = new ClockIndexer(
     logger,
@@ -83,6 +89,7 @@ export function createDiscoveryModule({
           blockNumber: blockRepository,
           indexerState: indexerRepository,
           discovery: discoverRepository,
+          discoveryCache: discoveryCacheRepository,
         },
         config: moduleConfig,
       },
@@ -123,7 +130,12 @@ export function createDiscoverySubmodule(
   const provider = new providers.StaticJsonRpcProvider(config.rpcUrl)
   const blockchainClient = new BlockchainClient(provider, logger)
 
-  const discoveryEngine = createDiscoveryEngine(provider, config, chainId)
+  const discoveryEngine = createDiscoveryEngine(
+    provider,
+    config,
+    chainId,
+    repositories.discoveryCache,
+  )
 
   const blockNumberIndexer = new BlockNumberIndexer(
     blockchainClient,
@@ -163,6 +175,7 @@ function createDiscoveryEngine(
   provider: providers.Provider,
   config: EthereumLikeDiscoveryConfig,
   chainId: ChainId,
+  discoveryCacheRepository: DiscoveryCacheRepository,
 ): DiscoveryEngine {
   const httpClient = new HttpClient()
 
@@ -174,7 +187,7 @@ function createDiscoveryEngine(
   )
   const discoveryLogger = DiscoveryLogger.SILENT
 
-  const discoveryCache = new InMemoryDiscoveryCache()
+  const discoveryCache = new DatabaseDiscoveryCache(discoveryCacheRepository)
 
   const discoveryProvider = new ProviderWithCache(
     provider,
@@ -182,6 +195,7 @@ function createDiscoveryEngine(
     discoveryLogger,
     chainId,
     discoveryCache,
+    10_000,
   )
 
   const proxyDetector = new ProxyDetector(discoveryProvider, discoveryLogger)
