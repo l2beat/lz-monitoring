@@ -29,15 +29,9 @@ export function Delays({ status }: { status: DiscoveryStatus }) {
   return (
     <>
       <SubsectionHeader title="Delays" />
-      {status.delays.blocks && (
-        <Row label="Blocks behind the tip" value={status.delays.blocks} />
-      )}
-      {status.delays.discovery && (
-        <Row label="Discovery blocks to tip" value={status.delays.discovery} />
-      )}
-      {status.delays.offset && (
-        <Row label="Offset between indexers" value={status.delays.offset} />
-      )}
+      <Row label="Blocks behind the tip" value={status.delays.blocks} />
+      <Row label="Discovery blocks to tip" value={status.delays.discovery} />
+      <Row label="Offset between indexers" value={status.delays.offset} />
     </>
   )
 }
