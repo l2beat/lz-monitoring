@@ -3,13 +3,14 @@ import {
   AddressAnalyzer,
   DiscoveryEngine,
   DiscoveryLogger,
-  DiscoveryProvider,
   EtherscanLikeClient,
   HandlerExecutor,
   HttpClient,
   ProxyDetector,
   SourceCodeService,
 } from '@l2beat/discovery'
+// eslint-disable-next-line import/no-internal-modules
+import { ProviderWithCache } from '@l2beat/discovery/dist/discovery/provider/ProviderWithCache'
 import { ChainId } from '@lz/libs'
 import { providers } from 'ethers'
 
@@ -25,6 +26,7 @@ import { BlockNumberRepository } from '../peripherals/database/BlockNumberReposi
 import { DiscoveryRepository } from '../peripherals/database/DiscoveryRepository'
 import { IndexerStateRepository } from '../peripherals/database/IndexerStateRepository'
 import { Database } from '../peripherals/database/shared/Database'
+import { InMemoryDiscoveryCache } from '../peripherals/discovery/DiscoveryCache'
 import { ApplicationModule } from './ApplicationModule'
 
 interface DiscoverySubmoduleDependencies {
@@ -121,7 +123,7 @@ export function createDiscoverySubmodule(
   const provider = new providers.StaticJsonRpcProvider(config.rpcUrl)
   const blockchainClient = new BlockchainClient(provider, logger)
 
-  const discoveryEngine = createDiscoveryEngine(provider, config)
+  const discoveryEngine = createDiscoveryEngine(provider, config, chainId)
 
   const blockNumberIndexer = new BlockNumberIndexer(
     blockchainClient,
@@ -160,6 +162,7 @@ export function createDiscoverySubmodule(
 function createDiscoveryEngine(
   provider: providers.Provider,
   config: EthereumLikeDiscoveryConfig,
+  chainId: ChainId,
 ): DiscoveryEngine {
   const httpClient = new HttpClient()
 
@@ -169,9 +172,17 @@ function createDiscoveryEngine(
     config.blockExplorerApiKey,
     config.blockExplorerMinTimestamp,
   )
-
-  const discoveryProvider = new DiscoveryProvider(provider, discoveryClient)
   const discoveryLogger = DiscoveryLogger.SILENT
+
+  const discoveryCache = new InMemoryDiscoveryCache()
+
+  const discoveryProvider = new ProviderWithCache(
+    provider,
+    discoveryClient,
+    discoveryLogger,
+    chainId,
+    discoveryCache,
+  )
 
   const proxyDetector = new ProxyDetector(discoveryProvider, discoveryLogger)
   const sourceCodeService = new SourceCodeService(discoveryProvider)
