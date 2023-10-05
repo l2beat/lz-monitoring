@@ -15,7 +15,7 @@ import { Knex } from 'knex'
 
 export async function up(knex: Knex): Promise<void> {
   await knex.schema.createTable('provider_cache', (table) => {
-    table.string('key').primary()
+    table.string('key').notNullable().primary()
     table.text('value').notNullable()
   })
 }
