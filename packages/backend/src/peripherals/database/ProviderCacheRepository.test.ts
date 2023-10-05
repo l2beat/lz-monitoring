@@ -1,12 +1,9 @@
 import { Logger } from '@l2beat/backend-tools'
-import { ChainId } from '@lz/libs'
 import { expect } from 'earl'
+import type { ProviderCacheRow } from 'knex/types/tables'
 
 import { setupDatabaseTestSuite } from '../../test/database'
-import {
-  ProviderCacheRecord,
-  ProviderCacheRepository,
-} from './ProviderCacheRepository'
+import { ProviderCacheRepository } from './ProviderCacheRepository'
 
 describe(ProviderCacheRepository.name, () => {
   const { database } = setupDatabaseTestSuite()
@@ -31,32 +28,26 @@ describe(ProviderCacheRepository.name, () => {
     expect(actual).toEqual([record2])
   })
 
-  it('finds by key and chainId', async () => {
+  it('finds by key', async () => {
     const records = Array.from({ length: 10 }).map((_, i) =>
       mockRecord({
         key: `key${i}`,
         value: `value${i}`,
-        chainId: i % 2 === 0 ? ChainId.ETHEREUM : ChainId.OPTIMISM,
       }),
     )
     for (const record of records) {
       await repository.addOrUpdate(record)
     }
-    const actual = await repository.findByKeyAndChainId(
-      'key1',
-      ChainId.OPTIMISM,
-    )
+    const actual = await repository.findByKey('key1')
     expect(actual).toEqual({
       key: 'key1',
       value: 'value1',
-      chainId: ChainId.OPTIMISM,
     })
   })
 })
 
-function mockRecord(record?: Partial<ProviderCacheRecord>) {
+function mockRecord(record?: Partial<ProviderCacheRow>) {
   return {
-    chainId: ChainId.ETHEREUM,
     key: 'key',
     value: 'value',
     ...record,

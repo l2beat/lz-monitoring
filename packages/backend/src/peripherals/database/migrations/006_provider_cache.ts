@@ -15,10 +15,8 @@ import { Knex } from 'knex'
 
 export async function up(knex: Knex): Promise<void> {
   await knex.schema.createTable('provider_cache', (table) => {
-    table.string('key').notNullable()
-    table.integer('chain_id').notNullable()
+    table.string('key').primary()
     table.text('value').notNullable()
-    table.primary(['key', 'chain_id'])
   })
 }
 

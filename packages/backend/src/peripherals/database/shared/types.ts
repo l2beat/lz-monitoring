@@ -3,7 +3,6 @@ declare module 'knex/types/tables' {
   interface ProviderCacheRow {
     key: string
     value: string
-    chain_id: number
   }
 
   interface BlockNumberRow {

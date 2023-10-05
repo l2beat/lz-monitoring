@@ -193,7 +193,7 @@ function createDiscoveryEngine(
 
   const discoveryLogger = DiscoveryLogger.CLI
 
-  const providerCache = new ProviderCache(cacheRepository, chainId)
+  const providerCache = new ProviderCache(cacheRepository)
   const discoveryProvider = new ProviderWithCache(
     provider,
     discoveryClient,
