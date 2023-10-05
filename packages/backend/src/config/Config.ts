@@ -14,6 +14,7 @@ export interface Config {
     Partial<LoggerOptions>
   readonly health: HealthConfig
   readonly discovery: {
+    readonly callsPerMinute: number
     readonly clock: {
       readonly tickIntervalMs: number
     }

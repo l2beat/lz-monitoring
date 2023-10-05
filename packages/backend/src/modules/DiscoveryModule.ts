@@ -93,6 +93,7 @@ export function createDiscoveryModule({
         config: moduleConfig,
       },
       chainName,
+      config.discovery.callsPerMinute / availableChainConfigs.length,
     )
   })
 
@@ -123,11 +124,16 @@ export function createDiscoverySubmodule(
     clockIndexer,
   }: DiscoverySubmoduleDependencies,
   chain: keyof Config['discovery']['modules'],
+  callsPerMinute: number,
 ): ApplicationModule {
   const chainId = ChainId.fromName(chain)
 
   const provider = new providers.StaticJsonRpcProvider(config.rpcUrl)
-  const blockchainClient = new BlockchainClient(provider, logger)
+  const blockchainClient = new BlockchainClient(
+    provider,
+    logger,
+    callsPerMinute,
+  )
 
   const discoveryEngine = createDiscoveryEngine(
     provider,
@@ -185,7 +191,7 @@ function createDiscoveryEngine(
     config.blockExplorerMinTimestamp,
   )
 
-  const discoveryLogger = DiscoveryLogger.SILENT
+  const discoveryLogger = DiscoveryLogger.CLI
 
   const providerCache = new ProviderCache(cacheRepository, chainId)
   const discoveryProvider = new ProviderWithCache(

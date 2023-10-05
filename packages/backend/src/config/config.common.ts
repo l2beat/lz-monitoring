@@ -15,6 +15,7 @@ export function getCommonDiscoveryConfig(env: Env): Config['discovery'] {
   const createConfig = configFromTemplate(env)
 
   return {
+    callsPerMinute: env.integer('RPC_CALLS_PER_MINUTE', 1000),
     clock: {
       tickIntervalMs: env.integer('CLOCK_TICK_INTERVAL_MS', 10 * 1000),
     },
