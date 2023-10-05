@@ -51,6 +51,7 @@ export interface HealthConfig {
 export interface EthereumLikeDiscoveryConfig {
   startBlock: number
   rpcUrl: string
+  rpcLogsMaxRange: number
   blockExplorerApiUrl: string
   blockExplorerApiKey: string
   blockExplorerMinTimestamp: UnixTime

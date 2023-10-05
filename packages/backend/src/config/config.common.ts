@@ -114,6 +114,10 @@ function configFromTemplate(env: Env) {
       env.boolean(`${chainNamePrefix}_DISCOVERY_ENABLED`, false) && {
         startBlock: env.integer(`${chainNamePrefix}_START_BLOCK`, startBlock),
         rpcUrl: env.string(`${chainNamePrefix}_RPC_URL`),
+        rpcLogsMaxRange: env.integer(
+          `${chainNamePrefix}_RPC_LOGS_MAX_RANGE`,
+          10000,
+        ),
         blockExplorerApiUrl,
         blockExplorerApiKey: env.string(`${blockExplorerPrefix}_API_KEY`),
         blockExplorerMinTimestamp: new UnixTime(

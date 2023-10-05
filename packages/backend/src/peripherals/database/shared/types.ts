@@ -1,5 +1,11 @@
 export {}
 declare module 'knex/types/tables' {
+  interface ProviderCacheRow {
+    key: string
+    value: string
+    chain_id: number
+  }
+
   interface BlockNumberRow {
     unix_timestamp: Date
     block_number: number
@@ -23,5 +29,6 @@ declare module 'knex/types/tables' {
     block_numbers: BlockNumberRow
     indexer_states: IndexerStateRow
     discovery: DiscoveryRow
+    provider_cache: ProviderCacheRow
   }
 }
