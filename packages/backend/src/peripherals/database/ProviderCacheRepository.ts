@@ -12,10 +12,7 @@ export class ProviderCacheRepository extends BaseRepository {
 
   async addOrUpdate(row: ProviderCacheRow): Promise<string> {
     const knex = await this.knex()
-    await knex('provider_cache')
-      .insert(row)
-      .onConflict(['key', 'chain_id'])
-      .merge()
+    await knex('provider_cache').insert(row).onConflict('key').merge()
 
     return row.key
   }
