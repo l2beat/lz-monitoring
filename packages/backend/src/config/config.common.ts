@@ -15,6 +15,7 @@ export function getCommonDiscoveryConfig(env: Env): Config['discovery'] {
   const createConfig = configFromTemplate(env)
 
   return {
+    callsPerMinute: env.integer('RPC_CALLS_PER_MINUTE', 1000),
     clock: {
       tickIntervalMs: env.integer('CLOCK_TICK_INTERVAL_MS', 10 * 1000),
     },
@@ -114,6 +115,10 @@ function configFromTemplate(env: Env) {
       env.boolean(`${chainNamePrefix}_DISCOVERY_ENABLED`, false) && {
         startBlock: env.integer(`${chainNamePrefix}_START_BLOCK`, startBlock),
         rpcUrl: env.string(`${chainNamePrefix}_RPC_URL`),
+        rpcLogsMaxRange: env.integer(
+          `${chainNamePrefix}_RPC_LOGS_MAX_RANGE`,
+          10000,
+        ),
         blockExplorerApiUrl,
         blockExplorerApiKey: env.string(`${blockExplorerPrefix}_API_KEY`),
         blockExplorerMinTimestamp: new UnixTime(
