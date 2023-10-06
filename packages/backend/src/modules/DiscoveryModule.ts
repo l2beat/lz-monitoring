@@ -8,6 +8,7 @@ import {
   HttpClient,
   ProviderWithCache,
   ProxyDetector,
+  RateLimitedProvider,
   SourceCodeService,
 } from '@l2beat/discovery'
 import { ChainId } from '@lz/libs'
@@ -71,6 +72,10 @@ export function createDiscoveryModule({
     config.discovery.modules,
   ) as AvailableConfigs[]
 
+  const enabledChainConfigs = availableChainConfigs.filter(
+    (chainName) => config.discovery.modules[chainName],
+  )
+
   const modules = availableChainConfigs.flatMap((chainName) => {
     const moduleConfig = config.discovery.modules[chainName]
 
@@ -93,7 +98,7 @@ export function createDiscoveryModule({
         config: moduleConfig,
       },
       chainName,
-      config.discovery.callsPerMinute / availableChainConfigs.length,
+      config.discovery.callsPerMinute / enabledChainConfigs.length,
     )
   })
 
@@ -129,14 +134,11 @@ export function createDiscoverySubmodule(
   const chainId = ChainId.fromName(chain)
 
   const provider = new providers.StaticJsonRpcProvider(config.rpcUrl)
-  const blockchainClient = new BlockchainClient(
-    provider,
-    logger,
-    callsPerMinute,
-  )
+  const rateLimitedProvider = new RateLimitedProvider(provider, callsPerMinute)
+  const blockchainClient = new BlockchainClient(rateLimitedProvider, logger)
 
   const discoveryEngine = createDiscoveryEngine(
-    provider,
+    rateLimitedProvider,
     repositories.providerCache,
     config,
     chainId,
@@ -177,7 +179,7 @@ export function createDiscoverySubmodule(
 }
 
 function createDiscoveryEngine(
-  provider: providers.Provider,
+  provider: RateLimitedProvider,
   cacheRepository: ProviderCacheRepository,
   config: EthereumLikeDiscoveryConfig,
   chainId: ChainId,

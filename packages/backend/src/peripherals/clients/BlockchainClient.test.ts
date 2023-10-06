@@ -1,18 +1,14 @@
 import { Logger } from '@l2beat/backend-tools'
+import { RateLimitedProvider } from '@l2beat/discovery'
 import { EthereumAddress } from '@lz/libs'
 import { expect, mockFn, mockObject } from 'earl'
-import { providers } from 'ethers'
 
 import { BlockchainClient } from './BlockchainClient'
 
 describe(BlockchainClient.name, () => {
   describe(BlockchainClient.prototype.getAllLogs.name, () => {
     it('divides on two calls', async () => {
-      const provider = mockObject<providers.Provider>({
-        call: mockFn(),
-        getBlock: mockFn(),
-        getBlockNumber: mockFn(),
-        getBalance: mockFn(),
+      const provider = mockObject<RateLimitedProvider>({
         getLogs: mockFn()
           .throwsOnce(new Error('Log response size exceeded'))
           .returnsOnce([])
@@ -47,11 +43,7 @@ describe(BlockchainClient.name, () => {
     })
 
     it('correctly divides range of two', async () => {
-      const provider = mockObject<providers.Provider>({
-        call: mockFn(),
-        getBlock: mockFn(),
-        getBlockNumber: mockFn(),
-        getBalance: mockFn(),
+      const provider = mockObject<RateLimitedProvider>({
         getLogs: mockFn()
           .throwsOnce(new Error('Log response size exceeded'))
           .returnsOnce([])
@@ -86,11 +78,7 @@ describe(BlockchainClient.name, () => {
     })
 
     it('fromBlock === toBlock', async () => {
-      const provider = mockObject<providers.Provider>({
-        call: mockFn(),
-        getBlock: mockFn(),
-        getBlockNumber: mockFn(),
-        getBalance: mockFn(),
+      const provider = mockObject<RateLimitedProvider>({
         getLogs: mockFn().throwsOnce(new Error('Log response size exceeded')),
       })
 
