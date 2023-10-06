@@ -14,6 +14,7 @@ export interface Config {
     Partial<LoggerOptions>
   readonly health: HealthConfig
   readonly discovery: {
+    readonly callsPerMinute: number
     readonly clock: {
       readonly tickIntervalMs: number
     }
@@ -51,6 +52,7 @@ export interface HealthConfig {
 export interface EthereumLikeDiscoveryConfig {
   startBlock: number
   rpcUrl: string
+  rpcLogsMaxRange: number
   blockExplorerApiUrl: string
   blockExplorerApiKey: string
   blockExplorerMinTimestamp: UnixTime
