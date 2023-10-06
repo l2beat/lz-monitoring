@@ -1,23 +1,18 @@
 import { assert, Logger } from '@l2beat/backend-tools'
+import { RateLimitedProvider } from '@l2beat/discovery'
 import { Bytes, EthereumAddress, Hash256, UnixTime } from '@lz/libs'
 import { providers } from 'ethers'
-
-import { RateLimitedProvider } from '../../utils/RateLimitedProvider'
 
 export type BlockFromClient = Pick<providers.Block, 'timestamp' | 'number'> & {
   hash: Hash256
   parentHash: Hash256
 }
 export class BlockchainClient {
-  private readonly provider: RateLimitedProvider
-
   constructor(
-    provider: providers.Provider,
+    private readonly provider: RateLimitedProvider,
     private readonly logger: Logger,
-    callsPerMinute = Infinity,
   ) {
     this.logger = this.logger.for(this)
-    this.provider = new RateLimitedProvider(provider, callsPerMinute)
   }
 
   async getBlockNumber(): Promise<number> {
