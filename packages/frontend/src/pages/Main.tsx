@@ -8,6 +8,7 @@ import { EndpointContract } from '../view/components/EndpointContract'
 import { LzMultisig } from '../view/components/LayerZeroMultisig'
 import { Layout } from '../view/components/Layout'
 import { Navbar } from '../view/components/Navbar'
+import { QueuedTransactions } from '../view/components/safe/QueuedTransactions'
 import { ULNv2Contract } from '../view/components/ULNv2Contract'
 
 export function Main(): JSX.Element {
@@ -31,6 +32,8 @@ export function Main(): JSX.Element {
     setChain(ChainId.ETHEREUM)
   }
 
+  const multisigAddress = discoveryResponse?.contracts.lzMultisig?.address
+
   return (
     <>
       <Navbar />
@@ -44,6 +47,12 @@ export function Main(): JSX.Element {
         <EndpointContract {...discoveryResponse?.contracts.endpoint} />
         <ULNv2Contract {...discoveryResponse?.contracts.ulnV2} />
         <LzMultisig {...discoveryResponse?.contracts.lzMultisig} />
+        {multisigAddress && (
+          <QueuedTransactions
+            multisigAddress={multisigAddress}
+            chainId={paramChain}
+          />
+        )}
       </Layout>
     </>
   )
