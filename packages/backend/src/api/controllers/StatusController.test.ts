@@ -1,4 +1,5 @@
 import { assert } from '@l2beat/backend-tools'
+import { RateLimitedProvider } from '@l2beat/discovery'
 import { DiscoveryOutput } from '@l2beat/discovery-types'
 import { ChainId, Hash256, UnixTime } from '@lz/libs'
 import { expect, mockObject } from 'earl'
@@ -262,7 +263,7 @@ function mockDeps() {
   const LATEST_DISCOVERY_BLOCK_NUMBER = 1000
   const LATEST_INDEXED_BLOCK_NUMBER = 1000
 
-  const provider = mockObject<providers.Provider>({
+  const provider = mockObject<RateLimitedProvider>({
     getBlock: () =>
       Promise.resolve({
         number: LATEST_BLOCK_NUMBER,

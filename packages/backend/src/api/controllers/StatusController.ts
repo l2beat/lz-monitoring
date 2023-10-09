@@ -1,3 +1,4 @@
+import { RateLimitedProvider } from '@l2beat/discovery'
 import {
   ChainId,
   CommonDiscoveryStatus,
@@ -15,7 +16,7 @@ export type ChainModuleStatus =
   | {
       state: 'enabled'
       chainId: ChainId
-      provider: providers.Provider
+      provider: RateLimitedProvider
     }
   | {
       state: 'disabled'
@@ -125,7 +126,7 @@ export class StatusController {
   }
 
   private async getLatestNodeBlock(
-    provider: providers.Provider,
+    provider: RateLimitedProvider,
   ): Promise<providers.Block | null> {
     try {
       return await provider.getBlock('latest')
