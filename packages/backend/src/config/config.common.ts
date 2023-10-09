@@ -98,7 +98,7 @@ export function getCommonDiscoveryConfig(env: Env): Config['discovery'] {
       }),
       celo: createConfig({
         chainNamePrefix: 'CELO',
-        startBlock: 0,
+        startBlock: 21836924,
         blockExplorerPrefix: 'CELOSCAN',
         blockExplorerApiUrl: 'https://api.celoscan.io/api',
         blockExplorerMinTimestamp: new Date('2020-04-22T16:00:00Z'),
