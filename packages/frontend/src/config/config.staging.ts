@@ -12,6 +12,9 @@ export function getStagingConfig(): Config {
       ChainId.POLYGON_POS,
       ChainId.POLYGON_ZKEVM,
       ChainId.BASE,
+      ChainId.AVALANCHE,
+      ChainId.BSC,
+      ChainId.LINEA,
     ],
   }
 }

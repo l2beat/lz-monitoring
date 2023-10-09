@@ -17,7 +17,19 @@ interface TemplateVariables {
 function createConfigFromTemplate(
   templateConfig: TemplateVariables,
 ): RawDiscoveryConfig {
-  const { chain, initialAddresses, addresses } = templateConfig
+  const { chain, initialAddresses, addresses: unsafeAddresses } = templateConfig
+
+  // addresses with proper checksums
+  const addresses = {
+    ultraLightNodeV2: EthereumAddress(
+      unsafeAddresses.ultraLightNodeV2,
+    ).toString(),
+    endpoint: EthereumAddress(unsafeAddresses.endpoint).toString(),
+    layerZeroMultisig:
+      unsafeAddresses.layerZeroMultisig !== undefined
+        ? EthereumAddress(unsafeAddresses.layerZeroMultisig).toString()
+        : undefined,
+  }
 
   // Since some on-chain LZs does not support multisig
   const multisigNameEntry = addresses.layerZeroMultisig

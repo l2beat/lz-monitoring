@@ -5,8 +5,12 @@ import { UnixTime } from '@l2beat/discovery/dist/utils/UnixTime'
 
 import { Config, EthereumLikeDiscoveryConfig } from './Config'
 import { arbitrumDiscoveryConfig } from './discovery/arbitrum'
+import { avalancheDiscoveryConfig } from './discovery/avalanche'
 import { baseDiscoveryConfig } from './discovery/base'
+import { bscDiscoveryConfig } from './discovery/bsc'
+import { celoDiscoveryConfig } from './discovery/celo'
 import { ethereumDiscoveryConfig } from './discovery/ethereum'
+import { lineaDiscoveryConfig } from './discovery/linea'
 import { optimismDiscoveryConfig } from './discovery/optimism'
 import { polygonPosDiscoveryConfig } from './discovery/polygon-pos'
 import { polygonZkEvmDiscoveryConfig } from './discovery/polygon-zkevm'
@@ -67,6 +71,38 @@ export function getCommonDiscoveryConfig(env: Env): Config['discovery'] {
         blockExplorerApiUrl: 'https://api.basescan.org/api',
         blockExplorerMinTimestamp: new Date('2023-06-15T12:36:00Z'),
         discoveryConfig: baseDiscoveryConfig,
+      }),
+      avalanche: createConfig({
+        chainNamePrefix: 'AVALANCHE',
+        startBlock: 36223765,
+        blockExplorerPrefix: 'SNOWTRACE',
+        blockExplorerApiUrl: 'https://api.snowtrace.io/api',
+        blockExplorerMinTimestamp: new Date('2020-09-23T11:02:00Z'),
+        discoveryConfig: avalancheDiscoveryConfig,
+      }),
+      linea: createConfig({
+        chainNamePrefix: 'LINEA',
+        startBlock: 594349,
+        blockExplorerPrefix: 'LINEASCAN',
+        blockExplorerApiUrl: 'https://api.lineascan.build/api',
+        blockExplorerMinTimestamp: new Date('2023-07-06T13:15:00Z'),
+        discoveryConfig: lineaDiscoveryConfig,
+      }),
+      bsc: createConfig({
+        chainNamePrefix: 'BSC',
+        startBlock: 32446967,
+        blockExplorerPrefix: 'BSCSCAN',
+        blockExplorerApiUrl: 'https://api.bscscan.com/api',
+        blockExplorerMinTimestamp: new Date('2020-08-29T03:24:00Z'),
+        discoveryConfig: bscDiscoveryConfig,
+      }),
+      celo: createConfig({
+        chainNamePrefix: 'CELO',
+        startBlock: 21836924,
+        blockExplorerPrefix: 'CELOSCAN',
+        blockExplorerApiUrl: 'https://api.celoscan.io/api',
+        blockExplorerMinTimestamp: new Date('2020-04-22T16:00:00Z'),
+        discoveryConfig: celoDiscoveryConfig,
       }),
     },
   }

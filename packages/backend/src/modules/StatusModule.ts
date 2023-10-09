@@ -1,4 +1,5 @@
 import { Logger } from '@l2beat/backend-tools'
+import { RateLimitedProvider } from '@l2beat/discovery'
 import { ChainId } from '@lz/libs'
 import { providers } from 'ethers'
 
@@ -47,10 +48,11 @@ export function createStatusModule({
       moduleConfig.rpcUrl,
       Number(ChainId.fromName(chainName)),
     )
+    const rateLimitedProvider = new RateLimitedProvider(provider, 100)
 
     return {
       state: 'enabled',
-      provider,
+      provider: rateLimitedProvider,
       chainId: ChainId.fromName(chainName),
     }
   })
