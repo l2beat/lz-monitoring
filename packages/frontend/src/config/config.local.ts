@@ -14,6 +14,7 @@ export function getLocalConfig(): Config {
       ChainId.BASE,
       ChainId.AVALANCHE,
       ChainId.BSC,
+      ChainId.LINEA,
     ],
   }
 }
