@@ -18,7 +18,9 @@
     "format": "prettier --check .",
     "lint:fix": "yarn lint --fix",
     "lint": "eslint --ext .ts,.tsx --max-warnings 0 src",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "clear:db-dump": "rm -rf scripts/db",
+    "update:db-dump": "cd scripts && bash update_cache.sh"
   },
   "dependencies": {
     "@koa/cors": "^4.0.0",
