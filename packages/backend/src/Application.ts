@@ -7,13 +7,13 @@ import { createDiscoveryModule } from './modules/DiscoveryModule'
 import { createHealthModule } from './modules/HealthModule'
 import { createStatusModule } from './modules/StatusModule'
 import { Database } from './peripherals/database/shared/Database'
+import { handleServerError, reportError } from './tools/ErrorReporter'
 
-// TODO: Error reporting
 export class Application {
   start: () => Promise<void>
 
   constructor(config: Config) {
-    const loggerOptions = { ...config.logger }
+    const loggerOptions = { ...config.logger, reportError }
 
     const logger = new Logger(loggerOptions)
 
@@ -29,6 +29,7 @@ export class Application {
       config.api.port,
       logger,
       modules.flatMap((x) => x?.routers ?? []),
+      handleServerError,
     )
 
     this.start = async () => {
