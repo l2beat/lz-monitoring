@@ -10,7 +10,8 @@ type ArrayItem<T extends unknown[]> = T extends (infer U)[] ? U : never
 
 type SafeTransaction = ArrayItem<AllTransactionsListResponse['results']>
 
-function createSafeApiClient(chainId: ChainId): SafeApiKit {
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+function createSafeApiClient(chainId: ChainId) {
   const chainIdNumber = chainId.valueOf()
 
   const isSupported = endpoints.isChainSupported(chainIdNumber)
@@ -21,10 +22,30 @@ function createSafeApiClient(chainId: ChainId): SafeApiKit {
 
   const safeServiceEndpoint = endpoints.list[chainIdNumber]
 
-  return new SafeApiKit({
+  const safeApiKit = new SafeApiKit({
     ethAdapter: spoofedAdapter,
     txServiceUrl: safeServiceEndpoint,
   })
+
+  return {
+    getAllTransactions: async (multisigAddress: string) => {
+      const transactions: SafeTransaction[] = []
+
+      let response = await safeApiKit.getAllTransactions(multisigAddress)
+
+      transactions.push(...response.results)
+
+      while (response.next) {
+        const raw = await fetch(response.next)
+
+        response = (await raw.json()) as AllTransactionsListResponse
+
+        transactions.push(...response.results)
+      }
+
+      return transactions
+    },
+  }
 }
 
 /**

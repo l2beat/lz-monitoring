@@ -26,9 +26,13 @@ function useSafeApi({ chainId, multisigAddress }: UseStatusApiHookOptions) {
         multisigAddress.toString(),
       )
 
-      console.dir({ transactions }, { depth: null })
+      // const save = [transactions.at(-24)]
 
-      setTransactions(transactions.results)
+      // setTransactions(transactions.filter((t) => t.transfers.length > 0))
+      // console.warn(transactions.map((t) => t.txType))
+      setTransactions(transactions)
+
+      console.dir({ save: transactions.filter((t) => t.transfers.length > 0) })
     }
     void fetch()
   }, [chainId, multisigAddress])

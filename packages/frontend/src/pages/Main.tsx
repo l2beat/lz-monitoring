@@ -1,4 +1,4 @@
-import { ChainId } from '@lz/libs'
+import { ChainId, endpoints } from '@lz/libs'
 
 import { config } from '../config'
 import { useChainQueryParam } from '../hooks/useChainQueryParam'
@@ -47,11 +47,13 @@ export function Main(): JSX.Element {
         <EndpointContract {...discoveryResponse?.contracts.endpoint} />
         <ULNv2Contract {...discoveryResponse?.contracts.ulnV2} />
         <LzMultisig {...discoveryResponse?.contracts.lzMultisig} />
-        {multisigAddress && (
+        {multisigAddress && endpoints.isChainSupported(paramChain.valueOf()) ? (
           <QueuedTransactions
             multisigAddress={multisigAddress}
             chainId={paramChain}
           />
+        ) : (
+          <div> Protocol on this chain is not owned by Safe Multisig</div>
         )}
       </Layout>
     </>

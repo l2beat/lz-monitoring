@@ -11,4 +11,5 @@ const publicNodeEndpoints: Record<SupportedSafeChainIds, string> = {
   42220: 'https://rpc.ankr.com/celo',
   8453: 'https://mainnet.base.org',
   100: 'https://rpc.ankr.com/gnosis',
+  137: 'https://rpc.ankr.com/polygon',
 }
