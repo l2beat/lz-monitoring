@@ -1,13 +1,11 @@
 import { DiscoveryStatusResponse } from '@lz/libs'
 import { useEffect, useState } from 'react'
 
-export { useStatusApi }
-
 interface UseStatusApiHookOptions {
   apiUrl: string
 }
 
-function useStatusApi({ apiUrl }: UseStatusApiHookOptions) {
+export function useStatusApi({ apiUrl }: UseStatusApiHookOptions) {
   const [response, setResponse] = useState<DiscoveryStatusResponse | null>(null)
 
   useEffect(() => {

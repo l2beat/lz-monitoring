@@ -1,8 +1,6 @@
 import { useEffect, useState } from 'react'
 
-export { useQueryParam }
-
-function useQueryParam(paramName: string) {
+export function useQueryParam(paramName: string) {
   const currentParam = new URLSearchParams(window.location.search).get(
     paramName,
   )

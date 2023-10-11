@@ -1,15 +1,13 @@
 import { ChainId, DiscoveryApi } from '@lz/libs'
 import { useEffect, useState } from 'react'
 
-export { useDiscoveryApi }
-
 interface UseDiscoverApiHookOptions {
   initialChainId: ChainId
   apiUrl: string
   intervalMs?: number
 }
 
-function useDiscoveryApi({
+export function useDiscoveryApi({
   initialChainId,
   apiUrl,
   intervalMs = 10_000,
@@ -27,7 +25,6 @@ function useDiscoveryApi({
       setData(parsed)
     }
 
-    // Refresh on change
     void fetchData()
 
     const fetchDataInterval = setInterval(() => {

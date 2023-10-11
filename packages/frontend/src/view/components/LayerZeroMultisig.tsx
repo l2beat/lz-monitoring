@@ -24,7 +24,7 @@ export function LzMultisig({
           <span className="font-mono text-gray-600">{address}</span>
         ) : (
           <span className="font-mono text-gray-600">
-            This chain does not support LayerZero Multisig
+            Protocol on this chain is not owned by Safe Multisig
           </span>
         )}
       </div>

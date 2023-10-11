@@ -1,4 +1,5 @@
-import { ChainId } from '@lz/libs'
+import { ChainId, DiscoveryApi, endpoints, EthereumAddress } from '@lz/libs'
+import { SkeletonTheme } from 'react-loading-skeleton'
 
 import { config } from '../config'
 import { useChainQueryParam } from '../hooks/useChainQueryParam'
@@ -8,6 +9,7 @@ import { EndpointContract } from '../view/components/EndpointContract'
 import { LzMultisig } from '../view/components/LayerZeroMultisig'
 import { Layout } from '../view/components/Layout'
 import { Navbar } from '../view/components/Navbar'
+import { MultisigTransactions } from '../view/components/safe/MultisigTransactions'
 import { ULNv2Contract } from '../view/components/ULNv2Contract'
 
 export function Main(): JSX.Element {
@@ -31,20 +33,61 @@ export function Main(): JSX.Element {
     setChain(ChainId.ETHEREUM)
   }
 
+  const multisigAddress = discoveryResponse?.contracts.lzMultisig?.address
+
+  const associatedAddresses = discoveryResponse
+    ? getAssociatedAddresses(discoveryResponse)
+    : []
+
+  const shouldDisplayMultisigTransactions =
+    multisigAddress && endpoints.isChainSupported(paramChain.valueOf())
+
   return (
     <>
       <Navbar />
       <Layout>
-        <CurrentNetwork
-          latestBlock={discoveryResponse?.blockNumber}
-          chainId={paramChain}
-          setChainId={setChain}
-          availableChains={config.availableChains}
-        />
-        <EndpointContract {...discoveryResponse?.contracts.endpoint} />
-        <ULNv2Contract {...discoveryResponse?.contracts.ulnV2} />
-        <LzMultisig {...discoveryResponse?.contracts.lzMultisig} />
+        <SkeletonTheme baseColor="#ff0000">
+          <CurrentNetwork
+            latestBlock={discoveryResponse?.blockNumber}
+            chainId={paramChain}
+            setChainId={setChain}
+            availableChains={config.availableChains}
+          />
+          <EndpointContract {...discoveryResponse?.contracts.endpoint} />
+          <ULNv2Contract {...discoveryResponse?.contracts.ulnV2} />
+          <LzMultisig {...discoveryResponse?.contracts.lzMultisig} />
+
+          {shouldDisplayMultisigTransactions && (
+            <MultisigTransactions
+              multisigAddress={multisigAddress}
+              chainId={paramChain}
+              associatedAddresses={associatedAddresses}
+            />
+          )}
+        </SkeletonTheme>
       </Layout>
     </>
   )
+}
+
+function getAssociatedAddresses(
+  discoveryResponse: DiscoveryApi,
+): EthereumAddress[] {
+  const multisig = discoveryResponse.contracts.lzMultisig?.address ?? []
+
+  const multisigOwners =
+    discoveryResponse.contracts.lzMultisig?.owners.map((owner) => {
+      return owner
+    }) ?? []
+
+  const ulnV2 = discoveryResponse.contracts.ulnV2.address
+  const endpoint = discoveryResponse.contracts.endpoint.address
+
+  const allAddresses = [multisig, multisigOwners, ulnV2, endpoint].flat()
+
+  const nonZeroAddresses = allAddresses.filter((address) => {
+    return address !== EthereumAddress.ZERO
+  })
+
+  return Array.from(new Set(nonZeroAddresses))
 }

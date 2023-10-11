@@ -3,8 +3,6 @@ import { useEffect, useState } from 'react'
 
 import { useQueryParam } from './useQueryParam'
 
-export { useChainQueryParam }
-
 function serialize(chainId: ChainId): string | null {
   try {
     return ChainId.getName(chainId)
@@ -34,7 +32,7 @@ interface UseChainQueryParamOptions {
 }
 
 // We can do that in the generic way such as `useSerializableQueryParam<T>` but it's not needed for now
-function useChainQueryParam({
+export function useChainQueryParam({
   fallback,
   paramName,
 }: UseChainQueryParamOptions) {
