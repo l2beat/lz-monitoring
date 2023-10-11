@@ -54,12 +54,9 @@ export function SafeMultisigTransactionComponent({
       <Row label="Nonce" value={nonce} />
       <Row label="Block number" value={blockNumber} />
       <Row label="Target" value={target} />
-      <Row label="Method" value={<Code className="mr-2">{method}</Code>} />
-      <Row
-        label="Call with params"
-        value={<Code className="mr-2">{callWithParams}</Code>}
-      />
-      <Row label="Raw data" value={<Code className="mr-2">{rawData}</Code>} />
+      <Row label="Method" value={<Code>{method}</Code>} />
+      <Row label="Call with params" value={<Code>{callWithParams}</Code>} />
+      <Row label="Raw data" value={<Code>{rawData}</Code>} />
 
       {paramsSummary.length > 0 && (
         <ExpandableRow className="mt-5" title="Params / Function calls">
@@ -82,9 +79,7 @@ export function SafeMultisigTransactionComponent({
 export function SafeMultisigTransactionSkeleton() {
   const inlinePropSkeletons = new Array(9)
     .fill(0)
-    .map((_, i) => (
-      <Row key={i} label={<Skeleton />} value={<Skeleton width="95%" />} />
-    ))
+    .map((_, i) => <Row key={i} label={<Skeleton />} value={<Skeleton />} />)
 
   const codeSkeletons = new Array(3).fill(0).map((_, i) => (
     <Row
@@ -92,7 +87,7 @@ export function SafeMultisigTransactionSkeleton() {
       label={<Skeleton />}
       value={
         <Code>
-          <Skeleton width="95%" />
+          <Skeleton />
         </Code>
       }
     />
