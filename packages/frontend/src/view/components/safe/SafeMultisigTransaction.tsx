@@ -42,6 +42,8 @@ function SafeMultisigTransactionComponent({
     decodedProperties?.callWithParams ?? 'Could not be decoded ⚠️'
   const params = decodedProperties?.params ?? []
 
+  const paramsSummary = params.map((inlineSummary) => `${inlineSummary}\n`)
+
   return (
     <ComponentLayout>
       <Row label="Transaction type" value={transactionType} />
@@ -61,9 +63,11 @@ function SafeMultisigTransactionComponent({
       />
       <Row label="Raw data" value={<Code className="mr-2">{rawData}</Code>} />
 
-      <ExpandableRow cls="mt-5" title="Params / Function calls">
-        <Code>{params.map((inlineSummary) => `${inlineSummary}\n`)}</Code>
-      </ExpandableRow>
+      {paramsSummary.length > 0 && (
+        <ExpandableRow cls="mt-5" title="Params / Function calls">
+          <Code>{params.map((inlineSummary) => `${inlineSummary}\n`)}</Code>
+        </ExpandableRow>
+      )}
 
       {tx.transfers.length > 0 && (
         <ExpandableRow title="Transfers">
