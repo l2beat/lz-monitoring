@@ -2,7 +2,7 @@ import {
   ChainId,
   createSafeApiClient,
   EthereumAddress,
-  SafeTransaction,
+  SafeMultisigTransaction,
 } from '@lz/libs'
 import { useEffect, useState } from 'react'
 
@@ -14,28 +14,31 @@ interface UseStatusApiHookOptions {
 }
 
 function useSafeApi({ chainId, multisigAddress }: UseStatusApiHookOptions) {
-  const [transactions, setTransactions] = useState<SafeTransaction[] | null>(
-    null,
-  )
+  const [isLoading, setIsLoading] = useState(false)
+  const [isError, setIsError] = useState(false)
+  const [transactions, setTransactions] = useState<
+    SafeMultisigTransaction[] | null
+  >(null)
 
   useEffect(() => {
     const api = createSafeApiClient(chainId)
 
     async function fetch() {
-      const transactions = await api.getAllTransactions(
-        multisigAddress.toString(),
-      )
+      setIsLoading(true)
+      try {
+        const transactions = await api.getMultisigTransactions(
+          multisigAddress.toString(),
+        )
 
-      // const save = [transactions.at(-24)]
-
-      // setTransactions(transactions.filter((t) => t.transfers.length > 0))
-      // console.warn(transactions.map((t) => t.txType))
-      setTransactions(transactions)
-
-      console.dir({ save: transactions.filter((t) => t.transfers.length > 0) })
+        setTransactions(transactions)
+        setIsLoading(false)
+      } catch {
+        setIsError(true)
+      }
+      setIsLoading(false)
     }
     void fetch()
   }, [chainId, multisigAddress])
 
-  return [transactions] as const
+  return [isLoading, isError, transactions] as const
 }

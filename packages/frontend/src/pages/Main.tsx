@@ -1,4 +1,5 @@
-import { ChainId, endpoints } from '@lz/libs'
+import { ChainId, DiscoveryApi, endpoints, EthereumAddress } from '@lz/libs'
+import { SkeletonTheme } from 'react-loading-skeleton'
 
 import { config } from '../config'
 import { useChainQueryParam } from '../hooks/useChainQueryParam'
@@ -34,28 +35,66 @@ export function Main(): JSX.Element {
 
   const multisigAddress = discoveryResponse?.contracts.lzMultisig?.address
 
+  const associatedAddresses = discoveryResponse
+    ? getAssociatedAddresses(discoveryResponse)
+    : []
+
   return (
     <>
       <Navbar />
       <Layout>
-        <CurrentNetwork
-          latestBlock={discoveryResponse?.blockNumber}
-          chainId={paramChain}
-          setChainId={setChain}
-          availableChains={config.availableChains}
-        />
-        <EndpointContract {...discoveryResponse?.contracts.endpoint} />
-        <ULNv2Contract {...discoveryResponse?.contracts.ulnV2} />
-        <LzMultisig {...discoveryResponse?.contracts.lzMultisig} />
-        {multisigAddress && endpoints.isChainSupported(paramChain.valueOf()) ? (
-          <QueuedTransactions
-            multisigAddress={multisigAddress}
+        <SkeletonTheme baseColor="#ff0000">
+          <CurrentNetwork
+            latestBlock={discoveryResponse?.blockNumber}
             chainId={paramChain}
+            setChainId={setChain}
+            availableChains={config.availableChains}
           />
-        ) : (
-          <div> Protocol on this chain is not owned by Safe Multisig</div>
-        )}
+          <EndpointContract {...discoveryResponse?.contracts.endpoint} />
+          <ULNv2Contract {...discoveryResponse?.contracts.ulnV2} />
+          <LzMultisig {...discoveryResponse?.contracts.lzMultisig} />
+          {multisigAddress &&
+          endpoints.isChainSupported(paramChain.valueOf()) ? (
+            <QueuedTransactions
+              multisigAddress={multisigAddress}
+              chainId={paramChain}
+              associatedAddresses={associatedAddresses}
+            />
+          ) : (
+            <div> Protocol on this chain is not owned by Safe Multisig</div>
+          )}
+        </SkeletonTheme>
       </Layout>
     </>
   )
+}
+
+function getAssociatedAddresses(
+  discoveryResponse: DiscoveryApi,
+): EthereumAddress[] {
+  const multisig = discoveryResponse.contracts.lzMultisig?.address ?? []
+
+  const multisigOwners =
+    discoveryResponse.contracts.lzMultisig?.owners.map((owner) => {
+      return owner
+    }) ?? []
+
+  const ulnV2 = discoveryResponse.contracts.ulnV2.address
+  const endpoint = discoveryResponse.contracts.endpoint.address
+
+  const allAddresses = [multisig, multisigOwners, ulnV2, endpoint].flat()
+
+  const nonZeroAddresses = allAddresses.filter((address) => {
+    return address !== EthereumAddress.ZERO
+  })
+
+  const normalizedAddresses = Array.from(
+    new Set(
+      nonZeroAddresses.filter((address) => {
+        return address !== EthereumAddress.ZERO
+      }),
+    ),
+  )
+
+  return normalizedAddresses
 }

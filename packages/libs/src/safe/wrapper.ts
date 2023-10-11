@@ -1,17 +1,23 @@
-import SafeApiKit, { AllTransactionsListResponse } from '@safe-global/api-kit'
+import SafeApiKit, {
+  AllTransactionsListResponse,
+  SafeMultisigTransactionWithTransfersResponse,
+} from '@safe-global/api-kit'
 
 import { ChainId } from '../chainId'
 import { endpoints } from './endpoints'
 
 export { createSafeApiClient }
-export type { SafeTransaction }
+export type { SafeMultisigTransaction }
 
 type ArrayItem<T extends unknown[]> = T extends (infer U)[] ? U : never
-
+type SafeMultisigTransaction = SafeMultisigTransactionWithTransfersResponse
 type SafeTransaction = ArrayItem<AllTransactionsListResponse['results']>
 
-// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-function createSafeApiClient(chainId: ChainId) {
+function createSafeApiClient(chainId: ChainId): {
+  getMultisigTransactions: (
+    multisigAddress: string,
+  ) => Promise<SafeMultisigTransaction[]>
+} {
   const chainIdNumber = chainId.valueOf()
 
   const isSupported = endpoints.isChainSupported(chainIdNumber)
@@ -28,8 +34,8 @@ function createSafeApiClient(chainId: ChainId) {
   })
 
   return {
-    getAllTransactions: async (multisigAddress: string) => {
-      const transactions: SafeTransaction[] = []
+    getMultisigTransactions: async (multisigAddress: string) => {
+      const transactions = []
 
       let response = await safeApiKit.getAllTransactions(multisigAddress)
 
@@ -43,7 +49,7 @@ function createSafeApiClient(chainId: ChainId) {
         transactions.push(...response.results)
       }
 
-      return transactions
+      return filterMultisigTransactions(transactions)
     },
   }
 }
@@ -61,3 +67,11 @@ const spoofedAdapter = {
     return { address }
   },
 } as never
+
+function filterMultisigTransactions(
+  all: SafeTransaction[],
+): SafeMultisigTransaction[] {
+  return all.filter(
+    (tx) => tx.txType === 'MULTISIG_TRANSACTION',
+  ) as SafeMultisigTransaction[]
+}
