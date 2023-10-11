@@ -1,4 +1,4 @@
-import SafeApiKit, {
+import {
   AllTransactionsListResponse,
   SafeMultisigTransactionWithTransfersResponse,
 } from '@safe-global/api-kit'
@@ -28,45 +28,36 @@ function createSafeApiClient(chainId: ChainId): {
 
   const safeServiceEndpoint = endpoints.list[chainIdNumber]
 
-  const safeApiKit = new SafeApiKit({
-    ethAdapter: spoofedAdapter,
-    txServiceUrl: safeServiceEndpoint,
-  })
-
   return {
     getMultisigTransactions: async (multisigAddress: string) => {
-      const transactions = []
+      const transactions: SafeTransaction[] = []
 
-      let response = await safeApiKit.getAllTransactions(multisigAddress)
+      const callEndpoint = `${safeServiceEndpoint}/api/v1/safes/${multisigAddress}/all-transactions`
 
-      transactions.push(...response.results)
+      // Batch of 10s since the API will force-paginate despite params
+      const initialParams = new URLSearchParams({
+        limit: '10',
+      })
 
-      while (response.next) {
-        const raw = await fetch(response.next, { cache: 'no-store' })
+      const response = await fetch(
+        `${callEndpoint}?${initialParams.toString()}`,
+      )
+      let json = (await response.json()) as AllTransactionsListResponse
 
-        response = (await raw.json()) as AllTransactionsListResponse
+      transactions.push(...json.results)
 
-        transactions.push(...response.results)
+      while (json.next) {
+        const raw = await fetch(json.next)
+
+        json = (await raw.json()) as AllTransactionsListResponse
+
+        transactions.push(...json.results)
       }
 
       return filterMultisigTransactions(transactions)
     },
   }
 }
-
-/**
- * Spoof-er adapter mock
- * @notice only internal `getEip3770Address` is being mocked. Original method can ingest EIP-3770 addresses with prefixes returning plain address.
- *
- * Method in question is a part of heavy `@safe-global/protocol-kit` package.
- * Also there are some dependency conflicts. There is no point in getting rid of those since
- * API-kit serves only as a fetch-wrapper.
- */
-const spoofedAdapter = {
-  getEip3770Address(address: string) {
-    return { address }
-  },
-} as never
 
 function filterMultisigTransactions(
   all: SafeTransaction[],
