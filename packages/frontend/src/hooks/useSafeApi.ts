@@ -31,6 +31,7 @@ function useSafeApi({ chainId, multisigAddress }: UseStatusApiHookOptions) {
         )
 
         setTransactions(transactions)
+        console.warn(transactions)
         setIsLoading(false)
       } catch {
         setIsError(true)
