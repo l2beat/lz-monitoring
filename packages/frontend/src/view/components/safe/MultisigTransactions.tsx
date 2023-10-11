@@ -2,13 +2,13 @@ import { ChainId, EthereumAddress } from '@lz/libs'
 import { SkeletonTheme } from 'react-loading-skeleton'
 
 import { useSafeApi } from '../../../hooks/useSafeApi'
-import { PaginatedContainer } from '../page-container/PaginatedContainer'
+import { PaginatedContainer } from './PaginatedContainer'
 import {
   SafeMultisigTransactionComponent,
   SafeMultisigTransactionSkeleton,
-} from './transactions/SafeMultisigTransaction'
+} from './SafeMultisigTransaction'
 
-export { QueuedTransactions }
+export { MultisigTransactions }
 
 interface Props {
   multisigAddress: EthereumAddress
@@ -16,7 +16,7 @@ interface Props {
   chainId: ChainId
 }
 
-function QueuedTransactions(props: Props) {
+function MultisigTransactions(props: Props) {
   const [isLoading, isError, transactions] = useSafeApi(props)
 
   if (isLoading) {

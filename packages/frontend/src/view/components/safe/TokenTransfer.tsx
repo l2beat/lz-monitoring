@@ -6,9 +6,9 @@ import {
 } from '@lz/libs'
 import { TransferWithTokenInfoResponse } from '@safe-global/api-kit'
 
-import { Row } from '../Row'
-import { toUTC } from '../utils'
 import { Badge, BadgeVariant } from './Badge'
+import { Row } from './Row'
+import { toUTC } from './utils'
 
 export { TokenTransfers }
 

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 
-import { NextPageIcon } from './NextPageIcon'
+import { NextPageIcon } from '../../icons/NextPageIcon'
 
 export { PaginatedContainer }
 

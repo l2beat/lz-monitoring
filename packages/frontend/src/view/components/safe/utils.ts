@@ -1,7 +1,7 @@
 import { DataDecoded, ParamDecoded } from '@lz/libs'
 
-export { decodeToTCall, decodeToTParam, paramToSummary, toUTC }
-export type { TCall, TParam }
+export { decodeCall, decodeParam, paramToSummary, toUTC }
+export type { Call, Param }
 
 type ExtendCommonParam<T> = {
   name: string
@@ -9,25 +9,25 @@ type ExtendCommonParam<T> = {
   valueType: string
 } & T
 
-type TParam =
+type Param =
   | ExtendCommonParam<{ type: 'primitive' }>
-  | ExtendCommonParam<{ type: 'nested'; calls: TCall[] }>
+  | ExtendCommonParam<{ type: 'nested'; calls: Call[] }>
 
-interface TCall {
+interface Call {
   method: string
-  params: TParam[]
+  params: Param[]
   signature: string
   functionCall: string
 }
 
-function decodeToTCall(call: NonNullable<DataDecoded>): TCall {
+function decodeCall(call: NonNullable<DataDecoded>): Call {
   const method = call.method
   const params = call.parameters
 
   const signature = toSignature(method, params)
   const functionCall = toFunctionCall(method, params)
 
-  const normalizedParams = call.parameters.map(decodeToTParam)
+  const normalizedParams = call.parameters.map(decodeParam)
 
   return {
     method,
@@ -37,7 +37,7 @@ function decodeToTCall(call: NonNullable<DataDecoded>): TCall {
   }
 }
 
-function decodeToTParam(param: ParamDecoded): TParam {
+function decodeParam(param: ParamDecoded): Param {
   if (param.valueDecoded) {
     return {
       type: 'nested',
@@ -45,7 +45,7 @@ function decodeToTParam(param: ParamDecoded): TParam {
       value: param.value,
       valueType: param.type,
       calls: param.valueDecoded.flatMap((value) =>
-        value.dataDecoded ? decodeToTCall(value.dataDecoded) : [],
+        value.dataDecoded ? decodeCall(value.dataDecoded) : [],
       ),
     }
   }
@@ -74,7 +74,7 @@ function toFunctionCall(method: string, params: ParamDecoded[]) {
     .join(', ')})`
 }
 
-function paramToSummary(param: TParam): string {
+function paramToSummary(param: Param): string {
   if (param.type === 'primitive') {
     const prettyValue = Array.isArray(param.value)
       ? `[${param.value.join(', ')}]`

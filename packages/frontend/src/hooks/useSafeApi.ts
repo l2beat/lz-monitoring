@@ -37,6 +37,7 @@ function useSafeApi({ chainId, multisigAddress }: UseStatusApiHookOptions) {
       }
       setIsLoading(false)
     }
+
     void fetch()
   }, [chainId, multisigAddress])
 

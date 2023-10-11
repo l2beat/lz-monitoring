@@ -9,7 +9,7 @@ import { EndpointContract } from '../view/components/EndpointContract'
 import { LzMultisig } from '../view/components/LayerZeroMultisig'
 import { Layout } from '../view/components/Layout'
 import { Navbar } from '../view/components/Navbar'
-import { QueuedTransactions } from '../view/components/safe/QueuedTransactions'
+import { MultisigTransactions } from '../view/components/safe/MultisigTransactions'
 import { ULNv2Contract } from '../view/components/ULNv2Contract'
 
 export function Main(): JSX.Element {
@@ -39,6 +39,9 @@ export function Main(): JSX.Element {
     ? getAssociatedAddresses(discoveryResponse)
     : []
 
+  const shouldDisplayMultisigTransactions =
+    multisigAddress && endpoints.isChainSupported(paramChain.valueOf())
+
   return (
     <>
       <Navbar />
@@ -53,15 +56,13 @@ export function Main(): JSX.Element {
           <EndpointContract {...discoveryResponse?.contracts.endpoint} />
           <ULNv2Contract {...discoveryResponse?.contracts.ulnV2} />
           <LzMultisig {...discoveryResponse?.contracts.lzMultisig} />
-          {multisigAddress &&
-          endpoints.isChainSupported(paramChain.valueOf()) ? (
-            <QueuedTransactions
+
+          {shouldDisplayMultisigTransactions && (
+            <MultisigTransactions
               multisigAddress={multisigAddress}
               chainId={paramChain}
               associatedAddresses={associatedAddresses}
             />
-          ) : (
-            <div> Protocol on this chain is not owned by Safe Multisig</div>
           )}
         </SkeletonTheme>
       </Layout>
