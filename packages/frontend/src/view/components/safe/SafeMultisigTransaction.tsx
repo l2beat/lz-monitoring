@@ -64,13 +64,13 @@ function SafeMultisigTransactionComponent({
       <Row label="Raw data" value={<Code className="mr-2">{rawData}</Code>} />
 
       {paramsSummary.length > 0 && (
-        <ExpandableRow cls="mt-5" title="Params / Function calls">
+        <ExpandableRow className="mt-5" title="Params / Function calls">
           <Code>{params.map((inlineSummary) => `${inlineSummary}\n`)}</Code>
         </ExpandableRow>
       )}
 
       {tx.transfers.length > 0 && (
-        <ExpandableRow title="Transfers">
+        <ExpandableRow className="mt-5" title="Transfers">
           <TokenTransfers
             transfers={tx.transfers}
             associatedAddresses={associatedAddresses}

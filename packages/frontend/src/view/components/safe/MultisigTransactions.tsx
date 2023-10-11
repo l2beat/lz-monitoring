@@ -60,9 +60,9 @@ function ComponentLayout({
   subtitle?: string
 }) {
   return (
-    <section className="mx-6 border-t border-blue bg-gray-900">
+    <section className="mx-6 border-t border-[#3cb1ff] bg-gray-900">
       <div className="flex items-center justify-between p-8">
-        <h2 className="text-2xl text-lg font-medium text-blue">
+        <h2 className="text-2xl text-lg font-medium text-[#3cb1ff]">
           Safe Multisig Transactions
         </h2>
         {subtitle && (

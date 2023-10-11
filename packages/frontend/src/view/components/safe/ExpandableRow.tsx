@@ -8,11 +8,11 @@ export { ExpandableRow }
 function ExpandableRow({
   children,
   title,
-  cls,
+  className,
 }: {
   children: React.ReactNode
   title: string
-  cls?: string
+  className?: string
 }) {
   const [isExpanded, setIsExpanded] = useState(false)
 
@@ -21,7 +21,7 @@ function ExpandableRow({
   }
 
   return (
-    <div className={cx('bg-gray-800', cls)}>
+    <div className={cx('bg-gray-800', className)}>
       <div className="flex items-center justify-between">
         <div className="px-5 py-3 font-semibold">{title}</div>
         <span
