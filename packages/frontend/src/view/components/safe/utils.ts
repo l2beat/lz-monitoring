@@ -48,9 +48,7 @@ function decodeParam(param: SafeTransactionDecodedParam): Param {
       value: param.value,
       valueType: param.type,
       calls: param.valueDecoded.flatMap((value) =>
-        value.SafeTransactionDecodedData
-          ? decodeCall(value.SafeTransactionDecodedData)
-          : [],
+        value.dataDecoded ? decodeCall(value.dataDecoded) : [],
       ),
     }
   }
