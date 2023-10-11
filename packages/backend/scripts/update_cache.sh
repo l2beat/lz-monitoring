@@ -42,6 +42,7 @@ BACKUP_FILENAME=".db/dump.$TIMESTAMP"
 # Find the most recent backup file with the given naming format
 LATEST_DUMP=$(ls .db/dump.* 2>/dev/null | sort -r | head -n1)
 
+echo "Checking for a recent Heroku backup..."
 # Get the most recent Heroku backup's date
 HEROKU_BACKUP_DATE=$(heroku pg:backups --app lz-monitoring | grep -E '^b[0-9]+' | head -n 1 | awk '{print $3 " " $4}')
 
@@ -58,15 +59,22 @@ fi
 
 # If no local dump file exists or the most recent local dump is older than 2 days, capture and download a new backup
 if [[ -z "$LATEST_DUMP" ]] || [[ $(find "$LATEST_DUMP" -mtime +2) ]]; then
-    # If no recent Heroku backup exists, capture a new one
-    if [[ $RECENT_HEROKU_BACKUP == false ]]; then
-        heroku pg:backups:capture --app lz-monitoring
-    fi
-
     # If an older dump file exists, notify about it
     if [[ -n "$LATEST_DUMP" ]]; then
+        echo "The latest dump file is older than two days."
         echo "Removing old $LATEST_DUMP..."
         rm "$LATEST_DUMP"
+    else
+        echo "No local dump file found."
+    fi
+
+    # If no recent Heroku backup exists, capture a new one
+    if [[ $RECENT_HEROKU_BACKUP == false ]]; then
+        echo "No recent Heroku backup found."
+        echo "Capturing a new backup on Heroku..."
+        heroku pg:backups:capture --app lz-monitoring
+    else
+        echo "A recent Heroku backup exists."
     fi
 
     echo "Downloading the latest backup from Heroku..."
@@ -75,12 +83,12 @@ if [[ -z "$LATEST_DUMP" ]] || [[ $(find "$LATEST_DUMP" -mtime +2) ]]; then
     heroku pg:backups:download --app lz-monitoring --output $BACKUP_FILENAME
     LATEST_DUMP=$BACKUP_FILENAME
 else
-    echo "$LATEST_DUMP is less than two days old. Using the existing backup."
+    echo "Latest dump ($LATEST_DUMP) is less than two days old. Using the existing backup."
 fi
 
 # Restore the downloaded backup to the local database
 echo "Restoring the backup to the local database..."
-pg_restore --clean --no-acl --no-owner -h localhost -d local "$LATEST_DUMP"
+pg_restore --clean --no-acl --no-owner -h localhost -d local "$LATEST_DUMP" --schema public
 
 # Check the success of pg_restore
 if [[ $? -eq 0 ]]; then
