@@ -2,7 +2,7 @@ import cx from 'classnames'
 
 export function SubsectionHeader(props: {
   title: string
-  subtitle?: string | number
+  subtitle?: string
   className?: string
 }) {
   return (
