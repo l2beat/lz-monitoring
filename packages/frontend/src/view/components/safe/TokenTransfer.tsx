@@ -10,9 +10,7 @@ import { Badge, BadgeVariant } from './Badge'
 import { Row } from './Row'
 import { toUTC } from './utils'
 
-export { TokenTransfers }
-
-function TokenTransfers({
+export function TokenTransfers({
   transfers,
   associatedAddresses,
 }: {

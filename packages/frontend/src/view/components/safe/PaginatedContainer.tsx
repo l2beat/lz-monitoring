@@ -2,9 +2,7 @@ import { useEffect, useState } from 'react'
 
 import { NextPageIcon } from '../../icons/NextPageIcon'
 
-export { PaginatedContainer }
-
-function PaginatedContainer<T extends React.ReactNode>(props: {
+export function PaginatedContainer<T extends React.ReactNode>(props: {
   children: T[]
   itemsPerPage: number
 }) {

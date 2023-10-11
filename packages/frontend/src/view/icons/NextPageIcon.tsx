@@ -1,8 +1,6 @@
 import cx from 'classnames'
 
-export { NextPageIcon }
-
-function NextPageIcon({ className }: { className?: string }) {
+export function NextPageIcon({ className }: { className?: string }) {
   return (
     <svg
       fill="#ffffff"

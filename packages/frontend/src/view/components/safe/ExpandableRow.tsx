@@ -3,9 +3,7 @@ import { useState } from 'react'
 
 import { DropdownArrowIcon } from '../../icons/DropdownArrowIcon'
 
-export { ExpandableRow }
-
-function ExpandableRow({
+export function ExpandableRow({
   children,
   title,
   className,
@@ -29,11 +27,7 @@ function ExpandableRow({
           onClick={toggleExpand}
         >
           <DropdownArrowIcon
-            className={cx(
-              isExpanded && 'rotate-180',
-              'transition-all',
-              'duration-500',
-            )}
+            className={cx(isExpanded && 'rotate-180', 'transition-all')}
           />
         </span>
       </div>

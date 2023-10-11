@@ -6,14 +6,15 @@ import {
 } from '@lz/libs'
 import { useEffect, useState } from 'react'
 
-export { useSafeApi }
-
 interface UseStatusApiHookOptions {
   chainId: ChainId
   multisigAddress: EthereumAddress
 }
 
-function useSafeApi({ chainId, multisigAddress }: UseStatusApiHookOptions) {
+export function useSafeApi({
+  chainId,
+  multisigAddress,
+}: UseStatusApiHookOptions) {
   const [isLoading, setIsLoading] = useState(false)
   const [isError, setIsError] = useState(false)
   const [transactions, setTransactions] = useState<

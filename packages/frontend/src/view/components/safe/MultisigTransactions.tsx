@@ -8,15 +8,13 @@ import {
   SafeMultisigTransactionSkeleton,
 } from './SafeMultisigTransaction'
 
-export { MultisigTransactions }
-
 interface Props {
   multisigAddress: EthereumAddress
   associatedAddresses: EthereumAddress[]
   chainId: ChainId
 }
 
-function MultisigTransactions(props: Props) {
+export function MultisigTransactions(props: Props) {
   const [isLoading, isError, transactions] = useSafeApi(props)
 
   if (isLoading) {
@@ -33,14 +31,14 @@ function MultisigTransactions(props: Props) {
     return <ComponentLayout subtitle="Data could not be loaded ⚠️" />
   }
 
-  if (!transactions || transactions.length <= 0) {
+  if (!transactions || transactions.length === 0) {
     return <ComponentLayout subtitle="No transactions executed" />
   }
 
   return (
     <ComponentLayout>
       <PaginatedContainer itemsPerPage={1}>
-        {transactions.flatMap((tx, i) => (
+        {transactions.map((tx, i) => (
           <SafeMultisigTransactionComponent
             tx={tx}
             key={i}

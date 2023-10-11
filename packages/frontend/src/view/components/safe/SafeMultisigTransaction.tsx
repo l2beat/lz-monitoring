@@ -13,9 +13,7 @@ import { RowSection } from './RowSection'
 import { TokenTransfers } from './TokenTransfer'
 import { decodeCall, paramToSummary, toUTC } from './utils'
 
-export { SafeMultisigTransactionComponent, SafeMultisigTransactionSkeleton }
-
-function SafeMultisigTransactionComponent({
+export function SafeMultisigTransactionComponent({
   tx,
   associatedAddresses,
 }: {
@@ -81,7 +79,7 @@ function SafeMultisigTransactionComponent({
   )
 }
 
-function SafeMultisigTransactionSkeleton() {
+export function SafeMultisigTransactionSkeleton() {
   const inlinePropSkeletons = new Array(9)
     .fill(0)
     .map((_, i) => (

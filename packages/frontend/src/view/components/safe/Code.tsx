@@ -1,8 +1,6 @@
 import cx from 'classnames'
 
-export { Code }
-
-function Code({
+export function Code({
   children,
   className,
 }: {
