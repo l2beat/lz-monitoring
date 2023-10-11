@@ -11,7 +11,7 @@ const SubParamDecoded = z.object({
   to: z.string(),
   value: PrimitiveValue,
   data: z.string(),
-  SafeTransactionDecodedData: z
+  dataDecoded: z
     .object({
       method: z.string(),
       parameters: z.array(
