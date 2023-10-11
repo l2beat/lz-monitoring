@@ -1,4 +1,8 @@
-import { DataDecoded, EthereumAddress, SafeMultisigTransaction } from '@lz/libs'
+import {
+  EthereumAddress,
+  SafeMultisigTransaction,
+  SafeTransactionDecodedData,
+} from '@lz/libs'
 import React from 'react'
 import Skeleton from 'react-loading-skeleton'
 
@@ -109,13 +113,13 @@ function ComponentLayout({ children }: { children: React.ReactNode[] }) {
 }
 
 function getDecodedProperties(tx: SafeMultisigTransaction) {
-  const parsingResult = DataDecoded.safeParse(tx.dataDecoded)
+  const parsingResult = SafeTransactionDecodedData.safeParse(tx.dataDecoded)
 
   if (parsingResult.success && tx.dataDecoded) {
     // SafeApi kit typings are wrong, string type applies only for transport layer
     // string is later parsed into json object
     const decodedCall = decodeCall(
-      tx.dataDecoded as unknown as NonNullable<DataDecoded>,
+      tx.dataDecoded as unknown as NonNullable<SafeTransactionDecodedData>,
     )
 
     return {

@@ -1,4 +1,7 @@
-import { DataDecoded, ParamDecoded } from '@lz/libs'
+import {
+  SafeTransactionDecodedData,
+  SafeTransactionDecodedParam,
+} from '@lz/libs'
 
 export { decodeCall, decodeParam, paramToSummary, toUTC }
 export type { Call, Param }
@@ -20,7 +23,7 @@ interface Call {
   functionCall: string
 }
 
-function decodeCall(call: NonNullable<DataDecoded>): Call {
+function decodeCall(call: NonNullable<SafeTransactionDecodedData>): Call {
   const method = call.method
   const params = call.parameters
 
@@ -37,7 +40,7 @@ function decodeCall(call: NonNullable<DataDecoded>): Call {
   }
 }
 
-function decodeParam(param: ParamDecoded): Param {
+function decodeParam(param: SafeTransactionDecodedParam): Param {
   if (param.valueDecoded) {
     return {
       type: 'nested',
@@ -45,7 +48,9 @@ function decodeParam(param: ParamDecoded): Param {
       value: param.value,
       valueType: param.type,
       calls: param.valueDecoded.flatMap((value) =>
-        value.dataDecoded ? decodeCall(value.dataDecoded) : [],
+        value.SafeTransactionDecodedData
+          ? decodeCall(value.SafeTransactionDecodedData)
+          : [],
       ),
     }
   }
@@ -58,7 +63,7 @@ function decodeParam(param: ParamDecoded): Param {
   }
 }
 
-function toSignature(method: string, params: ParamDecoded[]) {
+function toSignature(method: string, params: SafeTransactionDecodedParam[]) {
   return `function ${method}(${params
     .map((param) => {
       return `${param.type} ${param.name}`
@@ -66,7 +71,7 @@ function toSignature(method: string, params: ParamDecoded[]) {
     .join(', ')})`
 }
 
-function toFunctionCall(method: string, params: ParamDecoded[]) {
+function toFunctionCall(method: string, params: SafeTransactionDecodedParam[]) {
   return `function ${method}(${params
     .map((param) => {
       return param.value
