@@ -12,7 +12,7 @@ interface UseDiscoverApiHookOptions {
 function useDiscoveryApi({
   initialChainId,
   apiUrl,
-  intervalMs = 1_000_000,
+  intervalMs = 10_000,
 }: UseDiscoverApiHookOptions) {
   const [data, setData] = useState<DiscoveryApi | null>(null)
   const [chainId, setChainId] = useState<ChainId>(initialChainId)
