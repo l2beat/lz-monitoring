@@ -89,13 +89,5 @@ function getAssociatedAddresses(
     return address !== EthereumAddress.ZERO
   })
 
-  const normalizedAddresses = Array.from(
-    new Set(
-      nonZeroAddresses.filter((address) => {
-        return address !== EthereumAddress.ZERO
-      }),
-    ),
-  )
-
-  return normalizedAddresses
+  return Array.from(new Set(nonZeroAddresses))
 }
