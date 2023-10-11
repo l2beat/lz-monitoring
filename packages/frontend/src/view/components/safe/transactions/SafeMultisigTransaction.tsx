@@ -3,9 +3,8 @@ import React from 'react'
 import Skeleton from 'react-loading-skeleton'
 
 import { Code } from '../Code'
-import { CodeRow } from '../CodeRow'
 import { ExpandableRow } from '../ExpandableRow'
-import { ComponentRow, Row } from '../Row'
+import { Row } from '../Row'
 import { RowSection } from '../RowSection'
 import { TokenTransfers } from '../tokens/TokenTransfer'
 import { decodeToTCall, paramToSummary, toUTC } from '../utils'
@@ -39,9 +38,13 @@ function SafeMultisigTransactionComponent({
         <Row label="Nonce" value={tx.nonce} />
         <Row label="Block number" value={tx.blockNumber ?? 'No block'} />
         <Row label="Target" value={tx.to} />
-        <CodeRow label="Method">Could not be decoded ⚠️</CodeRow>
-        <CodeRow label="Call with params">Could not be decoded ⚠️</CodeRow>
-        <CodeRow label="Raw data">{tx.data ?? 'No Data'}</CodeRow>
+        <Row label="Method" value={<Code>Could not be decoded ⚠️</Code>} />
+        <Row
+          label="Call with params"
+          value={<Code>Could not be decoded ⚠️</Code>}
+        />
+        <Row label="Method" value={<Code>Could not be decoded ⚠️</Code>} />
+        <Row label="Raw data" value={tx.data ?? 'No Data'} />
         {tx.transfers.length > 0 && (
           <ExpandableRow title="Transfers">
             <TokenTransfers
@@ -70,8 +73,8 @@ function SafeMultisigTransactionComponent({
       <Row label="Nonce" value={tx.nonce} />
       <Row label="Block number" value={tx.blockNumber ?? 'No block'} />
       <Row label="Target" value={tx.to} />
-      <CodeRow label="Method">{call.signature}</CodeRow>
-      <CodeRow label="Call with params">{call.functionCall}</CodeRow>
+      <Row label="Method" value={call.signature} />
+      <Row label="Call with params" value={call.functionCall} />
 
       <ExpandableRow cls="mt-5" title="Params / Function calls">
         <Code>
@@ -96,11 +99,7 @@ function SafeMultisigTransactionSkeleton() {
   const skeletons = new Array(10)
     .fill(0)
     .map((_, i) => (
-      <ComponentRow
-        key={i}
-        label={<Skeleton />}
-        value={<Skeleton width="95%" />}
-      />
+      <Row key={i} label={<Skeleton />} value={<Skeleton width="95%" />} />
     ))
   return <ComponentLayout>{skeletons}</ComponentLayout>
 }

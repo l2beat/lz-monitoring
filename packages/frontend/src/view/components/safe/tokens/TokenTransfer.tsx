@@ -6,7 +6,7 @@ import {
 } from '@lz/libs'
 import { TransferWithTokenInfoResponse } from '@safe-global/api-kit'
 
-import { ComponentRow, Row } from '../Row'
+import { Row } from '../Row'
 import { toUTC } from '../utils'
 import { Badge, BadgeVariant } from './Badge'
 
@@ -85,7 +85,7 @@ function CommonTransferComponent({
       <Row label="From" value={transfer.from} />
       <Row label="To" value={transfer.to} />
       {associatedAddresses.length > 0 && (
-        <ComponentRow
+        <Row
           label="Direction"
           value={<Badge variant={badgeVariant}>{transferDirection}</Badge>}
         />
