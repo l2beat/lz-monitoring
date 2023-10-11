@@ -42,7 +42,7 @@ function createSafeApiClient(chainId: ChainId): {
       transactions.push(...response.results)
 
       while (response.next) {
-        const raw = await fetch(response.next)
+        const raw = await fetch(response.next, { cache: 'no-store' })
 
         response = (await raw.json()) as AllTransactionsListResponse
 
