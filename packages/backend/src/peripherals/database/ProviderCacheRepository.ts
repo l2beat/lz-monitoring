@@ -19,8 +19,6 @@ export class ProviderCacheRepository extends BaseRepository {
   }
 
   async addOrUpdate(record: ProviderCacheRecord): Promise<string> {
-    console.dir({ record })
-
     const row = toRow(record)
     const knex = await this.knex()
     await knex('provider_cache').insert(row).onConflict('key').merge()
@@ -45,7 +43,7 @@ export class ProviderCacheRepository extends BaseRepository {
   }
   async deleteAfter(blockNumber: number, chainId: ChainId): Promise<number> {
     const knex = await this.knex()
-    return knex('block_numbers')
+    return knex('provider_cache')
       .where('block_number', '>', blockNumber)
       .andWhere('chain_id', Number(chainId))
       .delete()

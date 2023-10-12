@@ -11,7 +11,6 @@ import { ChainId, UnixTime } from '@lz/libs'
 import { BlockNumberRepository } from '../peripherals/database/BlockNumberRepository'
 import { DiscoveryRepository } from '../peripherals/database/DiscoveryRepository'
 import { IndexerStateRepository } from '../peripherals/database/IndexerStateRepository'
-import { BlockNumberIndexer } from './BlockNumberIndexer'
 import { CacheInvalidationIndexer } from './CacheInvalidationIndexer'
 
 export class DiscoveryIndexer extends ChildIndexer {
@@ -24,13 +23,9 @@ export class DiscoveryIndexer extends ChildIndexer {
     private readonly indexerStateRepository: IndexerStateRepository,
     private readonly chainId: ChainId,
     logger: Logger,
-    blockNumberIndexer: BlockNumberIndexer,
     cacheInvalidationIndexer: CacheInvalidationIndexer,
   ) {
-    super(logger.tag(ChainId.getName(chainId)), [
-      blockNumberIndexer,
-      cacheInvalidationIndexer,
-    ])
+    super(logger.tag(ChainId.getName(chainId)), [cacheInvalidationIndexer])
   }
 
   async update(_fromTimestamp: number, toTimestamp: number): Promise<number> {

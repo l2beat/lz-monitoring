@@ -1,6 +1,6 @@
 import { assert, Logger } from '@l2beat/backend-tools'
 import { ChildIndexer } from '@l2beat/uif'
-import { ChainId } from '@lz/libs'
+import { ChainId, UnixTime } from '@lz/libs'
 
 import { BlockNumberRepository } from '../peripherals/database/BlockNumberRepository'
 import { IndexerStateRepository } from '../peripherals/database/IndexerStateRepository'
@@ -30,14 +30,17 @@ export class CacheInvalidationIndexer extends ChildIndexer {
       return targetHeight
     }
 
-    const block = await this.blockNumberRepository.findByTimestamp(
-      targetHeight,
+    const blockNumber = await this.blockNumberRepository.findAtOrBefore(
+      new UnixTime(targetHeight),
       this.chainId,
     )
 
-    assert(block, 'Referenced block not found')
+    // Maybe we should do a full cache wipe? This should never happen provided indexers were
+    // running for some time and the database is not empty.
+    // If this happens, we are probably at the very beginning or have data integrity issues
+    assert(blockNumber, 'Referenced block not found')
 
-    await this.cacheRepository.deleteAfter(block.blockNumber, this.chainId)
+    await this.cacheRepository.deleteAfter(blockNumber, this.chainId)
 
     return targetHeight
   }

@@ -77,6 +77,7 @@ export class BlockNumberRepository extends BaseRepository {
       .andWhere('chain_id', '=', Number(chainId))
       .orderBy('block_number', 'desc')
       .first()
+
     return row?.block_number
   }
 
@@ -89,19 +90,6 @@ export class BlockNumberRepository extends BaseRepository {
       .where('block_number', number)
       .andWhere('chain_id', Number(chainId))
       .first()
-    return row && toRecord(row)
-  }
-
-  async findByTimestamp(
-    timestamp: number,
-    chainId: ChainId,
-  ): Promise<BlockNumberRecord | undefined> {
-    const knex = await this.knex()
-    const row = await knex('block_numbers')
-      .where('unix_timestamp', timestamp)
-      .andWhere('chain_id', Number(chainId))
-      .first()
-
     return row && toRecord(row)
   }
 
