@@ -12,6 +12,7 @@ import { BlockNumberRepository } from '../peripherals/database/BlockNumberReposi
 import { DiscoveryRepository } from '../peripherals/database/DiscoveryRepository'
 import { IndexerStateRepository } from '../peripherals/database/IndexerStateRepository'
 import { BlockNumberIndexer } from './BlockNumberIndexer'
+import { CacheInvalidationIndexer } from './CacheInvalidationIndexer'
 
 export class DiscoveryIndexer extends ChildIndexer {
   private readonly id = 'DiscoveryIndexer'
@@ -24,8 +25,12 @@ export class DiscoveryIndexer extends ChildIndexer {
     private readonly chainId: ChainId,
     logger: Logger,
     blockNumberIndexer: BlockNumberIndexer,
+    cacheInvalidationIndexer: CacheInvalidationIndexer,
   ) {
-    super(logger.tag(ChainId.getName(chainId)), [blockNumberIndexer])
+    super(logger.tag(ChainId.getName(chainId)), [
+      blockNumberIndexer,
+      cacheInvalidationIndexer,
+    ])
   }
 
   async update(_fromTimestamp: number, toTimestamp: number): Promise<number> {

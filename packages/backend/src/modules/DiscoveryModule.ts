@@ -20,6 +20,7 @@ import { createDiscoveryRouter } from '../api/routes/discovery'
 import { Config } from '../config'
 import { AvailableConfigs, EthereumLikeDiscoveryConfig } from '../config/Config'
 import { BlockNumberIndexer } from '../indexers/BlockNumberIndexer'
+import { CacheInvalidationIndexer } from '../indexers/CacheInvalidationIndexer'
 import { ClockIndexer } from '../indexers/ClockIndexer'
 import { CurrentDiscoveryIndexer } from '../indexers/CurrentDiscoveryIndexer'
 import { DiscoveryIndexer } from '../indexers/DiscoveryIndexer'
@@ -165,6 +166,15 @@ export function createDiscoverySubmodule(
     logger,
   )
 
+  const cacheInvalidationIndexer = new CacheInvalidationIndexer(
+    repositories.blockNumber,
+    repositories.providerCache,
+    repositories.indexerState,
+    chainId,
+    logger,
+    blockNumberIndexer,
+  )
+
   const discoveryIndexer = new DiscoveryIndexer(
     discoveryEngine,
     config.discovery,
@@ -174,6 +184,7 @@ export function createDiscoverySubmodule(
     chainId,
     logger,
     blockNumberIndexer,
+    cacheInvalidationIndexer,
   )
 
   const currDiscoveryIndexer = new CurrentDiscoveryIndexer(
@@ -192,6 +203,7 @@ export function createDiscoverySubmodule(
       statusLogger.info(`Starting discovery submodule`)
 
       await blockNumberIndexer.start()
+      await cacheInvalidationIndexer.start()
       await discoveryIndexer.start()
       await currDiscoveryIndexer.start()
 
