@@ -92,6 +92,19 @@ export class BlockNumberRepository extends BaseRepository {
     return row && toRecord(row)
   }
 
+  async findByTimestamp(
+    timestamp: number,
+    chainId: ChainId,
+  ): Promise<BlockNumberRecord | undefined> {
+    const knex = await this.knex()
+    const row = await knex('block_numbers')
+      .where('unix_timestamp', timestamp)
+      .andWhere('chain_id', Number(chainId))
+      .first()
+
+    return row && toRecord(row)
+  }
+
   async deleteAll(): Promise<number> {
     const knex = await this.knex()
     return knex('block_numbers').delete()
