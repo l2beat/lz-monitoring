@@ -7,7 +7,7 @@ import { expect, mockObject } from 'earl'
 import { BlockNumberRepository } from '../peripherals/database/BlockNumberRepository'
 import { DiscoveryRepository } from '../peripherals/database/DiscoveryRepository'
 import { IndexerStateRepository } from '../peripherals/database/IndexerStateRepository'
-import { BlockNumberIndexer } from './BlockNumberIndexer'
+import { CacheInvalidationIndexer } from './CacheInvalidationIndexer'
 import { DiscoveryIndexer } from './DiscoveryIndexer'
 
 describe(DiscoveryIndexer.name, () => {
@@ -24,7 +24,7 @@ describe(DiscoveryIndexer.name, () => {
       })
       const chainId = ChainId.ETHEREUM
 
-      const disocoveryIndexer = new DiscoveryIndexer(
+      const discoveryIndexer = new DiscoveryIndexer(
         discoveryEngine,
         config,
         mockObject<BlockNumberRepository>({
@@ -34,11 +34,12 @@ describe(DiscoveryIndexer.name, () => {
         mockObject<IndexerStateRepository>(),
         chainId,
         Logger.SILENT,
-        mockObject<BlockNumberIndexer>({
+        mockObject<CacheInvalidationIndexer>({
           subscribe: () => {},
         }),
       )
-      expect(await disocoveryIndexer.update(0, 1)).toEqual(1)
+
+      expect(await discoveryIndexer.update(0, 1)).toEqual(1)
       expect(discoveryEngine.discover).toHaveBeenCalledTimes(1)
       expect(discoveryEngine.discover).toHaveBeenNthCalledWith(1, config, 1)
       expect(discoveryRepository.addOrUpdate).toHaveBeenNthCalledWith(1, {
@@ -86,7 +87,7 @@ describe(DiscoveryIndexer.name, () => {
         mockObject<IndexerStateRepository>(),
         chainId,
         Logger.SILENT,
-        mockObject<BlockNumberIndexer>({
+        mockObject<CacheInvalidationIndexer>({
           subscribe: () => {},
         }),
       )
@@ -125,7 +126,7 @@ describe(DiscoveryIndexer.name, () => {
         mockObject<IndexerStateRepository>(),
         chainId,
         Logger.SILENT,
-        mockObject<BlockNumberIndexer>({
+        mockObject<CacheInvalidationIndexer>({
           subscribe: () => {},
         }),
       )
