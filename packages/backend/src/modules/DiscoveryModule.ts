@@ -175,10 +175,6 @@ export function createDiscoverySubmodule(
     blockNumberIndexer,
   )
 
-  //
-  //
-  //
-
   /**
    * Do we want both indexers here?
    * Waterfall update should be sufficient
