@@ -27,6 +27,9 @@ export class CacheInvalidationIndexer extends ChildIndexer {
 
   override async invalidate(targetHeight: number): Promise<number> {
     if (targetHeight === 0) {
+      this.logger.warn(
+        'Invalidation signal received for height 0 - ignoring to prevent cache wipe',
+      )
       return targetHeight
     }
 
