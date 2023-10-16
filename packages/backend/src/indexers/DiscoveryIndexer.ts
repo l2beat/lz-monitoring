@@ -108,5 +108,5 @@ function errorsToString(discoveryOutput: DiscoveryOutput): string {
     }
   }
 
-  return errors.join('\n')
+  return 'chain: ' + discoveryOutput.chain + '\n' + errors.join('\n')
 }
