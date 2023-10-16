@@ -175,21 +175,6 @@ export function createDiscoverySubmodule(
     blockNumberIndexer,
   )
 
-  /**
-   * Do we want both indexers here?
-   * Waterfall update should be sufficient
-   *
-   *  Currently:
-   *
-   *  BlockNumberIndexer -> CacheInvalidationIndexer -> DiscoveryIndexer
-   *
-   *
-   *  In question:
-   *                     ______________________________
-   *                   /                                \
-   *                  /                                  v
-   *  BlockNumberIndexer -> CacheInvalidationIndexer -> DiscoveryIndexer
-   */
   const discoveryIndexer = new DiscoveryIndexer(
     discoveryEngine,
     config.discovery,
@@ -198,7 +183,6 @@ export function createDiscoverySubmodule(
     repositories.indexerState,
     chainId,
     logger,
-
     cacheInvalidationIndexer,
   )
 
