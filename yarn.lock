@@ -777,10 +777,10 @@
     sqlite3 "^5.1.6"
     zod "^3.22.2"
 
-"@l2beat/uif@^0.2.1":
-  version "0.2.1"
-  resolved "https://registry.yarnpkg.com/@l2beat/uif/-/uif-0.2.1.tgz#e320df7554c55a76b5b57d49c034da1217b38a68"
-  integrity sha512-DjTxoCEHDJbxcojOnTo1KG2SVUMPDEvD7Q8HTdzyDKfmFUUbOs10EV7XBzPvQYYMxMrI+gu7pQAy1y4+Vn/wQQ==
+"@l2beat/uif@^0.2.2":
+  version "0.2.2"
+  resolved "https://registry.yarnpkg.com/@l2beat/uif/-/uif-0.2.2.tgz#e3d728b7d52d02de7562d6a96415d856d0503b6f"
+  integrity sha512-JAwNrdodRZcpeWqb2xziQ7qNwIVH6GL/rS03ADTYIpRjAyaN8KCTbAyMmNih/PjifGUxcODAv6omRHgAB4U4FA==
   dependencies:
     "@l2beat/backend-tools" "^0.4.0"
 
