@@ -33,7 +33,7 @@ export function ProtocolComponentCard({
   )
 }
 
-export type AccentColor = 'green' | 'blue' | 'orange' | 'deep-blue'
+type AccentColor = 'green' | 'blue' | 'orange' | 'deep-blue'
 
 function accentToBorderColor(color: AccentColor): string {
   switch (color) {
