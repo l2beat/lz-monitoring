@@ -4,17 +4,14 @@ import { useChainQueryParam } from '../../../hooks/useChainQueryParam'
 import { Code } from '../Code'
 import { Dropdown, DropdownOption } from '../Dropdown'
 import { Row } from '../Row'
-import { InlineSkeleton, MultilineCodeSkeleton } from '../Skeleton'
 import { toDropdownOption } from './utils'
 
 interface Props {
   remoteChains?: RemoteChain[]
-  isLoading?: boolean
 }
 
 export function RemoteChainComponent({
   remoteChains,
-  isLoading,
 }: Props): JSX.Element | null {
   const [selectedChain, setSelectedChain] = useChainQueryParam({
     fallback: ChainId.ETHEREUM,
@@ -29,25 +26,6 @@ export function RemoteChainComponent({
     }
 
     setSelectedChain(ChainId.fromName(chain.name))
-  }
-
-  if (isLoading) {
-    return (
-      <ComponentLayout>
-        <div className="mb-0.5 flex h-10 items-center">
-          <Row label="Remote chain" value={<InlineSkeleton />} />
-        </div>
-        <Row label="Default app config" value={<MultilineCodeSkeleton />} />
-        <Row label="Default adapter params" value={<MultilineCodeSkeleton />} />
-        <Row label="Inbound proof library" value={<MultilineCodeSkeleton />} />
-        <Row
-          label="Supported outbound proof"
-          value={<MultilineCodeSkeleton />}
-        />
-
-        <Row label="Ultra Light Node" value={<InlineSkeleton />} />
-      </ComponentLayout>
-    )
   }
 
   if (!remoteChains) {

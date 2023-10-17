@@ -21,7 +21,7 @@ export function InlineCodeSkeleton() {
 export function MultilineCodeSkeleton() {
   return (
     <Code>
-      <MultilineCodeSkeleton />
+      <Skeleton count={5} className="my-1" />
     </Code>
   )
 }

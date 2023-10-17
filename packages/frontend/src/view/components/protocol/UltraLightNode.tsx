@@ -22,6 +22,7 @@ export function UltraLightNodeContract(props: Props): JSX.Element {
         subtitle={<InlineSkeleton />}
         accentColor="green"
       >
+        <RemoteChainComponent remoteChains={props.remoteChains} />
         <Row label="Owner" value={<InlineSkeleton />} />
         <Row label="Treasury Contract" value={<InlineSkeleton />} />
         <Row label="LayerZero token" value={<InlineSkeleton />} />
@@ -35,10 +36,7 @@ export function UltraLightNodeContract(props: Props): JSX.Element {
       subtitle={props.address}
       accentColor="green"
     >
-      <RemoteChainComponent
-        remoteChains={props.remoteChains}
-        isLoading={false}
-      />
+      <RemoteChainComponent remoteChains={props.remoteChains} />
       <Row label="Owner" value={props.owner} />
       <Row label="Treasury Contract" value={props.treasuryContract} />
       <Row label="LayerZero token" value={props.layerZeroToken} />

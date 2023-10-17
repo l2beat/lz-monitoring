@@ -19,7 +19,7 @@ export function ProtocolComponentCard({
   return (
     <section className={cx('mx-6 mb-12 border-t bg-gray-900', borderColor)}>
       <div className="flex items-center justify-between p-8">
-        <h2 className={cx('text-2xl text-lg font-medium text-blue', textColor)}>
+        <h2 className={cx('text-2xl text-lg font-medium', textColor)}>
           {title}
         </h2>
         {subtitle && (

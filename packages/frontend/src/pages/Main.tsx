@@ -79,7 +79,6 @@ export function Main(): JSX.Element {
             {...discoveryResponse.data.contracts.endpoint}
             isLoading={isLoading}
           />
-
           <UltraLightNodeContract
             {...discoveryResponse.data.contracts.ulnV2}
             isLoading={isLoading}
@@ -89,7 +88,6 @@ export function Main(): JSX.Element {
             {...discoveryResponse.data.contracts.lzMultisig}
             isLoading={isLoading}
           />
-
           {shouldDisplayMultisigTransactions && (
             <MultisigTransactions
               multisigAddress={multisigAddress}
