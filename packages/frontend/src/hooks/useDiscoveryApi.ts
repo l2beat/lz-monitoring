@@ -1,28 +1,60 @@
 import { ChainId, DiscoveryApi } from '@lz/libs'
 import { useEffect, useState } from 'react'
 
+interface DiscoveryData {
+  data: DiscoveryApi
+  chainId: ChainId
+}
+
 interface UseDiscoverApiHookOptions {
-  initialChainId: ChainId
+  chainId: ChainId
   apiUrl: string
   intervalMs?: number
 }
 
+type FetchHookResult<T> =
+  | {
+      isLoading: true
+      isError: false
+      data: null
+    }
+  | {
+      isLoading: false
+      isError: true
+      data: null
+    }
+  | {
+      isLoading: false
+      isError: false
+      data: T
+    }
+
 export function useDiscoveryApi({
-  initialChainId,
+  chainId,
   apiUrl,
   intervalMs = 10_000,
 }: UseDiscoverApiHookOptions) {
-  const [data, setData] = useState<DiscoveryApi | null>(null)
-  const [chainId, setChainId] = useState<ChainId>(initialChainId)
+  const [isLoading, setIsLoading] = useState(true)
+  const [isError, setIsError] = useState(false)
+  const [data, setData] = useState<DiscoveryData | null>(null)
 
   useEffect(() => {
+    setIsLoading(true)
     async function fetchData() {
-      const result = await fetch(
-        apiUrl + 'discovery/' + ChainId.getName(chainId),
-      )
-      const data = await result.text()
-      const parsed = DiscoveryApi.parse(JSON.parse(data))
-      setData(parsed)
+      try {
+        const result = await fetch(
+          apiUrl + 'discovery/' + ChainId.getName(chainId),
+        )
+        const data = await result.text()
+        const parsed = DiscoveryApi.parse(JSON.parse(data))
+        setData({ data: parsed, chainId })
+        setIsError(false)
+      } catch (e) {
+        console.error(e)
+        setIsError(true)
+      } finally {
+        setIsLoading(false)
+      }
     }
 
     void fetchData()
@@ -34,5 +66,5 @@ export function useDiscoveryApi({
     return () => clearInterval(fetchDataInterval)
   }, [chainId, intervalMs, apiUrl])
 
-  return [data, setChainId] as const
+  return [data, isLoading, isError] as const
 }

@@ -9,14 +9,14 @@ export interface DropdownOption {
   value: string
 }
 
-interface DropdownProps {
+interface Props {
   options: DropdownOption[]
   defaultValue?: DropdownOption
   onChange: (option: DropdownOption) => void
   className?: string
 }
 
-export function Dropdown(props: DropdownProps): JSX.Element {
+export function Dropdown(props: Props): JSX.Element {
   const [selectedOption, setSelectedOption] = useState<DropdownOption | null>(
     props.defaultValue ?? null,
   )
@@ -43,12 +43,12 @@ export function Dropdown(props: DropdownProps): JSX.Element {
               />
             </span>
           </Listbox.Button>
-          <Listbox.Options className="absolute w-full">
+          <Listbox.Options className="absolute z-dropdown w-full">
             {props.options.map((option) => (
               <Listbox.Option
                 key={option.value}
                 value={option}
-                className="mr-10 pl-6 font-mono ui-active:bg-white ui-active:text-black 
+                className="!mr-10 py-1 !pl-6 font-mono ui-active:bg-white ui-active:text-black 
                           ui-not-active:bg-black ui-not-active:text-white"
               >
                 {option.label}

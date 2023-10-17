@@ -10,7 +10,7 @@ export function Code({
   return (
     <pre
       className={cx(
-        'overflow-auto border border-gray-700 bg-gray-900 p-10 font-mono text-gray-500',
+        'overflow-auto border border-gray-700 bg-gray-900 p-10 !text-left font-mono text-gray-500',
         className,
       )}
     >
