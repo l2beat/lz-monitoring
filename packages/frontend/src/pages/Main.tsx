@@ -11,6 +11,8 @@ import { NetworkError } from '../view/components/NetworkError'
 import { NetworkDropdownSelector } from '../view/components/NetworkSelector'
 import { EndpointContract } from '../view/components/protocol/EndpointContract'
 import { LayerZeroMultisig } from '../view/components/protocol/LayerZeroMultisig'
+import { UltraLightNodeContract } from '../view/components/protocol/UltraLightNode'
+import { MultisigTransactions } from '../view/components/safe/MultisigTransactions'
 
 export function Main(): JSX.Element {
   const [paramChain, setParamChain] = useChainQueryParam({
@@ -78,23 +80,23 @@ export function Main(): JSX.Element {
             isLoading={isLoading}
           />
 
-          {/* <UltraLightNodeContract
+          <UltraLightNodeContract
             {...discoveryResponse.data.contracts.ulnV2}
             isLoading={isLoading}
-          /> */}
+          />
 
           <LayerZeroMultisig
             {...discoveryResponse.data.contracts.lzMultisig}
             isLoading={isLoading}
           />
 
-          {/* {shouldDisplayMultisigTransactions && (
+          {shouldDisplayMultisigTransactions && (
             <MultisigTransactions
               multisigAddress={multisigAddress}
               chainId={discoveryResponse.chainId}
               associatedAddresses={associatedAddresses}
             />
-          )} */}
+          )}
         </SkeletonTheme>
       </Layout>
     </>
