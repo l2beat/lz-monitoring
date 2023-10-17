@@ -1,14 +1,13 @@
 import { useEffect, useState } from 'react'
 
-import { NextPageIcon } from '../../icons/NextPageIcon'
+import { NextPageIcon } from '../icons/NextPageIcon'
 
-export function PaginatedContainer<T extends React.ReactNode>({
-  children,
-  itemsPerPage,
-}: {
-  children: T[]
+interface Props {
+  children: React.ReactNode[]
   itemsPerPage: number
-}) {
+}
+
+export function PaginatedContainer({ children, itemsPerPage }: Props) {
   const [page, setPage] = useState(1)
 
   const maxPage = Math.ceil(children.length / itemsPerPage)

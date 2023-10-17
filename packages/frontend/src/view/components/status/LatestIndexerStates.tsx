@@ -1,6 +1,6 @@
 import { DiscoveryStatus } from '@lz/libs'
 
-import { Row } from './Row'
+import { Row } from './StatusRow'
 import { SubsectionHeader } from './SubsectionHeader'
 
 export function LatestIndexerStates({ status }: { status: DiscoveryStatus }) {

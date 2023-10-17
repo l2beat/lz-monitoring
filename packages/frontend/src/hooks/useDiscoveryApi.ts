@@ -12,23 +12,6 @@ interface UseDiscoverApiHookOptions {
   intervalMs?: number
 }
 
-type FetchHookResult<T> =
-  | {
-      isLoading: true
-      isError: false
-      data: null
-    }
-  | {
-      isLoading: false
-      isError: true
-      data: null
-    }
-  | {
-      isLoading: false
-      isError: false
-      data: T
-    }
-
 export function useDiscoveryApi({
   chainId,
   apiUrl,

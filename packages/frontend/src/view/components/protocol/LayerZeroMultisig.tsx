@@ -1,9 +1,9 @@
 import { EthereumAddress } from '@lz/libs'
-import Skeleton from 'react-loading-skeleton'
 
-import { ProtocolComponentCard } from './ProtocolComponentCard'
-import { Code } from './safe/Code'
-import { Row } from './ulnv2/Row'
+import { cardFor } from '../cardFor'
+import { Code } from '../Code'
+import { Row } from '../Row'
+import { InlineSkeleton, MultilineCodeSkeleton } from '../Skeleton'
 
 interface Props {
   address?: EthereumAddress
@@ -12,7 +12,9 @@ interface Props {
   isLoading: boolean
 }
 
-export function LzMultisig({
+const Card = cardFor('LayerZero Multisig', 'blue')
+
+export function LayerZeroMultisig({
   owners,
   address,
   threshold,
@@ -22,17 +24,11 @@ export function LzMultisig({
   const hasData = address && threshold && owners
 
   if (isLoading) {
-    const inlineSkeleton = <Skeleton width="350px" />
-    const codeSkeleton = (
-      <Code>
-        <Skeleton count={5} className="my-1" />
-      </Code>
-    )
     return (
-      <ProtocolComponentCard title="LayerZero Multisig" accentColor="blue">
-        <Row label="Threshold" value={inlineSkeleton} />
-        <Row label="Owners" value={codeSkeleton} />
-      </ProtocolComponentCard>
+      <Card>
+        <Row label="Threshold" value={<InlineSkeleton />} />
+        <Row label="Owners" value={<MultilineCodeSkeleton />} />
+      </Card>
     )
   }
 
@@ -40,11 +36,7 @@ export function LzMultisig({
     address ?? 'Protocol on this chain is not owned by Safe Multisig'
 
   return (
-    <ProtocolComponentCard
-      title="LayerZero Multisig"
-      accentColor="blue"
-      subtitle={subtitle}
-    >
+    <Card subtitle={subtitle}>
       {hasData && (
         <>
           <Row label="Threshold" value={`${threshold}/${owners.length}`} />
@@ -54,6 +46,6 @@ export function LzMultisig({
           />
         </>
       )}
-    </ProtocolComponentCard>
+    </Card>
   )
 }

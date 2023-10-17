@@ -1,7 +1,7 @@
 import cx from 'classnames'
 
 interface Props {
-  children?: React.ReactNode | number
+  children?: React.ReactNode
   subtitle?: React.ReactNode
   title: React.ReactNode
   accentColor: AccentColor
@@ -33,7 +33,7 @@ export function ProtocolComponentCard({
   )
 }
 
-type AccentColor = 'green' | 'blue' | 'orange'
+export type AccentColor = 'green' | 'blue' | 'orange' | 'deep-blue'
 
 function accentToBorderColor(color: AccentColor): string {
   switch (color) {
@@ -43,6 +43,8 @@ function accentToBorderColor(color: AccentColor): string {
       return 'border-blue'
     case 'orange':
       return 'border-orange'
+    case 'deep-blue':
+      return 'border-[#3cb1ff]'
   }
 }
 
@@ -54,5 +56,7 @@ function accentToTextColor(color: AccentColor): string {
       return 'text-blue'
     case 'orange':
       return 'text-orange'
+    case 'deep-blue':
+      return 'text-[#3cb1ff]'
   }
 }

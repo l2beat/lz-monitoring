@@ -6,10 +6,10 @@ import {
 import React from 'react'
 import Skeleton from 'react-loading-skeleton'
 
-import { Code } from './Code'
-import { ExpandableRow } from './ExpandableRow'
-import { Row } from './Row'
-import { RowSection } from './RowSection'
+import { Code } from '../Code'
+import { ExpandableRow } from '../ExpandableRow'
+import { Row } from '../Row'
+import { RowSection } from '../RowSection'
 import { TokenTransfers } from './TokenTransfer'
 import { decodeCall, paramToSummary, toUTC } from './utils'
 

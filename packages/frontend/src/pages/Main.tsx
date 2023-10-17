@@ -4,15 +4,13 @@ import { SkeletonTheme } from 'react-loading-skeleton'
 import { config } from '../config'
 import { useChainQueryParam } from '../hooks/useChainQueryParam'
 import { useDiscoveryApi } from '../hooks/useDiscoveryApi'
-import { EndpointContract } from '../view/components/EndpointContract'
-import { LzMultisig } from '../view/components/LayerZeroMultisig'
 import { Layout } from '../view/components/Layout'
 import { Navbar } from '../view/components/Navbar'
 import { NetworkData } from '../view/components/NetworkData'
 import { NetworkError } from '../view/components/NetworkError'
 import { NetworkDropdownSelector } from '../view/components/NetworkSelector'
-import { MultisigTransactions } from '../view/components/safe/MultisigTransactions'
-import { ULNv2Contract } from '../view/components/ulnv2/ULNv2Contract'
+import { EndpointContract } from '../view/components/protocol/EndpointContract'
+import { UltraLightNodeContract } from '../view/components/protocol/UltraLightNode'
 
 export function Main(): JSX.Element {
   const [paramChain, setParamChain] = useChainQueryParam({
@@ -79,22 +77,25 @@ export function Main(): JSX.Element {
             {...discoveryResponse.data.contracts.endpoint}
             isLoading={isLoading}
           />
-          <ULNv2Contract
+
+          <UltraLightNodeContract
             {...discoveryResponse.data.contracts.ulnV2}
             isLoading={isLoading}
           />
-          <LzMultisig
-            {...discoveryResponse.data.contracts.lzMultisig}
-            isLoading={isLoading}
-          />
+          {/*
 
-          {shouldDisplayMultisigTransactions && (
+          <LayerZeroMultisig
+            {...discoveryResponse.data.contracts.lzMultisig}
+            isLoading={isLoading} */}
+          {/* /> */}
+
+          {/* {shouldDisplayMultisigTransactions && (
             <MultisigTransactions
               multisigAddress={multisigAddress}
               chainId={discoveryResponse.chainId}
               associatedAddresses={associatedAddresses}
             />
-          )}
+          )} */}
         </SkeletonTheme>
       </Layout>
     </>

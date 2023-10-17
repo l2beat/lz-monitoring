@@ -1,10 +1,10 @@
 import { ChainId, RemoteChain } from '@lz/libs'
-import Skeleton from 'react-loading-skeleton'
 
 import { useChainQueryParam } from '../../../hooks/useChainQueryParam'
+import { Code } from '../Code'
 import { Dropdown, DropdownOption } from '../Dropdown'
-import { Code } from '../safe/Code'
-import { Row } from './Row'
+import { Row } from '../Row'
+import { InlineSkeleton, MultilineCodeSkeleton } from '../Skeleton'
 import { toDropdownOption } from './utils'
 
 interface Props {
@@ -32,25 +32,20 @@ export function RemoteChainComponent({
   }
 
   if (isLoading) {
-    const codeSkeleton = (
-      <Code>
-        <Skeleton count={5} className="my-1" />
-      </Code>
-    )
-
-    const addressSkeleton = <Skeleton width="350px" />
-
     return (
       <ComponentLayout>
         <div className="mb-0.5 flex h-10 items-center">
-          <Row label="Remote chain" value={addressSkeleton} />
+          <Row label="Remote chain" value={<InlineSkeleton />} />
         </div>
-        <Row label="Default app config" value={codeSkeleton} />
-        <Row label="Default adapter params" value={codeSkeleton} />
-        <Row label="Inbound proof library" value={codeSkeleton} />
-        <Row label="Supported outbound proof" value={codeSkeleton} />
+        <Row label="Default app config" value={<MultilineCodeSkeleton />} />
+        <Row label="Default adapter params" value={<MultilineCodeSkeleton />} />
+        <Row label="Inbound proof library" value={<MultilineCodeSkeleton />} />
+        <Row
+          label="Supported outbound proof"
+          value={<MultilineCodeSkeleton />}
+        />
 
-        <Row label="Ultra Light Node" value={addressSkeleton} />
+        <Row label="Ultra Light Node" value={<InlineSkeleton />} />
       </ComponentLayout>
     )
   }
