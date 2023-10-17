@@ -19,7 +19,7 @@ export function Main(): JSX.Element {
     fallback: ChainId.ETHEREUM,
     paramName: 'chain',
   })
-  const [discoveryResponse, isLoading, isError] = useDiscoveryApi({
+  const [discoveryResponse, , isError] = useDiscoveryApi({
     apiUrl: config.apiUrl,
     chainId: paramChain,
   })
@@ -44,7 +44,7 @@ export function Main(): JSX.Element {
     multisigAddress &&
     endpoints.isChainSupported(discoveryResponse.chainId.valueOf())
 
-  if (isError || !discoveryResponse || isLoading) {
+  if (!discoveryResponse) {
     return (
       <>
         <Navbar />
@@ -54,7 +54,7 @@ export function Main(): JSX.Element {
             availableChains={config.availableChains}
             setChainId={setChain}
           />
-          <NetworkError />
+          {isError && <NetworkError />}
         </Layout>
       </>
     )
