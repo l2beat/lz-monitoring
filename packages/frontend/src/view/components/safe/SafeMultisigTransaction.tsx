@@ -10,6 +10,7 @@ import { Code } from '../Code'
 import { ExpandableRow } from '../ExpandableRow'
 import { Row } from '../Row'
 import { RowSection } from '../RowSection'
+import { InlineCodeSkeleton, InlineSkeleton } from '../Skeleton'
 import { TokenTransfers } from './TokenTransfer'
 import { decodeCall, paramToSummary, toUTC } from './utils'
 
@@ -79,19 +80,15 @@ export function SafeMultisigTransactionComponent({
 export function SafeMultisigTransactionSkeleton() {
   const inlinePropSkeletons = new Array(9)
     .fill(0)
-    .map((_, i) => <Row key={i} label={<Skeleton />} value={<Skeleton />} />)
+    .map((_, i) => (
+      <Row key={i} label={<Skeleton />} value={<InlineSkeleton />} />
+    ))
 
-  const codeSkeletons = new Array(3).fill(0).map((_, i) => (
-    <Row
-      key={i}
-      label={<Skeleton />}
-      value={
-        <Code>
-          <Skeleton />
-        </Code>
-      }
-    />
-  ))
+  const codeSkeletons = new Array(3)
+    .fill(0)
+    .map((_, i) => (
+      <Row key={i} label={<Skeleton />} value={<InlineCodeSkeleton />} />
+    ))
 
   return (
     <ComponentLayout>

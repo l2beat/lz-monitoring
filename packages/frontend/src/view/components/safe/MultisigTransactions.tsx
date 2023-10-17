@@ -1,5 +1,4 @@
 import { ChainId, EthereumAddress } from '@lz/libs'
-import { SkeletonTheme } from 'react-loading-skeleton'
 
 import { useSafeApi } from '../../../hooks/useSafeApi'
 import { cardFor } from '../cardFor'
@@ -24,9 +23,7 @@ export function MultisigTransactions(props: Props) {
   if (isLoading) {
     return (
       <Card subtitle={<InlineSkeleton />}>
-        <SkeletonTheme baseColor="#0D0D0D" highlightColor="#525252">
-          <SafeMultisigTransactionSkeleton />
-        </SkeletonTheme>
+        <SafeMultisigTransactionSkeleton />
       </Card>
     )
   }
