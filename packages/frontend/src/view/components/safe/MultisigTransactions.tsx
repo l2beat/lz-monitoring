@@ -2,8 +2,8 @@ import { ChainId, EthereumAddress } from '@lz/libs'
 import { SkeletonTheme } from 'react-loading-skeleton'
 
 import { useSafeApi } from '../../../hooks/useSafeApi'
+import { cardFor } from '../cardFor'
 import { PaginatedContainer } from '../PaginatedContainer'
-import { ProtocolComponentCard } from '../ProtocolComponentCard'
 import { InlineSkeleton } from '../Skeleton'
 import {
   SafeMultisigTransactionComponent,
@@ -16,49 +16,31 @@ interface Props {
   chainId: ChainId
 }
 
+const Card = cardFor('Multisig transactions', 'deep-blue')
+
 export function MultisigTransactions(props: Props) {
   const [isLoading, isError, transactions] = useSafeApi(props)
 
   if (isLoading) {
     return (
-      <ProtocolComponentCard
-        title="Multisig transactions"
-        subtitle={<InlineSkeleton />}
-        accentColor="deep-blue"
-      >
+      <Card subtitle={<InlineSkeleton />}>
         <SkeletonTheme baseColor="#0D0D0D" highlightColor="#525252">
           <SafeMultisigTransactionSkeleton />
         </SkeletonTheme>
-      </ProtocolComponentCard>
+      </Card>
     )
   }
 
   if (isError) {
-    return (
-      <ProtocolComponentCard
-        title="Multisig transactions"
-        subtitle="Data could not be loaded ⚠️"
-        accentColor="deep-blue"
-      />
-    )
+    return <Card subtitle="Data could not be loaded ⚠️" />
   }
 
   if (!transactions || transactions.length === 0) {
-    return (
-      <ProtocolComponentCard
-        title="Multisig transactions"
-        subtitle="No transactions executed"
-        accentColor="deep-blue"
-      />
-    )
+    return <Card subtitle="No transactions executed" />
   }
 
   return (
-    <ProtocolComponentCard
-      title="Multisig transactions"
-      subtitle={props.multisigAddress}
-      accentColor="deep-blue"
-    >
+    <Card subtitle={props.multisigAddress}>
       <PaginatedContainer itemsPerPage={1}>
         {transactions.map((tx, i) => (
           <SafeMultisigTransactionComponent
@@ -68,6 +50,6 @@ export function MultisigTransactions(props: Props) {
           />
         ))}
       </PaginatedContainer>
-    </ProtocolComponentCard>
+    </Card>
   )
 }

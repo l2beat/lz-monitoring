@@ -1,6 +1,6 @@
 import { EthereumAddress } from '@lz/libs'
 
-import { ProtocolComponentCard } from '../ProtocolComponentCard'
+import { cardFor } from '../cardFor'
 import { Row } from '../Row'
 import { InlineSkeleton } from '../Skeleton'
 
@@ -13,33 +13,27 @@ interface Props {
   isLoading: boolean
 }
 
+const Card = cardFor('Endpoint', 'orange')
+
 export function EndpointContract(props: Props): JSX.Element {
   if (props.isLoading) {
     return (
-      <ProtocolComponentCard
-        title="Endpoint"
-        subtitle={<InlineSkeleton />}
-        accentColor="orange"
-      >
+      <Card subtitle={<InlineSkeleton />}>
         <Row label="Owner" value={<InlineSkeleton />} />
         <Row label="Default send library" value={<InlineSkeleton />} />
         <Row label="Default receive library" value={<InlineSkeleton />} />
-      </ProtocolComponentCard>
+      </Card>
     )
   }
 
   return (
-    <ProtocolComponentCard
-      title="Endpoint"
-      subtitle={props.address}
-      accentColor="orange"
-    >
+    <Card subtitle={props.address}>
       <Row label="Owner" value={props.owner} />
       <Row label="Default send library" value={props.defaultSendLibrary} />
       <Row
         label="Default receive library"
         value={props.defaultReceiveLibrary}
       />
-    </ProtocolComponentCard>
+    </Card>
   )
 }

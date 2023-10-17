@@ -1,6 +1,6 @@
 import { EthereumAddress, RemoteChain } from '@lz/libs'
 
-import { ProtocolComponentCard } from '../ProtocolComponentCard'
+import { cardFor } from '../cardFor'
 import { Row } from '../Row'
 import { InlineSkeleton } from '../Skeleton'
 import { RemoteChainComponent } from './RemoteChain'
@@ -14,32 +14,26 @@ interface Props {
   isLoading: boolean
 }
 
+const Card = cardFor('Ultra Light Node', 'green')
+
 export function UltraLightNodeContract(props: Props): JSX.Element {
   if (props.isLoading) {
     return (
-      <ProtocolComponentCard
-        title="Ultra Light Node"
-        subtitle={<InlineSkeleton />}
-        accentColor="green"
-      >
+      <Card subtitle={<InlineSkeleton />}>
         <RemoteChainComponent remoteChains={props.remoteChains} />
         <Row label="Owner" value={<InlineSkeleton />} />
         <Row label="Treasury Contract" value={<InlineSkeleton />} />
         <Row label="LayerZero token" value={<InlineSkeleton />} />
-      </ProtocolComponentCard>
+      </Card>
     )
   }
 
   return (
-    <ProtocolComponentCard
-      title="Ultra Light Node"
-      subtitle={props.address}
-      accentColor="green"
-    >
+    <Card subtitle={props.address}>
       <RemoteChainComponent remoteChains={props.remoteChains} />
       <Row label="Owner" value={props.owner} />
       <Row label="Treasury Contract" value={props.treasuryContract} />
       <Row label="LayerZero token" value={props.layerZeroToken} />
-    </ProtocolComponentCard>
+    </Card>
   )
 }

@@ -1,7 +1,7 @@
 import { EthereumAddress } from '@lz/libs'
 
+import { cardFor } from '../cardFor'
 import { Code } from '../Code'
-import { ProtocolComponentCard } from '../ProtocolComponentCard'
 import { Row } from '../Row'
 import { InlineSkeleton, MultilineCodeSkeleton } from '../Skeleton'
 
@@ -11,6 +11,8 @@ interface Props {
   owners?: EthereumAddress[]
   isLoading: boolean
 }
+
+const Card = cardFor('Layer Zero Multisig', 'blue')
 
 export function LayerZeroMultisig({
   owners,
@@ -23,14 +25,10 @@ export function LayerZeroMultisig({
 
   if (isLoading) {
     return (
-      <ProtocolComponentCard
-        title="Layer Zero Multisig"
-        subtitle={<InlineSkeleton />}
-        accentColor="blue"
-      >
+      <Card subtitle={<InlineSkeleton />}>
         <Row label="Threshold" value={<InlineSkeleton />} />
         <Row label="Owners" value={<MultilineCodeSkeleton />} />
-      </ProtocolComponentCard>
+      </Card>
     )
   }
 
@@ -38,11 +36,7 @@ export function LayerZeroMultisig({
     address ?? 'Protocol on this chain is not owned by Safe Multisig'
 
   return (
-    <ProtocolComponentCard
-      title="Layer Zero Multisig"
-      subtitle={subtitle}
-      accentColor="blue"
-    >
+    <Card subtitle={subtitle}>
       {hasData && (
         <>
           <Row label="Threshold" value={`${threshold}/${owners.length}`} />
@@ -52,6 +46,6 @@ export function LayerZeroMultisig({
           />
         </>
       )}
-    </ProtocolComponentCard>
+    </Card>
   )
 }
