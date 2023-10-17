@@ -44,7 +44,7 @@ export function Main(): JSX.Element {
     multisigAddress &&
     endpoints.isChainSupported(discoveryResponse.chainId.valueOf())
 
-  if (isError || !discoveryResponse) {
+  if (isError || !discoveryResponse || isLoading) {
     return (
       <>
         <Navbar />
@@ -73,21 +73,11 @@ export function Main(): JSX.Element {
           <NetworkData
             chainId={discoveryResponse.chainId}
             latestBlock={discoveryResponse.data.blockNumber}
-            isLoading={isLoading}
           />
-          <EndpointContract
-            {...discoveryResponse.data.contracts.endpoint}
-            isLoading={isLoading}
-          />
-          <UltraLightNodeContract
-            {...discoveryResponse.data.contracts.ulnV2}
-            isLoading={isLoading}
-          />
+          <EndpointContract {...discoveryResponse.data.contracts.endpoint} />
+          <UltraLightNodeContract {...discoveryResponse.data.contracts.ulnV2} />
 
-          <LayerZeroMultisig
-            {...discoveryResponse.data.contracts.lzMultisig}
-            isLoading={isLoading}
-          />
+          <LayerZeroMultisig {...discoveryResponse.data.contracts.lzMultisig} />
           {shouldDisplayMultisigTransactions && (
             <MultisigTransactions
               multisigAddress={multisigAddress}

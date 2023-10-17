@@ -1,27 +1,11 @@
 import { ChainId, getLzIdFromChainId } from '@lz/libs'
-import Skeleton from 'react-loading-skeleton'
 
 interface Props {
   chainId: ChainId
   latestBlock: number
-  isLoading: boolean
 }
 
-export function NetworkData({
-  chainId,
-  latestBlock,
-  isLoading,
-}: Props): JSX.Element {
-  if (isLoading) {
-    return (
-      <ComponentLayout>
-        <DataBlock label="Chain ID" value={<Skeleton />} />
-        <DataBlock label="LZ chain ID" value={<Skeleton />} />
-        <DataBlock label="Latest block" value={<Skeleton />} />
-      </ComponentLayout>
-    )
-  }
-
+export function NetworkData({ chainId, latestBlock }: Props): JSX.Element {
   return (
     <ComponentLayout>
       <DataBlock label="Chain ID" value={chainId.toString()} />
