@@ -1,5 +1,5 @@
 import { LoggerOptions } from '@l2beat/backend-tools'
-import { DiscoveryConfig } from '@l2beat/discovery'
+import { DiscoveryConfig, MulticallConfig } from '@l2beat/discovery'
 // eslint-disable-next-line import/no-internal-modules
 import { UnixTime } from '@l2beat/discovery/dist/utils/UnixTime'
 import { Knex } from 'knex'
@@ -57,4 +57,5 @@ export interface EthereumLikeDiscoveryConfig {
   blockExplorerApiKey: string
   blockExplorerMinTimestamp: UnixTime
   discovery: DiscoveryConfig
+  multicall: MulticallConfig
 }

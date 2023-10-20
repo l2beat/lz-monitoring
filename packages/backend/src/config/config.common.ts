@@ -1,5 +1,9 @@
 import { Env } from '@l2beat/backend-tools'
-import { DiscoveryConfig } from '@l2beat/discovery'
+import {
+  DiscoveryConfig,
+  MulticallConfig,
+  multicallConfig,
+} from '@l2beat/discovery'
 // eslint-disable-next-line import/no-internal-modules
 import { UnixTime } from '@l2beat/discovery/dist/utils/UnixTime'
 
@@ -31,6 +35,7 @@ export function getCommonDiscoveryConfig(env: Env): Config['discovery'] {
         blockExplorerApiUrl: 'https://api.etherscan.io/api',
         blockExplorerMinTimestamp: new Date(0),
         discoveryConfig: ethereumDiscoveryConfig,
+        multicallConfig: multicallConfig.ethereum,
       }),
       arbitrum: createConfig({
         chainNamePrefix: 'ARBITRUM',
@@ -39,6 +44,7 @@ export function getCommonDiscoveryConfig(env: Env): Config['discovery'] {
         blockExplorerApiUrl: 'https://api.arbiscan.io/api',
         blockExplorerMinTimestamp: new Date('2021-05-28T22:15:00Z'),
         discoveryConfig: arbitrumDiscoveryConfig,
+        multicallConfig: multicallConfig.arbitrum,
       }),
       optimism: createConfig({
         chainNamePrefix: 'OPTIMISM',
@@ -47,6 +53,7 @@ export function getCommonDiscoveryConfig(env: Env): Config['discovery'] {
         blockExplorerApiUrl: 'https://api-optimistic.etherscan.io/api',
         blockExplorerMinTimestamp: new Date('2021-01-14T15:52:00Z'),
         discoveryConfig: optimismDiscoveryConfig,
+        multicallConfig: multicallConfig.optimism,
       }),
       'polygon-pos': createConfig({
         chainNamePrefix: 'POLYGON_POS',
@@ -55,6 +62,7 @@ export function getCommonDiscoveryConfig(env: Env): Config['discovery'] {
         blockExplorerApiUrl: 'https://api.polygonscan.com/api',
         blockExplorerMinTimestamp: new Date('2020-05-30T07:48:00Z'),
         discoveryConfig: polygonPosDiscoveryConfig,
+        multicallConfig: multicallConfig.polygon_pos,
       }),
       'polygon-zkevm': createConfig({
         chainNamePrefix: 'POLYGON_ZKEVM',
@@ -63,6 +71,7 @@ export function getCommonDiscoveryConfig(env: Env): Config['discovery'] {
         blockExplorerApiUrl: 'https://api-zkevm.polygonscan.com/api',
         blockExplorerMinTimestamp: new Date('2023-06-15T12:36:00Z'),
         discoveryConfig: polygonZkEvmDiscoveryConfig,
+        multicallConfig: multicallConfig.polygon_zkevm,
       }),
       base: createConfig({
         chainNamePrefix: 'BASE',
@@ -71,6 +80,7 @@ export function getCommonDiscoveryConfig(env: Env): Config['discovery'] {
         blockExplorerApiUrl: 'https://api.basescan.org/api',
         blockExplorerMinTimestamp: new Date('2023-06-15T12:36:00Z'),
         discoveryConfig: baseDiscoveryConfig,
+        multicallConfig: multicallConfig.base,
       }),
       avalanche: createConfig({
         chainNamePrefix: 'AVALANCHE',
@@ -79,6 +89,7 @@ export function getCommonDiscoveryConfig(env: Env): Config['discovery'] {
         blockExplorerApiUrl: 'https://api.snowtrace.io/api',
         blockExplorerMinTimestamp: new Date('2020-09-23T11:02:00Z'),
         discoveryConfig: avalancheDiscoveryConfig,
+        multicallConfig: multicallConfig.avalanche,
       }),
       linea: createConfig({
         chainNamePrefix: 'LINEA',
@@ -87,6 +98,7 @@ export function getCommonDiscoveryConfig(env: Env): Config['discovery'] {
         blockExplorerApiUrl: 'https://api.lineascan.build/api',
         blockExplorerMinTimestamp: new Date('2023-07-06T13:15:00Z'),
         discoveryConfig: lineaDiscoveryConfig,
+        multicallConfig: multicallConfig.linea,
       }),
       bsc: createConfig({
         chainNamePrefix: 'BSC',
@@ -95,6 +107,7 @@ export function getCommonDiscoveryConfig(env: Env): Config['discovery'] {
         blockExplorerApiUrl: 'https://api.bscscan.com/api',
         blockExplorerMinTimestamp: new Date('2020-08-29T03:24:00Z'),
         discoveryConfig: bscDiscoveryConfig,
+        multicallConfig: multicallConfig.bsc,
       }),
       celo: createConfig({
         chainNamePrefix: 'CELO',
@@ -103,6 +116,7 @@ export function getCommonDiscoveryConfig(env: Env): Config['discovery'] {
         blockExplorerApiUrl: 'https://api.celoscan.io/api',
         blockExplorerMinTimestamp: new Date('2020-04-22T16:00:00Z'),
         discoveryConfig: celoDiscoveryConfig,
+        multicallConfig: multicallConfig.celo,
       }),
     },
   }
@@ -116,6 +130,7 @@ function configFromTemplate(env: Env) {
     blockExplorerApiUrl,
     blockExplorerMinTimestamp,
     discoveryConfig,
+    multicallConfig,
   }: {
     /**
      * The prefix of the environment variables that configure the chain.
@@ -146,6 +161,7 @@ function configFromTemplate(env: Env) {
      * The block number from which to start indexing.
      */
     startBlock: number
+    multicallConfig: MulticallConfig
   }): false | EthereumLikeDiscoveryConfig {
     return (
       env.boolean(`${chainNamePrefix}_DISCOVERY_ENABLED`, false) && {
@@ -164,6 +180,7 @@ function configFromTemplate(env: Env) {
           ),
         ),
         discovery: discoveryConfig,
+        multicall: multicallConfig,
       }
     )
   }

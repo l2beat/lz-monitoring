@@ -6,6 +6,7 @@ import {
   EtherscanLikeClient,
   HandlerExecutor,
   HttpClient,
+  MulticallClient,
   ProviderWithCache,
   ProxyDetector,
   RateLimitedProvider,
@@ -204,11 +205,16 @@ function createDiscoveryEngine(
     providerCache,
     config.rpcLogsMaxRange,
   )
+  const multicallClient = new MulticallClient(
+    discoveryProvider,
+    config.multicall,
+  )
 
   const proxyDetector = new ProxyDetector(discoveryProvider, discoveryLogger)
   const sourceCodeService = new SourceCodeService(discoveryProvider)
   const handlerExecutor = new HandlerExecutor(
     discoveryProvider,
+    multicallClient,
     discoveryLogger,
   )
   const addressAnalyzer = new AddressAnalyzer(
