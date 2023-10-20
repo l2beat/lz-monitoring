@@ -21,6 +21,12 @@ declare module 'knex/types/tables' {
 
   interface DiscoveryRow {
     chain_id: number
+    block_number: number
+    discovery_json_blob: string
+  }
+
+  interface CurrentDiscoveryRow {
+    chain_id: number
     discovery_json_blob: string
   }
 
@@ -28,6 +34,7 @@ declare module 'knex/types/tables' {
     block_numbers: BlockNumberRow
     indexer_states: IndexerStateRow
     discovery: DiscoveryRow
+    current_discovery: CurrentDiscoveryRow
     provider_cache: ProviderCacheRow
   }
 }

@@ -41,7 +41,10 @@ export class DiscoveryIndexer extends ChildIndexer {
         timestamp,
         this.chainId,
       )) ?? 0
-    const prevOutput = await this.discoveryRepository.find(this.chainId)
+    const prevOutput = await this.discoveryRepository.findAtOrBefore(
+      blockNumber,
+      this.chainId,
+    )
 
     if (prevOutput && prevOutput.discoveryOutput.version >= 3) {
       this.logger.info('Running discovery quick mode', { blockNumber })
@@ -53,13 +56,6 @@ export class DiscoveryIndexer extends ChildIndexer {
 
       if (!changed) {
         this.logger.info('Nothing changed', { blockNumber })
-        // right now we only update the block number
-        // in the future we want to not save the new discovery output
-        // see L2B-2865
-        await this.discoveryRepository.addOrUpdate({
-          discoveryOutput: { ...prevOutput.discoveryOutput, blockNumber },
-          chainId: this.chainId,
-        })
         return timestamp
       }
     }
@@ -85,6 +81,7 @@ export class DiscoveryIndexer extends ChildIndexer {
     await this.discoveryRepository.addOrUpdate({
       discoveryOutput,
       chainId: this.chainId,
+      blockNumber,
     })
     this.logger.info('Discovery finished', { blockNumber })
 
