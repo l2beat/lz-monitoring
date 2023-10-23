@@ -3,6 +3,7 @@ import { SkeletonTheme } from 'react-loading-skeleton'
 
 import { config } from '../config'
 import { useChainQueryParam } from '../hooks/useChainQueryParam'
+import { useConfigApi } from '../hooks/useConfigApi'
 import { useDiscoveryApi } from '../hooks/useDiscoveryApi'
 import { Layout } from '../view/components/Layout'
 import { Navbar } from '../view/components/Navbar'
@@ -22,6 +23,10 @@ export function Main(): JSX.Element {
   const [discoveryResponse, , isError] = useDiscoveryApi({
     apiUrl: config.apiUrl,
     chainId: paramChain,
+  })
+
+  const [configResponse] = useConfigApi({
+    apiUrl: config.apiUrl,
   })
 
   function setChain(chain: ChainId) {
@@ -64,28 +69,39 @@ export function Main(): JSX.Element {
     <>
       <Navbar />
       <Layout>
-        <SkeletonTheme baseColor="#0D0D0D" highlightColor="#525252">
-          <NetworkDropdownSelector
-            chainId={discoveryResponse.chainId}
-            availableChains={config.availableChains}
-            setChainId={setChain}
-          />
-          <NetworkData
-            chainId={discoveryResponse.chainId}
-            latestBlock={discoveryResponse.data.blockNumber}
-          />
-          <EndpointContract {...discoveryResponse.data.contracts.endpoint} />
-          <UltraLightNodeContract {...discoveryResponse.data.contracts.ulnV2} />
-
-          <LayerZeroMultisig {...discoveryResponse.data.contracts.lzMultisig} />
-          {shouldDisplayMultisigTransactions && (
-            <MultisigTransactions
-              multisigAddress={multisigAddress}
+        {configResponse?.find((c) => c.enabled) ? (
+          <SkeletonTheme baseColor="#0D0D0D" highlightColor="#525252">
+            <NetworkDropdownSelector
               chainId={discoveryResponse.chainId}
-              associatedAddresses={associatedAddresses}
+              availableChains={config.availableChains}
+              setChainId={setChain}
             />
-          )}
-        </SkeletonTheme>
+            <NetworkData
+              chainId={discoveryResponse.chainId}
+              latestBlock={discoveryResponse.data.blockNumber}
+            />
+            <EndpointContract {...discoveryResponse.data.contracts.endpoint} />
+            <UltraLightNodeContract
+              {...discoveryResponse.data.contracts.ulnV2}
+            />
+
+            <LayerZeroMultisig
+              {...discoveryResponse.data.contracts.lzMultisig}
+            />
+            {shouldDisplayMultisigTransactions && (
+              <MultisigTransactions
+                multisigAddress={multisigAddress}
+                chainId={discoveryResponse.chainId}
+                associatedAddresses={associatedAddresses}
+              />
+            )}
+          </SkeletonTheme>
+        ) : (
+          <>
+            Available chains could not be loaded or all chains have been
+            disabled
+          </>
+        )}
       </Layout>
     </>
   )
