@@ -21,15 +21,11 @@ export async function up(knex: Knex): Promise<void> {
   await knex.table('provider_cache').truncate()
 
   // Cache keys might be pretty long
-  await knex.raw(
-    'ALTER TABLE "' +
-      'provider_cache' +
-      '" ALTER COLUMN "' +
-      'key' +
-      '" TYPE ' +
-      'text' +
-      '',
-  )
+  await knex.raw(`
+    ALTER TABLE "provider_cache"
+    ALTER COLUMN "key" 
+    TYPE text
+  `)
 
   await knex.schema.alterTable('provider_cache', (table) => {
     table.integer('chain_id').notNullable()
