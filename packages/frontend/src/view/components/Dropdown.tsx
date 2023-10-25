@@ -48,7 +48,7 @@ export function Dropdown(props: Props): JSX.Element {
               <Listbox.Option
                 key={option.value}
                 value={option}
-                className="!mr-10 py-1 !pl-6 font-mono ui-active:bg-white ui-active:text-black 
+                className="mr-10 py-1 pl-6 font-mono ui-active:bg-white ui-active:text-black 
                           ui-not-active:bg-black ui-not-active:text-white"
               >
                 {option.label}
