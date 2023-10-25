@@ -40,7 +40,7 @@ export function createStatusModule({
     const moduleConfig = config.discovery.modules[chainName]
     const chainId = ChainId.fromName(chainName)
 
-    if (!moduleConfig) {
+    if (!moduleConfig?.config) {
       return {
         state: 'disabled',
         chainId,
@@ -48,9 +48,10 @@ export function createStatusModule({
     }
 
     const provider = new providers.StaticJsonRpcProvider(
-      moduleConfig.rpcUrl,
+      moduleConfig.config.rpcUrl,
       Number(ChainId.fromName(chainName)),
     )
+
     const rateLimitedProvider = new RateLimitedProvider(provider, 100)
 
     return {

@@ -19,17 +19,17 @@ export interface Config {
       readonly tickIntervalMs: number
     }
     readonly modules: {
-      readonly ethereum: false | EthereumLikeDiscoveryConfig
-      readonly arbitrum: false | EthereumLikeDiscoveryConfig
-      readonly optimism: false | EthereumLikeDiscoveryConfig
-      readonly 'polygon-pos': false | EthereumLikeDiscoveryConfig
-      readonly base: false | EthereumLikeDiscoveryConfig
-      readonly 'polygon-zkevm': false | EthereumLikeDiscoveryConfig
-      readonly bsc?: false | EthereumLikeDiscoveryConfig // No alchemy
-      readonly avalanche?: false | EthereumLikeDiscoveryConfig // No alchemy
-      readonly celo?: false | EthereumLikeDiscoveryConfig // No alchemy
-      readonly linea?: false | EthereumLikeDiscoveryConfig // No alchemy
-      readonly gnosis?: false | EthereumLikeDiscoveryConfig // No alchemy
+      readonly ethereum: DiscoverySubmoduleConfig
+      readonly arbitrum: DiscoverySubmoduleConfig
+      readonly optimism: DiscoverySubmoduleConfig
+      readonly 'polygon-pos': DiscoverySubmoduleConfig
+      readonly base: DiscoverySubmoduleConfig
+      readonly 'polygon-zkevm': DiscoverySubmoduleConfig
+      readonly bsc?: DiscoverySubmoduleConfig // No alchemy
+      readonly avalanche?: DiscoverySubmoduleConfig // No alchemy
+      readonly celo?: DiscoverySubmoduleConfig // No alchemy
+      readonly linea?: DiscoverySubmoduleConfig // No alchemy
+      readonly gnosis?: DiscoverySubmoduleConfig // No alchemy
     }
   }
 }
@@ -49,6 +49,18 @@ export interface HealthConfig {
   readonly commitSha?: string
 }
 
+export type DiscoverySubmoduleConfig =
+  | {
+      visible: boolean
+      enabled: true
+      config: EthereumLikeDiscoveryConfig
+    }
+  | {
+      visible: boolean
+      enabled: false
+      config: null
+    }
+
 export interface EthereumLikeDiscoveryConfig {
   startBlock: number
   rpcUrl: string
@@ -56,7 +68,6 @@ export interface EthereumLikeDiscoveryConfig {
   blockExplorerApiUrl: string
   blockExplorerApiKey: string
   blockExplorerMinTimestamp: UnixTime
-  visible: boolean
   discovery: DiscoveryConfig
   multicall: MulticallConfig
 }

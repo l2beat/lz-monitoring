@@ -7,7 +7,7 @@ import {
 // eslint-disable-next-line import/no-internal-modules
 import { UnixTime } from '@l2beat/discovery/dist/utils/UnixTime'
 
-import { Config, EthereumLikeDiscoveryConfig } from './Config'
+import { Config, DiscoverySubmoduleConfig } from './Config'
 import { arbitrumDiscoveryConfig } from './discovery/arbitrum'
 import { avalancheDiscoveryConfig } from './discovery/avalanche'
 import { baseDiscoveryConfig } from './discovery/base'
@@ -162,9 +162,22 @@ function configFromTemplate(env: Env) {
      */
     startBlock: number
     multicallConfig: MulticallConfig
-  }): false | EthereumLikeDiscoveryConfig {
-    return (
-      env.boolean(`${chainNamePrefix}_DISCOVERY_ENABLED`, false) && {
+  }): DiscoverySubmoduleConfig {
+    const isEnabled = env.boolean(`${chainNamePrefix}_ENABLED`, false)
+    const isVisible = env.boolean(`${chainNamePrefix}_VISIBLE`, false)
+
+    if (!isEnabled) {
+      return {
+        visible: isVisible,
+        enabled: false,
+        config: null,
+      }
+    }
+
+    return {
+      visible: isVisible,
+      enabled: isEnabled,
+      config: {
         startBlock: env.integer(`${chainNamePrefix}_START_BLOCK`, startBlock),
         rpcUrl: env.string(`${chainNamePrefix}_RPC_URL`),
         rpcLogsMaxRange: env.integer(
@@ -179,10 +192,9 @@ function configFromTemplate(env: Env) {
             blockExplorerMinTimestamp.getTime() / 1000,
           ),
         ),
-        visible: env.boolean(`${chainNamePrefix}_VISIBLE`, false),
         discovery: discoveryConfig,
         multicall: multicallConfig,
-      }
-    )
+      },
+    }
   }
 }
