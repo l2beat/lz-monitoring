@@ -40,19 +40,6 @@ describe(ProviderCacheRepository.name, () => {
     expect(actual).toEqual([record2])
   })
 
-  it('preserves nullish block number', async () => {
-    const record1 = mockRecord({
-      value: 'value1',
-      chainId: ChainId.OPTIMISM,
-      blockNumber: null,
-    })
-
-    await repository.addOrUpdate(record1)
-    const actual = await repository.getAll()
-
-    expect(actual).toEqual([record1])
-  })
-
   it('finds by key', async () => {
     const records = Array.from({ length: 10 }).map((_, i) =>
       mockRecord({
@@ -96,7 +83,7 @@ describe(ProviderCacheRepository.name, () => {
 
     const beforeDelete = await repository.getAll()
 
-    await repository.deleteAfter(recordUpTo.blockNumber!, ChainId.ETHEREUM)
+    await repository.deleteAfter(recordUpTo.blockNumber, ChainId.ETHEREUM)
 
     const afterDelete = await repository.getAll()
 

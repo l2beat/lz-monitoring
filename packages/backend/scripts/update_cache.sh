@@ -88,7 +88,7 @@ fi
 
 # Restore the downloaded backup to the local database
 echo "Restoring the backup to the local database..."
-pg_restore --clean --no-acl --no-owner -h localhost -d local "$LATEST_DUMP" --schema public
+pg_restore --clean --no-acl --no-owner -h localhost -d local "$LATEST_DUMP" --schema public $@
 
 # Check the success of pg_restore
 if [[ $? -eq 0 ]]; then
