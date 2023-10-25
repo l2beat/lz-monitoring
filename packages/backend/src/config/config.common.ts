@@ -179,6 +179,7 @@ function configFromTemplate(env: Env) {
             blockExplorerMinTimestamp.getTime() / 1000,
           ),
         ),
+        visible: env.boolean(`${chainNamePrefix}_VISIBLE`, false),
         discovery: discoveryConfig,
         multicall: multicallConfig,
       }

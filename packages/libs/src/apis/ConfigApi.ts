@@ -8,6 +8,7 @@ export { ChainModuleConfig, ChainModuleConfigsResponse }
 const ChainModuleConfig = z.object({
   chainId: branded(z.number(), ChainId),
   enabled: z.boolean(),
+  visible: z.boolean(),
 })
 
 type ChainModuleConfig = z.infer<typeof ChainModuleConfig>

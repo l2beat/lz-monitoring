@@ -17,6 +17,7 @@ export function useDiscoveryApi({
   apiUrl,
   intervalMs = 10_000,
 }: UseDiscoverApiHookOptions) {
+  const [shouldFetch, setShouldFetch] = useState(true)
   const [isLoading, setIsLoading] = useState(true)
   const [isError, setIsError] = useState(false)
   const [data, setData] = useState<DiscoveryData | null>(null)
@@ -40,14 +41,16 @@ export function useDiscoveryApi({
       }
     }
 
-    void fetchData()
-
-    const fetchDataInterval = setInterval(() => {
+    if (shouldFetch) {
       void fetchData()
-    }, intervalMs)
 
-    return () => clearInterval(fetchDataInterval)
-  }, [chainId, intervalMs, apiUrl])
+      const fetchDataInterval = setInterval(() => {
+        void fetchData()
+      }, intervalMs)
 
-  return [data, isLoading, isError] as const
+      return () => clearInterval(fetchDataInterval)
+    }
+  }, [chainId, intervalMs, apiUrl, shouldFetch])
+
+  return [data, isLoading, isError, setShouldFetch] as const
 }

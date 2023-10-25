@@ -6,7 +6,7 @@ export function createConfigRouter(configController: ConfigController): Router {
   const router = new Router()
 
   router.get('/config/chains', (ctx): void => {
-    const data = configController.getAvailableChains()
+    const data = configController.getChainConfigs()
 
     ctx.body = data
   })

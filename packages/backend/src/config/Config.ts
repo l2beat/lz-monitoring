@@ -56,6 +56,7 @@ export interface EthereumLikeDiscoveryConfig {
   blockExplorerApiUrl: string
   blockExplorerApiKey: string
   blockExplorerMinTimestamp: UnixTime
+  visible: boolean
   discovery: DiscoveryConfig
   multicall: MulticallConfig
 }

@@ -15,14 +15,18 @@ export function createConfigModule({
 }: ConfigModuleDependencies): ApplicationModule {
   const chains = Object.keys(config.discovery.modules) as AvailableConfigs[]
 
-  // FIXME: module config is not the best naming here, more something like flag
   const availableChains: ChainModuleConfig[] = chains.map((chainName) => {
     const moduleConfig = config.discovery.modules[chainName]
     const chainId = ChainId.fromName(chainName)
 
+    const isEnabled = Boolean(moduleConfig)
+    // eslint-disable-next-line @typescript-eslint/prefer-optional-chain
+    const isVisible = Boolean(moduleConfig && moduleConfig.visible)
+
     return {
       chainId,
-      enabled: Boolean(moduleConfig),
+      enabled: isEnabled,
+      visible: isVisible,
     }
   })
 

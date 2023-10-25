@@ -1,9 +1,9 @@
 import { ChainModuleConfig, ChainModuleConfigsResponse } from '@lz/libs'
 
 export class ConfigController {
-  constructor(private readonly availableChains: ChainModuleConfig[]) {}
+  constructor(private readonly chainConfigs: ChainModuleConfig[]) {}
 
-  public getAvailableChains(): ChainModuleConfigsResponse {
-    return this.availableChains
+  public getChainConfigs(): ChainModuleConfigsResponse {
+    return this.chainConfigs
   }
 }
