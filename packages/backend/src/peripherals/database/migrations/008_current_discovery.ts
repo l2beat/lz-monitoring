@@ -15,7 +15,6 @@ import { Knex } from 'knex'
 
 export async function up(knex: Knex): Promise<void> {
   const discoveryRows = await knex('discovery').select('*')
-  console.log(discoveryRows)
   const newDiscoveryRows = discoveryRows.map((row) => ({
     ...row,
     block_number: (
