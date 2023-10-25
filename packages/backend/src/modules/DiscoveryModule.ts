@@ -24,11 +24,13 @@ import { CacheInvalidationIndexer } from '../indexers/CacheInvalidationIndexer'
 import { ClockIndexer } from '../indexers/ClockIndexer'
 import { CurrentDiscoveryIndexer } from '../indexers/CurrentDiscoveryIndexer'
 import { DiscoveryIndexer } from '../indexers/DiscoveryIndexer'
+import { EventIndexer } from '../indexers/EventIndexer'
 import { BlockchainClient } from '../peripherals/clients/BlockchainClient'
 import { ProviderCache } from '../peripherals/clients/ProviderCache'
 import { BlockNumberRepository } from '../peripherals/database/BlockNumberRepository'
 import { CurrentDiscoveryRepository } from '../peripherals/database/CurrentDiscoveryRepository'
 import { DiscoveryRepository } from '../peripherals/database/DiscoveryRepository'
+import { EventRepository } from '../peripherals/database/EventRepository'
 import { IndexerStateRepository } from '../peripherals/database/IndexerStateRepository'
 import { ProviderCacheRepository } from '../peripherals/database/ProviderCacheRepository'
 import { Database } from '../peripherals/database/shared/Database'
@@ -43,6 +45,7 @@ interface DiscoverySubmoduleDependencies {
     discovery: DiscoveryRepository
     currDiscovery: CurrentDiscoveryRepository
     providerCache: ProviderCacheRepository
+    events: EventRepository
   }
   clockIndexer: ClockIndexer
 }
@@ -62,6 +65,7 @@ export function createDiscoveryModule({
 
   const blockRepository = new BlockNumberRepository(database, logger)
   const indexerRepository = new IndexerStateRepository(database, logger)
+  const eventRepository = new EventRepository(database, logger)
   const discoverRepository = new DiscoveryRepository(database, logger)
   const currentDiscoveryRepository = new CurrentDiscoveryRepository(
     database,
@@ -104,6 +108,7 @@ export function createDiscoveryModule({
           discovery: discoverRepository,
           currDiscovery: currentDiscoveryRepository,
           providerCache: providerCacheRepository,
+          events: eventRepository,
         },
         config: moduleConfig,
       },
@@ -175,6 +180,19 @@ export function createDiscoverySubmodule(
     blockNumberIndexer,
   )
 
+  const eventIndexer = new EventIndexer(
+    blockchainClient,
+    repositories.blockNumber,
+    repositories.events,
+    repositories.indexerState,
+    config.startBlock,
+    config.rpcLogsMaxRange,
+    chainId,
+    config.eventsToWatch,
+    blockNumberIndexer,
+    logger,
+  )
+
   const discoveryIndexer = new DiscoveryIndexer(
     discoveryEngine,
     config.discovery,
@@ -203,6 +221,7 @@ export function createDiscoverySubmodule(
 
       await blockNumberIndexer.start()
       await cacheInvalidationIndexer.start()
+      await eventIndexer.start()
       await discoveryIndexer.start()
       await currDiscoveryIndexer.start()
 

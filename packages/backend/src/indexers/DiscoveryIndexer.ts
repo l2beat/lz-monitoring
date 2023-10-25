@@ -36,11 +36,11 @@ export class DiscoveryIndexer extends ChildIndexer {
   }
 
   private async runAndSaveDiscovery(timestamp: UnixTime): Promise<UnixTime> {
-    const blockNumber =
-      (await this.blockNumberRepository.findAtOrBefore(
-        timestamp,
-        this.chainId,
-      )) ?? 0
+    const blockRecord = await this.blockNumberRepository.findAtOrBefore(
+      timestamp,
+      this.chainId,
+    )
+    const blockNumber = blockRecord?.blockNumber ?? 0
     const prevOutput = await this.discoveryRepository.findAtOrBefore(
       blockNumber,
       this.chainId,

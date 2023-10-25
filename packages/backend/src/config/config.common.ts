@@ -18,6 +18,7 @@ import { lineaDiscoveryConfig } from './discovery/linea'
 import { optimismDiscoveryConfig } from './discovery/optimism'
 import { polygonPosDiscoveryConfig } from './discovery/polygon-pos'
 import { polygonZkEvmDiscoveryConfig } from './discovery/polygon-zkevm'
+import { eventsToWatch } from './discoveryConfig'
 
 export function getCommonDiscoveryConfig(env: Env): Config['discovery'] {
   const createConfig = configFromTemplate(env)
@@ -180,6 +181,7 @@ function configFromTemplate(env: Env) {
           ),
         ),
         discovery: discoveryConfig,
+        eventsToWatch,
         multicall: multicallConfig,
       }
     )

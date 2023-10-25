@@ -4,6 +4,8 @@ import { DiscoveryConfig, MulticallConfig } from '@l2beat/discovery'
 import { UnixTime } from '@l2beat/discovery/dist/utils/UnixTime'
 import { Knex } from 'knex'
 
+import { EventsToWatchConfig } from './discoveryConfig'
+
 export type AvailableConfigs = keyof Config['discovery']['modules']
 
 export interface Config {
@@ -57,5 +59,6 @@ export interface EthereumLikeDiscoveryConfig {
   blockExplorerApiKey: string
   blockExplorerMinTimestamp: UnixTime
   discovery: DiscoveryConfig
+  eventsToWatch: EventsToWatchConfig
   multicall: MulticallConfig
 }

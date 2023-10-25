@@ -122,6 +122,27 @@ export class BlockchainClient {
       }
     }
   }
+
+  async getLogsBatch(
+    address: EthereumAddress,
+    topics: (string[] | string)[],
+    fromBlock: number,
+    toBlock: number,
+  ): Promise<providers.Log[]> {
+    this.logger.debug('Getting logs batch', {
+      address: address.toString(),
+      topics,
+      fromBlock,
+      toBlock,
+    })
+
+    return this.provider.getLogs({
+      address: address.toString(),
+      topics,
+      fromBlock,
+      toBlock,
+    })
+  }
 }
 
 export async function getBlockNumberAtOrBefore(

@@ -43,7 +43,7 @@ describe(CacheInvalidationIndexer.name, () => {
       }
 
       const blockNumberRepository = mockObject<BlockNumberRepository>({
-        findAtOrBefore: async () => BLOCK.blockNumber,
+        findAtOrBefore: async () => BLOCK,
       })
       const cacheRepository = mockObject<ProviderCacheRepository>({
         deleteAfter: async () => 1, // Amount of blocks deleted, doesn't matter - given 3 blocks, 2 preserved, 1 deleted

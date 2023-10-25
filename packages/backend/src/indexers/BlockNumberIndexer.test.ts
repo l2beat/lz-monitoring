@@ -279,7 +279,7 @@ function mockBlockNumberRepository(initialStorage: BlockNumberRecord[] = []) {
     findLast: async () => blockNumberStorage.at(-1),
     addMany: async (blocks: BlockNumberRecord[]) => {
       blockNumberStorage.push(...blocks)
-      return blocks.map((b) => b.blockNumber)
+      return blocks.length
     },
     add: async (block: BlockNumberRecord) => {
       blockNumberStorage.push(block)

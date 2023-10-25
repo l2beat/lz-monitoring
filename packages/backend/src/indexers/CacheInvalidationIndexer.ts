@@ -33,7 +33,7 @@ export class CacheInvalidationIndexer extends ChildIndexer {
       return targetHeight
     }
 
-    const blockNumber = await this.blockNumberRepository.findAtOrBefore(
+    const blockRecord = await this.blockNumberRepository.findAtOrBefore(
       new UnixTime(targetHeight),
       this.chainId,
     )
@@ -41,9 +41,12 @@ export class CacheInvalidationIndexer extends ChildIndexer {
     // Maybe we should do a full cache wipe? This should never happen provided indexers were
     // running for some time and the database is not empty.
     // If this happens, we are probably at the very beginning or have data integrity issues
-    assert(blockNumber, 'Referenced block not found')
+    assert(blockRecord, 'Referenced block not found')
 
-    await this.cacheRepository.deleteAfter(blockNumber, this.chainId)
+    await this.cacheRepository.deleteAfter(
+      blockRecord.blockNumber,
+      this.chainId,
+    )
 
     return targetHeight
   }
