@@ -1,11 +1,11 @@
 export type BadgeVariant = 'green' | 'yellow' | 'grey'
 
-interface BadgeProps {
+interface Props {
   variant: BadgeVariant
   children: React.ReactNode
 }
 
-export function Badge({ variant, children }: BadgeProps) {
+export function Badge({ variant, children }: Props) {
   return (
     <span
       className={`inline-flex items-center rounded-lg px-3 py-1 text-xs font-semibold ${variantToColor(

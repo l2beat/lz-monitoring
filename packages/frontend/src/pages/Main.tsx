@@ -4,27 +4,28 @@ import { SkeletonTheme } from 'react-loading-skeleton'
 import { config } from '../config'
 import { useChainQueryParam } from '../hooks/useChainQueryParam'
 import { useDiscoveryApi } from '../hooks/useDiscoveryApi'
-import { CurrentNetwork } from '../view/components/CurrentNetwork'
-import { EndpointContract } from '../view/components/EndpointContract'
-import { LzMultisig } from '../view/components/LayerZeroMultisig'
 import { Layout } from '../view/components/Layout'
 import { Navbar } from '../view/components/Navbar'
+import { NetworkData } from '../view/components/NetworkData'
+import { NetworkError } from '../view/components/NetworkError'
+import { NetworkDropdownSelector } from '../view/components/NetworkSelector'
+import { EndpointContract } from '../view/components/protocol/EndpointContract'
+import { LayerZeroMultisig } from '../view/components/protocol/LayerZeroMultisig'
+import { UltraLightNodeContract } from '../view/components/protocol/UltraLightNode'
 import { MultisigTransactions } from '../view/components/safe/MultisigTransactions'
-import { ULNv2Contract } from '../view/components/ULNv2Contract'
 
 export function Main(): JSX.Element {
   const [paramChain, setParamChain] = useChainQueryParam({
     fallback: ChainId.ETHEREUM,
     paramName: 'chain',
   })
-  const [discoveryResponse, setRequestChainId] = useDiscoveryApi({
+  const [discoveryResponse, , isError] = useDiscoveryApi({
     apiUrl: config.apiUrl,
-    initialChainId: paramChain,
+    chainId: paramChain,
   })
 
   function setChain(chain: ChainId) {
     setParamChain(chain)
-    setRequestChainId(chain)
   }
 
   // Restrict valid chains only to those that are turned on
@@ -33,34 +34,54 @@ export function Main(): JSX.Element {
     setChain(ChainId.ETHEREUM)
   }
 
-  const multisigAddress = discoveryResponse?.contracts.lzMultisig?.address
+  const multisigAddress = discoveryResponse?.data.contracts.lzMultisig?.address
 
   const associatedAddresses = discoveryResponse
-    ? getAssociatedAddresses(discoveryResponse)
+    ? getAssociatedAddresses(discoveryResponse.data)
     : []
 
   const shouldDisplayMultisigTransactions =
-    multisigAddress && endpoints.isChainSupported(paramChain.valueOf())
+    multisigAddress &&
+    endpoints.isChainSupported(discoveryResponse.chainId.valueOf())
+
+  if (!discoveryResponse) {
+    return (
+      <>
+        <Navbar />
+        <Layout>
+          <NetworkDropdownSelector
+            chainId={paramChain}
+            availableChains={config.availableChains}
+            setChainId={setChain}
+          />
+          {isError && <NetworkError />}
+        </Layout>
+      </>
+    )
+  }
 
   return (
     <>
       <Navbar />
       <Layout>
-        <SkeletonTheme baseColor="#ff0000">
-          <CurrentNetwork
-            latestBlock={discoveryResponse?.blockNumber}
-            chainId={paramChain}
-            setChainId={setChain}
+        <SkeletonTheme baseColor="#0D0D0D" highlightColor="#525252">
+          <NetworkDropdownSelector
+            chainId={discoveryResponse.chainId}
             availableChains={config.availableChains}
+            setChainId={setChain}
           />
-          <EndpointContract {...discoveryResponse?.contracts.endpoint} />
-          <ULNv2Contract {...discoveryResponse?.contracts.ulnV2} />
-          <LzMultisig {...discoveryResponse?.contracts.lzMultisig} />
+          <NetworkData
+            chainId={discoveryResponse.chainId}
+            latestBlock={discoveryResponse.data.blockNumber}
+          />
+          <EndpointContract {...discoveryResponse.data.contracts.endpoint} />
+          <UltraLightNodeContract {...discoveryResponse.data.contracts.ulnV2} />
 
+          <LayerZeroMultisig {...discoveryResponse.data.contracts.lzMultisig} />
           {shouldDisplayMultisigTransactions && (
             <MultisigTransactions
               multisigAddress={multisigAddress}
-              chainId={paramChain}
+              chainId={discoveryResponse.chainId}
               associatedAddresses={associatedAddresses}
             />
           )}
