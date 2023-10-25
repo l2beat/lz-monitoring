@@ -1,5 +1,6 @@
 import { Logger } from '@l2beat/backend-tools'
 import { DiscoveryConfig, DiscoveryEngine } from '@l2beat/discovery'
+import { DiscoveryOutput } from '@l2beat/discovery-types'
 import { ChainId, Hash256 } from '@lz/libs'
 import { expect, mockObject } from 'earl'
 
@@ -15,9 +16,11 @@ describe(DiscoveryIndexer.name, () => {
       const config = mockConfig()
       const discoveryEngine = mockObject<DiscoveryEngine>({
         discover: async () => [],
+        hasOutputChanged: async () => false,
       })
       const discoveryRepository = mockObject<DiscoveryRepository>({
         addOrUpdate: async () => true,
+        findAtOrBefore: async () => undefined,
       })
       const chainId = ChainId.ETHEREUM
 
@@ -35,14 +38,14 @@ describe(DiscoveryIndexer.name, () => {
           subscribe: () => {},
         }),
       )
-
       expect(await disocoveryIndexer.update(0, 1)).toEqual(1)
       expect(discoveryEngine.discover).toHaveBeenCalledTimes(1)
       expect(discoveryEngine.discover).toHaveBeenNthCalledWith(1, config, 1)
       expect(discoveryRepository.addOrUpdate).toHaveBeenNthCalledWith(1, {
         chainId,
+        blockNumber: 1,
         discoveryOutput: {
-          version: 2,
+          version: 3,
           name: 'test',
           configHash: config.hash,
           chain: 'ethereum',
@@ -52,6 +55,51 @@ describe(DiscoveryIndexer.name, () => {
           abis: {},
         },
       })
+    })
+
+    it('should run hasOutputChanged if previous discovery exists', async () => {
+      const config = mockConfig()
+      const chainId = ChainId.ETHEREUM
+      const prevDiscovery = {
+        chainId,
+        blockNumber: 1,
+        discoveryOutput: mockObject<DiscoveryOutput>({
+          version: 3,
+        }),
+      }
+      const discoveryEngine = mockObject<DiscoveryEngine>({
+        discover: async () => [],
+        hasOutputChanged: async () => false,
+      })
+      const discoveryRepository = mockObject<DiscoveryRepository>({
+        addOrUpdate: async () => true,
+        findAtOrBefore: async () => prevDiscovery,
+      })
+
+      const disocoveryIndexer = new DiscoveryIndexer(
+        discoveryEngine,
+        config,
+        mockObject<BlockNumberRepository>({
+          findAtOrBefore: async () => 1,
+        }),
+        discoveryRepository,
+        mockObject<IndexerStateRepository>(),
+        chainId,
+        Logger.SILENT,
+        mockObject<BlockNumberIndexer>({
+          subscribe: () => {},
+        }),
+      )
+
+      expect(await disocoveryIndexer.update(1, 2)).toEqual(2)
+      expect(discoveryEngine.discover).toHaveBeenCalledTimes(0)
+      expect(discoveryRepository.addOrUpdate).not.toHaveBeenCalled()
+      expect(discoveryEngine.hasOutputChanged).toHaveBeenCalledTimes(1)
+      expect(discoveryEngine.hasOutputChanged).toHaveBeenCalledWith(
+        config,
+        prevDiscovery.discoveryOutput,
+        1,
+      )
     })
   })
 

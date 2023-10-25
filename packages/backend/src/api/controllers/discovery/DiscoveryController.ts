@@ -13,7 +13,7 @@ import {
   RemoteChain,
 } from '@lz/libs'
 
-import { DiscoveryRepository } from '../../../peripherals/database/DiscoveryRepository'
+import { CurrentDiscoveryRepository } from '../../../peripherals/database/CurrentDiscoveryRepository'
 import {
   getAddressFromValue,
   getContractByName,
@@ -21,10 +21,12 @@ import {
 } from './utils'
 
 export class DiscoveryController {
-  constructor(private readonly discoveryRepository: DiscoveryRepository) {}
+  constructor(
+    private readonly currentDiscoveryRepository: CurrentDiscoveryRepository,
+  ) {}
 
   async getDiscovery(chainId: ChainId): Promise<DiscoveryApi | undefined> {
-    const discovery = await this.discoveryRepository.find(chainId)
+    const discovery = await this.currentDiscoveryRepository.find(chainId)
 
     if (!discovery) {
       return
@@ -36,7 +38,7 @@ export class DiscoveryController {
   async getRawDiscovery(
     chainId: ChainId,
   ): Promise<DiscoveryOutput | undefined> {
-    const discovery = await this.discoveryRepository.find(chainId)
+    const discovery = await this.currentDiscoveryRepository.find(chainId)
 
     if (!discovery) {
       return

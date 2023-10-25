@@ -9,7 +9,7 @@ import {
 import { providers } from 'ethers'
 
 import { BlockNumberRepository } from '../../peripherals/database/BlockNumberRepository'
-import { DiscoveryRepository } from '../../peripherals/database/DiscoveryRepository'
+import { CurrentDiscoveryRepository } from '../../peripherals/database/CurrentDiscoveryRepository'
 import { IndexerStateRepository } from '../../peripherals/database/IndexerStateRepository'
 
 export type ChainModuleStatus =
@@ -27,7 +27,7 @@ export class StatusController {
   constructor(
     private readonly chainModuleStatuses: ChainModuleStatus[],
     private readonly blockRepo: BlockNumberRepository,
-    private readonly discoveryRepo: DiscoveryRepository,
+    private readonly currDiscoveryRepo: CurrentDiscoveryRepository,
     private readonly indexerRepository: IndexerStateRepository,
   ) {}
 
@@ -108,7 +108,7 @@ export class StatusController {
   ): Promise<CommonDiscoveryStatus> {
     const allIndexerStates = await this.indexerRepository.getAll()
 
-    const discovery = await this.discoveryRepo.find(chainId)
+    const discovery = await this.currDiscoveryRepo.find(chainId)
     const indexerStates = allIndexerStates.filter(
       (state) => state.chainId === chainId,
     )

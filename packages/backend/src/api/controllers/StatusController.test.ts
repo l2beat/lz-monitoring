@@ -10,9 +10,9 @@ import {
   BlockNumberRepository,
 } from '../../peripherals/database/BlockNumberRepository'
 import {
-  DiscoveryRecord,
-  DiscoveryRepository,
-} from '../../peripherals/database/DiscoveryRepository'
+  CurrentDiscoveryRecord,
+  CurrentDiscoveryRepository,
+} from '../../peripherals/database/CurrentDiscoveryRepository'
 import {
   IndexerStateRecord,
   IndexerStateRepository,
@@ -30,7 +30,7 @@ describe(StatusController.name, () => {
           },
         ]
 
-        const discoveryRepo = mockObject<DiscoveryRepository>({
+        const currDiscoveryRepo = mockObject<CurrentDiscoveryRepository>({
           find: () => Promise.resolve(undefined),
         })
 
@@ -45,7 +45,7 @@ describe(StatusController.name, () => {
         const controller = new StatusController(
           chainModuleStatuses,
           blockRepo,
-          discoveryRepo,
+          currDiscoveryRepo,
           indexerStatesRepo,
         )
 
@@ -104,7 +104,7 @@ describe(StatusController.name, () => {
       describe('node healthy at query time', () => {
         it('returns basic information and node-related data excluding latest block-related data', async () => {
           const deps = mockDeps()
-          const discoveryRepo = mockObject<DiscoveryRepository>({
+          const discoveryRepo = mockObject<CurrentDiscoveryRepository>({
             find: () => Promise.resolve(undefined),
           })
 
@@ -147,7 +147,7 @@ describe(StatusController.name, () => {
 
           deps.provider.getBlock.rejectsWith('ANY_ERROR_WHILE_FETCHING_BLOCK')
 
-          const discoveryRepo = mockObject<DiscoveryRepository>({
+          const currDiscoveryRepo = mockObject<CurrentDiscoveryRepository>({
             find: () => Promise.resolve(undefined),
           })
 
@@ -162,7 +162,7 @@ describe(StatusController.name, () => {
           const controller = new StatusController(
             deps.chainModuleStatuses,
             blockRepo,
-            discoveryRepo,
+            currDiscoveryRepo,
             indexerStatesRepo,
           )
 
@@ -204,7 +204,7 @@ describe(StatusController.name, () => {
           expect(status.chainName).toEqual('ethereum')
           expect(status.lastIndexedBlock).toEqual(deps.lastIndexedBlock)
           expect(status.lastDiscoveredBlock).toEqual(
-            deps.discoveryResult.discoveryOutput.blockNumber,
+            deps.currDiscoveryResult.discoveryOutput.blockNumber,
           )
           expect(status.delays).toEqual({
             offset:
@@ -244,7 +244,7 @@ describe(StatusController.name, () => {
           expect(status.chainName).toEqual('ethereum')
           expect(status.lastIndexedBlock).toEqual(deps.lastIndexedBlock)
           expect(status.lastDiscoveredBlock).toEqual(
-            deps.discoveryResult.discoveryOutput.blockNumber,
+            deps.currDiscoveryResult.discoveryOutput.blockNumber,
           )
           expect(status.delays).toEqual(null)
           expect(status.node).toEqual(null)
@@ -284,7 +284,7 @@ function mockDeps() {
     },
   ]
 
-  const discoveryResult: DiscoveryRecord = {
+  const currDiscoveryResult: CurrentDiscoveryRecord = {
     chainId: ChainId.ETHEREUM,
     discoveryOutput: {
       blockNumber: LATEST_DISCOVERY_BLOCK_NUMBER,
@@ -301,8 +301,8 @@ function mockDeps() {
   const blockRepo = mockObject<BlockNumberRepository>({
     findLast: () => Promise.resolve(lastIndexedBlock),
   })
-  const discoveryRepo = mockObject<DiscoveryRepository>({
-    find: () => Promise.resolve(discoveryResult),
+  const discoveryRepo = mockObject<CurrentDiscoveryRepository>({
+    find: () => Promise.resolve(currDiscoveryResult),
   })
   const indexerRepository = mockObject<IndexerStateRepository>({
     getAll: () => Promise.resolve(indexerStates),
@@ -323,7 +323,7 @@ function mockDeps() {
     LATEST_INDEXED_BLOCK_NUMBER,
     provider,
     indexerStates,
-    discoveryResult,
+    currDiscoveryResult,
     lastIndexedBlock,
     blockRepo,
     discoveryRepo,

@@ -11,7 +11,7 @@ import { createStatusRouter } from '../api/routes/status'
 import { Config } from '../config'
 import { AvailableConfigs } from '../config/Config'
 import { BlockNumberRepository } from '../peripherals/database/BlockNumberRepository'
-import { DiscoveryRepository } from '../peripherals/database/DiscoveryRepository'
+import { CurrentDiscoveryRepository } from '../peripherals/database/CurrentDiscoveryRepository'
 import { IndexerStateRepository } from '../peripherals/database/IndexerStateRepository'
 import { Database } from '../peripherals/database/shared/Database'
 import { ApplicationModule } from './ApplicationModule'
@@ -31,7 +31,10 @@ export function createStatusModule({
 
   const blockRepository = new BlockNumberRepository(database, logger)
   const indexerRepository = new IndexerStateRepository(database, logger)
-  const discoverRepository = new DiscoveryRepository(database, logger)
+  const currentDiscoveryRepository = new CurrentDiscoveryRepository(
+    database,
+    logger,
+  )
 
   const chainModuleStatuses: ChainModuleStatus[] = chains.map((chainName) => {
     const moduleConfig = config.discovery.modules[chainName]
@@ -60,7 +63,7 @@ export function createStatusModule({
   const statusController = new StatusController(
     chainModuleStatuses,
     blockRepository,
-    discoverRepository,
+    currentDiscoveryRepository,
     indexerRepository,
   )
 
