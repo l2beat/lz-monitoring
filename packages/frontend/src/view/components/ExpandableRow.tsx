@@ -1,17 +1,15 @@
 import cx from 'classnames'
 import { useState } from 'react'
 
-import { DropdownArrowIcon } from '../../icons/DropdownArrowIcon'
+import { DropdownArrowIcon } from '../icons/DropdownArrowIcon'
 
-export function ExpandableRow({
-  children,
-  title,
-  className,
-}: {
+interface Props {
   children: React.ReactNode
   title: string
   className?: string
-}) {
+}
+
+export function ExpandableRow({ children, title, className }: Props) {
   const [isExpanded, setIsExpanded] = useState(false)
 
   const toggleExpand = () => {

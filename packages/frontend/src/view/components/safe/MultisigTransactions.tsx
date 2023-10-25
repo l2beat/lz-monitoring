@@ -1,8 +1,9 @@
 import { ChainId, EthereumAddress } from '@lz/libs'
-import { SkeletonTheme } from 'react-loading-skeleton'
 
 import { useSafeApi } from '../../../hooks/useSafeApi'
-import { PaginatedContainer } from './PaginatedContainer'
+import { cardFor } from '../cardFor'
+import { PaginatedContainer } from '../PaginatedContainer'
+import { InlineSkeleton } from '../Skeleton'
 import {
   SafeMultisigTransactionComponent,
   SafeMultisigTransactionSkeleton,
@@ -14,29 +15,29 @@ interface Props {
   chainId: ChainId
 }
 
+const Card = cardFor('Multisig transactions', 'deep-blue')
+
 export function MultisigTransactions(props: Props) {
   const [isLoading, isError, transactions] = useSafeApi(props)
 
   if (isLoading) {
     return (
-      <ComponentLayout>
-        <SkeletonTheme baseColor="#0D0D0D" highlightColor="#525252">
-          <SafeMultisigTransactionSkeleton />
-        </SkeletonTheme>
-      </ComponentLayout>
+      <Card subtitle={<InlineSkeleton />}>
+        <SafeMultisigTransactionSkeleton />
+      </Card>
     )
   }
 
   if (isError) {
-    return <ComponentLayout subtitle="Data could not be loaded ⚠️" />
+    return <Card subtitle="Data could not be loaded ⚠️" />
   }
 
   if (!transactions || transactions.length === 0) {
-    return <ComponentLayout subtitle="No transactions executed" />
+    return <Card subtitle="No transactions executed" />
   }
 
   return (
-    <ComponentLayout>
+    <Card subtitle={props.multisigAddress}>
       <PaginatedContainer itemsPerPage={1}>
         {transactions.map((tx, i) => (
           <SafeMultisigTransactionComponent
@@ -46,28 +47,6 @@ export function MultisigTransactions(props: Props) {
           />
         ))}
       </PaginatedContainer>
-    </ComponentLayout>
-  )
-}
-
-function ComponentLayout({
-  children,
-  subtitle,
-}: {
-  children?: React.ReactNode
-  subtitle?: string
-}) {
-  return (
-    <section className="mx-6 border-t border-[#3cb1ff] bg-gray-900">
-      <div className="flex items-center justify-between p-8">
-        <h2 className="text-2xl text-lg font-medium text-[#3cb1ff]">
-          Safe Multisig Transactions
-        </h2>
-        {subtitle && (
-          <span className="font-mono text-gray-600">{subtitle}</span>
-        )}
-      </div>
-      {children}
-    </section>
+    </Card>
   )
 }

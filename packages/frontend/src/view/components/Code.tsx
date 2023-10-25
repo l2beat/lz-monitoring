@@ -1,12 +1,11 @@
 import cx from 'classnames'
 
-export function Code({
-  children,
-  className,
-}: {
+interface Props {
   children: React.ReactNode
   className?: string
-}) {
+}
+
+export function Code({ children, className }: Props) {
   return (
     <pre
       className={cx(
