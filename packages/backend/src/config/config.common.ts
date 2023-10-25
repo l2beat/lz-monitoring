@@ -176,7 +176,7 @@ function configFromTemplate(env: Env) {
 
     return {
       visible: isVisible,
-      enabled: isEnabled,
+      enabled: true,
       config: {
         startBlock: env.integer(`${chainNamePrefix}_START_BLOCK`, startBlock),
         rpcUrl: env.string(`${chainNamePrefix}_RPC_URL`),
