@@ -757,10 +757,10 @@
   dependencies:
     zod "^3.22.2"
 
-"@l2beat/discovery@^0.18.3":
-  version "0.18.3"
-  resolved "https://registry.yarnpkg.com/@l2beat/discovery/-/discovery-0.18.3.tgz#f2f80bb7f4dc70763b88c60470b6ce2b8defdca2"
-  integrity sha512-mVUAStj+gIOyXWLiMQl57XqBFIRILVKZjc1VeVf1jUVJ/9DxxfpogguK05R1F406OwMs00qS8Cx0wgRvlL/T7w==
+"@l2beat/discovery@^0.18.4":
+  version "0.18.4"
+  resolved "https://registry.yarnpkg.com/@l2beat/discovery/-/discovery-0.18.4.tgz#00ec16187f653fd548cbd22442309b1ec5a61265"
+  integrity sha512-w/PtXkJRwrvAtTJgL0FvKteXZ52OeBB8HSGqqSt3rR2fYg0LWawDeq2bao8ofR8dfDEI63IJhhxvBfsjep912Q==
   dependencies:
     "@l2beat/backend-tools" "^0.4.0"
     "@l2beat/discovery-types" "^0.4.1"
