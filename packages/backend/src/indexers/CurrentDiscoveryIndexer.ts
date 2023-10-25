@@ -19,9 +19,9 @@ export class CurrentDiscoveryIndexer extends ChildIndexer {
     private readonly indexerStateRepository: IndexerStateRepository,
     private readonly chainId: ChainId,
     logger: Logger,
-    discoverySnaphotIndexer: DiscoveryIndexer,
+    discoveryIndexer: DiscoveryIndexer,
   ) {
-    super(logger.tag(ChainId.getName(chainId)), [discoverySnaphotIndexer])
+    super(logger.tag(ChainId.getName(chainId)), [discoveryIndexer])
   }
 
   async update(_fromTimestamp: number, toTimestamp: number): Promise<number> {
