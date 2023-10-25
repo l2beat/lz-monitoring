@@ -17,20 +17,10 @@ import { Knex } from 'knex'
  * @notice Cache wipe
  */
 export async function up(knex: Knex): Promise<void> {
-  // Wipe the table
   await knex.table('provider_cache').truncate()
-
-  // Cache keys might be pretty long
-  await knex.raw(`
-    ALTER TABLE "provider_cache"
-    ALTER COLUMN "key" 
-    TYPE text
-  `)
 
   await knex.schema.alterTable('provider_cache', (table) => {
     table.integer('chain_id').notNullable()
-    // Can be nullable in case of i.e getTransactions which is keyed by hash
-    // which in case of reorg will be discarded either way due to dangling tip
     table.integer('block_number')
   })
 }
