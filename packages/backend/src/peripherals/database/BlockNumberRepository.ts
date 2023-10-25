@@ -77,6 +77,7 @@ export class BlockNumberRepository extends BaseRepository {
       .andWhere('chain_id', '=', Number(chainId))
       .orderBy('block_number', 'desc')
       .first()
+
     return row?.block_number
   }
 

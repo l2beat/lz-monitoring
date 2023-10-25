@@ -1,16 +1,19 @@
 import { Logger } from '@l2beat/backend-tools'
+import { ChainId } from '@lz/libs'
 import { expect } from 'earl'
-import type { ProviderCacheRow } from 'knex/types/tables'
 
 import { setupDatabaseTestSuite } from '../../test/database'
-import { ProviderCacheRepository } from './ProviderCacheRepository'
+import {
+  ProviderCacheRecord,
+  ProviderCacheRepository,
+} from './ProviderCacheRepository'
 
 describe(ProviderCacheRepository.name, () => {
   const { database } = setupDatabaseTestSuite()
   const repository = new ProviderCacheRepository(database, Logger.SILENT)
 
-  before(() => repository.deleteAll())
-  afterEach(() => repository.deleteAll())
+  before(async () => await repository.deleteAll())
+  afterEach(async () => await repository.deleteAll())
 
   it('adds single record and queries it', async () => {
     const record = mockRecord()
@@ -19,13 +22,35 @@ describe(ProviderCacheRepository.name, () => {
     expect(actual).toEqual([record])
   })
 
-  it('only allows single record per key and chainId', async () => {
-    const record1 = mockRecord({ value: 'value1' })
-    const record2 = mockRecord({ value: 'value2' })
+  it('only allows single record per key and overwrites old record with fresh data', async () => {
+    const record1 = mockRecord({
+      value: 'value1',
+      chainId: ChainId.OPTIMISM,
+      blockNumber: 1_000_000,
+    })
+    const record2 = mockRecord({
+      value: 'value2',
+      chainId: ChainId.OPTIMISM,
+      blockNumber: 2_000_000,
+    })
+
     await repository.addOrUpdate(record1)
     await repository.addOrUpdate(record2)
     const actual = await repository.getAll()
     expect(actual).toEqual([record2])
+  })
+
+  it('preserves nullish block number', async () => {
+    const record1 = mockRecord({
+      value: 'value1',
+      chainId: ChainId.OPTIMISM,
+      blockNumber: null,
+    })
+
+    await repository.addOrUpdate(record1)
+    const actual = await repository.getAll()
+
+    expect(actual).toEqual([record1])
   })
 
   it('finds by key', async () => {
@@ -42,14 +67,52 @@ describe(ProviderCacheRepository.name, () => {
     expect(actual).toEqual({
       key: 'key1',
       value: 'value1',
+      chainId: ChainId.ETHEREUM,
+      blockNumber: 1_000_000,
     })
+  })
+
+  it('deletes only after certain point', async () => {
+    const baseBlock = 1_000_000
+
+    const allRecords = Array.from({ length: 10 }).map((_, i) => {
+      const id = i + 1
+      return mockRecord({
+        key: `key${id}`,
+        value: `value${id}`,
+        blockNumber: id * baseBlock,
+      })
+    })
+
+    const point = 5
+    const recordUpTo = allRecords[point]!
+
+    // exclusive
+    const recordsToStay = allRecords.slice(0, point + 1)
+
+    for (const record of allRecords) {
+      await repository.addOrUpdate(record)
+    }
+
+    const beforeDelete = await repository.getAll()
+
+    await repository.deleteAfter(recordUpTo.blockNumber!, ChainId.ETHEREUM)
+
+    const afterDelete = await repository.getAll()
+
+    expect(beforeDelete).toEqual(allRecords)
+    expect(afterDelete).toEqual(recordsToStay)
+    // exclusive
+    expect(afterDelete.length).toEqual(allRecords.length - point + 1)
   })
 })
 
-function mockRecord(record?: Partial<ProviderCacheRow>) {
+function mockRecord(record?: Partial<ProviderCacheRecord>) {
   return {
     key: 'key',
     value: 'value',
+    chainId: ChainId.ETHEREUM,
+    blockNumber: 1_000_000,
     ...record,
   }
 }
