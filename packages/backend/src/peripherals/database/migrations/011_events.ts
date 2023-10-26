@@ -17,6 +17,7 @@ export async function up(knex: Knex): Promise<void> {
   await knex.schema.createTable('events', (table) => {
     table.integer('chain_id').notNullable()
     table.integer('block_number').notNullable()
+    table.primary(['chain_id', 'block_number'])
   })
 }
 

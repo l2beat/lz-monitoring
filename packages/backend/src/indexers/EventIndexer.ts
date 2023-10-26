@@ -53,18 +53,18 @@ export class EventIndexer extends ChildIndexer {
       this.chainId,
     )
     assert(toBlockRecord, 'toBlockNumber not found')
-    const batchTo = Math.min(
+    const updateTo = Math.min(
       fromBlockNumber + this.amtBatches * this.maxBlockBatchSize,
       toBlockRecord.blockNumber,
     )
 
     const blocksToSave: BlockNumberRecord[] = []
-    if (batchTo !== toBlockRecord.blockNumber) {
-      const batchToBlock = await this.blockchainClient.getBlock(batchTo)
+    if (updateTo !== toBlockRecord.blockNumber) {
+      const updateToBlock = await this.blockchainClient.getBlock(updateTo)
       blocksToSave.push({
-        blockNumber: batchTo,
-        blockHash: batchToBlock.hash,
-        timestamp: new UnixTime(batchToBlock.timestamp),
+        blockNumber: updateTo,
+        blockHash: updateToBlock.hash,
+        timestamp: new UnixTime(updateToBlock.timestamp),
         chainId: this.chainId,
       })
     }
@@ -81,7 +81,7 @@ export class EventIndexer extends ChildIndexer {
         to: batchTo,
       })
       start = batchTo
-    } while (start < batchTo)
+    } while (start < updateTo)
 
     const logs = await Promise.all(
       calls.flatMap(({ from, to }) =>
@@ -136,7 +136,7 @@ export class EventIndexer extends ChildIndexer {
 
     const updatedTo =
       blocksToSave
-        .find((x) => x.blockNumber === batchTo)
+        .find((x) => x.blockNumber === updateTo)
         ?.timestamp.toNumber() ?? to
     return updatedTo
   }
