@@ -5,13 +5,13 @@ import { Dropdown, DropdownOption } from './Dropdown'
 interface Props {
   chainId: ChainId
   setChainId: (chainId: ChainId) => void
-  availableChains: ChainId[]
+  chainsToDisplay: [ChainId, ...ChainId[]]
 }
 
 export function NetworkDropdownSelector(props: Props) {
-  const options = props.availableChains.map((availableChainId) => ({
-    label: ChainId.getName(availableChainId),
-    value: ChainId.getName(availableChainId),
+  const options = props.chainsToDisplay.map((chainToDisplay) => ({
+    label: ChainId.getName(chainToDisplay),
+    value: ChainId.getName(chainToDisplay),
   }))
 
   function onChange(option: DropdownOption) {
@@ -22,6 +22,10 @@ export function NetworkDropdownSelector(props: Props) {
   const defaultValue = options.find(
     (option) => option.value === ChainId.getName(props.chainId),
   )
+
+  if (!props.chainsToDisplay.includes(props.chainId)) {
+    props.setChainId(props.chainsToDisplay[0])
+  }
 
   return (
     <section className="bg-gray-900 px-6 pb-0 pt-6">

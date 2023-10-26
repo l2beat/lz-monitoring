@@ -26,6 +26,7 @@ describe(StatusController.name, () => {
         const chainModuleStatuses: ChainModuleStatus[] = [
           {
             state: 'disabled',
+            visible: true, // Doesn't matter
             chainId: ChainId.ETHEREUM,
           },
         ]
@@ -68,6 +69,7 @@ describe(StatusController.name, () => {
         const chainModuleStatuses: ChainModuleStatus[] = [
           {
             state: 'disabled',
+            visible: true, // Doesn't matter
             chainId: ChainId.ETHEREUM,
           },
         ]
@@ -311,6 +313,7 @@ function mockDeps() {
   const chainModuleStatuses: ChainModuleStatus[] = [
     {
       state: 'enabled',
+      visible: true,
       chainId: ChainId.ETHEREUM,
       provider: provider,
     },

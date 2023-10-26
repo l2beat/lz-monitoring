@@ -40,22 +40,25 @@ export function createStatusModule({
     const moduleConfig = config.discovery.modules[chainName]
     const chainId = ChainId.fromName(chainName)
 
-    if (!moduleConfig) {
+    if (!moduleConfig.enabled) {
       return {
         state: 'disabled',
+        visible: moduleConfig.visible,
         chainId,
       }
     }
 
     const provider = new providers.StaticJsonRpcProvider(
-      moduleConfig.rpcUrl,
+      moduleConfig.config.rpcUrl,
       Number(ChainId.fromName(chainName)),
     )
+
     const rateLimitedProvider = new RateLimitedProvider(provider, 100)
 
     return {
       state: 'enabled',
       provider: rateLimitedProvider,
+      visible: moduleConfig.visible,
       chainId: ChainId.fromName(chainName),
     }
   })
