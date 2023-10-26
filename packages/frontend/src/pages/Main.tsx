@@ -30,6 +30,9 @@ export function Main() {
     )
   }
 
+  // It should not happen since we already have check above
+  assertAtLeastOneItem(chainsToDisplay)
+
   return (
     <>
       <Navbar />
@@ -38,4 +41,10 @@ export function Main() {
       </Layout>
     </>
   )
+}
+
+function assertAtLeastOneItem<T>(arr: T[]): asserts arr is [T, ...T[]] {
+  if (arr.length === 0) {
+    throw new Error('At least one item is required')
+  }
 }
