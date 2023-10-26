@@ -86,14 +86,13 @@ export function createDiscoveryModule({
   ) as AvailableConfigs[]
 
   const enabledChainConfigs = availableChainConfigs.filter(
-    (chainName) => config.discovery.modules[chainName],
+    (chainName) => config.discovery.modules[chainName].enabled,
   )
 
-  const modules = availableChainConfigs.flatMap((chainName) => {
-    const moduleConfig = config.discovery.modules[chainName]
+  const submodules = availableChainConfigs.flatMap((chainName) => {
+    const submoduleConfig = config.discovery.modules[chainName]
 
-    // Might be disabled
-    if (!moduleConfig) {
+    if (!submoduleConfig.enabled) {
       statusLogger.warn('Discovery submodule disabled', { chainName })
       return []
     }
@@ -110,7 +109,7 @@ export function createDiscoveryModule({
           providerCache: providerCacheRepository,
           events: eventRepository,
         },
-        config: moduleConfig,
+        config: submoduleConfig.config,
       },
       chainName,
       config.discovery.callsPerMinute / enabledChainConfigs.length,
@@ -129,8 +128,8 @@ export function createDiscoveryModule({
 
       await clockIndexer.start()
 
-      for (const module of modules) {
-        await module.start?.()
+      for (const submodule of submodules) {
+        await submodule.start?.()
       }
 
       statusLogger.info('Main discovery module started')

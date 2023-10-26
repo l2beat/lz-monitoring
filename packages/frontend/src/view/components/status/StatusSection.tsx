@@ -38,7 +38,10 @@ export function StatusSection(props: Props) {
           {capitalizeFirstLetter(props.status.chainName)}
           <ChainHighlight chain={props.status.chainId} />
         </div>
-        <StateHighlight state={props.status.state} />
+        <StateHighlight
+          state={props.status.state}
+          visibility={props.status.visible}
+        />
       </div>
       <div>
         <LastIndexedBlock status={props.status} />

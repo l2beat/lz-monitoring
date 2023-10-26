@@ -7,7 +7,7 @@ import {
 // eslint-disable-next-line import/no-internal-modules
 import { UnixTime } from '@l2beat/discovery/dist/utils/UnixTime'
 
-import { Config, EthereumLikeDiscoveryConfig } from './Config'
+import { Config, DiscoverySubmoduleConfig } from './Config'
 import { arbitrumDiscoveryConfig } from './discovery/arbitrum'
 import { avalancheDiscoveryConfig } from './discovery/avalanche'
 import { baseDiscoveryConfig } from './discovery/base'
@@ -31,7 +31,11 @@ export function getCommonDiscoveryConfig(env: Env): Config['discovery'] {
     modules: {
       ethereum: createConfig({
         chainNamePrefix: 'ETHEREUM',
-        startBlock: 18127698,
+        /**
+         * Endpoint deploy
+         * @see https://etherscan.io/address/0x66a71dcef29a0ffbdbe3c6a460a3b5bc225cd675
+         */
+        startBlock: 14388880,
         blockExplorerPrefix: 'ETHERSCAN',
         blockExplorerApiUrl: 'https://api.etherscan.io/api',
         blockExplorerMinTimestamp: new Date(0),
@@ -40,7 +44,11 @@ export function getCommonDiscoveryConfig(env: Env): Config['discovery'] {
       }),
       arbitrum: createConfig({
         chainNamePrefix: 'ARBITRUM',
-        startBlock: 133212747,
+        /**
+         * Endpoint deploy
+         * @see https://arbiscan.io/address/0x3c2269811836af69497e5f486a85d7316753cf62
+         */
+        startBlock: 7920157,
         blockExplorerPrefix: 'ARBISCAN',
         blockExplorerApiUrl: 'https://api.arbiscan.io/api',
         blockExplorerMinTimestamp: new Date('2021-05-28T22:15:00Z'),
@@ -49,7 +57,11 @@ export function getCommonDiscoveryConfig(env: Env): Config['discovery'] {
       }),
       optimism: createConfig({
         chainNamePrefix: 'OPTIMISM',
-        startBlock: 109983712,
+        /**
+         * Endpoint deploy
+         * @see https://optimistic.etherscan.io/address/0x3c2269811836af69497e5f486a85d7316753cf62
+         */
+        startBlock: 4457253,
         blockExplorerPrefix: 'OPTIMISTIC_ETHERSCAN',
         blockExplorerApiUrl: 'https://api-optimistic.etherscan.io/api',
         blockExplorerMinTimestamp: new Date('2021-01-14T15:52:00Z'),
@@ -57,8 +69,12 @@ export function getCommonDiscoveryConfig(env: Env): Config['discovery'] {
         multicallConfig: multicallConfig.optimism,
       }),
       'polygon-pos': createConfig({
+        /**
+         * Endpoint deploy
+         * @see https://polygonscan.com/address/0x3c2269811836af69497e5f486a85d7316753cf62
+         */
         chainNamePrefix: 'POLYGON_POS',
-        startBlock: 48049992,
+        startBlock: 25956313,
         blockExplorerPrefix: 'POLYGONSCAN_POS',
         blockExplorerApiUrl: 'https://api.polygonscan.com/api',
         blockExplorerMinTimestamp: new Date('2020-05-30T07:48:00Z'),
@@ -66,8 +82,12 @@ export function getCommonDiscoveryConfig(env: Env): Config['discovery'] {
         multicallConfig: multicallConfig.polygon_pos,
       }),
       'polygon-zkevm': createConfig({
+        /**
+         * Endpoint deploy
+         * @see https://zkevm.polygonscan.com/address/0x9740FF91F1985D8d2B71494aE1A2f723bb3Ed9E4
+         */
         chainNamePrefix: 'POLYGON_ZKEVM',
-        startBlock: 5793888,
+        startBlock: 5873,
         blockExplorerPrefix: 'POLYGONSCAN_ZKEVM',
         blockExplorerApiUrl: 'https://api-zkevm.polygonscan.com/api',
         blockExplorerMinTimestamp: new Date('2023-06-15T12:36:00Z'),
@@ -75,8 +95,12 @@ export function getCommonDiscoveryConfig(env: Env): Config['discovery'] {
         multicallConfig: multicallConfig.polygon_zkevm,
       }),
       base: createConfig({
+        /**
+         * Endpoint deploy
+         * @see https://basescan.org/address/0xb6319cc6c8c27a8f5daf0dd3df91ea35c4720dd7
+         */
         chainNamePrefix: 'BASE',
-        startBlock: 4526481,
+        startBlock: 1255804,
         blockExplorerPrefix: 'BASESCAN',
         blockExplorerApiUrl: 'https://api.basescan.org/api',
         blockExplorerMinTimestamp: new Date('2023-06-15T12:36:00Z'),
@@ -84,8 +108,12 @@ export function getCommonDiscoveryConfig(env: Env): Config['discovery'] {
         multicallConfig: multicallConfig.base,
       }),
       avalanche: createConfig({
+        /**
+         * Endpoint deploy
+         * @see https://snowtrace.io/address/0x3c2269811836af69497E5F486A85D7316753cf62
+         */
         chainNamePrefix: 'AVALANCHE',
-        startBlock: 36223765,
+        startBlock: 12126063,
         blockExplorerPrefix: 'SNOWTRACE',
         blockExplorerApiUrl: 'https://api.snowtrace.io/api',
         blockExplorerMinTimestamp: new Date('2020-09-23T11:02:00Z'),
@@ -93,8 +121,12 @@ export function getCommonDiscoveryConfig(env: Env): Config['discovery'] {
         multicallConfig: multicallConfig.avalanche,
       }),
       linea: createConfig({
+        /**
+         * Endpoint deploy
+         * @see https://lineascan.build/address/0xb6319cC6c8c27A8F5dAF0dD3DF91EA35C4720dd7
+         */
         chainNamePrefix: 'LINEA',
-        startBlock: 594349,
+        startBlock: 647,
         blockExplorerPrefix: 'LINEASCAN',
         blockExplorerApiUrl: 'https://api.lineascan.build/api',
         blockExplorerMinTimestamp: new Date('2023-07-06T13:15:00Z'),
@@ -103,7 +135,11 @@ export function getCommonDiscoveryConfig(env: Env): Config['discovery'] {
       }),
       bsc: createConfig({
         chainNamePrefix: 'BSC',
-        startBlock: 32446967,
+        /**
+         * Endpoint deploy
+         * @see https://bscscan.com/address/0x3c2269811836af69497e5f486a85d7316753cf62
+         */
+        startBlock: 16070442,
         blockExplorerPrefix: 'BSCSCAN',
         blockExplorerApiUrl: 'https://api.bscscan.com/api',
         blockExplorerMinTimestamp: new Date('2020-08-29T03:24:00Z'),
@@ -112,7 +148,11 @@ export function getCommonDiscoveryConfig(env: Env): Config['discovery'] {
       }),
       celo: createConfig({
         chainNamePrefix: 'CELO',
-        startBlock: 21836924,
+        /**
+         * Endpoint deploy
+         * @see https://celoscan.io/address/0x3A73033C0b1407574C76BdBAc67f126f6b4a9AA9#code
+         */
+        startBlock: 16179112,
         blockExplorerPrefix: 'CELOSCAN',
         blockExplorerApiUrl: 'https://api.celoscan.io/api',
         blockExplorerMinTimestamp: new Date('2020-04-22T16:00:00Z'),
@@ -162,10 +202,27 @@ function configFromTemplate(env: Env) {
      * The block number from which to start indexing.
      */
     startBlock: number
+
+    /**
+     * Multicall configuration for given chain
+     */
     multicallConfig: MulticallConfig
-  }): false | EthereumLikeDiscoveryConfig {
-    return (
-      env.boolean(`${chainNamePrefix}_DISCOVERY_ENABLED`, false) && {
+  }): DiscoverySubmoduleConfig {
+    const isEnabled = env.boolean(`${chainNamePrefix}_DISCOVERY_ENABLED`, false)
+    const isVisible = env.boolean(`${chainNamePrefix}_VISIBLE`, false)
+
+    if (!isEnabled) {
+      return {
+        visible: isVisible,
+        enabled: false,
+        config: null,
+      }
+    }
+
+    return {
+      visible: isVisible,
+      enabled: true,
+      config: {
         startBlock: env.integer(`${chainNamePrefix}_START_BLOCK`, startBlock),
         rpcUrl: env.string(`${chainNamePrefix}_RPC_URL`),
         rpcLogsMaxRange: env.integer(
@@ -183,7 +240,7 @@ function configFromTemplate(env: Env) {
         discovery: discoveryConfig,
         eventsToWatch,
         multicall: multicallConfig,
-      }
-    )
+      },
+    }
   }
 }
