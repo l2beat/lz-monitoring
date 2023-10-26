@@ -25,11 +25,10 @@ export interface Config {
       readonly 'polygon-pos': DiscoverySubmoduleConfig
       readonly base: DiscoverySubmoduleConfig
       readonly 'polygon-zkevm': DiscoverySubmoduleConfig
-      readonly bsc?: DiscoverySubmoduleConfig // No alchemy
-      readonly avalanche?: DiscoverySubmoduleConfig // No alchemy
-      readonly celo?: DiscoverySubmoduleConfig // No alchemy
-      readonly linea?: DiscoverySubmoduleConfig // No alchemy
-      readonly gnosis?: DiscoverySubmoduleConfig // No alchemy
+      readonly bsc: DiscoverySubmoduleConfig
+      readonly avalanche: DiscoverySubmoduleConfig
+      readonly celo: DiscoverySubmoduleConfig
+      readonly linea: DiscoverySubmoduleConfig
     }
   }
 }
