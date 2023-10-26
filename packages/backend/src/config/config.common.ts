@@ -8,17 +8,35 @@ import {
 import { UnixTime } from '@l2beat/discovery/dist/utils/UnixTime'
 
 import { Config, DiscoverySubmoduleConfig } from './Config'
-import { arbitrumDiscoveryConfig } from './discovery/arbitrum'
-import { avalancheDiscoveryConfig } from './discovery/avalanche'
-import { baseDiscoveryConfig } from './discovery/base'
-import { bscDiscoveryConfig } from './discovery/bsc'
-import { celoDiscoveryConfig } from './discovery/celo'
-import { ethereumDiscoveryConfig } from './discovery/ethereum'
-import { lineaDiscoveryConfig } from './discovery/linea'
-import { optimismDiscoveryConfig } from './discovery/optimism'
-import { polygonPosDiscoveryConfig } from './discovery/polygon-pos'
-import { polygonZkEvmDiscoveryConfig } from './discovery/polygon-zkevm'
-import { eventsToWatch } from './discoveryConfig'
+import {
+  arbitrumDiscoveryConfig,
+  arbitrumEventsToWatch,
+} from './discovery/arbitrum'
+import {
+  avalancheDiscoveryConfig,
+  avalancheEventsToWatch,
+} from './discovery/avalanche'
+import { baseDiscoveryConfig, baseEventsToWatch } from './discovery/base'
+import { bscDiscoveryConfig, bscEventsToWatch } from './discovery/bsc'
+import { celoDiscoveryConfig, celoEventsToWatch } from './discovery/celo'
+import {
+  ethereumDiscoveryConfig,
+  ethereumEventsToWatch,
+} from './discovery/ethereum'
+import { lineaDiscoveryConfig, lineaEventsToWatch } from './discovery/linea'
+import {
+  optimismDiscoveryConfig,
+  optimismEventsToWatch,
+} from './discovery/optimism'
+import {
+  polygonPosDiscoveryConfig,
+  polygonPosEventsToWatch,
+} from './discovery/polygon-pos'
+import {
+  polygonZkEvmDiscoveryConfig,
+  polygonZkEvmEventsToWatch,
+} from './discovery/polygon-zkevm'
+import { EventsToWatchConfig } from './discoveryConfig'
 
 export function getCommonDiscoveryConfig(env: Env): Config['discovery'] {
   const createConfig = configFromTemplate(env)
@@ -40,6 +58,7 @@ export function getCommonDiscoveryConfig(env: Env): Config['discovery'] {
         blockExplorerApiUrl: 'https://api.etherscan.io/api',
         blockExplorerMinTimestamp: new Date(0),
         discoveryConfig: ethereumDiscoveryConfig,
+        eventsToWatchConfig: ethereumEventsToWatch,
         multicallConfig: multicallConfig.ethereum,
       }),
       arbitrum: createConfig({
@@ -53,6 +72,7 @@ export function getCommonDiscoveryConfig(env: Env): Config['discovery'] {
         blockExplorerApiUrl: 'https://api.arbiscan.io/api',
         blockExplorerMinTimestamp: new Date('2021-05-28T22:15:00Z'),
         discoveryConfig: arbitrumDiscoveryConfig,
+        eventsToWatchConfig: arbitrumEventsToWatch,
         multicallConfig: multicallConfig.arbitrum,
       }),
       optimism: createConfig({
@@ -66,6 +86,7 @@ export function getCommonDiscoveryConfig(env: Env): Config['discovery'] {
         blockExplorerApiUrl: 'https://api-optimistic.etherscan.io/api',
         blockExplorerMinTimestamp: new Date('2021-01-14T15:52:00Z'),
         discoveryConfig: optimismDiscoveryConfig,
+        eventsToWatchConfig: optimismEventsToWatch,
         multicallConfig: multicallConfig.optimism,
       }),
       'polygon-pos': createConfig({
@@ -79,6 +100,7 @@ export function getCommonDiscoveryConfig(env: Env): Config['discovery'] {
         blockExplorerApiUrl: 'https://api.polygonscan.com/api',
         blockExplorerMinTimestamp: new Date('2020-05-30T07:48:00Z'),
         discoveryConfig: polygonPosDiscoveryConfig,
+        eventsToWatchConfig: polygonPosEventsToWatch,
         multicallConfig: multicallConfig.polygon_pos,
       }),
       'polygon-zkevm': createConfig({
@@ -92,6 +114,7 @@ export function getCommonDiscoveryConfig(env: Env): Config['discovery'] {
         blockExplorerApiUrl: 'https://api-zkevm.polygonscan.com/api',
         blockExplorerMinTimestamp: new Date('2023-06-15T12:36:00Z'),
         discoveryConfig: polygonZkEvmDiscoveryConfig,
+        eventsToWatchConfig: polygonZkEvmEventsToWatch,
         multicallConfig: multicallConfig.polygon_zkevm,
       }),
       base: createConfig({
@@ -105,6 +128,7 @@ export function getCommonDiscoveryConfig(env: Env): Config['discovery'] {
         blockExplorerApiUrl: 'https://api.basescan.org/api',
         blockExplorerMinTimestamp: new Date('2023-06-15T12:36:00Z'),
         discoveryConfig: baseDiscoveryConfig,
+        eventsToWatchConfig: baseEventsToWatch,
         multicallConfig: multicallConfig.base,
       }),
       avalanche: createConfig({
@@ -118,6 +142,7 @@ export function getCommonDiscoveryConfig(env: Env): Config['discovery'] {
         blockExplorerApiUrl: 'https://api.snowtrace.io/api',
         blockExplorerMinTimestamp: new Date('2020-09-23T11:02:00Z'),
         discoveryConfig: avalancheDiscoveryConfig,
+        eventsToWatchConfig: avalancheEventsToWatch,
         multicallConfig: multicallConfig.avalanche,
       }),
       linea: createConfig({
@@ -131,6 +156,7 @@ export function getCommonDiscoveryConfig(env: Env): Config['discovery'] {
         blockExplorerApiUrl: 'https://api.lineascan.build/api',
         blockExplorerMinTimestamp: new Date('2023-07-06T13:15:00Z'),
         discoveryConfig: lineaDiscoveryConfig,
+        eventsToWatchConfig: lineaEventsToWatch,
         multicallConfig: multicallConfig.linea,
       }),
       bsc: createConfig({
@@ -144,6 +170,7 @@ export function getCommonDiscoveryConfig(env: Env): Config['discovery'] {
         blockExplorerApiUrl: 'https://api.bscscan.com/api',
         blockExplorerMinTimestamp: new Date('2020-08-29T03:24:00Z'),
         discoveryConfig: bscDiscoveryConfig,
+        eventsToWatchConfig: bscEventsToWatch,
         multicallConfig: multicallConfig.bsc,
       }),
       celo: createConfig({
@@ -157,6 +184,7 @@ export function getCommonDiscoveryConfig(env: Env): Config['discovery'] {
         blockExplorerApiUrl: 'https://api.celoscan.io/api',
         blockExplorerMinTimestamp: new Date('2020-04-22T16:00:00Z'),
         discoveryConfig: celoDiscoveryConfig,
+        eventsToWatchConfig: celoEventsToWatch,
         multicallConfig: multicallConfig.celo,
       }),
     },
@@ -171,6 +199,7 @@ function configFromTemplate(env: Env) {
     blockExplorerApiUrl,
     blockExplorerMinTimestamp,
     discoveryConfig,
+    eventsToWatchConfig,
     multicallConfig,
   }: {
     /**
@@ -192,6 +221,11 @@ function configFromTemplate(env: Env) {
      * The discovery configuration.
      */
     discoveryConfig: DiscoveryConfig
+
+    /**
+     * Events that signify something changing
+     */
+    eventsToWatchConfig: EventsToWatchConfig
 
     /**
      * The minimum timestamp block explorer client can query
@@ -241,7 +275,7 @@ function configFromTemplate(env: Env) {
           ),
         ),
         discovery: discoveryConfig,
-        eventsToWatch,
+        eventsToWatch: eventsToWatchConfig,
         multicall: multicallConfig,
       },
     }
