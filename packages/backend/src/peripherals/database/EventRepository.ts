@@ -23,6 +23,10 @@ export class EventRepository extends BaseRepository {
     return rows.length
   }
 
+  /**
+   * @param fromBlock exclusive
+   * @param toBlock inclusive
+   */
   async getInRange(
     fromBlock: number,
     toBlock: number,

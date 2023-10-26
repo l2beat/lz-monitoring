@@ -10,6 +10,9 @@ describe(EventRepository.name, () => {
   const repository = new EventRepository(database, Logger.SILENT)
   const chainId = ChainId.ETHEREUM
 
+  before(() => repository.deleteAll())
+  afterEach(() => repository.deleteAll())
+
   it('adds single record and queries it', async () => {
     const record = {
       blockNumber: 1,
@@ -28,7 +31,7 @@ describe(EventRepository.name, () => {
       }),
     )
     await repository.addMany(records)
-    const actual = await repository.getInRange(3, 7, chainId)
+    const actual = await repository.getInRange(2, 6, chainId)
     expect(actual).toEqual([
       {
         blockNumber: 4,
