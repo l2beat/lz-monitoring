@@ -40,9 +40,10 @@ export function createStatusModule({
     const moduleConfig = config.discovery.modules[chainName]
     const chainId = ChainId.fromName(chainName)
 
-    if (!moduleConfig?.config) {
+    if (!moduleConfig.enabled) {
       return {
         state: 'disabled',
+        visible: moduleConfig.visible,
         chainId,
       }
     }
@@ -57,6 +58,7 @@ export function createStatusModule({
     return {
       state: 'enabled',
       provider: rateLimitedProvider,
+      visible: moduleConfig.visible,
       chainId: ChainId.fromName(chainName),
     }
   })

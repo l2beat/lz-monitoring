@@ -15,11 +15,13 @@ import { IndexerStateRepository } from '../../peripherals/database/IndexerStateR
 export type ChainModuleStatus =
   | {
       state: 'enabled'
+      visible: boolean
       chainId: ChainId
       provider: RateLimitedProvider
     }
   | {
       state: 'disabled'
+      visible: boolean
       chainId: ChainId
     }
 
@@ -34,9 +36,9 @@ export class StatusController {
   async getStatus(): Promise<DiscoveryStatus[]> {
     const discoveryStatuses = await Promise.all(
       this.chainModuleStatuses.map(async (chainModuleStatus) => {
-        const { chainId } = chainModuleStatus
+        const { chainId, visible } = chainModuleStatus
 
-        const commonChainData = await this.getCommonStatus(chainId)
+        const commonChainData = await this.getCommonStatus(chainId, visible)
 
         if (chainModuleStatus.state === 'disabled') {
           const disabledStatus: DiscoveryDisabledStatus = {
@@ -105,6 +107,7 @@ export class StatusController {
 
   private async getCommonStatus(
     chainId: ChainId,
+    chainVisibility: boolean,
   ): Promise<CommonDiscoveryStatus> {
     const allIndexerStates = await this.indexerRepository.getAll()
 
@@ -119,6 +122,7 @@ export class StatusController {
     return {
       chainName: ChainId.getName(chainId),
       chainId: chainId,
+      visible: chainVisibility,
       lastIndexedBlock,
       lastDiscoveredBlock,
       indexerStates,

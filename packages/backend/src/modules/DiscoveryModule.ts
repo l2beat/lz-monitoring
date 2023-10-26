@@ -82,13 +82,13 @@ export function createDiscoveryModule({
   ) as AvailableConfigs[]
 
   const enabledChainConfigs = availableChainConfigs.filter(
-    (chainName) => config.discovery.modules[chainName]?.enabled,
+    (chainName) => config.discovery.modules[chainName].enabled,
   )
 
   const submodules = availableChainConfigs.flatMap((chainName) => {
     const submoduleConfig = config.discovery.modules[chainName]
 
-    if (!submoduleConfig?.enabled) {
+    if (!submoduleConfig.enabled) {
       statusLogger.warn('Discovery submodule disabled', { chainName })
       return []
     }

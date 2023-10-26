@@ -15,6 +15,7 @@ export {
 type CommonDiscoveryStatus = z.infer<typeof CommonDiscoveryStatus>
 
 const CommonDiscoveryStatus = z.object({
+  visible: z.boolean(),
   chainName: z.string(),
   chainId: branded(z.number(), ChainId),
   lastIndexedBlock: z.nullable(

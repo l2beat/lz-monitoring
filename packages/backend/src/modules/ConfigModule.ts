@@ -19,8 +19,8 @@ export function createConfigModule({
     const moduleConfig = config.discovery.modules[chainName]
     const chainId = ChainId.fromName(chainName)
 
-    const isEnabled = Boolean(moduleConfig?.enabled)
-    const isVisible = Boolean(moduleConfig?.visible)
+    const isEnabled = Boolean(moduleConfig.enabled)
+    const isVisible = Boolean(moduleConfig.visible)
 
     return {
       chainId,
