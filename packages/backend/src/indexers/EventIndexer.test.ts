@@ -71,7 +71,7 @@ describe(EventIndexer.name, () => {
         address,
         topics,
         startBlock,
-        startBlock + 10,
+        startBlock + maxEventRange,
       )
       expect(blockchainClient.getBlock).toHaveBeenCalledTimes(1)
       expect(blockRepo.addMany).toHaveBeenCalledTimes(1)
@@ -150,7 +150,7 @@ describe(EventIndexer.name, () => {
         address,
         topics,
         startBlock,
-        startBlock + 10,
+        startBlock + maxEventRange,
       )
       expect(blockchainClient.getBlock).toHaveBeenCalledTimes(2)
       expect(blockchainClient.getBlock).toHaveBeenNthCalledWith(
