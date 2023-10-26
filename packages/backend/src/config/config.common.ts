@@ -82,11 +82,11 @@ export function getCommonDiscoveryConfig(env: Env): Config['discovery'] {
       }),
       'polygon-zkevm': createConfig({
         /**
-         * Unverified deploy
-         * @see https://zkevm.polygonscan.com/address/0x2D61DCDD36F10b22176E0433B86F74567d529aAa
+         * Endpoint deploy
+         * @see https://zkevm.polygonscan.com/address/0x9740FF91F1985D8d2B71494aE1A2f723bb3Ed9E4
          */
         chainNamePrefix: 'POLYGON_ZKEVM',
-        startBlock: 5878,
+        startBlock: 5873,
         blockExplorerPrefix: 'POLYGONSCAN_ZKEVM',
         blockExplorerApiUrl: 'https://api-zkevm.polygonscan.com/api',
         blockExplorerMinTimestamp: new Date('2023-06-15T12:36:00Z'),
@@ -95,11 +95,11 @@ export function getCommonDiscoveryConfig(env: Env): Config['discovery'] {
       }),
       base: createConfig({
         /**
-         * Unverified deploy
-         * @see https://basescan.org/address/0x9740ff91f1985d8d2b71494ae1a2f723bb3ed9e4
+         * Endpoint deploy
+         * @see https://basescan.org/address/0xb6319cc6c8c27a8f5daf0dd3df91ea35c4720dd7
          */
         chainNamePrefix: 'BASE',
-        startBlock: 1255754,
+        startBlock: 1255804,
         blockExplorerPrefix: 'BASESCAN',
         blockExplorerApiUrl: 'https://api.basescan.org/api',
         blockExplorerMinTimestamp: new Date('2023-06-15T12:36:00Z'),
@@ -121,11 +121,11 @@ export function getCommonDiscoveryConfig(env: Env): Config['discovery'] {
       }),
       linea: createConfig({
         /**
-         * Unverified deploy
-         * @see https://lineascan.build/address/0x9740ff91f1985d8d2b71494ae1a2f723bb3ed9e4
+         * Endpoint deploy
+         * @see https://lineascan.build/address/0xb6319cC6c8c27A8F5dAF0dD3DF91EA35C4720dd7
          */
         chainNamePrefix: 'LINEA',
-        startBlock: 644,
+        startBlock: 647,
         blockExplorerPrefix: 'LINEASCAN',
         blockExplorerApiUrl: 'https://api.lineascan.build/api',
         blockExplorerMinTimestamp: new Date('2023-07-06T13:15:00Z'),
