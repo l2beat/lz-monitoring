@@ -5,7 +5,7 @@ import { Dropdown, DropdownOption } from './Dropdown'
 interface Props {
   chainId: ChainId
   setChainId: (chainId: ChainId) => void
-  chainsToDisplay: ChainId[]
+  chainsToDisplay: [ChainId, ...ChainId[]]
 }
 
 export function NetworkDropdownSelector(props: Props) {
@@ -24,7 +24,7 @@ export function NetworkDropdownSelector(props: Props) {
   )
 
   if (!props.chainsToDisplay.includes(props.chainId)) {
-    props.setChainId(ChainId.ETHEREUM)
+    props.setChainId(props.chainsToDisplay[0])
   }
 
   return (

@@ -15,10 +15,10 @@ import { UltraLightNodeContract } from './UltraLightNode'
 export function ProtocolInformation({
   chainsToDisplay,
 }: {
-  chainsToDisplay: ChainId[]
+  chainsToDisplay: [ChainId, ...ChainId[]]
 }): JSX.Element {
   const [paramChain, setParamChain] = useChainQueryParam({
-    fallback: ChainId.ETHEREUM,
+    fallback: chainsToDisplay[0],
     paramName: 'chain',
   })
 
