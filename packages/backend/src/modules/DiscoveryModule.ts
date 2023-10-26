@@ -184,10 +184,13 @@ export function createDiscoverySubmodule(
     repositories.blockNumber,
     repositories.events,
     repositories.indexerState,
-    config.startBlock,
-    config.rpcLogsMaxRange,
     chainId,
     config.eventsToWatch,
+    {
+      startBlock: config.startBlock,
+      maxBlockBatchSize: config.rpcLogsMaxRange,
+      amtBatches: config.eventIndexerAmtBatches,
+    },
     blockNumberIndexer,
     logger,
   )

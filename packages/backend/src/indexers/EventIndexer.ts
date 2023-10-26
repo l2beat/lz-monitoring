@@ -17,21 +17,29 @@ import { BlockNumberIndexer } from './BlockNumberIndexer'
 
 export class EventIndexer extends ChildIndexer {
   private readonly id = 'EventIndexer'
+  private readonly startBlock: number
+  private readonly maxBlockBatchSize: number
+  private readonly amtBatches: number
 
   constructor(
     private readonly blockchainClient: BlockchainClient,
     private readonly blockNumberRepository: BlockNumberRepository,
     private readonly eventRepository: EventRepository,
     private readonly indexerStateRepository: IndexerStateRepository,
-    // TODO: maybe we don't need that somehow?
-    private readonly startBlock: number,
-    private readonly maxBlockBatchSize: number,
     private readonly chainId: ChainId,
     private readonly eventsToWatch: EventsToWatchConfig,
+    opts: {
+      startBlock: number
+      maxBlockBatchSize: number
+      amtBatches?: number
+    },
     blockNumberIndexer: BlockNumberIndexer,
     logger: Logger,
   ) {
     super(logger, [blockNumberIndexer])
+    this.startBlock = opts.startBlock
+    this.amtBatches = opts.amtBatches ?? 1
+    this.maxBlockBatchSize = opts.maxBlockBatchSize
   }
 
   override async update(from: number, to: number): Promise<number> {
@@ -46,9 +54,10 @@ export class EventIndexer extends ChildIndexer {
     )
     assert(toBlockRecord, 'toBlockNumber not found')
     const batchTo = Math.min(
-      fromBlockNumber + this.maxBlockBatchSize,
+      fromBlockNumber + this.amtBatches * this.maxBlockBatchSize,
       toBlockRecord.blockNumber,
     )
+
     const blocksToSave: BlockNumberRecord[] = []
     if (batchTo !== toBlockRecord.blockNumber) {
       const batchToBlock = await this.blockchainClient.getBlock(batchTo)
@@ -60,15 +69,31 @@ export class EventIndexer extends ChildIndexer {
       })
     }
 
+    const calls = []
+    let start = fromBlockNumber
+    do {
+      const batchTo = Math.min(
+        start + this.maxBlockBatchSize,
+        toBlockRecord.blockNumber,
+      )
+      calls.push({
+        from: start,
+        to: batchTo,
+      })
+      start = batchTo
+    } while (start < batchTo)
+
     const logs = await Promise.all(
-      this.eventsToWatch.map((event) => {
-        return this.blockchainClient.getLogsBatch(
-          event.address,
-          event.topics,
-          fromBlockNumber,
-          batchTo,
-        )
-      }),
+      calls.flatMap(({ from, to }) =>
+        this.eventsToWatch.map((event) => {
+          return this.blockchainClient.getLogsBatch(
+            event.address,
+            event.topics,
+            from,
+            to,
+          )
+        }),
+      ),
     )
 
     const emitted = logs.flat()

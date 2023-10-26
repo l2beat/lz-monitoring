@@ -229,6 +229,9 @@ function configFromTemplate(env: Env) {
           `${chainNamePrefix}_RPC_LOGS_MAX_RANGE`,
           10000,
         ),
+        eventIndexerAmtBatches: env.optionalInteger(
+          `${chainNamePrefix}_EVENT_INDEXER_AMT_BATCHES`,
+        ),
         blockExplorerApiUrl,
         blockExplorerApiKey: env.string(`${blockExplorerPrefix}_API_KEY`),
         blockExplorerMinTimestamp: new UnixTime(

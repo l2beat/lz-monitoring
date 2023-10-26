@@ -66,6 +66,7 @@ export interface EthereumLikeDiscoveryConfig {
   startBlock: number
   rpcUrl: string
   rpcLogsMaxRange: number
+  eventIndexerAmtBatches?: number
   blockExplorerApiUrl: string
   blockExplorerApiKey: string
   blockExplorerMinTimestamp: UnixTime

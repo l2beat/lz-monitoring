@@ -48,13 +48,16 @@ describe(EventIndexer.name, () => {
         blockRepo,
         mockObject<EventRepository>(),
         mockObject<IndexerStateRepository>(),
-        startBlock,
-        maxEventRange,
         chainId,
         eventsToWatch,
+        {
+          maxBlockBatchSize: maxEventRange,
+          startBlock,
+        },
         mockObject<BlockNumberIndexer>({
           subscribe: () => undefined,
         }),
+
         Logger.SILENT,
       )
 
@@ -124,10 +127,12 @@ describe(EventIndexer.name, () => {
         blockRepo,
         eventsRepo,
         mockObject<IndexerStateRepository>(),
-        startBlock,
-        maxEventRange,
         chainId,
         eventsToWatch,
+        {
+          maxBlockBatchSize: maxEventRange,
+          startBlock,
+        },
         mockObject<BlockNumberIndexer>({
           subscribe: () => undefined,
         }),
@@ -171,6 +176,108 @@ describe(EventIndexer.name, () => {
       ])
     })
 
+    it('should call multiple batches', async () => {
+      const startBlock = 15
+      const maxEventRange = 1
+      const amtBatches = 10
+      const chainId = ChainId.ETHEREUM
+      const address = EthereumAddress.random()
+      const topics = [
+        ['event Transfer(address from, address to, uint256 value)'],
+      ]
+      const eventsToWatch = [
+        {
+          address,
+          topics,
+        },
+      ]
+
+      const blocksFromClient = [
+        mockBlockFromClient(startBlock + maxEventRange * amtBatches),
+        mockBlockFromClient(startBlock + 1),
+      ] as const
+
+      const blockchainClient = mockObject<BlockchainClient>({
+        getBlock: async (blockNumber) => {
+          const block = blocksFromClient.find((b) => b.number === blockNumber)
+          assert(block, `Block ${blockNumber.toString()} not found`)
+          return block
+        },
+        getLogsBatch: async () => [mockLog(startBlock + 1)],
+      })
+      const blockRepo = mockObject<BlockNumberRepository>({
+        findAtOrBefore: async (time) =>
+          time.toNumber() === 100 ? mockBlock(100) : undefined,
+        findByNumber: async () => undefined,
+        addMany: async () => 0,
+      })
+      const eventsRepo = mockObject<EventRepository>({
+        addMany: async () => 0,
+      })
+      const indexer = new EventIndexer(
+        blockchainClient,
+        blockRepo,
+        eventsRepo,
+        mockObject<IndexerStateRepository>(),
+        chainId,
+        eventsToWatch,
+        {
+          amtBatches,
+          maxBlockBatchSize: maxEventRange,
+          startBlock,
+        },
+        mockObject<BlockNumberIndexer>({
+          subscribe: () => undefined,
+        }),
+
+        Logger.SILENT,
+      )
+
+      await indexer.update(0, 100)
+      expect(blockchainClient.getBlock).toHaveBeenCalledTimes(2)
+      expect(blockchainClient.getBlock).toHaveBeenNthCalledWith(
+        2,
+        startBlock + 1,
+      )
+      expect(blockchainClient.getLogsBatch).toHaveBeenCalledTimes(10)
+      expect(blockchainClient.getLogsBatch).toHaveBeenNthCalledWith(
+        1,
+        address,
+        topics,
+        startBlock,
+        startBlock + 1,
+      )
+      expect(blockchainClient.getLogsBatch).toHaveBeenNthCalledWith(
+        5,
+        address,
+        topics,
+        startBlock + 4,
+        startBlock + 5,
+      )
+      expect(blockchainClient.getBlock).toHaveBeenCalledTimes(2)
+      expect(blockchainClient.getBlock).toHaveBeenNthCalledWith(
+        2,
+        startBlock + 1,
+      )
+      expect(blockRepo.addMany).toHaveBeenCalledTimes(1)
+      expect(blockRepo.addMany).toHaveBeenNthCalledWith(
+        1,
+        blocksFromClient.map((block) => ({
+          blockHash: block.hash,
+          blockNumber: block.number,
+          chainId,
+          timestamp: new UnixTime(block.timestamp),
+        })),
+      )
+      expect(eventsRepo.addMany).toHaveBeenCalledTimes(1)
+      expect(eventsRepo.addMany).toHaveBeenNthCalledWith(1, [
+        {
+          blockNumber: startBlock + 1,
+          chainId,
+        },
+      ])
+    })
+
     it('should throw if no toBlockNumber', async () => {
       const startBlock = 15
       const chainId = ChainId.ETHEREUM
@@ -188,10 +295,12 @@ describe(EventIndexer.name, () => {
         }),
         mockObject<EventRepository>(),
         mockObject<IndexerStateRepository>(),
-        startBlock,
-        10,
         chainId,
         eventsToWatch,
+        {
+          maxBlockBatchSize: 10,
+          startBlock,
+        },
         mockObject<BlockNumberIndexer>({
           subscribe: () => undefined,
         }),
