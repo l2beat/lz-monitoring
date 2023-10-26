@@ -161,9 +161,13 @@ function configFromTemplate(env: Env) {
      * The block number from which to start indexing.
      */
     startBlock: number
+
+    /**
+     * Multicall configuration for given chain
+     */
     multicallConfig: MulticallConfig
   }): DiscoverySubmoduleConfig {
-    const isEnabled = env.boolean(`${chainNamePrefix}_ENABLED`, false)
+    const isEnabled = env.boolean(`${chainNamePrefix}_DISCOVERY_ENABLED`, false)
     const isVisible = env.boolean(`${chainNamePrefix}_VISIBLE`, false)
 
     if (!isEnabled) {
