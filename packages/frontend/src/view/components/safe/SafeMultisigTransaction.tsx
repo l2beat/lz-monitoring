@@ -22,14 +22,18 @@ export function SafeMultisigTransactionComponent({
   associatedAddresses: EthereumAddress[]
 }) {
   // Data obtained from transaction payload itself
-  const transactionType = 'Multisig Transaction'
   const submissionDate = toUTC(tx.submissionDate)
+  // It may be nullable in case of not executed transactions
+  // typings are yet another time wrong
+  const executionDate = tx.executionDate
+    ? toUTC(tx.executionDate)
+    : 'Not executed'
   const requiredConfirmations = tx.confirmationsRequired
   const acquiredConfirmations = tx.confirmations?.length ?? 0
   const executed = tx.isExecuted ? 'yes' : 'no'
   const successful = tx.isSuccessful ? 'yes' : 'no'
   const nonce = tx.nonce
-  const blockNumber = tx.blockNumber ?? 'Not yet executed'
+  const blockNumber = tx.blockNumber ?? 'Not executed'
   const target = tx.to
   const rawData = tx.data ?? 'No Data'
 
@@ -45,8 +49,8 @@ export function SafeMultisigTransactionComponent({
 
   return (
     <ComponentLayout>
-      <Row label="Transaction type" value={transactionType} />
       <Row label="Submission date" value={submissionDate} />
+      <Row label="Execution date" value={executionDate} />
       <Row label="Required confirmations" value={requiredConfirmations} />
       <Row label="Acquired confirmations" value={acquiredConfirmations} />
       <Row label="Executed" value={executed} />

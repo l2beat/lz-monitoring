@@ -70,14 +70,14 @@ function CommonTransferComponent({
       <Row label="Block number" value={transfer.blockNumber} />
       <Row
         label="Transaction hash"
-        value={transfer.transactionHash ?? 'Not yet executed'}
+        value={transfer.transactionHash ?? 'Not executed'}
       />
       <Row
         label="Execution date"
         value={
           transfer.executionDate
             ? toUTC(transfer.executionDate)
-            : 'Not yet executed'
+            : 'Not executed'
         }
       />
       <Row label="From" value={transfer.from} />
