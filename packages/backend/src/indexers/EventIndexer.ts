@@ -47,7 +47,9 @@ export class EventIndexer extends ChildIndexer {
       new UnixTime(from),
       this.chainId,
     )
-    const fromBlockNumber = fromBlockRecord?.blockNumber ?? this.startBlock
+    const fromBlockNumber = fromBlockRecord
+      ? fromBlockRecord.blockNumber + 1
+      : this.startBlock
     const toBlockRecord = await this.blockNumberRepository.findAtOrBefore(
       new UnixTime(to),
       this.chainId,
@@ -102,9 +104,9 @@ export class EventIndexer extends ChildIndexer {
       // deduplicate array
       .filter((x, i, a) => a.indexOf(x) === i)
 
-    const eventsToSave: EventRecord[] = []
+    const blocksWithEventsToSave: EventRecord[] = []
     for (const blockNumber of blocksWithEvents) {
-      eventsToSave.push({
+      blocksWithEventsToSave.push({
         chainId: this.chainId,
         blockNumber,
       })
@@ -130,8 +132,8 @@ export class EventIndexer extends ChildIndexer {
     if (blocksToSave.length > 0) {
       await this.blockNumberRepository.addMany(blocksToSave)
     }
-    if (eventsToSave.length > 0) {
-      await this.eventRepository.addMany(eventsToSave)
+    if (blocksWithEventsToSave.length > 0) {
+      await this.eventRepository.addMany(blocksWithEventsToSave)
     }
 
     const updatedTo =
