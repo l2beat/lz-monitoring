@@ -278,6 +278,103 @@ describe(EventIndexer.name, () => {
       ])
     })
 
+    it('does not go over to timestamp', async () => {
+      const startBlock = 90
+      const maxEventRange = 10
+      const amtBatches = 10
+      const toBlockNumber = 101
+      const blockWithEvents = startBlock + 1
+      const toTimestamp = new UnixTime(toBlockNumber * 1000)
+      const chainId = ChainId.ETHEREUM
+      const address = EthereumAddress.random()
+      const topics = [
+        ['event Transfer(address from, address to, uint256 value)'],
+      ]
+      const eventsToWatch = [
+        {
+          address,
+          topics,
+        },
+      ]
+
+      const blocksFromClient = [mockBlockFromClient(blockWithEvents)] as const
+
+      const blockchainClient = mockObject<BlockchainClient>({
+        getBlock: async (blockNumber) => {
+          const block = blocksFromClient.find((b) => b.number === blockNumber)
+          assert(block, `Block ${blockNumber.toString()} not found`)
+          return block
+        },
+        getLogsBatch: async () => [mockLog(blockWithEvents)],
+      })
+      const blockRepo = mockObject<BlockNumberRepository>({
+        findAtOrBefore: async (time) =>
+          time.equals(toTimestamp) ? mockBlock(toBlockNumber) : undefined,
+        findByNumber: async () => undefined,
+        addMany: async () => 0,
+      })
+      const eventsRepo = mockObject<EventRepository>({
+        addMany: async () => 0,
+      })
+      const indexer = new EventIndexer(
+        blockchainClient,
+        blockRepo,
+        eventsRepo,
+        mockObject<IndexerStateRepository>(),
+        chainId,
+        eventsToWatch,
+        {
+          amtBatches,
+          maxBlockBatchSize: maxEventRange,
+          startBlock,
+        },
+        mockObject<BlockNumberIndexer>({
+          subscribe: () => undefined,
+        }),
+
+        Logger.SILENT,
+      )
+
+      await indexer.update(0, toTimestamp.toNumber())
+      expect(blockchainClient.getLogsBatch).toHaveBeenCalledTimes(2)
+      expect(blockchainClient.getLogsBatch).toHaveBeenNthCalledWith(
+        1,
+        address,
+        topics,
+        startBlock,
+        startBlock + maxEventRange,
+      )
+      expect(blockchainClient.getLogsBatch).toHaveBeenNthCalledWith(
+        2,
+        address,
+        topics,
+        startBlock + maxEventRange,
+        toBlockNumber,
+      )
+      expect(blockchainClient.getBlock).toHaveBeenCalledTimes(1)
+      expect(blockchainClient.getBlock).toHaveBeenNthCalledWith(
+        1,
+        blockWithEvents,
+      )
+      expect(blockRepo.addMany).toHaveBeenCalledTimes(1)
+      expect(blockRepo.addMany).toHaveBeenNthCalledWith(
+        1,
+        blocksFromClient.map((block) => ({
+          blockHash: block.hash,
+          blockNumber: block.number,
+          chainId,
+          timestamp: new UnixTime(block.timestamp),
+        })),
+      )
+      expect(eventsRepo.addMany).toHaveBeenCalledTimes(1)
+      expect(eventsRepo.addMany).toHaveBeenNthCalledWith(1, [
+        {
+          blockNumber: blockWithEvents,
+          chainId,
+        },
+      ])
+    })
+
     it('should throw if no toBlockNumber', async () => {
       const startBlock = 15
       const chainId = ChainId.ETHEREUM
