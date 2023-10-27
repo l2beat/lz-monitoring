@@ -30,16 +30,15 @@ export class BlockNumberRepository extends BaseRepository {
     return row.block_number
   }
 
-  async addMany(records: BlockNumberRecord[]): Promise<number[]> {
+  async addMany(records: BlockNumberRecord[]): Promise<number> {
     const rows: BlockNumberRow[] = records.map(toRow)
     const knex = await this.knex()
-    const result = await knex('block_numbers')
+    await knex('block_numbers')
       .insert(rows)
-      .returning('block_number')
-      .onConflict(['unix_timestamp', 'chain_id'])
+      .onConflict(['block_number', 'chain_id'])
       .merge()
 
-    return result.map((x) => x.block_number)
+    return rows.length
   }
 
   async getAll(): Promise<BlockNumberRecord[]> {
@@ -70,7 +69,7 @@ export class BlockNumberRepository extends BaseRepository {
   async findAtOrBefore(
     timestamp: UnixTime,
     chainId: ChainId,
-  ): Promise<number | undefined> {
+  ): Promise<BlockNumberRecord | undefined> {
     const knex = await this.knex()
     const row = await knex('block_numbers')
       .where('unix_timestamp', '<=', timestamp.toDate())
@@ -78,7 +77,7 @@ export class BlockNumberRepository extends BaseRepository {
       .orderBy('block_number', 'desc')
       .first()
 
-    return row?.block_number
+    return row ? toRecord(row) : undefined
   }
 
   async findByNumber(

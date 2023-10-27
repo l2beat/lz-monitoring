@@ -1,6 +1,8 @@
+import { assert } from '@l2beat/backend-tools'
 // eslint-disable-next-line import/no-internal-modules
 import { RawDiscoveryConfig } from '@l2beat/discovery/dist/discovery/config/RawDiscoveryConfig'
 import { ChainId, EthereumAddress } from '@lz/libs'
+import { utils } from 'ethers'
 
 export { createConfigFromTemplate }
 
@@ -117,4 +119,57 @@ function createConfigFromTemplate(
       },
     },
   }
+}
+
+const abis = [
+  {
+    contract: 'ultraLightNodeV2',
+    abi: [
+      'event AddInboundProofLibraryForChain(uint16 indexed chainId, address lib)',
+      'event EnableSupportedOutboundProof(uint16 indexed chainId, uint16 proofType)',
+      'event OwnershipTransferred(address indexed previousOwner, address indexed newOwner)',
+      'event SetChainAddressSize(uint16 indexed chainId, uint256 size)',
+      'event SetDefaultAdapterParamsForChainId(uint16 indexed chainId, uint16 indexed proofType, bytes adapterParams)',
+      'event SetDefaultConfigForChainId(uint16 indexed chainId, uint16 inboundProofLib, uint64 inboundBlockConfirm, address relayer, uint16 outboundProofType, uint64 outboundBlockConfirm, address oracle)',
+      'event SetLayerZeroToken(address indexed tokenAddress)',
+      'event SetRemoteUln(uint16 indexed chainId, bytes32 uln)',
+      'event SetTreasury(address indexed treasuryAddress)',
+    ],
+  },
+  {
+    contract: 'endpoint',
+    abi: [
+      'event DefaultReceiveVersionSet(uint16 version)',
+      'event DefaultSendVersionSet(uint16 version)',
+      'event NewLibraryVersionAdded(uint16 version)',
+      'event OwnershipTransferred(address indexed previousOwner, address indexed newOwner)',
+    ],
+  },
+] as const
+
+interface EventToWatchConfig {
+  address: EthereumAddress
+  topics: string[][]
+}
+
+export type EventsToWatchConfig = EventToWatchConfig[]
+
+export function getEventsToWatch(
+  addresses: TemplateVariables['addresses'],
+): EventsToWatchConfig {
+  return abis.map(({ contract, abi }) => {
+    const int = new utils.Interface(abi)
+    const topics = int.fragments.map((fragment) => {
+      assert(fragment.type === 'event', 'Fragment is not an event')
+      const encoded = int.getEventTopic(fragment as utils.EventFragment)
+      return encoded
+    })
+
+    const address = addresses[contract]
+
+    return {
+      address: EthereumAddress(address),
+      topics: [topics],
+    }
+  })
 }

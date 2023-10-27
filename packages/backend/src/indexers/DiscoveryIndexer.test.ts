@@ -1,7 +1,7 @@
 import { Logger } from '@l2beat/backend-tools'
 import { DiscoveryConfig, DiscoveryEngine } from '@l2beat/discovery'
 import { DiscoveryOutput } from '@l2beat/discovery-types'
-import { ChainId, Hash256 } from '@lz/libs'
+import { ChainId, Hash256, UnixTime } from '@lz/libs'
 import { expect, mockObject } from 'earl'
 
 import { BlockNumberRepository } from '../peripherals/database/BlockNumberRepository'
@@ -28,7 +28,7 @@ describe(DiscoveryIndexer.name, () => {
         discoveryEngine,
         config,
         mockObject<BlockNumberRepository>({
-          findAtOrBefore: async () => 1,
+          findAtOrBefore: async () => mockBlock(1),
         }),
         discoveryRepository,
         mockObject<IndexerStateRepository>(),
@@ -81,7 +81,7 @@ describe(DiscoveryIndexer.name, () => {
         discoveryEngine,
         config,
         mockObject<BlockNumberRepository>({
-          findAtOrBefore: async () => 1,
+          findAtOrBefore: async () => mockBlock(1),
         }),
         discoveryRepository,
         mockObject<IndexerStateRepository>(),
@@ -120,7 +120,7 @@ describe(DiscoveryIndexer.name, () => {
         discoveryEngine,
         config,
         mockObject<BlockNumberRepository>({
-          findAtOrBefore: async () => BLOCK_NUMBER,
+          findAtOrBefore: async () => mockBlock(BLOCK_NUMBER),
         }),
         discoveryRepository,
         mockObject<IndexerStateRepository>(),
@@ -145,4 +145,13 @@ function mockConfig() {
     chainId: ChainId.ETHEREUM,
     hash: configHash,
   })
+}
+
+function mockBlock(number: number) {
+  return {
+    blockNumber: number,
+    blockHash: Hash256.random(),
+    timestamp: new UnixTime(1),
+    chainId: ChainId.ETHEREUM,
+  }
 }

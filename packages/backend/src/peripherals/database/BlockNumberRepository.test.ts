@@ -107,6 +107,15 @@ describe(BlockNumberRepository.name, () => {
 
     expect(await repository.getAllInRange(13, 17)).toEqual(blocks.slice(3, 8))
   })
+
+  it('adds multiple blocks with the same timestamp', async () => {
+    const now = UnixTime.now()
+    const blocks = new Array(2).fill(null).map((_, i) => mockRecord(i, now))
+
+    await repository.addMany(blocks)
+
+    expect(await repository.getAll()).toEqual(blocks)
+  })
 })
 
 function mockRecord(blockNumber: number, now?: UnixTime): BlockNumberRecord {

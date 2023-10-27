@@ -44,19 +44,22 @@ export class CurrentDiscoveryIndexer extends ChildIndexer {
   }
 
   private async updateCurrentDiscovery(timestamp: UnixTime): Promise<UnixTime> {
-    const blockNumber = await this.blockNumberRepository.findAtOrBefore(
+    const blockRecord = await this.blockNumberRepository.findAtOrBefore(
       timestamp,
       this.chainId,
     )
-    assert(blockNumber, 'No block number found')
+    assert(blockRecord, 'No block number record found')
     const lastDiscovery = await this.discoveryRepository.findAtOrBefore(
-      blockNumber,
+      blockRecord.blockNumber,
       this.chainId,
     )
-    assert(lastDiscovery, 'No discovery found')
+    assert(lastDiscovery, 'No discovery record found')
     await this.currentDiscoveryRepository.addOrUpdate({
       chainId: this.chainId,
-      discoveryOutput: { ...lastDiscovery.discoveryOutput, blockNumber },
+      discoveryOutput: {
+        ...lastDiscovery.discoveryOutput,
+        blockNumber: blockRecord.blockNumber,
+      },
     })
 
     return timestamp
