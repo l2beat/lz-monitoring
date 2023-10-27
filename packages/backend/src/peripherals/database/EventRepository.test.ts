@@ -56,4 +56,26 @@ describe(EventRepository.name, () => {
     const actual = await repository.getAll()
     expect(actual).toEqual([])
   })
+
+  it(EventRepository.prototype.deleteAfter.name, async () => {
+    const records = Array.from({ length: 10 }, (_, i) => i * 2).map(
+      (blockNumber) => ({
+        blockNumber,
+        chainId,
+      }),
+    )
+    await repository.addMany(records)
+    await repository.deleteAfter(2, chainId)
+    const actual = await repository.getAll()
+    expect(actual).toEqual([
+      {
+        blockNumber: 0,
+        chainId,
+      },
+      {
+        blockNumber: 2,
+        chainId,
+      },
+    ])
+  })
 })
