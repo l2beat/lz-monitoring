@@ -36,7 +36,7 @@ export class EventIndexer extends ChildIndexer {
     blockNumberIndexer: BlockNumberIndexer,
     logger: Logger,
   ) {
-    super(logger, [blockNumberIndexer])
+    super(logger.tag(ChainId.getName(chainId)), [blockNumberIndexer])
     this.startBlock = opts.startBlock
     this.amtBatches = opts.amtBatches ?? 1
     this.maxBlockBatchSize = opts.maxBlockBatchSize
