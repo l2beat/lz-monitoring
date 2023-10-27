@@ -24,7 +24,7 @@ export class BlockNumberRepository extends BaseRepository {
     await knex('block_numbers')
       .insert(row)
       .returning('block_number')
-      .onConflict(['unix_timestamp', 'chain_id'])
+      .onConflict(['block_number', 'chain_id'])
       .merge()
 
     return row.block_number
