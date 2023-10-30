@@ -30,10 +30,21 @@ describe(BlockNumberRepository.name, () => {
     expect(await repository.getAll()).toEqual([])
   })
 
-  it('adds 1 records', async () => {
+  it('adds 1 record', async () => {
     const record = mockRecord(1)
     await repository.add(record)
     expect(await repository.getAll()).toEqual([record])
+  })
+
+  it('updates 1 record', async () => {
+    const record = mockRecord(1)
+    const redord2 = {
+      ...record,
+      blockHash: Hash256('0x' + '2'.padStart(64, '0')),
+    }
+    await repository.add(record)
+    await repository.add(redord2)
+    expect(await repository.getAll()).toEqual([redord2])
   })
 
   it('adds multiple records and queries them', async () => {
