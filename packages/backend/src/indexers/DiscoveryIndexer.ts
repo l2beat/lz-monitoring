@@ -10,8 +10,10 @@ import { ChainId, UnixTime } from '@lz/libs'
 
 import { BlockNumberRepository } from '../peripherals/database/BlockNumberRepository'
 import { DiscoveryRepository } from '../peripherals/database/DiscoveryRepository'
+import { EventRepository } from '../peripherals/database/EventRepository'
 import { IndexerStateRepository } from '../peripherals/database/IndexerStateRepository'
 import { CacheInvalidationIndexer } from './CacheInvalidationIndexer'
+import { EventIndexer } from './EventIndexer'
 
 export class DiscoveryIndexer extends ChildIndexer {
   private readonly id = 'DiscoveryIndexer'
@@ -19,47 +21,56 @@ export class DiscoveryIndexer extends ChildIndexer {
     private readonly discoveryEngine: DiscoveryEngine,
     private readonly config: DiscoveryConfig,
     private readonly blockNumberRepository: BlockNumberRepository,
+    private readonly eventRepository: EventRepository,
     private readonly discoveryRepository: DiscoveryRepository,
     private readonly indexerStateRepository: IndexerStateRepository,
     private readonly chainId: ChainId,
     logger: Logger,
     cacheInvalidationIndexer: CacheInvalidationIndexer,
+    eventIndexer: EventIndexer,
   ) {
-    super(logger.tag(ChainId.getName(chainId)), [cacheInvalidationIndexer])
+    super(logger.tag(ChainId.getName(chainId)), [
+      cacheInvalidationIndexer,
+      eventIndexer,
+    ])
   }
 
-  async update(_fromTimestamp: number, toTimestamp: number): Promise<number> {
-    const updatedToTimestamp = await this.runAndSaveDiscovery(
-      new UnixTime(toTimestamp),
-    )
-    return updatedToTimestamp.toNumber()
-  }
+  async update(fromTimestamp: number, toTimestamp: number): Promise<number> {
+    const [fromBlock, toBlock] = await Promise.all([
+      this.blockNumberRepository.findAtOrBefore(
+        new UnixTime(fromTimestamp),
+        this.chainId,
+      ),
+      this.blockNumberRepository.findAtOrBefore(
+        new UnixTime(toTimestamp),
+        this.chainId,
+      ),
+    ])
 
-  private async runAndSaveDiscovery(timestamp: UnixTime): Promise<UnixTime> {
-    const blockRecord = await this.blockNumberRepository.findAtOrBefore(
-      timestamp,
+    assert(fromBlock, 'No block found for fromTimestamp')
+    assert(toBlock, 'No block found for toTimestamp')
+
+    const blocksWithEvents = await this.eventRepository.getInRange(
+      fromBlock.blockNumber,
+      toBlock.blockNumber,
       this.chainId,
     )
-    const blockNumber = blockRecord?.blockNumber ?? 0
-    const prevOutput = await this.discoveryRepository.findAtOrBefore(
-      blockNumber,
-      this.chainId,
-    )
-
-    if (prevOutput && prevOutput.discoveryOutput.version >= 3) {
-      this.logger.info('Running discovery quick mode', { blockNumber })
-      const changed = await this.discoveryEngine.hasOutputChanged(
-        this.config,
-        prevOutput.discoveryOutput,
-        blockNumber,
-      )
-
-      if (!changed) {
-        this.logger.info('Nothing changed', { blockNumber })
-        return timestamp
-      }
+    if (blocksWithEvents.length === 0) {
+      return toTimestamp
     }
-    this.logger.info('Something changed, running discovery', { blockNumber })
+
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    const blockToUpdate = blocksWithEvents[0]!
+    await this.runAndSaveDiscovery(blockToUpdate.blockNumber)
+    const updatedToBlock = await this.blockNumberRepository.findByNumber(
+      blockToUpdate.blockNumber,
+      this.chainId,
+    )
+    assert(updatedToBlock, 'No block found for updatedToBlock')
+    return updatedToBlock.timestamp.toNumber()
+  }
+
+  private async runAndSaveDiscovery(blockNumber: number): Promise<void> {
     const analysis = await this.discoveryEngine.discover(
       this.config,
       blockNumber,
@@ -78,19 +89,22 @@ export class DiscoveryIndexer extends ChildIndexer {
       'Errors in discovery output ' + errorsToString(discoveryOutput),
     )
 
-    await this.discoveryRepository.addOrUpdate({
+    await this.discoveryRepository.add({
       discoveryOutput,
       chainId: this.chainId,
       blockNumber,
     })
     this.logger.info('Discovery finished', { blockNumber })
-
-    return timestamp
   }
 
   override async invalidate(targetHeight: number): Promise<number> {
-    // Noop
-    return Promise.resolve(targetHeight)
+    const invalidateToBlock = await this.blockNumberRepository.findAtOrBefore(
+      new UnixTime(targetHeight),
+      this.chainId,
+    )
+    const targetBlockNumber = invalidateToBlock?.blockNumber ?? 0
+    await this.discoveryRepository.deleteAfter(targetBlockNumber, this.chainId)
+    return invalidateToBlock?.timestamp.toNumber() ?? 0
   }
 
   async getSafeHeight(): Promise<number> {
