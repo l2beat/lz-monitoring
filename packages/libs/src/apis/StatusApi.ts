@@ -26,6 +26,7 @@ const CommonDiscoveryStatus = z.object({
       chainId: branded(z.number(), ChainId),
     }),
   ),
+  lastIndexedBlockForEvents: z.number().nullable(),
   lastDiscoveredBlock: z.number().nullable(),
   indexerStates: z.array(
     z.object({

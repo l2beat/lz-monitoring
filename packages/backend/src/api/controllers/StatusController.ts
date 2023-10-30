@@ -5,6 +5,7 @@ import {
   DiscoveryDisabledStatus,
   DiscoveryEnabledStatus,
   DiscoveryStatus,
+  UnixTime,
 } from '@lz/libs'
 import { providers } from 'ethers'
 
@@ -119,12 +120,25 @@ export class StatusController {
 
     const lastDiscoveredBlock = discovery?.discoveryOutput.blockNumber ?? null
 
+    const eventIndexerStateRecord = await this.indexerRepository.findById(
+      'EventIndexer',
+      chainId,
+    )
+    const lastIndexedEventTimestamp = eventIndexerStateRecord?.height ?? 0
+    const lastIndexedBlockForEventRecord =
+      (await this.blockRepo.findAtOrBefore(
+        new UnixTime(lastIndexedEventTimestamp),
+        chainId,
+      )) ?? null
+
     return {
       chainName: ChainId.getName(chainId),
       chainId: chainId,
       visible: chainVisibility,
       lastIndexedBlock,
       lastDiscoveredBlock,
+      lastIndexedBlockForEvents:
+        lastIndexedBlockForEventRecord?.blockNumber ?? null,
       indexerStates,
     }
   }

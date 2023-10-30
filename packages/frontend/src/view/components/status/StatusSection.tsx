@@ -5,6 +5,7 @@ import { ChainHighlight } from './ChainHighlight'
 import { Delays } from './Delays'
 import { LastDiscoveredBlock } from './LastDiscoveredBlock'
 import { LastIndexedBlock } from './LastIndexedBlock'
+import { LastIndexedBlockForEvents } from './LastIndexedEventBlock'
 import { LatestIndexerStates } from './LatestIndexerStates'
 import { NodeInformation } from './NodeInformation'
 import { StateHighlight } from './StateHighlight'
@@ -45,6 +46,7 @@ export function StatusSection(props: Props) {
       </div>
       <div>
         <LastIndexedBlock status={props.status} />
+        <LastIndexedBlockForEvents status={props.status} />
         <LastDiscoveredBlock status={props.status} />
         <LatestIndexerStates status={props.status} />
         <Delays status={props.status} />
