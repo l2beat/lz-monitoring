@@ -27,7 +27,7 @@ describe(DiscoveryRepository.name, () => {
   }
 
   it('adds single record and queries it', async () => {
-    await repository.addOrUpdate(record)
+    await repository.add(record)
 
     const actual = await repository.findAtOrBefore(record.blockNumber, chainId)
 
@@ -35,17 +35,28 @@ describe(DiscoveryRepository.name, () => {
   })
 
   it('does not override existing records', async () => {
-    await repository.addOrUpdate(record)
-    await repository.addOrUpdate(record2)
+    await repository.add(record)
+    await repository.add(record2)
 
     const actual = await repository.getAll()
 
     expect(actual).toEqual([record, record2])
   })
 
+  it('deletes records after given block number', async () => {
+    await repository.add(record)
+    await repository.add(record2)
+
+    await repository.deleteAfter(1, chainId)
+
+    const actual = await repository.getAll()
+
+    expect(actual).toEqual([record])
+  })
+
   it('delete all records', async () => {
-    await repository.addOrUpdate(record)
-    await repository.addOrUpdate(record2)
+    await repository.add(record)
+    await repository.add(record2)
 
     await repository.deleteAll()
 

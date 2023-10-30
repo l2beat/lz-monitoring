@@ -18,7 +18,7 @@ export class DiscoveryRepository extends BaseRepository {
     this.autoWrap(this)
   }
 
-  async addOrUpdate(record: DiscoveryRecord): Promise<boolean> {
+  async add(record: DiscoveryRecord): Promise<boolean> {
     const row = toRow(record)
     const knex = await this.knex()
     await knex('discovery').insert(row)
@@ -41,6 +41,14 @@ export class DiscoveryRepository extends BaseRepository {
     const knex = await this.knex()
     const rows = await knex('discovery').select('*')
     return rows.map(toRecord)
+  }
+
+  async deleteAfter(blockNumber: number, chainId: ChainId): Promise<number> {
+    const knex = await this.knex()
+    return knex('discovery')
+      .where('chain_id', Number(chainId))
+      .andWhere('block_number', '>', blockNumber)
+      .delete()
   }
 
   async deleteAll(): Promise<number> {

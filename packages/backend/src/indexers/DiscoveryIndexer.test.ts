@@ -19,7 +19,7 @@ describe(DiscoveryIndexer.name, () => {
         hasOutputChanged: async () => false,
       })
       const discoveryRepository = mockObject<DiscoveryRepository>({
-        addOrUpdate: async () => true,
+        add: async () => true,
         findAtOrBefore: async () => undefined,
       })
       const chainId = ChainId.ETHEREUM
@@ -42,7 +42,7 @@ describe(DiscoveryIndexer.name, () => {
       expect(await discoveryIndexer.update(0, 1)).toEqual(1)
       expect(discoveryEngine.discover).toHaveBeenCalledTimes(1)
       expect(discoveryEngine.discover).toHaveBeenNthCalledWith(1, config, 1)
-      expect(discoveryRepository.addOrUpdate).toHaveBeenNthCalledWith(1, {
+      expect(discoveryRepository.add).toHaveBeenNthCalledWith(1, {
         chainId,
         blockNumber: 1,
         discoveryOutput: {
@@ -73,7 +73,7 @@ describe(DiscoveryIndexer.name, () => {
         hasOutputChanged: async () => false,
       })
       const discoveryRepository = mockObject<DiscoveryRepository>({
-        addOrUpdate: async () => true,
+        add: async () => true,
         findAtOrBefore: async () => prevDiscovery,
       })
 
@@ -94,7 +94,7 @@ describe(DiscoveryIndexer.name, () => {
 
       expect(await disocoveryIndexer.update(1, 2)).toEqual(2)
       expect(discoveryEngine.discover).toHaveBeenCalledTimes(0)
-      expect(discoveryRepository.addOrUpdate).not.toHaveBeenCalled()
+      expect(discoveryRepository.add).not.toHaveBeenCalled()
       expect(discoveryEngine.hasOutputChanged).toHaveBeenCalledTimes(1)
       expect(discoveryEngine.hasOutputChanged).toHaveBeenCalledWith(
         config,
@@ -112,7 +112,7 @@ describe(DiscoveryIndexer.name, () => {
         discover: async () => [],
       })
       const discoveryRepository = mockObject<DiscoveryRepository>({
-        addOrUpdate: async () => true,
+        add: async () => true,
       })
       const BLOCK_NUMBER = 10
 
