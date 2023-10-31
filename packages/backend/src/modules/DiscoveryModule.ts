@@ -199,11 +199,13 @@ export function createDiscoverySubmodule(
     discoveryEngine,
     config.discovery,
     repositories.blockNumber,
+    repositories.events,
     repositories.discovery,
     repositories.indexerState,
     chainId,
     logger,
     cacheInvalidationIndexer,
+    eventIndexer,
   )
 
   const currDiscoveryIndexer = new CurrentDiscoveryIndexer(

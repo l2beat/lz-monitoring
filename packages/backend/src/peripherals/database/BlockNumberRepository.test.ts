@@ -133,6 +133,24 @@ describe(BlockNumberRepository.name, () => {
 
     expect(await repository.getAll()).toEqual(blocks)
   })
+
+  it('gets blocks by timestamp', async () => {
+    const now = UnixTime.now()
+    const blocks = new Array(2).fill(null).map((_, i) => ({
+      blockNumber: i,
+      blockHash: Hash256.random(),
+      timestamp: now,
+      chainId: ChainId.ETHEREUM,
+    }))
+
+    await repository.addMany(blocks)
+    const block = mockRecord(69420)
+    await repository.addMany([block])
+
+    expect(await repository.getByTimestamp(now, ChainId.ETHEREUM)).toEqual(
+      blocks,
+    )
+  })
 })
 
 function mockRecord(blockNumber: number, now?: UnixTime): BlockNumberRecord {

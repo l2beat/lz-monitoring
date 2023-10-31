@@ -270,13 +270,22 @@ const BLOCKS: BlockFromClient[] = [
   },
 ]
 
-function mockBlockNumberRepository(initialStorage: BlockNumberRecord[] = []) {
+export function mockBlockNumberRepository(
+  initialStorage: BlockNumberRecord[] = [],
+) {
   const blockNumberStorage: BlockNumberRecord[] = [...initialStorage]
 
   return mockObject<BlockNumberRepository>({
     findByNumber: async (number) =>
       blockNumberStorage.find((bnr) => bnr.blockNumber === number),
     findLast: async () => blockNumberStorage.at(-1),
+    findAtOrBefore: async (timestamp) =>
+      blockNumberStorage
+        .filter((bnr) => timestamp.gte(bnr.timestamp))
+        .sort((a, b) => b.timestamp.toNumber() - a.timestamp.toNumber())
+        .shift(),
+    getByTimestamp: async (timestamp) =>
+      blockNumberStorage.filter((bnr) => timestamp.equals(bnr.timestamp)),
     addMany: async (blocks: BlockNumberRecord[]) => {
       blockNumberStorage.push(...blocks)
       return blocks.length

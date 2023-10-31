@@ -23,7 +23,7 @@ describe(EventRepository.name, () => {
     expect(actual).toEqual([record])
   })
 
-  it('gets records in range', async () => {
+  it('gets records in range, sorted', async () => {
     const records = Array.from({ length: 10 }, (_, i) => i * 2).map(
       (blockNumber) => ({
         blockNumber,
@@ -31,10 +31,20 @@ describe(EventRepository.name, () => {
       }),
     )
     await repository.addMany(records)
-    const actual = await repository.getInRange(2, 6, chainId)
+    await repository.addMany([
+      {
+        blockNumber: 5,
+        chainId,
+      },
+    ])
+    const actual = await repository.getSortedInRange(2, 6, chainId)
     expect(actual).toEqual([
       {
         blockNumber: 4,
+        chainId,
+      },
+      {
+        blockNumber: 5,
         chainId,
       },
       {
