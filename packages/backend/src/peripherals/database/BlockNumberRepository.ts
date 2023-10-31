@@ -57,6 +57,18 @@ export class BlockNumberRepository extends BaseRepository {
     return rows.map(toRecord)
   }
 
+  async getByTimestamp(
+    timestamp: UnixTime,
+    chainId: ChainId,
+  ): Promise<BlockNumberRecord[]> {
+    const knex = await this.knex()
+    const rows = await knex('block_numbers')
+      .select('*')
+      .where('chain_id', '=', Number(chainId))
+      .where('unix_timestamp', '=', timestamp.toDate())
+    return rows.map(toRecord)
+  }
+
   async findLast(chainId: ChainId): Promise<BlockNumberRecord | undefined> {
     const knex = await this.knex()
     const row = await knex('block_numbers')

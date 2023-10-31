@@ -27,7 +27,7 @@ export class EventRepository extends BaseRepository {
    * @param fromBlock exclusive
    * @param toBlock inclusive
    */
-  async getInRange(
+  async getSortedInRange(
     fromBlock: number,
     toBlock: number,
     chainId: ChainId,
@@ -37,6 +37,7 @@ export class EventRepository extends BaseRepository {
       .where('chain_id', Number(chainId))
       .andWhere('block_number', '>', fromBlock)
       .andWhere('block_number', '<=', toBlock)
+      .orderBy('block_number', 'asc')
 
     return rows.map(toRecord)
   }

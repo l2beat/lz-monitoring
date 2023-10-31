@@ -47,11 +47,10 @@ export class DiscoveryIndexer extends ChildIndexer {
       ),
     ])
 
-    assert(fromBlock, 'No block found for fromTimestamp')
     assert(toBlock, 'No block found for toTimestamp')
 
-    const blocksWithEvents = await this.eventRepository.getInRange(
-      fromBlock.blockNumber,
+    const blocksWithEvents = await this.eventRepository.getSortedInRange(
+      fromBlock?.blockNumber ?? 0,
       toBlock.blockNumber,
       this.chainId,
     )
@@ -60,14 +59,28 @@ export class DiscoveryIndexer extends ChildIndexer {
     }
 
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const blockToUpdate = blocksWithEvents[0]!
-    await this.runAndSaveDiscovery(blockToUpdate.blockNumber)
-    const updatedToBlock = await this.blockNumberRepository.findByNumber(
-      blockToUpdate.blockNumber,
+    const firstBlock = blocksWithEvents[0]!
+    const updateTo = await this.blockNumberRepository.findByNumber(
+      firstBlock.blockNumber,
       this.chainId,
     )
-    assert(updatedToBlock, 'No block found for updatedToBlock')
-    return updatedToBlock.timestamp.toNumber()
+    assert(updateTo, 'No block found for updateTo')
+    // we want to mark timestamp as safe and sometimes there is multiple blocks per timestamp (Arbitrum)
+    const blocksWithTimestamp = await this.blockNumberRepository.getByTimestamp(
+      updateTo.timestamp,
+      this.chainId,
+    )
+    const blocksToUpdate = blocksWithTimestamp.filter((block) =>
+      blocksWithEvents.find((x) => x.blockNumber === block.blockNumber),
+    )
+
+    await Promise.all(
+      blocksToUpdate.map(({ blockNumber }) =>
+        this.runAndSaveDiscovery(blockNumber),
+      ),
+    )
+
+    return updateTo.timestamp.toNumber()
   }
 
   private async runAndSaveDiscovery(blockNumber: number): Promise<void> {
