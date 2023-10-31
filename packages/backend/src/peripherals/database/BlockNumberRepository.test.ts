@@ -138,7 +138,7 @@ describe(BlockNumberRepository.name, () => {
     const now = UnixTime.now()
     const blocks = new Array(2).fill(null).map((_, i) => ({
       blockNumber: i,
-      blockHash: Hash256('0x' + i.toString(16).padStart(64, '0')),
+      blockHash: Hash256.random(),
       timestamp: now,
       chainId: ChainId.ETHEREUM,
     }))

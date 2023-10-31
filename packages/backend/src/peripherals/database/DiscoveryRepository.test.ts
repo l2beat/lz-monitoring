@@ -47,7 +47,7 @@ describe(DiscoveryRepository.name, () => {
     await repository.add(record)
     await repository.add(record2)
 
-    await repository.deleteAfter(1, chainId)
+    await repository.deleteAfter(record.blockNumber, chainId)
 
     const actual = await repository.getAll()
 

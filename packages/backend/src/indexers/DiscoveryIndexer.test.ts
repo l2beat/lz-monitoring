@@ -259,7 +259,7 @@ describe(DiscoveryIndexer.name, () => {
         }),
       )
 
-      await discoveryIndexer.invalidate(0)
+      await expect(discoveryIndexer.invalidate(0)).not.toBeRejected()
     })
   })
 })
