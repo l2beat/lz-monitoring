@@ -9,6 +9,8 @@ type UnsafeContractPair = readonly [
 
 type SafeContractPair = readonly [ContractParameters, ContractParameters]
 
+// What if given contract appeared between previous and current?
+// What if given contract disappeared between previous and current?
 function getMatchingContractPairs(
   previous: DiscoveryOutput,
   current: DiscoveryOutput,
