@@ -54,6 +54,8 @@ function diffContractValues(
 ): FieldDifference[] {
   const differences = diff(firstContractValues, secondContract)
 
+  console.dir({ differences }, { depth: null })
+
   if (!differences) {
     return []
   }
@@ -131,5 +133,5 @@ function diffContractValues(
 }
 
 function pathToKey(path?: string[]): string[] {
-  return Array.isArray(path) ? path : []
+  return Array.isArray(path) ? path.map((key) => key.toString()) : []
 }
