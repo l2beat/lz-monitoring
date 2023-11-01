@@ -1,11 +1,149 @@
-import { ContractParameters } from '@l2beat/discovery-types'
+import { ContractParameters, DiscoveryOutput } from '@l2beat/discovery-types'
+import { ChainId, EthereumAddress } from '@lz/libs'
 import { expect } from 'earl'
 
 import { diffContractValues, getDiscoveryChanges } from './diff'
 import { FieldDifference } from './types'
 
 describe(getDiscoveryChanges.name, () => {
-  it('works', () => {})
+  it('transforms outputs into diff', () => {
+    const endpoint = {
+      name: 'Endpoint',
+      address: EthereumAddress.random(),
+    } as ContractParameters
+
+    const ulnV2 = {
+      name: 'Ultra Light Node V2',
+      address: EthereumAddress.random(),
+    } as ContractParameters
+
+    const previousEndpoint = {
+      ...endpoint,
+      values: {
+        BLOCK_VERSION: 1,
+        defaultSendVersion: 2,
+      },
+    }
+
+    const currentEndpoint = {
+      ...endpoint,
+      values: {
+        BLOCK_VERSION: 2,
+        defaultSendVersion: 3,
+        isReceivingPayload: false,
+      },
+    }
+
+    const previousUlnV2 = {
+      ...ulnV2,
+      values: {
+        CONFIG_TYPE_INBOUND_BLOCK_CONFIRMATIONS: 20,
+        defaultAdapterParams: {
+          '101': [
+            {
+              proofType: 1,
+              adapterParams:
+                '0x00010000000000000000000000000000000000000000000000000000000000030d40',
+            },
+          ],
+        },
+      },
+    }
+
+    const currentUlnV2 = {
+      ...ulnV2,
+      values: {
+        CONFIG_TYPE_INBOUND_BLOCK_CONFIRMATIONS: 15,
+        defaultAdapterParams: {
+          '101': [
+            {
+              proofType: 1,
+              adapterParams:
+                '0x00010000000000000000000000000000000000000000000000000000000000030d40',
+            },
+            {
+              proofType: 2,
+              adapterParams:
+                '0x00010000000000000000000000000000000000000000000000000000000000030d48',
+            },
+          ],
+        },
+      },
+    }
+
+    const previousOutput = {
+      chain: 'ethereum',
+      blockNumber: 1000,
+      contracts: [previousEndpoint, previousUlnV2],
+    } as unknown as DiscoveryOutput
+
+    const currentOutput = {
+      chain: 'ethereum',
+      blockNumber: 2000,
+      contracts: [currentEndpoint, currentUlnV2],
+    } as unknown as DiscoveryOutput
+
+    const changelogEntries = getDiscoveryChanges(previousOutput, currentOutput)
+
+    expect(changelogEntries).toEqual([
+      {
+        targetName: endpoint.name,
+        targetAddress: endpoint.address,
+        chainId: ChainId.ETHEREUM,
+        blockNumber: currentOutput.blockNumber,
+        type: 'OBJECT_EDITED_PROPERTY',
+        parameterName: 'BLOCK_VERSION',
+        parameterPath: ['BLOCK_VERSION'],
+        previousValue: '1',
+        currentValue: '2',
+      },
+      {
+        targetName: endpoint.name,
+        targetAddress: endpoint.address,
+        chainId: ChainId.ETHEREUM,
+        blockNumber: currentOutput.blockNumber,
+        type: 'OBJECT_EDITED_PROPERTY',
+        parameterName: 'defaultSendVersion',
+        parameterPath: ['defaultSendVersion'],
+        previousValue: '2',
+        currentValue: '3',
+      },
+      {
+        targetName: endpoint.name,
+        targetAddress: endpoint.address,
+        chainId: ChainId.ETHEREUM,
+        blockNumber: currentOutput.blockNumber,
+        type: 'OBJECT_NEW_PROPERTY',
+        parameterName: 'isReceivingPayload',
+        parameterPath: ['isReceivingPayload'],
+        previousValue: null,
+        currentValue: 'false',
+      },
+      {
+        targetName: ulnV2.name,
+        targetAddress: ulnV2.address,
+        chainId: ChainId.ETHEREUM,
+        blockNumber: currentOutput.blockNumber,
+        type: 'OBJECT_EDITED_PROPERTY',
+        parameterName: 'CONFIG_TYPE_INBOUND_BLOCK_CONFIRMATIONS',
+        parameterPath: ['CONFIG_TYPE_INBOUND_BLOCK_CONFIRMATIONS'],
+        previousValue: '20',
+        currentValue: '15',
+      },
+      {
+        targetName: ulnV2.name,
+        targetAddress: ulnV2.address,
+        chainId: ChainId.ETHEREUM,
+        blockNumber: currentOutput.blockNumber,
+        type: 'ARRAY_NEW_ELEMENT',
+        parameterName: 'defaultAdapterParams',
+        parameterPath: ['defaultAdapterParams', '101', '1'],
+        previousValue: null,
+        currentValue:
+          '{"proofType":2,"adapterParams":"0x00010000000000000000000000000000000000000000000000000000000000030d48"}',
+      },
+    ])
+  })
 })
 
 interface Case {
@@ -225,8 +363,6 @@ describe(diffContractValues.name, () => {
   cases.forEach(({ desc, prev, curr, expected }) => {
     it(desc, () => {
       const result = diffContractValues(prev, curr)
-
-      console.dir({ result }, { depth: null })
 
       expect(result).toEqual(expected)
     })

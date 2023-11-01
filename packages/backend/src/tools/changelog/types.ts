@@ -76,7 +76,7 @@ interface ChangelogEntry {
   blockNumber: number
   type: ModificationType
   parameterName: string
-  parameterPath: string[] | string
+  parameterPath: string[]
   previousValue: string | null
   currentValue: string | null
 }
