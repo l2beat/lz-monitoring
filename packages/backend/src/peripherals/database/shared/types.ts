@@ -38,6 +38,26 @@ declare module 'knex/types/tables' {
     block_number: number
   }
 
+  interface ChangelogRow {
+    target_name: string
+    target_address: string
+    chain_id: number
+    block_number: number
+    modification_type: string
+    parameter_name: string
+    parameter_path: string[]
+    previous_value: string | null
+    current_value: string | null
+  }
+
+  interface MilestoneRow {
+    target_name: string
+    target_address: string
+    chain_id: number
+    block_number: number
+    operation: string
+  }
+
   interface Tables {
     block_numbers: BlockNumberRow
     indexer_states: IndexerStateRow
