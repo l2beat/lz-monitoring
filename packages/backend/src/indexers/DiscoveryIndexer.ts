@@ -35,6 +35,17 @@ export class DiscoveryIndexer extends ChildIndexer {
     ])
   }
 
+  override async start(): Promise<void> {
+    const oldConfigHash = (
+      await this.indexerStateRepository.findById(this.id, this.chainId)
+    )?.configHash
+    const newConfigHash = this.config.hash
+    if (oldConfigHash !== newConfigHash) {
+      await this.setSafeHeight(0)
+    }
+    await super.start()
+  }
+
   async update(fromTimestamp: number, toTimestamp: number): Promise<number> {
     const [fromBlock, toBlock] = await Promise.all([
       this.blockNumberRepository.findAtOrBefore(
@@ -134,6 +145,7 @@ export class DiscoveryIndexer extends ChildIndexer {
       id: this.id,
       height,
       chainId: this.chainId,
+      configHash: this.config.hash,
     })
   }
 }

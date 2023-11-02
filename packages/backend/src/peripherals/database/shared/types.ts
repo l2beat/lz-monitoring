@@ -19,6 +19,7 @@ declare module 'knex/types/tables' {
     height: number
     last_updated: Date
     chain_id: number
+    config_hash?: string
   }
 
   interface DiscoveryRow {

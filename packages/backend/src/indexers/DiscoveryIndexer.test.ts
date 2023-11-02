@@ -16,6 +16,69 @@ import { DiscoveryIndexer } from './DiscoveryIndexer'
 import { EventIndexer } from './EventIndexer'
 
 describe(DiscoveryIndexer.name, () => {
+  describe(DiscoveryIndexer.prototype.start.name, () => {
+    it('should respect the config hash', async () => {
+      const oldConfig = mockConfig()
+      const newConfig = mockConfig()
+
+      const indexerStateRepo = mockObject<IndexerStateRepository>({
+        findById: async () => ({
+          configHash: oldConfig.hash,
+          id: 'id',
+          chainId: ChainId.ETHEREUM,
+          height: 100,
+        }),
+        addOrUpdate: async () => 'string',
+      })
+
+      const oldDiscoveryIndexer = new DiscoveryIndexer(
+        mockObject<DiscoveryEngine>(),
+        oldConfig,
+        mockObject<BlockNumberRepository>(),
+        mockObject<EventRepository>(),
+        mockObject<DiscoveryRepository>(),
+        indexerStateRepo,
+        ChainId.ETHEREUM,
+        Logger.SILENT,
+        mockObject<CacheInvalidationIndexer>({
+          subscribe: () => {},
+        }),
+        mockObject<EventIndexer>({
+          subscribe: () => {},
+        }),
+      )
+
+      await expect(oldDiscoveryIndexer.start()).not.toBeRejected()
+      expect(indexerStateRepo.addOrUpdate).not.toHaveBeenCalled()
+
+      const newDiscoveryIndexer = new DiscoveryIndexer(
+        mockObject<DiscoveryEngine>(),
+        newConfig,
+        mockObject<BlockNumberRepository>(),
+        mockObject<EventRepository>(),
+        mockObject<DiscoveryRepository>(),
+        indexerStateRepo,
+        ChainId.ETHEREUM,
+        Logger.SILENT,
+        mockObject<CacheInvalidationIndexer>({
+          subscribe: () => {},
+        }),
+        mockObject<EventIndexer>({
+          subscribe: () => {},
+        }),
+      )
+
+      await expect(newDiscoveryIndexer.start()).not.toBeRejected()
+      expect(indexerStateRepo.addOrUpdate).toHaveBeenCalledTimes(1)
+      expect(indexerStateRepo.addOrUpdate).toHaveBeenNthCalledWith(1, {
+        id: 'DiscoveryIndexer',
+        chainId: ChainId.ETHEREUM,
+        height: 0,
+        configHash: newConfig.hash,
+      })
+    })
+  })
+
   describe(DiscoveryIndexer.prototype.update.name, () => {
     it('should run discovery on the latest block with event', async () => {
       const chainId = ChainId.ETHEREUM
@@ -260,6 +323,43 @@ describe(DiscoveryIndexer.name, () => {
       )
 
       await expect(discoveryIndexer.invalidate(0)).not.toBeRejected()
+    })
+  })
+
+  describe(DiscoveryIndexer.prototype.setSafeHeight.name, () => {
+    it('should set the safe height and config hash', async () => {
+      const chainId = ChainId.ETHEREUM
+      const config = mockConfig()
+      const newHeight = 100
+      const indexerStateRepo = mockObject<IndexerStateRepository>({
+        addOrUpdate: async () => 'string',
+      })
+
+      const discoveryIndexer = new DiscoveryIndexer(
+        mockObject<DiscoveryEngine>(),
+        config,
+        mockObject<BlockNumberRepository>(),
+        mockObject<EventRepository>(),
+        mockObject<DiscoveryRepository>(),
+        indexerStateRepo,
+        chainId,
+        Logger.SILENT,
+        mockObject<CacheInvalidationIndexer>({
+          subscribe: () => {},
+        }),
+        mockObject<EventIndexer>({
+          subscribe: () => {},
+        }),
+      )
+
+      await expect(discoveryIndexer.setSafeHeight(newHeight)).not.toBeRejected()
+      expect(indexerStateRepo.addOrUpdate).toHaveBeenCalledTimes(1)
+      expect(indexerStateRepo.addOrUpdate).toHaveBeenNthCalledWith(1, {
+        id: 'DiscoveryIndexer',
+        chainId,
+        height: newHeight,
+        configHash: config.hash,
+      })
     })
   })
 })
