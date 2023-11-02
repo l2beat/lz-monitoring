@@ -129,9 +129,13 @@ export class ChangelogIndexer extends ChildIndexer {
  * ```
  */
 function createComparablePairs<T>(outputs: T[]): [T, T][] {
+  assert(outputs.length > 1, 'Not enough items to pair')
+
   const pairs: [T, T][] = []
 
-  for (let i = 1; i <= outputs.length - 1; i++) {
+  for (let i = 1; i < outputs.length; i++) {
+    assert(outputs[i - 1] && outputs[i], 'Invalid outputs given to pair')
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     pairs.push([outputs[i - 1]!, outputs[i]!])
   }
 
