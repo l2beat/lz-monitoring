@@ -143,9 +143,9 @@ function flatGroups(groups: ReturnType<typeof getDiscoveryChanges>): {
   milestones: MilestoneEntry[]
 } {
   const flatChangelogEntries = [
-    groups.added,
-    groups.modified,
-    groups.removed,
+    groups.properties.added,
+    groups.properties.modified,
+    groups.properties.removed,
   ].flat()
 
   const flatMilestoneEntries = [

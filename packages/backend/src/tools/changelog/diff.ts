@@ -7,6 +7,7 @@ import { groupContracts } from './grouping'
 import {
   ChangelogEntry,
   FieldDifference,
+  MilestoneEntry,
   SmartContractOperation,
 } from './types'
 
@@ -21,16 +22,41 @@ function getDiscoveryChanges(
   previousOutput: DiscoveryOutput,
   currentOutput: DiscoveryOutput,
 ): {
-  modified: ChangelogEntry[]
-  removed: ChangelogEntry[]
-  added: ChangelogEntry[]
+  properties: {
+    modified: ChangelogEntry[]
+    removed: ChangelogEntry[]
+    added: ChangelogEntry[]
+  }
+  milestones: {
+    added: MilestoneEntry[]
+    removed: MilestoneEntry[]
+  }
 } {
   const { modified, removed, added } = groupContracts(
     previousOutput,
     currentOutput,
   )
 
+  const removedContractsMileStones = removed.map((c) =>
+    contractToMilestoneEntry(c, {
+      chain: currentOutput.chain,
+      blockNumber: currentOutput.blockNumber,
+      operation: 'CONTRACT_REMOVED',
+    }),
+  )
+
+  const addedContractsMileStones = added.map((c) =>
+    contractToMilestoneEntry(c, {
+      chain: currentOutput.chain,
+      blockNumber: currentOutput.blockNumber,
+      operation: 'CONTRACT_ADDED',
+    }),
+  )
+
   const removedChangelogEntries = removed.flatMap((contract) => {
+    if (!contract.values) {
+      return []
+    }
     // Diff values against empty object to get all removed fields
     const valuesDiff = diffContractValues(contract.values, {})
 
@@ -40,12 +66,14 @@ function getDiscoveryChanges(
         contractAddress: contract.address,
         blockNumber: currentOutput.blockNumber,
         chainName: currentOutput.chain,
-        operation: 'REMOVE_CONTRACT',
       }),
     )
   })
 
   const addedChangelogEntries = added.flatMap((contract) => {
+    if (!contract.values) {
+      return []
+    }
     // Diff values against empty object to get all added fields
     const valuesDiff = diffContractValues({}, contract.values)
 
@@ -55,13 +83,17 @@ function getDiscoveryChanges(
         contractAddress: contract.address,
         blockNumber: currentOutput.blockNumber,
         chainName: currentOutput.chain,
-        operation: 'ADD_CONTRACT',
       }),
     )
   })
 
   const changelogEntries = modified.flatMap(
     ([previousContract, currentContract]) => {
+      // FIXME: Double check
+      if (!previousContract.values || !currentContract.values) {
+        return []
+      }
+
       const fieldDifferences = diffContractValues(
         previousContract.values,
         currentContract.values,
@@ -78,16 +110,21 @@ function getDiscoveryChanges(
           contractAddress: currentContract.address,
           blockNumber: currentOutput.blockNumber,
           chainName: currentOutput.chain,
-          operation: 'MODIFY_CONTRACT',
         }),
       )
     },
   )
 
   return {
-    modified: changelogEntries,
-    removed: removedChangelogEntries,
-    added: addedChangelogEntries,
+    properties: {
+      modified: changelogEntries,
+      removed: removedChangelogEntries,
+      added: addedChangelogEntries,
+    },
+    milestones: {
+      added: addedContractsMileStones,
+      removed: removedContractsMileStones,
+    },
   }
 }
 
@@ -180,7 +217,6 @@ function pathToKey(path?: string[]): string[] {
 function fieldDiffToChangelogEntry(
   fieldDiff: FieldDifference,
   context: {
-    operation: SmartContractOperation
     contractName: string
     contractAddress: EthereumAddress
     blockNumber: number
@@ -194,8 +230,7 @@ function fieldDiffToChangelogEntry(
     targetAddress: context.contractAddress,
     chainId: ChainId.fromName(context.chainName),
     blockNumber: context.blockNumber,
-    operation: context.operation,
-    type: fieldDiff.modificationType,
+    modificationType: fieldDiff.modificationType,
     parameterName: fieldDiff.key[0],
     parameterPath: fieldDiff.key,
     previousValue: fieldDiff.previous,
@@ -208,9 +243,26 @@ function changelogEntryToFieldDiff(
 ): FieldDifference {
   return {
     key: changelogEntry.parameterPath,
-    modificationType: changelogEntry.type,
+    modificationType: changelogEntry.modificationType,
     previous: changelogEntry.previousValue,
     current: changelogEntry.currentValue,
     // Changelog Entry is dummy fallback, there is no type discrimination
   } as FieldDifference
+}
+
+function contractToMilestoneEntry(
+  contract: ContractParameters,
+  context: {
+    chain: string
+    blockNumber: number
+    operation: SmartContractOperation
+  },
+): MilestoneEntry {
+  return {
+    targetName: contract.name,
+    targetAddress: contract.address,
+    chainId: ChainId.fromName(context.chain),
+    blockNumber: context.blockNumber,
+    operation: context.operation,
+  }
 }
