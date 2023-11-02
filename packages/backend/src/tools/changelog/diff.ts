@@ -3,8 +3,12 @@ import { ContractParameters, DiscoveryOutput } from '@l2beat/discovery-types'
 import { ChainId, EthereumAddress } from '@lz/libs'
 import diff from 'deep-diff'
 
-import { getMatchingContractPairs, splitSafeContractPairs } from './pairs'
-import { ChangelogEntry, FieldDifference } from './types'
+import { groupContracts } from './grouping'
+import {
+  ChangelogEntry,
+  FieldDifference,
+  SmartContractOperation,
+} from './types'
 
 export {
   changelogEntryToFieldDiff,
@@ -16,12 +20,47 @@ export {
 function getDiscoveryChanges(
   previousOutput: DiscoveryOutput,
   currentOutput: DiscoveryOutput,
-): ChangelogEntry[] {
-  const matchingPairs = getMatchingContractPairs(previousOutput, currentOutput)
+): {
+  modified: ChangelogEntry[]
+  removed: ChangelogEntry[]
+  added: ChangelogEntry[]
+} {
+  const { modified, removed, added } = groupContracts(
+    previousOutput,
+    currentOutput,
+  )
 
-  const { safe: safePairs } = splitSafeContractPairs(matchingPairs)
+  const removedChangelogEntries = removed.flatMap((contract) => {
+    // Diff values against empty object to get all removed fields
+    const valuesDiff = diffContractValues(contract.values, {})
 
-  const changelogEntries = safePairs.flatMap(
+    return valuesDiff.map((valueDifference) =>
+      fieldDiffToChangelogEntry(valueDifference, {
+        contractName: contract.name,
+        contractAddress: contract.address,
+        blockNumber: currentOutput.blockNumber,
+        chainName: currentOutput.chain,
+        operation: 'REMOVE_CONTRACT',
+      }),
+    )
+  })
+
+  const addedChangelogEntries = added.flatMap((contract) => {
+    // Diff values against empty object to get all added fields
+    const valuesDiff = diffContractValues({}, contract.values)
+
+    return valuesDiff.map((valueDifference) =>
+      fieldDiffToChangelogEntry(valueDifference, {
+        contractName: contract.name,
+        contractAddress: contract.address,
+        blockNumber: currentOutput.blockNumber,
+        chainName: currentOutput.chain,
+        operation: 'ADD_CONTRACT',
+      }),
+    )
+  })
+
+  const changelogEntries = modified.flatMap(
     ([previousContract, currentContract]) => {
       const fieldDifferences = diffContractValues(
         previousContract.values,
@@ -39,12 +78,17 @@ function getDiscoveryChanges(
           contractAddress: currentContract.address,
           blockNumber: currentOutput.blockNumber,
           chainName: currentOutput.chain,
+          operation: 'MODIFY_CONTRACT',
         }),
       )
     },
   )
 
-  return changelogEntries
+  return {
+    modified: changelogEntries,
+    removed: removedChangelogEntries,
+    added: addedChangelogEntries,
+  }
 }
 
 function diffContractValues(
@@ -136,6 +180,7 @@ function pathToKey(path?: string[]): string[] {
 function fieldDiffToChangelogEntry(
   fieldDiff: FieldDifference,
   context: {
+    operation: SmartContractOperation
     contractName: string
     contractAddress: EthereumAddress
     blockNumber: number
@@ -149,6 +194,7 @@ function fieldDiffToChangelogEntry(
     targetAddress: context.contractAddress,
     chainId: ChainId.fromName(context.chainName),
     blockNumber: context.blockNumber,
+    operation: context.operation,
     type: fieldDiff.modificationType,
     parameterName: fieldDiff.key[0],
     parameterPath: fieldDiff.key,

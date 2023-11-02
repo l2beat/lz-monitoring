@@ -6,7 +6,7 @@ import { diffContractValues, getDiscoveryChanges } from './diff'
 import { FieldDifference } from './types'
 
 describe(getDiscoveryChanges.name, () => {
-  it('transforms outputs into diff', () => {
+  it('handles contract modification', () => {
     const endpoint = {
       name: 'Endpoint',
       address: EthereumAddress.random(),
@@ -85,12 +85,15 @@ describe(getDiscoveryChanges.name, () => {
 
     const changelogEntries = getDiscoveryChanges(previousOutput, currentOutput)
 
-    expect(changelogEntries).toEqual([
+    expect(changelogEntries.added).toEqual([])
+    expect(changelogEntries.removed).toEqual([])
+    expect(changelogEntries.modified).toEqual([
       {
         targetName: endpoint.name,
         targetAddress: endpoint.address,
         chainId: ChainId.ETHEREUM,
         blockNumber: currentOutput.blockNumber,
+        operation: 'MODIFY_CONTRACT',
         type: 'OBJECT_EDITED_PROPERTY',
         parameterName: 'BLOCK_VERSION',
         parameterPath: ['BLOCK_VERSION'],
@@ -102,6 +105,7 @@ describe(getDiscoveryChanges.name, () => {
         targetAddress: endpoint.address,
         chainId: ChainId.ETHEREUM,
         blockNumber: currentOutput.blockNumber,
+        operation: 'MODIFY_CONTRACT',
         type: 'OBJECT_EDITED_PROPERTY',
         parameterName: 'defaultSendVersion',
         parameterPath: ['defaultSendVersion'],
@@ -113,6 +117,7 @@ describe(getDiscoveryChanges.name, () => {
         targetAddress: endpoint.address,
         chainId: ChainId.ETHEREUM,
         blockNumber: currentOutput.blockNumber,
+        operation: 'MODIFY_CONTRACT',
         type: 'OBJECT_NEW_PROPERTY',
         parameterName: 'isReceivingPayload',
         parameterPath: ['isReceivingPayload'],
@@ -124,6 +129,7 @@ describe(getDiscoveryChanges.name, () => {
         targetAddress: ulnV2.address,
         chainId: ChainId.ETHEREUM,
         blockNumber: currentOutput.blockNumber,
+        operation: 'MODIFY_CONTRACT',
         type: 'OBJECT_EDITED_PROPERTY',
         parameterName: 'CONFIG_TYPE_INBOUND_BLOCK_CONFIRMATIONS',
         parameterPath: ['CONFIG_TYPE_INBOUND_BLOCK_CONFIRMATIONS'],
@@ -135,12 +141,270 @@ describe(getDiscoveryChanges.name, () => {
         targetAddress: ulnV2.address,
         chainId: ChainId.ETHEREUM,
         blockNumber: currentOutput.blockNumber,
+        operation: 'MODIFY_CONTRACT',
         type: 'ARRAY_NEW_ELEMENT',
         parameterName: 'defaultAdapterParams',
         parameterPath: ['defaultAdapterParams', '101', '1'],
         previousValue: null,
         currentValue:
           '{"proofType":2,"adapterParams":"0x00010000000000000000000000000000000000000000000000000000000000030d48"}',
+      },
+    ])
+  })
+
+  it('handles contract creation', () => {
+    const currentEndpoint = {
+      name: 'Endpoint',
+      address: EthereumAddress.random(),
+      values: {
+        BLOCK_VERSION: 2,
+        defaultSendVersion: 3,
+        isReceivingPayload: false,
+      },
+    }
+
+    const previousOutput = {
+      chain: 'ethereum',
+      blockNumber: 1000,
+      contracts: [],
+    } as unknown as DiscoveryOutput
+
+    const currentOutput = {
+      chain: 'ethereum',
+      blockNumber: 2000,
+      contracts: [currentEndpoint],
+    } as unknown as DiscoveryOutput
+
+    const changelogEntries = getDiscoveryChanges(previousOutput, currentOutput)
+
+    expect(changelogEntries.modified).toEqual([])
+    expect(changelogEntries.removed).toEqual([])
+    expect(changelogEntries.added).toEqual([
+      {
+        targetName: currentEndpoint.name,
+        targetAddress: currentEndpoint.address,
+        chainId: ChainId.ETHEREUM,
+        blockNumber: currentOutput.blockNumber,
+        operation: 'ADD_CONTRACT',
+        type: 'OBJECT_NEW_PROPERTY',
+        parameterName: 'BLOCK_VERSION',
+        parameterPath: ['BLOCK_VERSION'],
+        previousValue: null,
+        currentValue: '2',
+      },
+      {
+        targetName: currentEndpoint.name,
+        targetAddress: currentEndpoint.address,
+        chainId: ChainId.ETHEREUM,
+        blockNumber: currentOutput.blockNumber,
+        operation: 'ADD_CONTRACT',
+        type: 'OBJECT_NEW_PROPERTY',
+        parameterName: 'defaultSendVersion',
+        parameterPath: ['defaultSendVersion'],
+        previousValue: null,
+        currentValue: '3',
+      },
+      {
+        targetName: currentEndpoint.name,
+        targetAddress: currentEndpoint.address,
+        chainId: ChainId.ETHEREUM,
+        blockNumber: currentOutput.blockNumber,
+        operation: 'ADD_CONTRACT',
+        type: 'OBJECT_NEW_PROPERTY',
+        parameterName: 'isReceivingPayload',
+        parameterPath: ['isReceivingPayload'],
+        previousValue: null,
+        currentValue: 'false',
+      },
+    ])
+  })
+
+  it('handles contract removal', () => {
+    const previousEndpoint = {
+      name: 'Endpoint',
+      address: EthereumAddress.random(),
+      values: {
+        BLOCK_VERSION: 2,
+        defaultSendVersion: 3,
+        isReceivingPayload: false,
+      },
+    }
+
+    const previousOutput = {
+      chain: 'ethereum',
+      blockNumber: 1000,
+      contracts: [previousEndpoint],
+    } as unknown as DiscoveryOutput
+
+    const currentOutput = {
+      chain: 'ethereum',
+      blockNumber: 2000,
+      contracts: [],
+    } as unknown as DiscoveryOutput
+
+    const changelogEntries = getDiscoveryChanges(previousOutput, currentOutput)
+
+    expect(changelogEntries.added).toEqual([])
+    expect(changelogEntries.modified).toEqual([])
+    expect(changelogEntries.removed).toEqual([
+      {
+        targetName: previousEndpoint.name,
+        targetAddress: previousEndpoint.address,
+        chainId: ChainId.ETHEREUM,
+        blockNumber: currentOutput.blockNumber,
+        operation: 'REMOVE_CONTRACT',
+        type: 'OBJECT_DELETED_PROPERTY',
+        parameterName: 'BLOCK_VERSION',
+        parameterPath: ['BLOCK_VERSION'],
+        previousValue: '2',
+        currentValue: null,
+      },
+      {
+        targetName: previousEndpoint.name,
+        targetAddress: previousEndpoint.address,
+        chainId: ChainId.ETHEREUM,
+        blockNumber: currentOutput.blockNumber,
+        operation: 'REMOVE_CONTRACT',
+        type: 'OBJECT_DELETED_PROPERTY',
+        parameterName: 'defaultSendVersion',
+        parameterPath: ['defaultSendVersion'],
+        previousValue: '3',
+        currentValue: null,
+      },
+      {
+        targetName: previousEndpoint.name,
+        targetAddress: previousEndpoint.address,
+        chainId: ChainId.ETHEREUM,
+        blockNumber: currentOutput.blockNumber,
+        operation: 'REMOVE_CONTRACT',
+        type: 'OBJECT_DELETED_PROPERTY',
+        parameterName: 'isReceivingPayload',
+        parameterPath: ['isReceivingPayload'],
+        previousValue: 'false',
+        currentValue: null,
+      },
+    ])
+  })
+
+  // Just a double check
+  it('handles all ops at once', () => {
+    const endpoint = {
+      name: 'Endpoint',
+      address: EthereumAddress.random(),
+    }
+
+    const previousEndpoint = {
+      ...endpoint,
+      values: {
+        toBeChanged: 1,
+      },
+    }
+
+    const currentEndpoint = {
+      ...endpoint,
+      values: {
+        toBeChanged: 2,
+      },
+    }
+
+    const contractToBeRemoved = {
+      name: 'Removed',
+      address: EthereumAddress.random(),
+      values: {
+        toBeRemovedA: 1,
+        toBeRemovedB: 2,
+      },
+    }
+
+    const contractToBeAdded = {
+      name: 'Added',
+      address: EthereumAddress.random(),
+      values: {
+        toBeAddedA: 1,
+        toBeAddedB: 2,
+      },
+    }
+
+    const previousOutput = {
+      chain: 'ethereum',
+      blockNumber: 1000,
+      contracts: [previousEndpoint, contractToBeRemoved],
+    } as unknown as DiscoveryOutput
+
+    const currentOutput = {
+      chain: 'ethereum',
+      blockNumber: 2000,
+      contracts: [currentEndpoint, contractToBeAdded],
+    } as unknown as DiscoveryOutput
+
+    const changelogEntries = getDiscoveryChanges(previousOutput, currentOutput)
+
+    expect(changelogEntries.modified).toEqual([
+      {
+        targetName: currentEndpoint.name,
+        targetAddress: currentEndpoint.address,
+        chainId: ChainId.ETHEREUM,
+        blockNumber: currentOutput.blockNumber,
+        operation: 'MODIFY_CONTRACT',
+        type: 'OBJECT_EDITED_PROPERTY',
+        parameterName: 'toBeChanged',
+        parameterPath: ['toBeChanged'],
+        previousValue: '1',
+        currentValue: '2',
+      },
+    ])
+
+    expect(changelogEntries.removed).toEqual([
+      {
+        targetName: contractToBeRemoved.name,
+        targetAddress: contractToBeRemoved.address,
+        chainId: ChainId.ETHEREUM,
+        blockNumber: currentOutput.blockNumber,
+        operation: 'REMOVE_CONTRACT',
+        type: 'OBJECT_DELETED_PROPERTY',
+        parameterName: 'toBeRemovedA',
+        parameterPath: ['toBeRemovedA'],
+        previousValue: '1',
+        currentValue: null,
+      },
+      {
+        targetName: contractToBeRemoved.name,
+        targetAddress: contractToBeRemoved.address,
+        chainId: ChainId.ETHEREUM,
+        blockNumber: currentOutput.blockNumber,
+        operation: 'REMOVE_CONTRACT',
+        type: 'OBJECT_DELETED_PROPERTY',
+        parameterName: 'toBeRemovedB',
+        parameterPath: ['toBeRemovedB'],
+        previousValue: '2',
+        currentValue: null,
+      },
+    ])
+
+    expect(changelogEntries.added).toEqual([
+      {
+        targetName: contractToBeAdded.name,
+        targetAddress: contractToBeAdded.address,
+        chainId: ChainId.ETHEREUM,
+        blockNumber: currentOutput.blockNumber,
+        operation: 'ADD_CONTRACT',
+        type: 'OBJECT_NEW_PROPERTY',
+        parameterName: 'toBeAddedA',
+        parameterPath: ['toBeAddedA'],
+        previousValue: null,
+        currentValue: '1',
+      },
+      {
+        targetName: contractToBeAdded.name,
+        targetAddress: contractToBeAdded.address,
+        chainId: ChainId.ETHEREUM,
+        blockNumber: currentOutput.blockNumber,
+        operation: 'ADD_CONTRACT',
+        type: 'OBJECT_NEW_PROPERTY',
+        parameterName: 'toBeAddedB',
+        parameterPath: ['toBeAddedB'],
+        previousValue: null,
+        currentValue: '2',
       },
     ])
   })

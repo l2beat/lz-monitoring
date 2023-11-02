@@ -1,6 +1,6 @@
 import { ChainId, EthereumAddress } from '@lz/libs'
 
-export type { ChangelogEntry, FieldDifference }
+export type { ChangelogEntry, FieldDifference, SmartContractOperation }
 
 type FieldDifference =
   | ObjectPropertyAdded
@@ -69,11 +69,17 @@ type ArrayElementEdited = TemplateModification<
   string
 >
 
+type SmartContractOperation =
+  | 'ADD_CONTRACT'
+  | 'REMOVE_CONTRACT'
+  | 'MODIFY_CONTRACT'
+
 interface ChangelogEntry {
   targetName: string
   targetAddress: EthereumAddress
   chainId: ChainId
   blockNumber: number
+  operation: SmartContractOperation
   type: ModificationType
   parameterName: string
   parameterPath: string[]
