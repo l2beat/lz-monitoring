@@ -10,6 +10,7 @@ describe(CurrentDiscoveryRepository.name, () => {
   const { database } = setupDatabaseTestSuite()
   const repository = new CurrentDiscoveryRepository(database, Logger.SILENT)
   const chainId = ChainId.ETHEREUM
+  const differentChainId = ChainId.OPTIMISM
 
   before(() => repository.deleteAll())
   afterEach(() => repository.deleteAll())
@@ -39,6 +40,23 @@ describe(CurrentDiscoveryRepository.name, () => {
     const actual = await repository.find(chainId)
 
     expect(actual).toEqual(record2)
+  })
+
+  it('deletes a record for chain', async () => {
+    await repository.addOrUpdate(record)
+    await repository.addOrUpdate(record2)
+    const differentChainRecord = {
+      discoveryOutput: mockDiscoveryOutput(3),
+      chainId: differentChainId,
+    }
+    await repository.addOrUpdate(differentChainRecord)
+    await repository.deleteChain(chainId)
+
+    const actual = await repository.find(chainId)
+    expect(actual).toEqual(undefined)
+
+    const differentChain = await repository.find(differentChainId)
+    expect(differentChain).toEqual(differentChainRecord)
   })
 
   it('delete all records', async () => {

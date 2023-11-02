@@ -33,6 +33,7 @@ export class DiscoveryRepository extends BaseRepository {
     const row = await knex('discovery')
       .where('chain_id', Number(chainId))
       .andWhere('block_number', '<=', blockNumber)
+      .orderBy('block_number', 'desc')
       .first()
     return row && toRecord(row)
   }

@@ -38,6 +38,11 @@ export class CurrentDiscoveryRepository extends BaseRepository {
     return rows.map(toRecord)
   }
 
+  async deleteChain(chainId: ChainId): Promise<number> {
+    const knex = await this.knex()
+    return knex('current_discovery').where('chain_id', Number(chainId)).delete()
+  }
+
   async deleteAll(): Promise<number> {
     const knex = await this.knex()
     return knex('current_discovery').delete()

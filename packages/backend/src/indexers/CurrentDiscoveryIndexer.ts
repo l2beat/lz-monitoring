@@ -33,7 +33,7 @@ export class CurrentDiscoveryIndexer extends ChildIndexer {
 
   async invalidate(targetTimestamp: number): Promise<number> {
     if (targetTimestamp === 0) {
-      await this.currentDiscoveryRepository.deleteAll()
+      await this.currentDiscoveryRepository.deleteChain(this.chainId)
       return 0
     }
 
