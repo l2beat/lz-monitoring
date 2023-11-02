@@ -28,6 +28,11 @@ export function useDiscoveryApi({
         const result = await fetch(
           apiUrl + 'discovery/' + ChainId.getName(chainId),
         )
+
+        if (!result.ok) {
+          setIsError(true)
+        }
+
         const data = await result.text()
         const parsed = DiscoveryApi.parse(JSON.parse(data))
         setData({ data: parsed, chainId })
