@@ -40,9 +40,11 @@ export class DiscoveryIndexer extends ChildIndexer {
       await this.indexerStateRepository.findById(this.id, this.chainId)
     )?.configHash
     const newConfigHash = this.config.hash
+
     if (oldConfigHash !== newConfigHash) {
       await this.setSafeHeight(0)
     }
+
     await super.start()
   }
 
