@@ -41,7 +41,7 @@ export function ProtocolInformation({
     multisigAddress &&
     endpoints.isChainSupported(discoveryResponse.chainId.valueOf())
 
-  if (!discoveryResponse) {
+  if (!discoveryResponse || isError) {
     return (
       <>
         <NetworkDropdownSelector
