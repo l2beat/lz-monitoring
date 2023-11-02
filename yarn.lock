@@ -1156,6 +1156,11 @@
     "@types/keygrip" "*"
     "@types/node" "*"
 
+"@types/deep-diff@^1.0.4":
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/@types/deep-diff/-/deep-diff-1.0.4.tgz#c174020f457359094c147ef172585244bee1f8ed"
+  integrity sha512-RoSxSYq+GIEOz6v4ELplccPCLEhDopAhUz0lfWea/435exxTA9n5WZ8AJNQOAOLn7tlmJSSe/vGZshU+x6qjdQ==
+
 "@types/etag@*":
   version "1.8.1"
   resolved "https://registry.yarnpkg.com/@types/etag/-/etag-1.8.1.tgz#593ca8ddb43acb3db049bd0955fd64d281ab58b9"
