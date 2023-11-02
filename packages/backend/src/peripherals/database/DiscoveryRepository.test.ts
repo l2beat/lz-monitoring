@@ -64,6 +64,21 @@ describe(DiscoveryRepository.name, () => {
 
     expect(actual).toEqual([])
   })
+
+  it('finds at or before given block number', async () => {
+    await repository.add(record)
+    await repository.add(record2)
+
+    expect(
+      await repository.findAtOrBefore(record.blockNumber, chainId),
+    ).toEqual(record)
+    expect(
+      await repository.findAtOrBefore(record2.blockNumber, chainId),
+    ).toEqual(record2)
+    expect(
+      await repository.findAtOrBefore(record2.blockNumber + 1, chainId),
+    ).toEqual(record2)
+  })
 })
 
 function mockDiscoveryOutput(blockNumber: number): DiscoveryOutput {
