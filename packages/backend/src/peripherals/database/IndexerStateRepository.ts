@@ -1,5 +1,5 @@
 import { Logger } from '@l2beat/backend-tools'
-import { ChainId } from '@lz/libs'
+import { ChainId, Hash256 } from '@lz/libs'
 import type { IndexerStateRow } from 'knex/types/tables'
 
 import { BaseRepository, CheckConvention } from './shared/BaseRepository'
@@ -9,6 +9,7 @@ export interface IndexerStateRecord {
   id: string // TODO: Maybe branded string?
   height: number
   chainId: ChainId
+  configHash?: Hash256
 }
 
 export class IndexerStateRepository extends BaseRepository {
@@ -57,6 +58,7 @@ function toRow(record: IndexerStateRecord): IndexerStateRow {
     height: record.height,
     last_updated: new Date(),
     chain_id: Number(record.chainId),
+    config_hash: record.configHash?.toString(),
   }
 }
 
@@ -65,5 +67,6 @@ function toRecord(row: IndexerStateRow): IndexerStateRecord {
     id: row.id,
     height: row.height,
     chainId: ChainId(row.chain_id),
+    configHash: row.config_hash ? Hash256(row.config_hash) : undefined,
   }
 }

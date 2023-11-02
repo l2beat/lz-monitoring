@@ -13,9 +13,7 @@ const addresses = {
 
 const baseRawConfig = createConfigFromTemplate({
   chain: ChainId.BASE,
-  initialAddresses: [
-    '0x38dE71124f7a447a01D67945a51eDcE9FF491251', // UltraLightNodeV2
-  ],
+  initialAddresses: [addresses.endpoint, addresses.ultraLightNodeV2],
   addresses,
 })
 
