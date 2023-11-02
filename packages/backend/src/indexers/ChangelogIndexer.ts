@@ -28,13 +28,6 @@ export class ChangelogIndexer extends ChildIndexer {
   }
 
   override async update(from: number, to: number): Promise<number> {
-    // Issues is that we might skip discoveries here
-    /**
-     * @FIXME
-     *     ______________ we are here and we need D1 even tough it is out of bounds
-     * D1 | D2 | D3 | D4 |
-     */
-
     const fromBlockRecord = await this.blockNumberRepository.findAtOrBefore(
       new UnixTime(from),
       this.chainId,
@@ -82,6 +75,7 @@ export class ChangelogIndexer extends ChildIndexer {
         getDiscoveryChanges(previousOutput, currentOutput),
     )
 
+    // FIXME: Fix this mess
     const flatEntries = changelogEntries
       .map(flatGroups)
       .map((c) => c.changelog)
