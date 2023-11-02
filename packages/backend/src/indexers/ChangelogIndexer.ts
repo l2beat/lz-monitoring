@@ -1,4 +1,4 @@
-import { Logger } from '@l2beat/backend-tools'
+import { assert, Logger } from '@l2beat/backend-tools'
 import { ChildIndexer } from '@l2beat/uif'
 import { ChainId, UnixTime } from '@lz/libs'
 
@@ -8,7 +8,7 @@ import { DiscoveryRepository } from '../peripherals/database/DiscoveryRepository
 import { IndexerStateRepository } from '../peripherals/database/IndexerStateRepository'
 import { MilestoneRepository } from '../peripherals/database/MilestoneRepository'
 import { getDiscoveryChanges } from '../tools/changelog/diff'
-import { ChangelogEntry } from '../tools/changelog/types'
+import { ChangelogEntry, MilestoneEntry } from '../tools/changelog/types'
 import { DiscoveryIndexer } from './DiscoveryIndexer'
 
 export class ChangelogIndexer extends ChildIndexer {
@@ -34,9 +34,24 @@ export class ChangelogIndexer extends ChildIndexer {
      *     ______________ we are here and we need D1 even tough it is out of bounds
      * D1 | D2 | D3 | D4 |
      */
+
+    const fromBlockRecord = await this.blockNumberRepository.findAtOrBefore(
+      new UnixTime(from),
+      this.chainId,
+    )
+    const fromBlockNumber = fromBlockRecord?.blockNumber ?? 0
+
+    const toBlockRecord = await this.blockNumberRepository.findAtOrBefore(
+      new UnixTime(to),
+      this.chainId,
+    )
+    assert(toBlockRecord, 'toBlockNumber not found')
+
+    const toBlockNumber = toBlockRecord.blockNumber
+
     const discovery = await this.discoveryRepository.getSortedInRange(
-      from,
-      to,
+      fromBlockNumber,
+      toBlockNumber,
       this.chainId,
     )
 
@@ -45,19 +60,35 @@ export class ChangelogIndexer extends ChildIndexer {
       return to
     }
 
-    const comparablePairs = createComparablePairs(
-      discovery.map((d) => d.discoveryOutput),
+    const referenceDiscovery = await this.discoveryRepository.findAtOrBefore(
+      fromBlockNumber - 1, // To catch previous one
+      this.chainId,
     )
+
+    assert(
+      referenceDiscovery,
+      'referenceDiscovery not found despite further discoveries being present',
+    )
+
+    const discoveries = [
+      referenceDiscovery.discoveryOutput,
+      ...discovery.map((d) => d.discoveryOutput),
+    ]
+
+    const comparablePairs = createComparablePairs(discoveries)
 
     const changelogEntries = comparablePairs.map(
       ([previousOutput, currentOutput]) =>
         getDiscoveryChanges(previousOutput, currentOutput),
     )
 
-    const flatEntries = changelogEntries.map(flatGroups).flat()
-
+    const flatEntries = changelogEntries
+      .map(flatGroups)
+      .map((c) => c.changelog)
+      .flat()
     const flatMilestones = changelogEntries
-      .map((e) => [e.milestones.added, e.milestones.removed].flat())
+      .map(flatGroups)
+      .map((c) => c.milestones)
       .flat()
 
     await this.changelogRepository.addMany(flatEntries)
@@ -74,6 +105,7 @@ export class ChangelogIndexer extends ChildIndexer {
     const blockNumber = blockRecord?.blockNumber ?? 0
 
     await this.changelogRepository.deleteAfter(blockNumber, this.chainId)
+    await this.milestoneRepository.deleteAfter(blockNumber, this.chainId)
 
     return targetHeight
   }
@@ -112,12 +144,23 @@ function createComparablePairs<T>(outputs: T[]): [T, T][] {
   return pairs
 }
 
-function flatGroups(
-  groups: ReturnType<typeof getDiscoveryChanges>,
-): ChangelogEntry[] {
-  return [groups.added, groups.modified, groups.removed].reduce(
-    (acc, group) => {
-      return acc.concat(group)
-    },
-  )
+function flatGroups(groups: ReturnType<typeof getDiscoveryChanges>): {
+  changelog: ChangelogEntry[]
+  milestones: MilestoneEntry[]
+} {
+  const flatChangelogEntries = [
+    groups.added,
+    groups.modified,
+    groups.removed,
+  ].flat()
+
+  const flatMilestoneEntries = [
+    groups.milestones.added,
+    groups.milestones.removed,
+  ].flat()
+
+  return {
+    changelog: flatChangelogEntries,
+    milestones: flatMilestoneEntries,
+  }
 }
