@@ -13,9 +13,7 @@ const addresses = {
 
 const polygonZkEvmRawConfig = createConfigFromTemplate({
   chain: ChainId.POLYGON_ZKEVM,
-  initialAddresses: [
-    '0xFe7C30860D01e28371D40434806F4A8fcDD3A098', // UltraLightNodeV2
-  ],
+  initialAddresses: [addresses.endpoint, addresses.ultraLightNodeV2],
   addresses,
 })
 

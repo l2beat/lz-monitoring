@@ -13,9 +13,7 @@ const addresses = {
 
 const lineaRawConfig = createConfigFromTemplate({
   chain: ChainId.LINEA,
-  initialAddresses: [
-    '0x38de71124f7a447a01d67945a51edce9ff491251', // UltraLightNodeV2
-  ],
+  initialAddresses: [addresses.endpoint, addresses.ultraLightNodeV2],
   addresses,
 })
 

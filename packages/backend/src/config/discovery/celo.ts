@@ -13,9 +13,7 @@ const addresses = {
 
 const celoRawConfig = createConfigFromTemplate({
   chain: ChainId.CELO,
-  initialAddresses: [
-    '0x377530cdA84DFb2673bF4d145DCF0C4D7fdcB5b6', // UltraLightNodeV2
-  ],
+  initialAddresses: [addresses.endpoint, addresses.ultraLightNodeV2],
   addresses,
 })
 
