@@ -33,9 +33,9 @@ describe(MilestoneRepository.name, () => {
     it('adds many records', async () => {
       await repository.addMany([record1, record2])
 
-      const actual = await repository.getAll()
+      const result = await repository.getAll()
 
-      expect(actual).toEqual([record1, record2])
+      expect(result).toEqual([record1, record2])
     })
   })
 
@@ -44,9 +44,9 @@ describe(MilestoneRepository.name, () => {
       await repository.addMany([record1, record2])
       await repository.deleteAll()
 
-      const actual = await repository.getAll()
+      const result = await repository.getAll()
 
-      expect(actual).toEqual([])
+      expect(result).toEqual([])
     })
   })
 
@@ -55,9 +55,9 @@ describe(MilestoneRepository.name, () => {
       await repository.addMany([record1, record2])
       await repository.deleteAfter(1000, chainId)
 
-      const actual = await repository.getAll()
+      const result = await repository.getAll()
 
-      expect(actual).toEqual([record1])
+      expect(result).toEqual([record1])
     })
   })
 })
