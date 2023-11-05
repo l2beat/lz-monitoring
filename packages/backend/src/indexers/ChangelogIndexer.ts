@@ -7,7 +7,10 @@ import { ChangelogRepository } from '../peripherals/database/ChangelogRepository
 import { DiscoveryRepository } from '../peripherals/database/DiscoveryRepository'
 import { IndexerStateRepository } from '../peripherals/database/IndexerStateRepository'
 import { MilestoneRepository } from '../peripherals/database/MilestoneRepository'
-import { getDiscoveryChanges } from '../tools/changelog/changes'
+import {
+  getComparableGenesisReference,
+  getDiscoveryChanges,
+} from '../tools/changelog/changes'
 import {
   applyChangelogWhitelist,
   createComparablePairs,
@@ -61,18 +64,11 @@ export class ChangelogIndexer extends ChildIndexer {
     // we don't have a previous discovery as a reference
     const referenceDiscovery =
       fromBlockNumber === 0
-        ? null
+        ? { discoveryOutput: getComparableGenesisReference(this.chainId) }
         : await this.discoveryRepository.findAtOrBefore(
             fromBlockNumber,
             this.chainId,
           )
-
-    if (fromBlockNumber !== 0) {
-      assert(
-        referenceDiscovery !== null,
-        'referenceDiscovery not found despite further discoveries being present',
-      )
-    }
 
     const presentOutputs = discovery.map((d) => d.discoveryOutput)
 
