@@ -8,7 +8,10 @@ import { DiscoveryRepository } from '../peripherals/database/DiscoveryRepository
 import { IndexerStateRepository } from '../peripherals/database/IndexerStateRepository'
 import { MilestoneRepository } from '../peripherals/database/MilestoneRepository'
 import { getDiscoveryChanges } from '../tools/changelog/changes'
-import { ChangelogEntry, MilestoneEntry } from '../tools/changelog/types'
+import {
+  createComparablePairs,
+  flattenChanges,
+} from '../tools/changelog/mappers'
 import { DiscoveryIndexer } from './DiscoveryIndexer'
 
 export class ChangelogIndexer extends ChildIndexer {
@@ -53,7 +56,8 @@ export class ChangelogIndexer extends ChildIndexer {
       return to
     }
 
-    // FIX THIS STUFF
+    // If we start from the very beginning,
+    // we don't have a previous discovery as a reference
     const referenceDiscovery =
       fromBlockNumber === 0
         ? null
@@ -69,31 +73,23 @@ export class ChangelogIndexer extends ChildIndexer {
       )
     }
 
-    const discoveries = [
-      [referenceDiscovery ? referenceDiscovery.discoveryOutput : []]
-        .flat()
-        .concat(discovery.map((d) => d.discoveryOutput)),
-    ].flat()
+    const presentOutputs = discovery.map((d) => d.discoveryOutput)
 
-    const comparablePairs = createComparablePairs(discoveries)
+    const outputsToCompare = referenceDiscovery
+      ? [referenceDiscovery.discoveryOutput, ...presentOutputs]
+      : presentOutputs
 
-    const changelogEntries = comparablePairs.map(
+    const outputPairs = createComparablePairs(outputsToCompare)
+
+    const changelogEntries = outputPairs.map(
       ([previousOutput, currentOutput]) =>
         getDiscoveryChanges(previousOutput, currentOutput),
     )
 
-    // FIXME: Fix this mess
-    const flatEntries = changelogEntries
-      .map(flatGroups)
-      .map((c) => c.changelog)
-      .flat()
-    const flatMilestones = changelogEntries
-      .map(flatGroups)
-      .map((c) => c.milestones)
-      .flat()
+    const flatEntries = flattenChanges(changelogEntries)
 
-    await this.changelogRepository.addMany(flatEntries)
-    await this.milestoneRepository.addMany(flatMilestones)
+    await this.changelogRepository.addMany(flatEntries.changelog)
+    await this.milestoneRepository.addMany(flatEntries.milestones)
 
     return to
   }
@@ -125,47 +121,5 @@ export class ChangelogIndexer extends ChildIndexer {
       chainId: this.chainId,
       height,
     })
-  }
-}
-
-/**
- * Convert outputs to comparable pairs
- * @code
- * ```ts
- * [D1,D2,D3,D4] -> [[D1,D2],[D2,D3],[D3,D4]]
- * ```
- */
-function createComparablePairs<T>(outputs: T[]): [T, T][] {
-  assert(outputs.length > 1, 'Not enough items to pair')
-
-  const pairs: [T, T][] = []
-
-  for (let i = 1; i < outputs.length; i++) {
-    assert(outputs[i - 1] && outputs[i], 'Invalid outputs given to pair')
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    pairs.push([outputs[i - 1]!, outputs[i]!])
-  }
-
-  return pairs
-}
-
-function flatGroups(groups: ReturnType<typeof getDiscoveryChanges>): {
-  changelog: ChangelogEntry[]
-  milestones: MilestoneEntry[]
-} {
-  const flatChangelogEntries = [
-    groups.properties.added,
-    groups.properties.modified,
-    groups.properties.removed,
-  ].flat()
-
-  const flatMilestoneEntries = [
-    groups.milestones.added,
-    groups.milestones.removed,
-  ].flat()
-
-  return {
-    changelog: flatChangelogEntries,
-    milestones: flatMilestoneEntries,
   }
 }
