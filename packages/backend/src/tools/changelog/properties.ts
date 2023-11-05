@@ -59,14 +59,9 @@ function getChangedProperties(
 
   const modifiedProperties = contracts.modified.flatMap(
     ([previousContract, currentContract]) => {
-      // FIXME: Double check
-      if (!previousContract.values || !currentContract.values) {
-        return []
-      }
-
       const fieldDifferences = diffContractValues(
-        previousContract.values,
-        currentContract.values,
+        previousContract.values ?? {},
+        currentContract.values ?? {},
       )
 
       if (fieldDifferences.length === 0) {
