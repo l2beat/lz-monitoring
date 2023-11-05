@@ -1,9 +1,13 @@
 import { DiscoveryConfig } from '@l2beat/discovery'
 import { ChainId } from '@lz/libs'
 
-import { createConfigFromTemplate, getEventsToWatch } from '../discoveryConfig'
+import {
+  createConfigFromTemplate,
+  getEventsToWatch,
+  toEthereumAddresses,
+} from '../discoveryConfig'
 
-export { lineaDiscoveryConfig, lineaEventsToWatch }
+export { lineaChangelogWhitelist, lineaDiscoveryConfig, lineaEventsToWatch }
 
 const addresses = {
   ultraLightNodeV2: '0x38de71124f7a447a01d67945a51edce9ff491251',
@@ -19,3 +23,7 @@ const lineaRawConfig = createConfigFromTemplate({
 
 const lineaDiscoveryConfig = new DiscoveryConfig(lineaRawConfig)
 const lineaEventsToWatch = getEventsToWatch(addresses)
+const lineaChangelogWhitelist = toEthereumAddresses([
+  addresses.ultraLightNodeV2,
+  addresses.endpoint,
+])

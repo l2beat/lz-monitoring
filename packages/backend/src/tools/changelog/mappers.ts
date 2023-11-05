@@ -1,9 +1,11 @@
 import { assert } from '@l2beat/backend-tools'
+import { DiscoveryOutput } from '@l2beat/discovery-types'
+import { EthereumAddress } from '@lz/libs'
 
 import { getDiscoveryChanges } from './changes'
 import { ChangelogEntry, MilestoneEntry } from './types'
 
-export { createComparablePairs, flattenChanges }
+export { applyChangelogWhitelist, createComparablePairs, flattenChanges }
 /**
  * Convert outputs to comparable pairs
  * @code
@@ -26,7 +28,7 @@ function createComparablePairs<T>(outputs: T[]): [T, T][] {
 }
 
 function flattenChanges(groups: ReturnType<typeof getDiscoveryChanges>[]): {
-  changelog: ChangelogEntry[]
+  properties: ChangelogEntry[]
   milestones: MilestoneEntry[]
 } {
   const flattenProperties = groups
@@ -42,7 +44,21 @@ function flattenChanges(groups: ReturnType<typeof getDiscoveryChanges>[]): {
     }, [])
 
   return {
-    changelog: flattenProperties,
+    properties: flattenProperties,
     milestones: flattenMilestones,
+  }
+}
+
+function applyChangelogWhitelist(
+  output: DiscoveryOutput,
+  whitelist: EthereumAddress[],
+): DiscoveryOutput {
+  return {
+    ...output,
+    contracts: output.contracts.filter((contract) =>
+      whitelist.some(
+        (whitelistedAddress) => whitelistedAddress === contract.address,
+      ),
+    ),
   }
 }

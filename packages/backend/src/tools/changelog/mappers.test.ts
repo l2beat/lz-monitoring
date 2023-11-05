@@ -1,8 +1,13 @@
+import { ContractParameters, DiscoveryOutput } from '@l2beat/discovery-types'
 import { ChainId, EthereumAddress } from '@lz/libs'
 import { expect } from 'earl'
 
 import { getDiscoveryChanges } from './changes'
-import { createComparablePairs, flattenChanges } from './mappers'
+import {
+  applyChangelogWhitelist,
+  createComparablePairs,
+  flattenChanges,
+} from './mappers'
 import { ChangelogEntry, MilestoneEntry } from './types'
 
 describe(createComparablePairs.name, () => {
@@ -73,7 +78,7 @@ describe(flattenChanges.name, () => {
 
     const result = flattenChanges(input)
 
-    expect(result.changelog).toEqual([
+    expect(result.properties).toEqual([
       mockProperty1,
       mockProperty2,
       mockProperty3,
@@ -88,6 +93,43 @@ describe(flattenChanges.name, () => {
       mockMilestone3,
       mockMilestone4,
     ])
+  })
+})
+
+describe(applyChangelogWhitelist.name, () => {
+  it('returns output with only whitelisted contracts', () => {
+    const contractA = {
+      name: 'Contract A',
+      address: EthereumAddress.random(),
+    } as ContractParameters
+
+    const contractB = {
+      name: 'Contract B',
+      address: EthereumAddress.random(),
+    } as ContractParameters
+
+    const contractC = {
+      name: 'Contract C',
+      address: EthereumAddress.random(),
+    } as ContractParameters
+
+    const output = {
+      name: 'Test',
+      chain: 'ETHEREUM',
+      blockNumber: 1,
+      contracts: [contractA, contractB, contractC],
+    } as DiscoveryOutput
+
+    const whitelist = [contractA.address, contractB.address]
+
+    const result = applyChangelogWhitelist(output, whitelist)
+
+    const { contracts: whitelistedContracts, ...resultWithNoContracts } = result
+    const { contracts: _, ...outputWithNoContracts } = output
+
+    expect(whitelistedContracts).toEqual([contractA, contractB])
+    // Config remains the same
+    expect(resultWithNoContracts).toEqual(outputWithNoContracts)
   })
 })
 

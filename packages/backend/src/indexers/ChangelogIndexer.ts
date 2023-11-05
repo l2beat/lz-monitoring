@@ -1,6 +1,6 @@
 import { assert, Logger } from '@l2beat/backend-tools'
 import { ChildIndexer } from '@l2beat/uif'
-import { ChainId, UnixTime } from '@lz/libs'
+import { ChainId, EthereumAddress, UnixTime } from '@lz/libs'
 
 import { BlockNumberRepository } from '../peripherals/database/BlockNumberRepository'
 import { ChangelogRepository } from '../peripherals/database/ChangelogRepository'
@@ -9,6 +9,7 @@ import { IndexerStateRepository } from '../peripherals/database/IndexerStateRepo
 import { MilestoneRepository } from '../peripherals/database/MilestoneRepository'
 import { getDiscoveryChanges } from '../tools/changelog/changes'
 import {
+  applyChangelogWhitelist,
   createComparablePairs,
   flattenChanges,
 } from '../tools/changelog/mappers'
@@ -23,7 +24,7 @@ export class ChangelogIndexer extends ChildIndexer {
     private readonly indexerStateRepository: IndexerStateRepository,
     private readonly discoveryRepository: DiscoveryRepository,
     private readonly chainId: ChainId,
-
+    private readonly changelogWhitelist: EthereumAddress[],
     discoveryIndexer: DiscoveryIndexer,
     logger: Logger,
   ) {
@@ -79,17 +80,20 @@ export class ChangelogIndexer extends ChildIndexer {
       ? [referenceDiscovery.discoveryOutput, ...presentOutputs]
       : presentOutputs
 
-    const outputPairs = createComparablePairs(outputsToCompare)
-
-    const changelogEntries = outputPairs.map(
-      ([previousOutput, currentOutput]) =>
-        getDiscoveryChanges(previousOutput, currentOutput),
+    const whitelistedOutputs = outputsToCompare.map((output) =>
+      applyChangelogWhitelist(output, this.changelogWhitelist),
     )
 
-    const flatEntries = flattenChanges(changelogEntries)
+    const outputPairs = createComparablePairs(whitelistedOutputs)
 
-    await this.changelogRepository.addMany(flatEntries.changelog)
-    await this.milestoneRepository.addMany(flatEntries.milestones)
+    const changes = outputPairs.map(([previousOutput, currentOutput]) =>
+      getDiscoveryChanges(previousOutput, currentOutput),
+    )
+
+    const flatChanges = flattenChanges(changes)
+
+    await this.changelogRepository.addMany(flatChanges.properties)
+    await this.milestoneRepository.addMany(flatChanges.milestones)
 
     return to
   }

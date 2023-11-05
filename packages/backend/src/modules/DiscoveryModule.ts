@@ -12,7 +12,7 @@ import {
   RateLimitedProvider,
   SourceCodeService,
 } from '@l2beat/discovery'
-import { ChainId } from '@lz/libs'
+import { ChainId, EthereumAddress } from '@lz/libs'
 import { providers } from 'ethers'
 
 import { DiscoveryController } from '../api/controllers/discovery/DiscoveryController'
@@ -115,6 +115,7 @@ export function createDiscoveryModule({
       },
       chainName,
       config.discovery.callsPerMinute / enabledChainConfigs.length,
+      submoduleConfig.config.changelogWhitelist,
     )
   })
 
@@ -141,6 +142,7 @@ export function createDiscoverySubmodule(
   { logger, config, repositories }: DiscoverySubmoduleDependencies,
   chain: keyof Config['discovery']['modules'],
   callsPerMinute: number,
+  changelogWhitelist: EthereumAddress[],
 ): ApplicationModule {
   const chainId = ChainId.fromName(chain)
 
@@ -223,6 +225,7 @@ export function createDiscoverySubmodule(
     repositories.indexerState,
     repositories.discovery,
     chainId,
+    changelogWhitelist,
     discoveryIndexer,
     logger,
   )

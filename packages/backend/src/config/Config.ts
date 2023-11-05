@@ -4,6 +4,7 @@ import { DiscoveryConfig, MulticallConfig } from '@l2beat/discovery'
 import { EtherscanUnsupportedMethods } from '@l2beat/discovery/dist/utils/EtherscanLikeClient'
 // eslint-disable-next-line import/no-internal-modules
 import { UnixTime } from '@l2beat/discovery/dist/utils/UnixTime'
+import { EthereumAddress } from '@lz/libs'
 import { Knex } from 'knex'
 
 import { EventsToWatchConfig } from './discoveryConfig'
@@ -71,6 +72,7 @@ export interface EthereumLikeDiscoveryConfig {
   blockExplorerMinTimestamp: UnixTime
   discovery: DiscoveryConfig
   eventsToWatch: EventsToWatchConfig
+  changelogWhitelist: EthereumAddress[]
   multicall: MulticallConfig
   tickIntervalMs: number
   loggerEnabled?: boolean
