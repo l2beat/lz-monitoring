@@ -215,6 +215,12 @@ const cases: Case[] = [
       },
     ],
   },
+  {
+    desc: 'no contract values',
+    prev: undefined as any,
+    curr: undefined as any,
+    expected: [],
+  },
 ]
 
 describe(diffContractValues.name, () => {
