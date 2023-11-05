@@ -144,6 +144,9 @@ describe(getDiscoveryChanges.name, () => {
           '{"proofType":2,"adapterParams":"0x00010000000000000000000000000000000000000000000000000000000000030d48"}',
       },
     ])
+
+    expect(changelogEntries.milestones.added).toEqual([])
+    expect(changelogEntries.milestones.removed).toEqual([])
   })
 
   it('handles contract creation', () => {
@@ -208,6 +211,17 @@ describe(getDiscoveryChanges.name, () => {
         currentValue: 'false',
       },
     ])
+
+    expect(changelogEntries.milestones.removed).toEqual([])
+    expect(changelogEntries.milestones.added).toEqual([
+      {
+        targetName: currentEndpoint.name,
+        targetAddress: currentEndpoint.address,
+        blockNumber: currentOutput.blockNumber,
+        operation: 'CONTRACT_ADDED',
+        chainId: ChainId.ETHEREUM,
+      },
+    ])
   })
 
   it('handles contract removal', () => {
@@ -270,6 +284,17 @@ describe(getDiscoveryChanges.name, () => {
         parameterPath: ['isReceivingPayload'],
         previousValue: 'false',
         currentValue: null,
+      },
+    ])
+
+    expect(changelogEntries.milestones.added).toEqual([])
+    expect(changelogEntries.milestones.removed).toEqual([
+      {
+        targetName: previousEndpoint.name,
+        targetAddress: previousEndpoint.address,
+        blockNumber: currentOutput.blockNumber,
+        operation: 'CONTRACT_REMOVED',
+        chainId: ChainId.ETHEREUM,
       },
     ])
   })
@@ -388,6 +413,26 @@ describe(getDiscoveryChanges.name, () => {
         parameterPath: ['toBeAddedB'],
         previousValue: null,
         currentValue: '2',
+      },
+    ])
+
+    expect(changelogEntries.milestones.added).toEqual([
+      {
+        targetName: contractToBeAdded.name,
+        targetAddress: contractToBeAdded.address,
+        blockNumber: currentOutput.blockNumber,
+        operation: 'CONTRACT_ADDED',
+        chainId: ChainId.ETHEREUM,
+      },
+    ])
+
+    expect(changelogEntries.milestones.removed).toEqual([
+      {
+        targetName: contractToBeRemoved.name,
+        targetAddress: contractToBeRemoved.address,
+        blockNumber: currentOutput.blockNumber,
+        operation: 'CONTRACT_REMOVED',
+        chainId: ChainId.ETHEREUM,
       },
     ])
   })
