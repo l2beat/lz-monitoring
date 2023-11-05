@@ -6,6 +6,7 @@ import { getDiscoveryChanges } from './changes'
 import { ChangelogEntry, MilestoneEntry } from './types'
 
 export { applyChangelogWhitelist, createComparablePairs, flattenChanges }
+
 /**
  * Convert outputs to comparable pairs
  * @code
