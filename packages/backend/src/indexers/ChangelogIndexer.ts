@@ -7,7 +7,7 @@ import { ChangelogRepository } from '../peripherals/database/ChangelogRepository
 import { DiscoveryRepository } from '../peripherals/database/DiscoveryRepository'
 import { IndexerStateRepository } from '../peripherals/database/IndexerStateRepository'
 import { MilestoneRepository } from '../peripherals/database/MilestoneRepository'
-import { getDiscoveryChanges } from '../tools/changelog/diff'
+import { getDiscoveryChanges } from '../tools/changelog/changes'
 import { ChangelogEntry, MilestoneEntry } from '../tools/changelog/types'
 import { DiscoveryIndexer } from './DiscoveryIndexer'
 
@@ -53,20 +53,27 @@ export class ChangelogIndexer extends ChildIndexer {
       return to
     }
 
-    const referenceDiscovery = await this.discoveryRepository.findAtOrBefore(
-      fromBlockNumber - 1, // To catch previous one
-      this.chainId,
-    )
+    // FIX THIS STUFF
+    const referenceDiscovery =
+      fromBlockNumber === 0
+        ? null
+        : await this.discoveryRepository.findAtOrBefore(
+            fromBlockNumber,
+            this.chainId,
+          )
 
-    assert(
-      referenceDiscovery,
-      'referenceDiscovery not found despite further discoveries being present',
-    )
+    if (fromBlockNumber !== 0) {
+      assert(
+        referenceDiscovery !== null,
+        'referenceDiscovery not found despite further discoveries being present',
+      )
+    }
 
     const discoveries = [
-      referenceDiscovery.discoveryOutput,
-      ...discovery.map((d) => d.discoveryOutput),
-    ]
+      [referenceDiscovery ? referenceDiscovery.discoveryOutput : []]
+        .flat()
+        .concat(discovery.map((d) => d.discoveryOutput)),
+    ].flat()
 
     const comparablePairs = createComparablePairs(discoveries)
 

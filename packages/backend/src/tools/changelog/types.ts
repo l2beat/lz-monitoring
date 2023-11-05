@@ -1,11 +1,15 @@
+import { ContractParameters } from '@l2beat/discovery-types'
 import { ChainId, EthereumAddress } from '@lz/libs'
 
 export type {
   ChangelogEntry,
+  ContractPair,
   FieldDifference,
   MilestoneEntry,
   SmartContractOperation,
 }
+
+type ContractPair = [ContractParameters, ContractParameters]
 
 type FieldDifference =
   | ObjectPropertyAdded
