@@ -55,26 +55,31 @@ export class ChangelogIndexer extends ChildIndexer {
       this.chainId,
     )
 
-    if (discovery.length < 2) {
-      // 0 records or 1 record we can't compare to anything
+    // 0 records - we can't compare to anything
+    if (discovery.length === 0) {
       return to
     }
 
     // If we start from the very beginning,
     // we don't have a previous discovery as a reference
-    const referenceDiscovery =
+    const referenceDiscoveryOutput =
       fromBlockNumber === 0
-        ? { discoveryOutput: getComparableGenesisReference(this.chainId) }
-        : await this.discoveryRepository.findAtOrBefore(
-            fromBlockNumber,
-            this.chainId,
-          )
+        ? getComparableGenesisReference(this.chainId)
+        : (
+            await this.discoveryRepository.findAtOrBefore(
+              fromBlockNumber,
+              this.chainId,
+            )
+          )?.discoveryOutput
+
+    assert(
+      referenceDiscoveryOutput,
+      'Reference discovery not found for non-genesis comparison',
+    )
 
     const presentOutputs = discovery.map((d) => d.discoveryOutput)
 
-    const outputsToCompare = referenceDiscovery
-      ? [referenceDiscovery.discoveryOutput, ...presentOutputs]
-      : presentOutputs
+    const outputsToCompare = [referenceDiscoveryOutput, ...presentOutputs]
 
     const whitelistedOutputs = outputsToCompare.map((output) =>
       applyChangelogWhitelist(output, this.changelogWhitelist),
