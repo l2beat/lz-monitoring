@@ -69,18 +69,16 @@ describe(BlockNumberRepository.name, () => {
     expect(actual).toEqual([])
   })
 
-  it('deletes all records after a block timestamp', async () => {
+  it('deletes all records after a block number', async () => {
     const now = UnixTime.now()
     const range = new Array(10).fill(null).map((_, i) => i + 1)
     const records = range.map((r) => mockRecord(r, now))
     await repository.addMany(records)
 
-    await repository.deleteAfter(now.add(5, 'hours'), ChainId.ETHEREUM)
-
+    const deleteAfter = 5
+    await repository.deleteAfter(deleteAfter, ChainId.ETHEREUM)
     const actual = await repository.getAll()
-    expect(actual).toEqual(
-      records.filter((r) => r.timestamp.lte(now.add(5, 'hours'))),
-    )
+    expect(actual).toEqual(records.filter((r) => r.blockNumber <= deleteAfter))
   })
 
   it('gets by number', async () => {

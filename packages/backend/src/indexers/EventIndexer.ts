@@ -1,4 +1,4 @@
-import { assert, Logger } from '@l2beat/backend-tools'
+import { Logger } from '@l2beat/backend-tools'
 import { ChildIndexer } from '@l2beat/uif'
 import { ChainId, UnixTime } from '@lz/libs'
 
@@ -42,26 +42,16 @@ export class EventIndexer extends ChildIndexer {
     this.maxBlockBatchSize = opts.maxBlockBatchSize
   }
 
-  override async update(from: number, to: number): Promise<number> {
-    const fromBlockRecord = await this.blockNumberRepository.findAtOrBefore(
-      new UnixTime(from),
-      this.chainId,
-    )
-    const fromBlockNumber = fromBlockRecord
-      ? fromBlockRecord.blockNumber + 1
-      : this.startBlock
-    const toBlockRecord = await this.blockNumberRepository.findAtOrBefore(
-      new UnixTime(to),
-      this.chainId,
-    )
-    assert(toBlockRecord, 'toBlockNumber not found')
+  override async update(fromBlock: number, toBlock: number): Promise<number> {
+    const fromBlockNumber = fromBlock === 0 ? this.startBlock : fromBlock
+
     const updateTo = Math.min(
       fromBlockNumber + this.amtBatches * this.maxBlockBatchSize,
-      toBlockRecord.blockNumber,
+      toBlock,
     )
 
     const blocksToSave: BlockNumberRecord[] = []
-    if (updateTo !== toBlockRecord.blockNumber) {
+    if (updateTo !== toBlock) {
       const updateToBlock = await this.blockchainClient.getBlock(updateTo)
       blocksToSave.push({
         blockNumber: updateTo,
@@ -74,10 +64,7 @@ export class EventIndexer extends ChildIndexer {
     const calls = []
     let start = fromBlockNumber
     do {
-      const batchTo = Math.min(
-        start + this.maxBlockBatchSize,
-        toBlockRecord.blockNumber,
-      )
+      const batchTo = Math.min(start + this.maxBlockBatchSize, toBlock)
       calls.push({
         from: start,
         to: batchTo,
@@ -110,6 +97,7 @@ export class EventIndexer extends ChildIndexer {
         chainId: this.chainId,
         blockNumber,
       })
+      // saving all blocks with events is possibly not necessary
       const savedBlock = await this.blockNumberRepository.findByNumber(
         blockNumber,
         this.chainId,
@@ -136,19 +124,11 @@ export class EventIndexer extends ChildIndexer {
       await this.eventRepository.addMany(blocksWithEventsToSave)
     }
 
-    const updatedTo =
-      blocksToSave
-        .find((x) => x.blockNumber === updateTo)
-        ?.timestamp.toNumber() ?? to
-    return updatedTo
+    return updateTo
   }
 
   protected override async invalidate(targetHeight: number): Promise<number> {
-    const blockRecord = await this.blockNumberRepository.findAtOrBefore(
-      new UnixTime(targetHeight),
-      this.chainId,
-    )
-    const blockNumber = blockRecord?.blockNumber ?? this.startBlock
+    const blockNumber = Math.max(targetHeight, this.startBlock)
     await this.eventRepository.deleteAfter(blockNumber, this.chainId)
     return targetHeight
   }

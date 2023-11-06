@@ -1,9 +1,7 @@
 import { assert, Logger } from '@l2beat/backend-tools'
 import { ChainId } from '@l2beat/discovery'
 import { ChildIndexer } from '@l2beat/uif'
-import { UnixTime } from '@lz/libs'
 
-import { BlockNumberRepository } from '../peripherals/database/BlockNumberRepository'
 import { CurrentDiscoveryRepository } from '../peripherals/database/CurrentDiscoveryRepository'
 import { DiscoveryRepository } from '../peripherals/database/DiscoveryRepository'
 import { IndexerStateRepository } from '../peripherals/database/IndexerStateRepository'
@@ -13,7 +11,6 @@ export class CurrentDiscoveryIndexer extends ChildIndexer {
   readonly id = 'CurrentDiscoveryIndexer'
 
   constructor(
-    private readonly blockNumberRepository: BlockNumberRepository,
     private readonly discoveryRepository: DiscoveryRepository,
     private readonly currentDiscoveryRepository: CurrentDiscoveryRepository,
     private readonly indexerStateRepository: IndexerStateRepository,
@@ -24,33 +21,24 @@ export class CurrentDiscoveryIndexer extends ChildIndexer {
     super(logger.tag(ChainId.getName(chainId)), [discoveryIndexer])
   }
 
-  async update(_fromTimestamp: number, toTimestamp: number): Promise<number> {
-    const updatedTimestamp = await this.updateCurrentDiscovery(
-      new UnixTime(toTimestamp),
-    )
-    return updatedTimestamp.toNumber()
+  async update(_fromBlock: number, toBlock: number): Promise<number> {
+    const updatedBlock = await this.updateCurrentDiscovery(toBlock)
+    return updatedBlock
   }
 
-  async invalidate(targetTimestamp: number): Promise<number> {
-    if (targetTimestamp === 0) {
+  async invalidate(targetBlock: number): Promise<number> {
+    if (targetBlock === 0) {
       await this.currentDiscoveryRepository.deleteChain(this.chainId)
       return 0
     }
 
-    const updatedTimestamp = await this.updateCurrentDiscovery(
-      new UnixTime(targetTimestamp),
-    )
-    return updatedTimestamp.toNumber()
+    const updatedBlock = await this.updateCurrentDiscovery(targetBlock)
+    return updatedBlock
   }
 
-  private async updateCurrentDiscovery(timestamp: UnixTime): Promise<UnixTime> {
-    const blockRecord = await this.blockNumberRepository.findAtOrBefore(
-      timestamp,
-      this.chainId,
-    )
-    assert(blockRecord, 'No block number record found')
+  private async updateCurrentDiscovery(blockNumber: number): Promise<number> {
     const lastDiscovery = await this.discoveryRepository.findAtOrBefore(
-      blockRecord.blockNumber,
+      blockNumber,
       this.chainId,
     )
     assert(lastDiscovery, 'No discovery record found')
@@ -58,11 +46,11 @@ export class CurrentDiscoveryIndexer extends ChildIndexer {
       chainId: this.chainId,
       discoveryOutput: {
         ...lastDiscovery.discoveryOutput,
-        blockNumber: blockRecord.blockNumber,
+        blockNumber,
       },
     })
 
-    return timestamp
+    return blockNumber
   }
 
   async getSafeHeight(): Promise<number> {

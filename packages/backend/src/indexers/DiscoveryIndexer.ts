@@ -6,9 +6,8 @@ import {
 } from '@l2beat/discovery'
 import type { DiscoveryOutput } from '@l2beat/discovery-types'
 import { ChildIndexer } from '@l2beat/uif'
-import { ChainId, UnixTime } from '@lz/libs'
+import { ChainId } from '@lz/libs'
 
-import { BlockNumberRepository } from '../peripherals/database/BlockNumberRepository'
 import { DiscoveryRepository } from '../peripherals/database/DiscoveryRepository'
 import { EventRepository } from '../peripherals/database/EventRepository'
 import { IndexerStateRepository } from '../peripherals/database/IndexerStateRepository'
@@ -20,7 +19,6 @@ export class DiscoveryIndexer extends ChildIndexer {
   constructor(
     private readonly discoveryEngine: DiscoveryEngine,
     private readonly config: DiscoveryConfig,
-    private readonly blockNumberRepository: BlockNumberRepository,
     private readonly eventRepository: EventRepository,
     private readonly discoveryRepository: DiscoveryRepository,
     private readonly indexerStateRepository: IndexerStateRepository,
@@ -48,52 +46,21 @@ export class DiscoveryIndexer extends ChildIndexer {
     await super.start()
   }
 
-  async update(fromTimestamp: number, toTimestamp: number): Promise<number> {
-    const [fromBlock, toBlock] = await Promise.all([
-      this.blockNumberRepository.findAtOrBefore(
-        new UnixTime(fromTimestamp),
-        this.chainId,
-      ),
-      this.blockNumberRepository.findAtOrBefore(
-        new UnixTime(toTimestamp),
-        this.chainId,
-      ),
-    ])
-
-    assert(toBlock, 'No block found for toTimestamp')
-
+  async update(fromBlock: number, toBlock: number): Promise<number> {
     const blocksWithEvents = await this.eventRepository.getSortedInRange(
-      fromBlock?.blockNumber ?? 0,
-      toBlock.blockNumber,
+      fromBlock,
+      toBlock,
       this.chainId,
     )
     if (blocksWithEvents.length === 0) {
-      return toTimestamp
+      return toBlock
     }
 
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const firstBlock = blocksWithEvents[0]!
-    const updateTo = await this.blockNumberRepository.findByNumber(
-      firstBlock.blockNumber,
-      this.chainId,
-    )
-    assert(updateTo, 'No block found for updateTo')
     // we want to mark timestamp as safe and sometimes there is multiple blocks per timestamp (Arbitrum)
-    const blocksWithTimestamp = await this.blockNumberRepository.getByTimestamp(
-      updateTo.timestamp,
-      this.chainId,
-    )
-    const blocksToUpdate = blocksWithTimestamp.filter((block) =>
-      blocksWithEvents.find((x) => x.blockNumber === block.blockNumber),
-    )
-
-    await Promise.all(
-      blocksToUpdate.map(({ blockNumber }) =>
-        this.runAndSaveDiscovery(blockNumber),
-      ),
-    )
-
-    return updateTo.timestamp.toNumber()
+    await this.runAndSaveDiscovery(firstBlock.blockNumber)
+    return firstBlock.blockNumber
   }
 
   private async runAndSaveDiscovery(blockNumber: number): Promise<void> {
@@ -123,14 +90,9 @@ export class DiscoveryIndexer extends ChildIndexer {
     this.logger.info('Discovery finished', { blockNumber })
   }
 
-  override async invalidate(targetHeight: number): Promise<number> {
-    const invalidateToBlock = await this.blockNumberRepository.findAtOrBefore(
-      new UnixTime(targetHeight),
-      this.chainId,
-    )
-    const targetBlockNumber = invalidateToBlock?.blockNumber ?? 0
+  override async invalidate(targetBlockNumber: number): Promise<number> {
     await this.discoveryRepository.deleteAfter(targetBlockNumber, this.chainId)
-    return invalidateToBlock?.timestamp.toNumber() ?? 0
+    return targetBlockNumber
   }
 
   async getSafeHeight(): Promise<number> {

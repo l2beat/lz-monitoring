@@ -278,13 +278,12 @@ describe(EventIndexer.name, () => {
       ])
     })
 
-    it('does not go over to timestamp', async () => {
+    it('does not go over to block', async () => {
       const startBlock = 90
       const maxEventRange = 10
       const amtBatches = 10
       const toBlockNumber = 101
       const blockWithEvents = startBlock + 1
-      const toTimestamp = new UnixTime(toBlockNumber * 1000)
       const chainId = ChainId.ETHEREUM
       const address = EthereumAddress.random()
       const topics = [
@@ -308,8 +307,6 @@ describe(EventIndexer.name, () => {
         getLogsBatch: async () => [mockLog(blockWithEvents)],
       })
       const blockRepo = mockObject<BlockNumberRepository>({
-        findAtOrBefore: async (time) =>
-          time.equals(toTimestamp) ? mockBlock(toBlockNumber) : undefined,
         findByNumber: async () => undefined,
         addMany: async () => 0,
       })
@@ -335,7 +332,7 @@ describe(EventIndexer.name, () => {
         Logger.SILENT,
       )
 
-      await indexer.update(0, toTimestamp.toNumber())
+      await indexer.update(0, toBlockNumber)
       expect(blockchainClient.getLogsBatch).toHaveBeenCalledTimes(2)
       expect(blockchainClient.getLogsBatch).toHaveBeenNthCalledWith(
         1,
@@ -373,40 +370,6 @@ describe(EventIndexer.name, () => {
           chainId,
         },
       ])
-    })
-
-    it('should throw if no toBlockNumber', async () => {
-      const startBlock = 15
-      const chainId = ChainId.ETHEREUM
-      const address = EthereumAddress.random()
-      const eventsToWatch = [
-        {
-          address,
-          topics: [['event Transfer(address from, address to, uint256 value)']],
-        },
-      ]
-      const indexer = new EventIndexer(
-        mockObject<BlockchainClient>(),
-        mockObject<BlockNumberRepository>({
-          findAtOrBefore: async () => undefined,
-        }),
-        mockObject<EventRepository>(),
-        mockObject<IndexerStateRepository>(),
-        chainId,
-        eventsToWatch,
-        {
-          maxBlockBatchSize: 10,
-          startBlock,
-        },
-        mockObject<BlockNumberIndexer>({
-          subscribe: () => undefined,
-        }),
-        Logger.SILENT,
-      )
-
-      await expect(indexer.update(0, 100)).toBeRejectedWith(
-        'toBlockNumber not found',
-      )
     })
   })
 })

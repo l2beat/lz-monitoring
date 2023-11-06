@@ -3,14 +3,10 @@ import { DiscoveryConfig, DiscoveryEngine } from '@l2beat/discovery'
 import { ChainId, Hash256, UnixTime } from '@lz/libs'
 import { expect, mockObject } from 'earl'
 
-import {
-  BlockNumberRecord,
-  BlockNumberRepository,
-} from '../peripherals/database/BlockNumberRepository'
+import { BlockNumberRecord } from '../peripherals/database/BlockNumberRepository'
 import { DiscoveryRepository } from '../peripherals/database/DiscoveryRepository'
 import { EventRepository } from '../peripherals/database/EventRepository'
 import { IndexerStateRepository } from '../peripherals/database/IndexerStateRepository'
-import { mockBlockNumberRepository } from './BlockNumberIndexer.test'
 import { CacheInvalidationIndexer } from './CacheInvalidationIndexer'
 import { DiscoveryIndexer } from './DiscoveryIndexer'
 import { EventIndexer } from './EventIndexer'
@@ -34,7 +30,6 @@ describe(DiscoveryIndexer.name, () => {
       const oldDiscoveryIndexer = new DiscoveryIndexer(
         mockObject<DiscoveryEngine>(),
         oldConfig,
-        mockObject<BlockNumberRepository>(),
         mockObject<EventRepository>(),
         mockObject<DiscoveryRepository>(),
         indexerStateRepo,
@@ -54,7 +49,6 @@ describe(DiscoveryIndexer.name, () => {
       const newDiscoveryIndexer = new DiscoveryIndexer(
         mockObject<DiscoveryEngine>(),
         newConfig,
-        mockObject<BlockNumberRepository>(),
         mockObject<EventRepository>(),
         mockObject<DiscoveryRepository>(),
         indexerStateRepo,
@@ -90,11 +84,6 @@ describe(DiscoveryIndexer.name, () => {
       const discoveryEngine = mockObject<DiscoveryEngine>({
         discover: async () => [],
       })
-      const blockRepo = mockObject<BlockNumberRepository>({
-        findAtOrBefore: async () => BLOCK_100,
-        findByNumber: async () => BLOCK_100,
-        getByTimestamp: async () => [BLOCK_100],
-      })
       const eventRepo = mockObject<EventRepository>({
         getSortedInRange: async () => [
           {
@@ -111,7 +100,6 @@ describe(DiscoveryIndexer.name, () => {
       const discoveryIndexer = new DiscoveryIndexer(
         discoveryEngine,
         config,
-        blockRepo,
         eventRepo,
         discoveryRepository,
         mockObject<IndexerStateRepository>(),
@@ -126,13 +114,7 @@ describe(DiscoveryIndexer.name, () => {
       )
 
       expect(await discoveryIndexer.update(0, 2000)).toEqual(
-        BLOCK_100.timestamp.toNumber(),
-      )
-      expect(blockRepo.findByNumber).toHaveBeenCalledTimes(1)
-      expect(blockRepo.findByNumber).toHaveBeenNthCalledWith(
-        1,
         BLOCK_100.blockNumber,
-        chainId,
       )
       expect(discoveryEngine.discover).toHaveBeenCalledTimes(1)
       expect(discoveryEngine.discover).toHaveBeenNthCalledWith(
@@ -169,13 +151,9 @@ describe(DiscoveryIndexer.name, () => {
         add: async () => true,
       })
 
-      const disocoveryIndexer = new DiscoveryIndexer(
+      const discoveryIndexer = new DiscoveryIndexer(
         discoveryEngine,
         config,
-        mockObject<BlockNumberRepository>({
-          findAtOrBefore: async (timestamp: UnixTime) =>
-            mockBlock({ timestamp, blockNumber: timestamp.toNumber() / 1000 }),
-        }),
         eventRepo,
         discoveryRepository,
         mockObject<IndexerStateRepository>(),
@@ -189,71 +167,16 @@ describe(DiscoveryIndexer.name, () => {
         }),
       )
 
-      expect(await disocoveryIndexer.update(1000, 2000)).toEqual(2000)
+      expect(await discoveryIndexer.update(1000, 2000)).toEqual(2000)
       expect(discoveryEngine.discover).toHaveBeenCalledTimes(0)
       expect(discoveryRepository.add).not.toHaveBeenCalled()
       expect(eventRepo.getSortedInRange).toHaveBeenCalledTimes(1)
       expect(eventRepo.getSortedInRange).toHaveBeenNthCalledWith(
         1,
-        1,
-        2,
+        1000,
+        2000,
         chainId,
       )
-    })
-
-    it('should run discovery multiple times if multiple blocks with the same timestamp', async () => {
-      const config = mockConfig()
-      const chainId = ChainId.ETHEREUM
-      const BLOCKS = [
-        mockBlock({ blockNumber: 1, timestamp: new UnixTime(1000) }),
-        mockBlock({ blockNumber: 2, timestamp: new UnixTime(1000) }),
-        mockBlock({ blockNumber: 3, timestamp: new UnixTime(2000) }),
-      ] as const
-      const fakeBlockRepo = mockBlockNumberRepository([...BLOCKS])
-      const discoveryEngine = mockObject<DiscoveryEngine>({
-        discover: async () => [],
-      })
-      const eventRepo = mockObject<EventRepository>({
-        getSortedInRange: async () =>
-          BLOCKS.map((x) => ({
-            chainId: x.chainId,
-            blockNumber: x.blockNumber,
-          })),
-      })
-      const discoveryRepo = mockObject<DiscoveryRepository>({
-        add: async () => true,
-      })
-
-      const discoveryIndexer = new DiscoveryIndexer(
-        discoveryEngine,
-        config,
-        fakeBlockRepo,
-        eventRepo,
-        discoveryRepo,
-        mockObject<IndexerStateRepository>(),
-        chainId,
-        Logger.SILENT,
-        mockObject<CacheInvalidationIndexer>({
-          subscribe: () => {},
-        }),
-        mockObject<EventIndexer>({
-          subscribe: () => {},
-        }),
-      )
-
-      expect(await discoveryIndexer.update(1000, 2000)).toEqual(1000)
-      expect(discoveryEngine.discover).toHaveBeenCalledTimes(2)
-      expect(discoveryEngine.discover).toHaveBeenNthCalledWith(
-        1,
-        config,
-        BLOCKS[0].blockNumber,
-      )
-      expect(discoveryEngine.discover).toHaveBeenNthCalledWith(
-        2,
-        config,
-        BLOCKS[1].blockNumber,
-      )
-      expect(discoveryRepo.add).toHaveBeenCalledTimes(2)
     })
   })
 
@@ -267,14 +190,10 @@ describe(DiscoveryIndexer.name, () => {
       const discoveryRepository = mockObject<DiscoveryRepository>({
         deleteAfter: async () => 1,
       })
-      const BLOCK_10 = mockBlock({ blockNumber: 10 })
 
       const discoveryIndexer = new DiscoveryIndexer(
         discoveryEngine,
         config,
-        mockObject<BlockNumberRepository>({
-          findAtOrBefore: async () => BLOCK_10,
-        }),
         mockObject<EventRepository>(),
         discoveryRepository,
         mockObject<IndexerStateRepository>(),
@@ -287,15 +206,15 @@ describe(DiscoveryIndexer.name, () => {
           subscribe: () => {},
         }),
       )
-
-      expect(await discoveryIndexer.invalidate(1000)).toEqual(
-        BLOCK_10.timestamp.toNumber(),
+      const invalidateTo = 1000
+      expect(await discoveryIndexer.invalidate(invalidateTo)).toEqual(
+        invalidateTo,
       )
       expect(discoveryEngine.discover).toHaveBeenCalledTimes(0)
       expect(discoveryRepository.deleteAfter).toHaveBeenCalledTimes(1)
       expect(discoveryRepository.deleteAfter).toHaveBeenNthCalledWith(
         1,
-        BLOCK_10.blockNumber,
+        invalidateTo,
         chainId,
       )
     })
@@ -304,9 +223,6 @@ describe(DiscoveryIndexer.name, () => {
       const discoveryIndexer = new DiscoveryIndexer(
         mockObject<DiscoveryEngine>(),
         mockConfig(),
-        mockObject<BlockNumberRepository>({
-          findAtOrBefore: async () => undefined,
-        }),
         mockObject<EventRepository>(),
         mockObject<DiscoveryRepository>({
           deleteAfter: async () => 1,
@@ -338,7 +254,6 @@ describe(DiscoveryIndexer.name, () => {
       const discoveryIndexer = new DiscoveryIndexer(
         mockObject<DiscoveryEngine>(),
         config,
-        mockObject<BlockNumberRepository>(),
         mockObject<EventRepository>(),
         mockObject<DiscoveryRepository>(),
         indexerStateRepo,

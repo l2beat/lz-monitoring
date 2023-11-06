@@ -1,5 +1,5 @@
 import { Logger } from '@l2beat/backend-tools'
-import { ChainId } from '@lz/libs'
+import { ChainId, Hash256 } from '@lz/libs'
 import { expect } from 'earl'
 
 import { setupDatabaseTestSuite } from '../../test/database'
@@ -18,6 +18,7 @@ describe(IndexerStateRepository.name, () => {
       id: 'id',
       height: 1,
       chainId,
+      configHash: Hash256.random(),
     }
 
     await repository.addOrUpdate(record)
@@ -32,6 +33,7 @@ describe(IndexerStateRepository.name, () => {
       id: 'id',
       height: 1,
       chainId,
+      configHash: Hash256.random(),
     }
 
     await repository.addOrUpdate(record)
@@ -47,12 +49,14 @@ describe(IndexerStateRepository.name, () => {
       id: 'id',
       height: 1,
       chainId,
+      configHash: Hash256.random(),
     }
 
     const record2 = {
       id: 'id2',
       height: 2,
       chainId,
+      configHash: Hash256.random(),
     }
 
     await repository.addOrUpdate(record)
@@ -61,6 +65,26 @@ describe(IndexerStateRepository.name, () => {
     const actual = await repository.findById('id2', chainId)
 
     expect(actual).toEqual(record2)
+  })
+
+  it('updates config hash', async () => {
+    const record = {
+      id: 'id',
+      height: 1,
+      chainId,
+      configHash: Hash256.random(),
+    }
+
+    const record2 = {
+      ...record,
+      configHash: Hash256.random(),
+    }
+
+    await repository.addOrUpdate(record)
+    await repository.addOrUpdate(record2)
+
+    const actual = await repository.getAll()
+    expect(actual).toEqual([record2])
   })
 
   it('delete all records', async () => {

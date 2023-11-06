@@ -1,8 +1,7 @@
-import { assert, Logger } from '@l2beat/backend-tools'
+import { Logger } from '@l2beat/backend-tools'
 import { ChildIndexer } from '@l2beat/uif'
-import { ChainId, UnixTime } from '@lz/libs'
+import { ChainId } from '@lz/libs'
 
-import { BlockNumberRepository } from '../peripherals/database/BlockNumberRepository'
 import { IndexerStateRepository } from '../peripherals/database/IndexerStateRepository'
 import { ProviderCacheRepository } from '../peripherals/database/ProviderCacheRepository'
 import { BlockNumberIndexer } from './BlockNumberIndexer'
@@ -10,7 +9,6 @@ import { BlockNumberIndexer } from './BlockNumberIndexer'
 export class CacheInvalidationIndexer extends ChildIndexer {
   private readonly id = 'CacheInvalidationIndexer'
   constructor(
-    private readonly blockNumberRepository: BlockNumberRepository,
     private readonly cacheRepository: ProviderCacheRepository,
     private readonly indexerStateRepository: IndexerStateRepository,
     private readonly chainId: ChainId,
@@ -20,9 +18,9 @@ export class CacheInvalidationIndexer extends ChildIndexer {
     super(logger.tag(ChainId.getName(chainId)), [blockNumberIndexer])
   }
 
-  async update(_fromTimestamp: number, toTimestamp: number): Promise<number> {
+  async update(_fromBlock: number, toBlock: number): Promise<number> {
     // NOOP
-    return Promise.resolve(toTimestamp)
+    return Promise.resolve(toBlock)
   }
 
   override async invalidate(targetHeight: number): Promise<number> {
@@ -33,21 +31,7 @@ export class CacheInvalidationIndexer extends ChildIndexer {
       return targetHeight
     }
 
-    const blockRecord = await this.blockNumberRepository.findAtOrBefore(
-      new UnixTime(targetHeight),
-      this.chainId,
-    )
-
-    // Maybe we should do a full cache wipe? This should never happen provided indexers were
-    // running for some time and the database is not empty.
-    // If this happens, we are probably at the very beginning or have data integrity issues
-    assert(blockRecord, 'Referenced block not found')
-
-    await this.cacheRepository.deleteAfter(
-      blockRecord.blockNumber,
-      this.chainId,
-    )
-
+    await this.cacheRepository.deleteAfter(targetHeight, this.chainId)
     return targetHeight
   }
 

@@ -1,8 +1,11 @@
 import { Logger } from '@l2beat/backend-tools'
 import { RootIndexer } from '@l2beat/uif'
 
-export class ClockIndexer extends RootIndexer {
+import { BlockchainClient } from '../peripherals/clients/BlockchainClient'
+
+export class LatestBlockNumberIndexer extends RootIndexer {
   constructor(
+    private readonly blockchainClient: BlockchainClient,
     logger: Logger,
     private readonly tickInterval: number,
   ) {
@@ -14,11 +17,8 @@ export class ClockIndexer extends RootIndexer {
     setInterval(() => this.requestTick(), this.tickInterval)
   }
 
-  tick(): Promise<number> {
-    return Promise.resolve(getTimeSeconds())
+  async tick(): Promise<number> {
+    const block = await this.blockchainClient.getBlock('latest')
+    return block.number
   }
-}
-
-function getTimeSeconds(): number {
-  return Math.floor(Date.now() / 1000)
 }

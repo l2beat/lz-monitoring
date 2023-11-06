@@ -47,7 +47,9 @@ export class BlockchainClient {
     return getBlockNumberAtOrBefore(timestamp, start, end, getBlockTimestamp)
   }
 
-  async getBlock(blockId: number | Hash256): Promise<BlockFromClient> {
+  async getBlock(
+    blockId: number | Hash256 | 'latest',
+  ): Promise<BlockFromClient> {
     const blockTag = typeof blockId === 'number' ? blockId : blockId.toString()
     const block = await this.provider.getBlock(blockTag)
     assert(block, `Block not found for given number: ${blockTag}`)

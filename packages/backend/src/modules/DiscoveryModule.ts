@@ -21,10 +21,10 @@ import { Config } from '../config'
 import { AvailableConfigs, EthereumLikeDiscoveryConfig } from '../config/Config'
 import { BlockNumberIndexer } from '../indexers/BlockNumberIndexer'
 import { CacheInvalidationIndexer } from '../indexers/CacheInvalidationIndexer'
-import { ClockIndexer } from '../indexers/ClockIndexer'
 import { CurrentDiscoveryIndexer } from '../indexers/CurrentDiscoveryIndexer'
 import { DiscoveryIndexer } from '../indexers/DiscoveryIndexer'
 import { EventIndexer } from '../indexers/EventIndexer'
+import { LatestBlockNumberIndexer } from '../indexers/LatestBlockNumberIndexer'
 import { BlockchainClient } from '../peripherals/clients/BlockchainClient'
 import { ProviderCache } from '../peripherals/clients/ProviderCache'
 import { BlockNumberRepository } from '../peripherals/database/BlockNumberRepository'
@@ -47,7 +47,6 @@ interface DiscoverySubmoduleDependencies {
     providerCache: ProviderCacheRepository
     events: EventRepository
   }
-  clockIndexer: ClockIndexer
 }
 
 interface DiscoveryModuleDependencies {
@@ -76,11 +75,6 @@ export function createDiscoveryModule({
     Logger.SILENT,
   )
 
-  const clockIndexer = new ClockIndexer(
-    logger,
-    config.discovery.clock.tickIntervalMs,
-  )
-
   const availableChainConfigs = Object.keys(
     config.discovery.modules,
   ) as AvailableConfigs[]
@@ -100,7 +94,6 @@ export function createDiscoveryModule({
     return createDiscoverySubmodule(
       {
         logger,
-        clockIndexer,
         repositories: {
           blockNumber: blockRepository,
           indexerState: indexerRepository,
@@ -126,8 +119,6 @@ export function createDiscoveryModule({
     start: async () => {
       statusLogger.info('Starting discovery module')
 
-      await clockIndexer.start()
-
       for (const submodule of submodules) {
         await submodule.start?.()
       }
@@ -138,12 +129,7 @@ export function createDiscoveryModule({
 }
 
 export function createDiscoverySubmodule(
-  {
-    logger,
-    config,
-    repositories,
-    clockIndexer,
-  }: DiscoverySubmoduleDependencies,
+  { logger, config, repositories }: DiscoverySubmoduleDependencies,
   chain: keyof Config['discovery']['modules'],
   callsPerMinute: number,
 ): ApplicationModule {
@@ -160,18 +146,23 @@ export function createDiscoverySubmodule(
     chainId,
   )
 
+  const latestBlockNumberIndexer = new LatestBlockNumberIndexer(
+    blockchainClient,
+    logger,
+    config.tickIntervalMs,
+  )
+
   const blockNumberIndexer = new BlockNumberIndexer(
     blockchainClient,
     repositories.blockNumber,
     repositories.indexerState,
     config.startBlock,
     chainId,
-    clockIndexer,
+    latestBlockNumberIndexer,
     logger,
   )
 
   const cacheInvalidationIndexer = new CacheInvalidationIndexer(
-    repositories.blockNumber,
     repositories.providerCache,
     repositories.indexerState,
     chainId,
@@ -198,7 +189,6 @@ export function createDiscoverySubmodule(
   const discoveryIndexer = new DiscoveryIndexer(
     discoveryEngine,
     config.discovery,
-    repositories.blockNumber,
     repositories.events,
     repositories.discovery,
     repositories.indexerState,
@@ -209,7 +199,6 @@ export function createDiscoverySubmodule(
   )
 
   const currDiscoveryIndexer = new CurrentDiscoveryIndexer(
-    repositories.blockNumber,
     repositories.discovery,
     repositories.currDiscovery,
     repositories.indexerState,
@@ -223,6 +212,7 @@ export function createDiscoverySubmodule(
       const statusLogger = logger.for('DiscoveryModule').tag(chain)
       statusLogger.info(`Starting discovery submodule`)
 
+      await latestBlockNumberIndexer.start()
       await blockNumberIndexer.start()
       await cacheInvalidationIndexer.start()
       await eventIndexer.start()
