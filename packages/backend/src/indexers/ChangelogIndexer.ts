@@ -1,8 +1,7 @@
 import { assert, Logger } from '@l2beat/backend-tools'
 import { ChildIndexer } from '@l2beat/uif'
-import { ChainId, EthereumAddress, UnixTime } from '@lz/libs'
+import { ChainId, EthereumAddress } from '@lz/libs'
 
-import { BlockNumberRepository } from '../peripherals/database/BlockNumberRepository'
 import { ChangelogRepository } from '../peripherals/database/ChangelogRepository'
 import { DiscoveryRepository } from '../peripherals/database/DiscoveryRepository'
 import { IndexerStateRepository } from '../peripherals/database/IndexerStateRepository'
@@ -21,7 +20,6 @@ import { DiscoveryIndexer } from './DiscoveryIndexer'
 export class ChangelogIndexer extends ChildIndexer {
   private readonly id = 'ChangelogIndexer'
   constructor(
-    private readonly blockNumberRepository: BlockNumberRepository,
     private readonly changelogRepository: ChangelogRepository,
     private readonly milestoneRepository: MilestoneRepository,
     private readonly indexerStateRepository: IndexerStateRepository,
@@ -35,19 +33,9 @@ export class ChangelogIndexer extends ChildIndexer {
   }
 
   override async update(from: number, to: number): Promise<number> {
-    const fromBlockRecord = await this.blockNumberRepository.findAtOrBefore(
-      new UnixTime(from),
-      this.chainId,
-    )
-    const fromBlockNumber = fromBlockRecord?.blockNumber ?? 0
+    const fromBlockNumber = from
 
-    const toBlockRecord = await this.blockNumberRepository.findAtOrBefore(
-      new UnixTime(to),
-      this.chainId,
-    )
-    assert(toBlockRecord, 'toBlockNumber not found')
-
-    const toBlockNumber = toBlockRecord.blockNumber
+    const toBlockNumber = to
 
     const discovery = await this.discoveryRepository.getSortedInRange(
       fromBlockNumber,
@@ -100,11 +88,7 @@ export class ChangelogIndexer extends ChildIndexer {
   }
 
   protected override async invalidate(targetHeight: number): Promise<number> {
-    const blockRecord = await this.blockNumberRepository.findAtOrBefore(
-      new UnixTime(targetHeight),
-      this.chainId,
-    )
-    const blockNumber = blockRecord?.blockNumber ?? 0
+    const blockNumber = targetHeight
 
     await this.changelogRepository.deleteAfter(blockNumber, this.chainId)
     await this.milestoneRepository.deleteAfter(blockNumber, this.chainId)

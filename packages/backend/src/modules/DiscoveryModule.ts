@@ -219,7 +219,6 @@ export function createDiscoverySubmodule(
   )
 
   const changelogIndexer = new ChangelogIndexer(
-    repositories.blockNumber,
     repositories.changelog,
     repositories.milestone,
     repositories.indexerState,
