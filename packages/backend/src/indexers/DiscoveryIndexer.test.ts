@@ -3,10 +3,7 @@ import { DiscoveryConfig, DiscoveryEngine } from '@l2beat/discovery'
 import { ChainId, Hash256, UnixTime } from '@lz/libs'
 import { expect, mockObject } from 'earl'
 
-import {
-  BlockNumberRecord,
-  BlockNumberRepository,
-} from '../peripherals/database/BlockNumberRepository'
+import { BlockNumberRecord } from '../peripherals/database/BlockNumberRepository'
 import { DiscoveryRepository } from '../peripherals/database/DiscoveryRepository'
 import { EventRepository } from '../peripherals/database/EventRepository'
 import { IndexerStateRepository } from '../peripherals/database/IndexerStateRepository'
@@ -52,7 +49,6 @@ describe(DiscoveryIndexer.name, () => {
       const newDiscoveryIndexer = new DiscoveryIndexer(
         mockObject<DiscoveryEngine>(),
         newConfig,
-        mockObject<BlockNumberRepository>(),
         mockObject<EventRepository>(),
         mockObject<DiscoveryRepository>(),
         indexerStateRepo,
