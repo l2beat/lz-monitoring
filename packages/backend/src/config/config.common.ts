@@ -257,6 +257,7 @@ function configFromTemplate(env: Env) {
       visible: isVisible,
       enabled: true,
       config: {
+        tickIntervalMs: env.integer('CLOCK_TICK_INTERVAL_MS'),
         startBlock: env.integer(`${chainNamePrefix}_START_BLOCK`, startBlock),
         rpcUrl: env.string(`${chainNamePrefix}_RPC_URL`),
         rpcLogsMaxRange: env.integer(

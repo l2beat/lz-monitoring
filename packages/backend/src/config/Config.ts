@@ -73,4 +73,5 @@ export interface EthereumLikeDiscoveryConfig {
   discovery: DiscoveryConfig
   eventsToWatch: EventsToWatchConfig
   multicall: MulticallConfig
+  tickIntervalMs: number
 }

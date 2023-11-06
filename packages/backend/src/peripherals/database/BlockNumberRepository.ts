@@ -109,13 +109,10 @@ export class BlockNumberRepository extends BaseRepository {
     return knex('block_numbers').delete()
   }
 
-  async deleteAfter(
-    blockTimestamp: UnixTime,
-    chainId: ChainId,
-  ): Promise<number> {
+  async deleteAfter(blockNumber: number, chainId: ChainId): Promise<number> {
     const knex = await this.knex()
     return knex('block_numbers')
-      .where('unix_timestamp', '>', blockTimestamp.toDate())
+      .where('block_number', '>', blockNumber)
       .andWhere('chain_id', Number(chainId))
       .delete()
   }

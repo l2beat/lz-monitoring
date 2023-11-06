@@ -8,7 +8,7 @@ import {
   BlockNumberRepository,
 } from '../peripherals/database/BlockNumberRepository'
 import { IndexerStateRepository } from '../peripherals/database/IndexerStateRepository'
-import { ClockIndexer } from './ClockIndexer'
+import { LatestBlockNumberIndexer } from './LatestBlockNumberIndexer'
 
 export class BlockNumberIndexer extends ChildIndexer {
   private lastKnownNumber = 0
@@ -43,11 +43,11 @@ export class BlockNumberIndexer extends ChildIndexer {
     private readonly indexerRepository: IndexerStateRepository,
     private readonly startBlock: number,
     private readonly chainId: ChainId,
-    clockIndexer: ClockIndexer,
+    latestBlockNumberIndexer: LatestBlockNumberIndexer,
     logger: Logger,
     skipReorgs?: boolean,
   ) {
-    super(logger.tag(ChainId.getName(chainId)), [clockIndexer])
+    super(logger.tag(ChainId.getName(chainId)), [latestBlockNumberIndexer])
     this.skipReorgs = skipReorgs ?? this.skipReorgs
   }
 
@@ -59,13 +59,9 @@ export class BlockNumberIndexer extends ChildIndexer {
       this.startBlock
   }
 
-  async update(_fromTimestamp: number, toTimestamp: number): Promise<number> {
+  async update(_fromBlock: number, toBlock: number): Promise<number> {
     if (this.skipReorgs) {
-      const tip = await this.blockchainClient.getBlockNumberAtOrBefore(
-        new UnixTime(toTimestamp),
-      )
-      const block = await this.blockchainClient.getBlock(tip)
-
+      const block = await this.blockchainClient.getBlock(toBlock)
       const record = {
         blockNumber: block.number,
         blockHash: block.hash,
@@ -74,7 +70,7 @@ export class BlockNumberIndexer extends ChildIndexer {
       }
       await this.blockRepository.add(record)
 
-      return toTimestamp
+      return record.blockNumber
     }
 
     if (this.reorgedBlocks.length > 0) {
@@ -86,19 +82,15 @@ export class BlockNumberIndexer extends ChildIndexer {
       this.reorgedBlocks = []
     }
 
-    const tip = await this.blockchainClient.getBlockNumberAtOrBefore(
-      new UnixTime(toTimestamp),
-    )
-
-    if (tip <= this.lastKnownNumber) {
-      return toTimestamp
+    if (this.lastKnownNumber >= toBlock) {
+      return toBlock
     }
 
     return this.advanceChain(this.lastKnownNumber + 1)
   }
 
   async invalidate(to: number): Promise<number> {
-    await this.blockRepository.deleteAfter(new UnixTime(to), this.chainId)
+    await this.blockRepository.deleteAfter(to, this.chainId)
 
     return to
   }
@@ -131,7 +123,7 @@ export class BlockNumberIndexer extends ChildIndexer {
         }
       })
 
-      return parent.timestamp.toNumber()
+      return parent.blockNumber
     }
 
     const record: BlockNumberRecord = {
@@ -144,7 +136,7 @@ export class BlockNumberIndexer extends ChildIndexer {
     await this.blockRepository.add(record)
     this.lastKnownNumber = block.number
 
-    return block.timestamp
+    return block.number
   }
 
   async setSafeHeight(height: number): Promise<void> {
