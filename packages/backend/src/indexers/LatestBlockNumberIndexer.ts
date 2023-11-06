@@ -1,6 +1,5 @@
 import { Logger } from '@l2beat/backend-tools'
 import { RootIndexer } from '@l2beat/uif'
-import { UnixTime } from '@lz/libs'
 
 import { BlockchainClient } from '../peripherals/clients/BlockchainClient'
 
@@ -19,10 +18,7 @@ export class LatestBlockNumberIndexer extends RootIndexer {
   }
 
   async tick(): Promise<number> {
-    const tip = await this.blockchainClient.getBlockNumberAtOrBefore(
-      UnixTime.now(),
-    )
-    const block = await this.blockchainClient.getBlock(tip)
+    const block = await this.blockchainClient.getBlock('latest')
     return block.number
   }
 }
