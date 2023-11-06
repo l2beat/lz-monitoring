@@ -32,11 +32,10 @@ export class ChangelogIndexer extends ChildIndexer {
     super(logger.tag(ChainId.getName(chainId)), [discoveryIndexer])
   }
 
-  override async update(from: number, to: number): Promise<number> {
-    const fromBlockNumber = from
-
-    const toBlockNumber = to
-
+  override async update(
+    fromBlockNumber: number,
+    toBlockNumber: number,
+  ): Promise<number> {
     const discovery = await this.discoveryRepository.getSortedInRange(
       fromBlockNumber,
       toBlockNumber,
@@ -45,7 +44,7 @@ export class ChangelogIndexer extends ChildIndexer {
 
     // 0 records - we can't compare to anything
     if (discovery.length === 0) {
-      return to
+      return toBlockNumber
     }
 
     // If we start from the very beginning,
@@ -84,14 +83,12 @@ export class ChangelogIndexer extends ChildIndexer {
     await this.changelogRepository.addMany(flatChanges.properties)
     await this.milestoneRepository.addMany(flatChanges.milestones)
 
-    return to
+    return toBlockNumber
   }
 
   protected override async invalidate(targetHeight: number): Promise<number> {
-    const blockNumber = targetHeight
-
-    await this.changelogRepository.deleteAfter(blockNumber, this.chainId)
-    await this.milestoneRepository.deleteAfter(blockNumber, this.chainId)
+    await this.changelogRepository.deleteAfter(targetHeight, this.chainId)
+    await this.milestoneRepository.deleteAfter(targetHeight, this.chainId)
 
     return targetHeight
   }
