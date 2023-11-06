@@ -17,9 +17,6 @@ export interface Config {
   readonly health: HealthConfig
   readonly discovery: {
     readonly callsPerMinute: number
-    readonly clock: {
-      readonly tickIntervalMs: number
-    }
     readonly modules: {
       readonly ethereum: DiscoverySubmoduleConfig
       readonly arbitrum: DiscoverySubmoduleConfig

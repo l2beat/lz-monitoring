@@ -43,9 +43,6 @@ export function getCommonDiscoveryConfig(env: Env): Config['discovery'] {
 
   return {
     callsPerMinute: env.integer('RPC_CALLS_PER_MINUTE', 1000),
-    clock: {
-      tickIntervalMs: env.integer('CLOCK_TICK_INTERVAL_MS', 10 * 1000),
-    },
     modules: {
       ethereum: createConfig({
         chainNamePrefix: 'ETHEREUM',
@@ -257,7 +254,7 @@ function configFromTemplate(env: Env) {
       visible: isVisible,
       enabled: true,
       config: {
-        tickIntervalMs: env.integer('CLOCK_TICK_INTERVAL_MS'),
+        tickIntervalMs: env.integer('TICK_INTERVAL_MS'),
         startBlock: env.integer(`${chainNamePrefix}_START_BLOCK`, startBlock),
         rpcUrl: env.string(`${chainNamePrefix}_RPC_URL`),
         rpcLogsMaxRange: env.integer(
