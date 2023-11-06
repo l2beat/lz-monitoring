@@ -30,4 +30,5 @@ const avalancheEventsToWatch = getEventsToWatch(addresses)
 const avalancheChangelogWhitelist = toEthereumAddresses([
   addresses.ultraLightNodeV2,
   addresses.endpoint,
+  addresses.layerZeroMultisig,
 ])

@@ -30,4 +30,5 @@ const polygonPosEventsToWatch = getEventsToWatch(addresses)
 const polygonPosChangelogWhitelist = toEthereumAddresses([
   addresses.ultraLightNodeV2,
   addresses.endpoint,
+  addresses.layerZeroMultisig,
 ])

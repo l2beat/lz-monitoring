@@ -30,4 +30,5 @@ const optimismEventsToWatch = getEventsToWatch(addresses)
 const optimismChangelogWhitelist = toEthereumAddresses([
   addresses.ultraLightNodeV2,
   addresses.endpoint,
+  addresses.layerZeroMultisig,
 ])

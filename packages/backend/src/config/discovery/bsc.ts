@@ -26,4 +26,5 @@ const bscEventsToWatch = getEventsToWatch(addresses)
 const bscChangelogWhitelist = toEthereumAddresses([
   addresses.ultraLightNodeV2,
   addresses.endpoint,
+  addresses.layerZeroMultisig,
 ])

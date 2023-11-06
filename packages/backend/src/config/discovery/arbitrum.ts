@@ -30,4 +30,5 @@ const arbitrumEventsToWatch = getEventsToWatch(addresses)
 const arbitrumChangelogWhitelist = toEthereumAddresses([
   addresses.ultraLightNodeV2,
   addresses.endpoint,
+  addresses.layerZeroMultisig,
 ])

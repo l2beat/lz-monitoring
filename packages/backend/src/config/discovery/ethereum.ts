@@ -30,4 +30,5 @@ const ethereumEventsToWatch = getEventsToWatch(addresses)
 const ethereumChangelogWhitelist = toEthereumAddresses([
   addresses.ultraLightNodeV2,
   addresses.endpoint,
+  addresses.layerZeroMultisig,
 ])
