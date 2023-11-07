@@ -12,7 +12,7 @@ import {
   RateLimitedProvider,
   SourceCodeService,
 } from '@l2beat/discovery'
-import { ChainId } from '@lz/libs'
+import { ChainId, EthereumAddress } from '@lz/libs'
 import { providers } from 'ethers'
 
 import { DiscoveryController } from '../api/controllers/discovery/DiscoveryController'
@@ -21,6 +21,7 @@ import { Config } from '../config'
 import { AvailableConfigs, EthereumLikeDiscoveryConfig } from '../config/Config'
 import { BlockNumberIndexer } from '../indexers/BlockNumberIndexer'
 import { CacheInvalidationIndexer } from '../indexers/CacheInvalidationIndexer'
+import { ChangelogIndexer } from '../indexers/ChangelogIndexer'
 import { CurrentDiscoveryIndexer } from '../indexers/CurrentDiscoveryIndexer'
 import { DiscoveryIndexer } from '../indexers/DiscoveryIndexer'
 import { EventIndexer } from '../indexers/EventIndexer'
@@ -28,10 +29,12 @@ import { LatestBlockNumberIndexer } from '../indexers/LatestBlockNumberIndexer'
 import { BlockchainClient } from '../peripherals/clients/BlockchainClient'
 import { ProviderCache } from '../peripherals/clients/ProviderCache'
 import { BlockNumberRepository } from '../peripherals/database/BlockNumberRepository'
+import { ChangelogRepository } from '../peripherals/database/ChangelogRepository'
 import { CurrentDiscoveryRepository } from '../peripherals/database/CurrentDiscoveryRepository'
 import { DiscoveryRepository } from '../peripherals/database/DiscoveryRepository'
 import { EventRepository } from '../peripherals/database/EventRepository'
 import { IndexerStateRepository } from '../peripherals/database/IndexerStateRepository'
+import { MilestoneRepository } from '../peripherals/database/MilestoneRepository'
 import { ProviderCacheRepository } from '../peripherals/database/ProviderCacheRepository'
 import { Database } from '../peripherals/database/shared/Database'
 import { ApplicationModule } from './ApplicationModule'
@@ -46,6 +49,8 @@ interface DiscoverySubmoduleDependencies {
     currDiscovery: CurrentDiscoveryRepository
     providerCache: ProviderCacheRepository
     events: EventRepository
+    changelog: ChangelogRepository
+    milestone: MilestoneRepository
   }
 }
 
@@ -74,6 +79,8 @@ export function createDiscoveryModule({
     database,
     Logger.SILENT,
   )
+  const changelogRepository = new ChangelogRepository(database, logger)
+  const milestoneRepository = new MilestoneRepository(database, logger)
 
   const availableChainConfigs = Object.keys(
     config.discovery.modules,
@@ -101,11 +108,14 @@ export function createDiscoveryModule({
           currDiscovery: currentDiscoveryRepository,
           providerCache: providerCacheRepository,
           events: eventRepository,
+          changelog: changelogRepository,
+          milestone: milestoneRepository,
         },
         config: submoduleConfig.config,
       },
       chainName,
       config.discovery.callsPerMinute / enabledChainConfigs.length,
+      submoduleConfig.config.changelogWhitelist,
     )
   })
 
@@ -132,6 +142,7 @@ export function createDiscoverySubmodule(
   { logger, config, repositories }: DiscoverySubmoduleDependencies,
   chain: keyof Config['discovery']['modules'],
   callsPerMinute: number,
+  changelogWhitelist: EthereumAddress[],
 ): ApplicationModule {
   const chainId = ChainId.fromName(chain)
 
@@ -207,6 +218,17 @@ export function createDiscoverySubmodule(
     discoveryIndexer,
   )
 
+  const changelogIndexer = new ChangelogIndexer(
+    repositories.changelog,
+    repositories.milestone,
+    repositories.indexerState,
+    repositories.discovery,
+    chainId,
+    changelogWhitelist,
+    discoveryIndexer,
+    logger,
+  )
+
   return {
     start: async () => {
       const statusLogger = logger.for('DiscoveryModule').tag(chain)
@@ -218,6 +240,7 @@ export function createDiscoverySubmodule(
       await eventIndexer.start()
       await discoveryIndexer.start()
       await currDiscoveryIndexer.start()
+      await changelogIndexer.start()
 
       statusLogger.info(`Discovery submodule  started`)
     },

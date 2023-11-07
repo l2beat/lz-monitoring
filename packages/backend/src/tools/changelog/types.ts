@@ -1,6 +1,15 @@
+import { ContractParameters } from '@l2beat/discovery-types'
 import { ChainId, EthereumAddress } from '@lz/libs'
 
-export type { ChangelogEntry, FieldDifference, SmartContractOperation }
+export type {
+  ChangelogEntry,
+  ContractPair,
+  FieldDifference,
+  MilestoneEntry,
+  SmartContractOperation,
+}
+
+type ContractPair = [ContractParameters, ContractParameters]
 
 type FieldDifference =
   | ObjectPropertyAdded
@@ -69,20 +78,22 @@ type ArrayElementEdited = TemplateModification<
   string
 >
 
-type SmartContractOperation =
-  | 'ADD_CONTRACT'
-  | 'REMOVE_CONTRACT'
-  | 'MODIFY_CONTRACT'
+type SmartContractOperation = 'CONTRACT_ADDED' | 'CONTRACT_REMOVED'
 
-interface ChangelogEntry {
+interface CommonEntry {
   targetName: string
   targetAddress: EthereumAddress
   chainId: ChainId
   blockNumber: number
-  operation: SmartContractOperation
-  type: ModificationType
+}
+interface ChangelogEntry extends CommonEntry {
+  modificationType: ModificationType
   parameterName: string
   parameterPath: string[]
   previousValue: string | null
   currentValue: string | null
+}
+
+interface MilestoneEntry extends CommonEntry {
+  operation: SmartContractOperation
 }

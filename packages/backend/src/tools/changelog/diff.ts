@@ -1,99 +1,13 @@
-import { assert } from '@l2beat/backend-tools'
-import { ContractParameters, DiscoveryOutput } from '@l2beat/discovery-types'
-import { ChainId, EthereumAddress } from '@lz/libs'
+import { ContractParameters } from '@l2beat/discovery-types'
 import diff from 'deep-diff'
 
-import { groupContracts } from './grouping'
-import {
-  ChangelogEntry,
-  FieldDifference,
-  SmartContractOperation,
-} from './types'
+import { FieldDifference } from './types'
 
-export {
-  changelogEntryToFieldDiff,
-  diffContractValues,
-  fieldDiffToChangelogEntry,
-  getDiscoveryChanges,
-}
-
-function getDiscoveryChanges(
-  previousOutput: DiscoveryOutput,
-  currentOutput: DiscoveryOutput,
-): {
-  modified: ChangelogEntry[]
-  removed: ChangelogEntry[]
-  added: ChangelogEntry[]
-} {
-  const { modified, removed, added } = groupContracts(
-    previousOutput,
-    currentOutput,
-  )
-
-  const removedChangelogEntries = removed.flatMap((contract) => {
-    // Diff values against empty object to get all removed fields
-    const valuesDiff = diffContractValues(contract.values, {})
-
-    return valuesDiff.map((valueDifference) =>
-      fieldDiffToChangelogEntry(valueDifference, {
-        contractName: contract.name,
-        contractAddress: contract.address,
-        blockNumber: currentOutput.blockNumber,
-        chainName: currentOutput.chain,
-        operation: 'REMOVE_CONTRACT',
-      }),
-    )
-  })
-
-  const addedChangelogEntries = added.flatMap((contract) => {
-    // Diff values against empty object to get all added fields
-    const valuesDiff = diffContractValues({}, contract.values)
-
-    return valuesDiff.map((valueDifference) =>
-      fieldDiffToChangelogEntry(valueDifference, {
-        contractName: contract.name,
-        contractAddress: contract.address,
-        blockNumber: currentOutput.blockNumber,
-        chainName: currentOutput.chain,
-        operation: 'ADD_CONTRACT',
-      }),
-    )
-  })
-
-  const changelogEntries = modified.flatMap(
-    ([previousContract, currentContract]) => {
-      const fieldDifferences = diffContractValues(
-        previousContract.values,
-        currentContract.values,
-      )
-
-      if (fieldDifferences.length === 0) {
-        // Flat map
-        return []
-      }
-
-      return fieldDifferences.map((valueDifference) =>
-        fieldDiffToChangelogEntry(valueDifference, {
-          contractName: currentContract.name,
-          contractAddress: currentContract.address,
-          blockNumber: currentOutput.blockNumber,
-          chainName: currentOutput.chain,
-          operation: 'MODIFY_CONTRACT',
-        }),
-      )
-    },
-  )
-
-  return {
-    modified: changelogEntries,
-    removed: removedChangelogEntries,
-    added: addedChangelogEntries,
-  }
-}
+export { diffContractValues }
 
 function diffContractValues(
-  firstContractValues: ContractParameters['values'],
-  secondContractValues: ContractParameters['values'],
+  firstContractValues: NonNullable<ContractParameters['values']>,
+  secondContractValues: NonNullable<ContractParameters['values']>,
 ): FieldDifference[] {
   const differences = diff(firstContractValues, secondContractValues)
 
@@ -175,42 +89,4 @@ function diffContractValues(
 
 function pathToKey(path?: string[]): string[] {
   return Array.isArray(path) ? path.map((key) => key.toString()) : []
-}
-
-function fieldDiffToChangelogEntry(
-  fieldDiff: FieldDifference,
-  context: {
-    operation: SmartContractOperation
-    contractName: string
-    contractAddress: EthereumAddress
-    blockNumber: number
-    chainName: string
-  },
-): ChangelogEntry {
-  assert(fieldDiff.key[0], 'no property path')
-
-  return {
-    targetName: context.contractName,
-    targetAddress: context.contractAddress,
-    chainId: ChainId.fromName(context.chainName),
-    blockNumber: context.blockNumber,
-    operation: context.operation,
-    type: fieldDiff.modificationType,
-    parameterName: fieldDiff.key[0],
-    parameterPath: fieldDiff.key,
-    previousValue: fieldDiff.previous,
-    currentValue: fieldDiff.current,
-  }
-}
-
-function changelogEntryToFieldDiff(
-  changelogEntry: ChangelogEntry,
-): FieldDifference {
-  return {
-    key: changelogEntry.parameterPath,
-    modificationType: changelogEntry.type,
-    previous: changelogEntry.previousValue,
-    current: changelogEntry.currentValue,
-    // Changelog Entry is dummy fallback, there is no type discrimination
-  } as FieldDifference
 }

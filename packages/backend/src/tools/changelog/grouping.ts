@@ -1,8 +1,8 @@
 import { ContractParameters, DiscoveryOutput } from '@l2beat/discovery-types'
 
-export { getAddedContracts, getRemovedContracts, groupContracts }
+import { ContractPair } from './types'
 
-type SafeContractPair = [ContractParameters, ContractParameters]
+export { getAddedContracts, getRemovedContracts, groupContracts }
 
 /**
  * Groups output's contracts into 3 buckets based on changes made between given outputs
@@ -11,7 +11,7 @@ function groupContracts(
   previous: DiscoveryOutput,
   current: DiscoveryOutput,
 ): {
-  modified: SafeContractPair[]
+  modified: ContractPair[]
   removed: ContractParameters[]
   added: ContractParameters[]
 } {
@@ -37,7 +37,7 @@ function groupContracts(
 function getModifiedContracts(
   previous: DiscoveryOutput,
   current: DiscoveryOutput,
-): SafeContractPair[] {
+): ContractPair[] {
   return (
     previous.contracts
       .map((c) => [
@@ -47,7 +47,7 @@ function getModifiedContracts(
         ),
       ])
       // type assertion since filter returns array of not-undefined pairs
-      .filter(([, c2]) => c2) as SafeContractPair[]
+      .filter(([, c2]) => c2) as ContractPair[]
   )
 }
 
