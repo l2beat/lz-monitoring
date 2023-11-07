@@ -185,7 +185,7 @@ export function getCommonDiscoveryConfig(env: Env): Config['discovery'] {
         discoveryConfig: celoDiscoveryConfig,
         eventsToWatchConfig: celoEventsToWatch,
         multicallConfig: multicallConfig.celo,
-        etherscanUnsupported: {
+        unsupportedEtherscanMethods: {
           getContractCreation: true,
         },
       }),
@@ -203,7 +203,7 @@ function configFromTemplate(env: Env) {
     discoveryConfig,
     eventsToWatchConfig,
     multicallConfig,
-    etherscanUnsupported,
+    unsupportedEtherscanMethods,
   }: {
     /**
      * The prefix of the environment variables that configure the chain.
@@ -248,7 +248,7 @@ function configFromTemplate(env: Env) {
     /**
      * Etherscan unsupported methods
      */
-    etherscanUnsupported?: EtherscanUnsupportedMethods
+    unsupportedEtherscanMethods?: EtherscanUnsupportedMethods
   }): DiscoverySubmoduleConfig {
     const isEnabled = env.boolean(`${chainNamePrefix}_DISCOVERY_ENABLED`, false)
     const isVisible = env.boolean(`${chainNamePrefix}_VISIBLE`, false)
@@ -287,7 +287,7 @@ function configFromTemplate(env: Env) {
         discovery: discoveryConfig,
         eventsToWatch: eventsToWatchConfig,
         multicall: multicallConfig,
-        etherscanUnsupported,
+        unsupportedEtherscanMethods,
       },
     }
   }

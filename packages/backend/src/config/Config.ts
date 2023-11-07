@@ -74,5 +74,5 @@ export interface EthereumLikeDiscoveryConfig {
   multicall: MulticallConfig
   tickIntervalMs: number
   loggerEnabled?: boolean
-  etherscanUnsupported?: EtherscanUnsupportedMethods
+  unsupportedEtherscanMethods?: EtherscanUnsupportedMethods
 }
