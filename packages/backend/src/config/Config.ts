@@ -71,4 +71,5 @@ export interface EthereumLikeDiscoveryConfig {
   eventsToWatch: EventsToWatchConfig
   multicall: MulticallConfig
   tickIntervalMs: number
+  loggerEnabled?: boolean
 }

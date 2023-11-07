@@ -239,7 +239,9 @@ function createDiscoveryEngine(
     config.blockExplorerMinTimestamp,
   )
 
-  const discoveryLogger = DiscoveryLogger.CLI
+  const discoveryLogger = config.loggerEnabled
+    ? DiscoveryLogger.CLI
+    : DiscoveryLogger.SILENT
 
   const providerCache = new ProviderCache(cacheRepository)
   const discoveryProvider = new ProviderWithCache(

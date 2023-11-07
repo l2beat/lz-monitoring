@@ -254,6 +254,7 @@ function configFromTemplate(env: Env) {
       visible: isVisible,
       enabled: true,
       config: {
+        loggerEnabled: env.optionalBoolean(`${chainNamePrefix}_LOGGER_ENABLED`),
         tickIntervalMs: env.integer('TICK_INTERVAL_MS'),
         startBlock: env.integer(`${chainNamePrefix}_START_BLOCK`, startBlock),
         rpcUrl: env.string(`${chainNamePrefix}_RPC_URL`),
