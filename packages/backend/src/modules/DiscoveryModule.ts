@@ -150,6 +150,7 @@ export function createDiscoverySubmodule(
     blockchainClient,
     logger,
     config.tickIntervalMs,
+    chainId,
   )
 
   const blockNumberIndexer = new BlockNumberIndexer(
