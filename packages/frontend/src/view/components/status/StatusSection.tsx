@@ -2,7 +2,6 @@ import { DiscoveryStatus } from '@lz/libs'
 import cx from 'classnames'
 
 import { ChainHighlight } from './ChainHighlight'
-import { Delays } from './Delays'
 import { LastDiscoveredBlock } from './LastDiscoveredBlock'
 import { LastIndexedBlock } from './LastIndexedBlock'
 import { LatestIndexerStates } from './LatestIndexerStates'
@@ -47,7 +46,6 @@ export function StatusSection(props: Props) {
         <LastIndexedBlock status={props.status} />
         <LastDiscoveredBlock status={props.status} />
         <LatestIndexerStates status={props.status} />
-        <Delays status={props.status} />
         <NodeInformation status={props.status} />
       </div>
     </section>

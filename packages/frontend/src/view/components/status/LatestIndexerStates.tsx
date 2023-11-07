@@ -15,11 +15,18 @@ export function LatestIndexerStates({ status }: { status: DiscoveryStatus }) {
 
   return (
     <>
-      <SubsectionHeader title="Latest indexer states" />
+      <SubsectionHeader
+        title="Latest indexer states"
+        subtitle="current height / latest block offset / node offset"
+      />
       {status.indexerStates.map((state) => {
-        const prettyTimestamp = `${state.height} / ${new Date(
-          state.height * 1000,
-        ).toUTCString()}`
+        const lastIndexedBlock = status.lastIndexedBlock?.blockNumber ?? 0
+        const lastIndexedBlockOffset = lastIndexedBlock - state.height
+        const nodeBlockTip =
+          status.state === 'enabled' ? status.node?.blockNumber ?? 0 : 0
+        const nodeBlockTipOffset = nodeBlockTip - state.height
+
+        const prettyTimestamp = `${state.height} / ${lastIndexedBlockOffset} / ${nodeBlockTipOffset}`
         return <Row label={state.id} key={state.id} value={prettyTimestamp} />
       })}
     </>
