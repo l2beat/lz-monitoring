@@ -5,6 +5,8 @@ import {
   multicallConfig,
 } from '@l2beat/discovery'
 // eslint-disable-next-line import/no-internal-modules
+import { EtherscanUnsupportedMethods } from '@l2beat/discovery/dist/utils/EtherscanLikeClient'
+// eslint-disable-next-line import/no-internal-modules
 import { UnixTime } from '@l2beat/discovery/dist/utils/UnixTime'
 
 import { Config, DiscoverySubmoduleConfig } from './Config'
@@ -183,6 +185,9 @@ export function getCommonDiscoveryConfig(env: Env): Config['discovery'] {
         discoveryConfig: celoDiscoveryConfig,
         eventsToWatchConfig: celoEventsToWatch,
         multicallConfig: multicallConfig.celo,
+        unsupportedEtherscanMethods: {
+          getContractCreation: true,
+        },
       }),
     },
   }
@@ -198,6 +203,7 @@ function configFromTemplate(env: Env) {
     discoveryConfig,
     eventsToWatchConfig,
     multicallConfig,
+    unsupportedEtherscanMethods,
   }: {
     /**
      * The prefix of the environment variables that configure the chain.
@@ -238,6 +244,11 @@ function configFromTemplate(env: Env) {
      * Multicall configuration for given chain
      */
     multicallConfig: MulticallConfig
+
+    /**
+     * Etherscan unsupported methods
+     */
+    unsupportedEtherscanMethods?: EtherscanUnsupportedMethods
   }): DiscoverySubmoduleConfig {
     const isEnabled = env.boolean(`${chainNamePrefix}_DISCOVERY_ENABLED`, false)
     const isVisible = env.boolean(`${chainNamePrefix}_VISIBLE`, false)
@@ -276,6 +287,7 @@ function configFromTemplate(env: Env) {
         discovery: discoveryConfig,
         eventsToWatch: eventsToWatchConfig,
         multicall: multicallConfig,
+        unsupportedEtherscanMethods,
       },
     }
   }
