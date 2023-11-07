@@ -194,7 +194,7 @@ describe(ChangelogIndexer.name, () => {
         ])
       })
 
-      it('should past discovery as a reference when updating', async () => {
+      it('should use past discovery as a reference when updating', async () => {
         const project = 'layerzero'
         const chainId = ChainId.ETHEREUM
         const chainName = ChainId.getName(chainId)
