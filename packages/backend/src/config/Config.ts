@@ -1,6 +1,8 @@
 import { LoggerOptions } from '@l2beat/backend-tools'
 import { DiscoveryConfig, MulticallConfig } from '@l2beat/discovery'
 // eslint-disable-next-line import/no-internal-modules
+import { EtherscanUnsupportedMethods } from '@l2beat/discovery/dist/utils/EtherscanLikeClient'
+// eslint-disable-next-line import/no-internal-modules
 import { UnixTime } from '@l2beat/discovery/dist/utils/UnixTime'
 import { Knex } from 'knex'
 
@@ -72,4 +74,5 @@ export interface EthereumLikeDiscoveryConfig {
   multicall: MulticallConfig
   tickIntervalMs: number
   loggerEnabled?: boolean
+  etherscanUnsupported?: EtherscanUnsupportedMethods
 }

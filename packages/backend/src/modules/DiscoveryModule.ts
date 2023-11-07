@@ -237,6 +237,7 @@ function createDiscoveryEngine(
     config.blockExplorerApiUrl,
     config.blockExplorerApiKey,
     config.blockExplorerMinTimestamp,
+    config.etherscanUnsupported,
   )
 
   const discoveryLogger = config.loggerEnabled
