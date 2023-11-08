@@ -1,6 +1,7 @@
 import { DiscoveryStatus } from '@lz/libs'
 
 import { Row } from './StatusRow'
+import { prettyDigitsGroups } from './statusUtils'
 import { SubsectionHeader } from './SubsectionHeader'
 
 export function LastDiscoveredBlock({ status }: { status: DiscoveryStatus }) {
@@ -16,7 +17,10 @@ export function LastDiscoveredBlock({ status }: { status: DiscoveryStatus }) {
   return (
     <>
       <SubsectionHeader title="Last discovered block" />
-      <Row label="Last discovered block" value={status.lastDiscoveredBlock} />
+      <Row
+        label="Last discovered block"
+        value={prettyDigitsGroups(status.lastDiscoveredBlock)}
+      />
     </>
   )
 }
