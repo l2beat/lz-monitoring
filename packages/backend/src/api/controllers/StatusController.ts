@@ -58,7 +58,6 @@ export class StatusController {
           const disabledStatus: DiscoveryEnabledStatus = {
             state: chainModuleStatus.state,
             ...commonChainData,
-            delays: null,
             node: null,
           }
 
@@ -72,7 +71,6 @@ export class StatusController {
           const disabledStatus: DiscoveryEnabledStatus = {
             state: chainModuleStatus.state,
             ...commonChainData,
-            delays: null,
             node: {
               blockNumber: latestNodeBlock.number,
               blockTimestamp: latestNodeBlock.timestamp,
@@ -82,16 +80,9 @@ export class StatusController {
           return disabledStatus
         }
 
-        const delaysAgainstNode = this.getDelays(
-          latestNodeBlock.number,
-          lastDiscoveredBlock,
-          lastIndexedBlock.blockNumber,
-        )
-
         const enabledStatus: DiscoveryEnabledStatus = {
           state: chainModuleStatus.state,
           ...commonChainData,
-          delays: delaysAgainstNode,
           node: {
             blockNumber: latestNodeBlock.number,
             blockTimestamp: latestNodeBlock.timestamp,
@@ -136,18 +127,6 @@ export class StatusController {
       return await provider.getBlock('latest')
     } catch {
       return null
-    }
-  }
-
-  private getDelays(
-    lastNodeBlock: number,
-    lastDiscoveredBlock: number,
-    lastIndexedBlock: number,
-  ): NonNullable<DiscoveryEnabledStatus['delays']> {
-    return {
-      discovery: lastNodeBlock - lastDiscoveredBlock,
-      blocks: lastNodeBlock - lastIndexedBlock,
-      offset: lastIndexedBlock - lastDiscoveredBlock,
     }
   }
 }

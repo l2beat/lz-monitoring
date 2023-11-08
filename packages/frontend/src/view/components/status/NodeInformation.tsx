@@ -1,6 +1,7 @@
 import { DiscoveryStatus } from '@lz/libs'
 
 import { Row } from './StatusRow'
+import { prettyDigitsGroups } from './statusUtils'
 import { SubsectionHeader } from './SubsectionHeader'
 
 export function NodeInformation({ status }: { status: DiscoveryStatus }) {
@@ -26,7 +27,10 @@ export function NodeInformation({ status }: { status: DiscoveryStatus }) {
   return (
     <>
       <SubsectionHeader title="Node information" />
-      <Row label="Node latest block" value={status.node.blockNumber} />
+      <Row
+        label="Node latest block"
+        value={prettyDigitsGroups(status.node.blockNumber)}
+      />
       <Row label="Node latest timestamp" value={prettyTimestamp} />
     </>
   )
