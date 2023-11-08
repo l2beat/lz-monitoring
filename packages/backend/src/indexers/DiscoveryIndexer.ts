@@ -11,7 +11,6 @@ import { ChainId } from '@lz/libs'
 import { DiscoveryRepository } from '../peripherals/database/DiscoveryRepository'
 import { EventRepository } from '../peripherals/database/EventRepository'
 import { IndexerStateRepository } from '../peripherals/database/IndexerStateRepository'
-import { CacheInvalidationIndexer } from './CacheInvalidationIndexer'
 import { EventIndexer } from './EventIndexer'
 
 export class DiscoveryIndexer extends ChildIndexer {
@@ -24,13 +23,9 @@ export class DiscoveryIndexer extends ChildIndexer {
     private readonly indexerStateRepository: IndexerStateRepository,
     private readonly chainId: ChainId,
     logger: Logger,
-    cacheInvalidationIndexer: CacheInvalidationIndexer,
     eventIndexer: EventIndexer,
   ) {
-    super(logger.tag(ChainId.getName(chainId)), [
-      cacheInvalidationIndexer,
-      eventIndexer,
-    ])
+    super(logger.tag(ChainId.getName(chainId)), [eventIndexer])
   }
 
   override async start(): Promise<void> {

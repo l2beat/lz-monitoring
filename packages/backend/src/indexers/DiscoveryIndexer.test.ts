@@ -7,7 +7,6 @@ import { BlockNumberRecord } from '../peripherals/database/BlockNumberRepository
 import { DiscoveryRepository } from '../peripherals/database/DiscoveryRepository'
 import { EventRepository } from '../peripherals/database/EventRepository'
 import { IndexerStateRepository } from '../peripherals/database/IndexerStateRepository'
-import { CacheInvalidationIndexer } from './CacheInvalidationIndexer'
 import { DiscoveryIndexer } from './DiscoveryIndexer'
 import { EventIndexer } from './EventIndexer'
 
@@ -35,9 +34,6 @@ describe(DiscoveryIndexer.name, () => {
         indexerStateRepo,
         ChainId.ETHEREUM,
         Logger.SILENT,
-        mockObject<CacheInvalidationIndexer>({
-          subscribe: () => {},
-        }),
         mockObject<EventIndexer>({
           subscribe: () => {},
         }),
@@ -54,9 +50,6 @@ describe(DiscoveryIndexer.name, () => {
         indexerStateRepo,
         ChainId.ETHEREUM,
         Logger.SILENT,
-        mockObject<CacheInvalidationIndexer>({
-          subscribe: () => {},
-        }),
         mockObject<EventIndexer>({
           subscribe: () => {},
         }),
@@ -100,9 +93,6 @@ describe(DiscoveryIndexer.name, () => {
         mockObject<IndexerStateRepository>(),
         chainId,
         Logger.SILENT,
-        mockObject<CacheInvalidationIndexer>({
-          subscribe: () => {},
-        }),
         mockObject<EventIndexer>({
           subscribe: () => {},
         }),
@@ -154,9 +144,6 @@ describe(DiscoveryIndexer.name, () => {
         mockObject<IndexerStateRepository>(),
         chainId,
         Logger.SILENT,
-        mockObject<CacheInvalidationIndexer>({
-          subscribe: () => {},
-        }),
         mockObject<EventIndexer>({
           subscribe: () => {},
         }),
@@ -194,9 +181,6 @@ describe(DiscoveryIndexer.name, () => {
         mockObject<IndexerStateRepository>(),
         chainId,
         Logger.SILENT,
-        mockObject<CacheInvalidationIndexer>({
-          subscribe: () => {},
-        }),
         mockObject<EventIndexer>({
           subscribe: () => {},
         }),
@@ -225,9 +209,6 @@ describe(DiscoveryIndexer.name, () => {
         mockObject<IndexerStateRepository>(),
         ChainId.ETHEREUM,
         Logger.SILENT,
-        mockObject<CacheInvalidationIndexer>({
-          subscribe: () => {},
-        }),
         mockObject<EventIndexer>({
           subscribe: () => {},
         }),
@@ -254,9 +235,6 @@ describe(DiscoveryIndexer.name, () => {
         indexerStateRepo,
         chainId,
         Logger.SILENT,
-        mockObject<CacheInvalidationIndexer>({
-          subscribe: () => {},
-        }),
         mockObject<EventIndexer>({
           subscribe: () => {},
         }),

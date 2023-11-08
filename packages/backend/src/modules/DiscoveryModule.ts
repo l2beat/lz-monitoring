@@ -150,7 +150,7 @@ export function createDiscoverySubmodule(
   const rateLimitedProvider = new RateLimitedProvider(provider, callsPerMinute)
   const blockchainClient = new BlockchainClient(rateLimitedProvider, logger)
 
-  const discoveryEngine = createDiscoveryEngine(
+  const { discoveryEngine, providerWithCache } = createDiscoveryEngine(
     rateLimitedProvider,
     repositories.providerCache,
     config,
@@ -183,7 +183,7 @@ export function createDiscoverySubmodule(
   )
 
   const eventIndexer = new EventIndexer(
-    blockchainClient,
+    providerWithCache,
     repositories.blockNumber,
     repositories.events,
     repositories.indexerState,
@@ -194,7 +194,7 @@ export function createDiscoverySubmodule(
       maxBlockBatchSize: config.rpcLogsMaxRange,
       amtBatches: config.eventIndexerAmtBatches,
     },
-    blockNumberIndexer,
+    cacheInvalidationIndexer,
     logger,
   )
 
@@ -206,7 +206,6 @@ export function createDiscoverySubmodule(
     repositories.indexerState,
     chainId,
     logger,
-    cacheInvalidationIndexer,
     eventIndexer,
   )
 
@@ -253,7 +252,7 @@ function createDiscoveryEngine(
   cacheRepository: ProviderCacheRepository,
   config: EthereumLikeDiscoveryConfig,
   chainId: ChainId,
-): DiscoveryEngine {
+): { discoveryEngine: DiscoveryEngine; providerWithCache: ProviderWithCache } {
   const httpClient = new HttpClient()
 
   const discoveryClient = new EtherscanLikeClient(
@@ -269,7 +268,7 @@ function createDiscoveryEngine(
     : DiscoveryLogger.SILENT
 
   const providerCache = new ProviderCache(cacheRepository)
-  const discoveryProvider = new ProviderWithCache(
+  const providerWithCache = new ProviderWithCache(
     provider,
     discoveryClient,
     discoveryLogger,
@@ -278,23 +277,24 @@ function createDiscoveryEngine(
     config.rpcLogsMaxRange,
   )
   const multicallClient = new MulticallClient(
-    discoveryProvider,
+    providerWithCache,
     config.multicall,
   )
 
-  const proxyDetector = new ProxyDetector(discoveryProvider, discoveryLogger)
-  const sourceCodeService = new SourceCodeService(discoveryProvider)
+  const proxyDetector = new ProxyDetector(providerWithCache, discoveryLogger)
+  const sourceCodeService = new SourceCodeService(providerWithCache)
   const handlerExecutor = new HandlerExecutor(
-    discoveryProvider,
+    providerWithCache,
     multicallClient,
     discoveryLogger,
   )
   const addressAnalyzer = new AddressAnalyzer(
-    discoveryProvider,
+    providerWithCache,
     proxyDetector,
     sourceCodeService,
     handlerExecutor,
     discoveryLogger,
   )
-  return new DiscoveryEngine(addressAnalyzer, discoveryLogger)
+  const discoveryEngine = new DiscoveryEngine(addressAnalyzer, discoveryLogger)
+  return { discoveryEngine, providerWithCache }
 }

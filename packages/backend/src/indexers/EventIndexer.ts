@@ -1,9 +1,9 @@
 import { Logger } from '@l2beat/backend-tools'
+import { ProviderWithCache } from '@l2beat/discovery'
 import { ChildIndexer } from '@l2beat/uif'
 import { ChainId, Hash256, UnixTime } from '@lz/libs'
 
 import { EventsToWatchConfig } from '../config/discoveryConfig'
-import { BlockchainClient } from '../peripherals/clients/BlockchainClient'
 import {
   BlockNumberRecord,
   BlockNumberRepository,
@@ -14,7 +14,7 @@ import {
 } from '../peripherals/database/EventRepository'
 import { IndexerStateRepository } from '../peripherals/database/IndexerStateRepository'
 import { hashJson } from '../tools/hashJson'
-import { BlockNumberIndexer } from './BlockNumberIndexer'
+import { CacheInvalidationIndexer } from './CacheInvalidationIndexer'
 
 /**
  * Changing this version will invalidate all existing data.
@@ -31,7 +31,7 @@ export class EventIndexer extends ChildIndexer {
   private readonly configHash: Hash256
 
   constructor(
-    private readonly blockchainClient: BlockchainClient,
+    private readonly provider: ProviderWithCache,
     private readonly blockNumberRepository: BlockNumberRepository,
     private readonly eventRepository: EventRepository,
     private readonly indexerStateRepository: IndexerStateRepository,
@@ -42,10 +42,10 @@ export class EventIndexer extends ChildIndexer {
       maxBlockBatchSize: number
       amtBatches?: number
     },
-    blockNumberIndexer: BlockNumberIndexer,
+    cacheInvalidationIndexer: CacheInvalidationIndexer,
     logger: Logger,
   ) {
-    super(logger.tag(ChainId.getName(chainId)), [blockNumberIndexer])
+    super(logger.tag(ChainId.getName(chainId)), [cacheInvalidationIndexer])
     this.startBlock = opts.startBlock
     this.amtBatches = opts.amtBatches ?? 1
     this.maxBlockBatchSize = opts.maxBlockBatchSize
@@ -75,10 +75,10 @@ export class EventIndexer extends ChildIndexer {
 
     const blocksToSave: BlockNumberRecord[] = []
     if (updateTo !== toBlock) {
-      const updateToBlock = await this.blockchainClient.getBlock(updateTo)
+      const updateToBlock = await this.provider.getBlock(updateTo)
       blocksToSave.push({
         blockNumber: updateTo,
-        blockHash: updateToBlock.hash,
+        blockHash: Hash256(updateToBlock.hash),
         timestamp: new UnixTime(updateToBlock.timestamp),
         chainId: this.chainId,
       })
@@ -98,7 +98,7 @@ export class EventIndexer extends ChildIndexer {
     const logs = await Promise.all(
       calls.flatMap(({ from, to }) =>
         this.eventsToWatch.map((event) => {
-          return this.blockchainClient.getLogsBatch(
+          return this.provider.getLogsBatch(
             event.address,
             event.topics,
             from,
@@ -140,9 +140,9 @@ export class EventIndexer extends ChildIndexer {
       ) {
         continue
       }
-      const blockData = await this.blockchainClient.getBlock(tx.blockNumber)
+      const blockData = await this.provider.getBlock(tx.blockNumber)
       blocksToSave.push({
-        blockHash: blockData.hash,
+        blockHash: Hash256(blockData.hash),
         blockNumber: blockData.number,
         timestamp: new UnixTime(blockData.timestamp),
         chainId: this.chainId,
