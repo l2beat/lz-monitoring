@@ -4,7 +4,7 @@ import { RawDiscoveryConfig } from '@l2beat/discovery/dist/discovery/config/RawD
 import { ChainId, EthereumAddress } from '@lz/libs'
 import { utils } from 'ethers'
 
-export { createConfigFromTemplate }
+export { createConfigFromTemplate, toEthereumAddresses }
 
 interface TemplateVariables {
   chain: ChainId
@@ -172,4 +172,8 @@ export function getEventsToWatch(
       topics: [topics],
     }
   })
+}
+
+function toEthereumAddresses(addresses: string[]): EthereumAddress[] {
+  return addresses.map((address) => EthereumAddress(address))
 }

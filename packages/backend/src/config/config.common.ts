@@ -8,33 +8,56 @@ import {
 import { EtherscanUnsupportedMethods } from '@l2beat/discovery/dist/utils/EtherscanLikeClient'
 // eslint-disable-next-line import/no-internal-modules
 import { UnixTime } from '@l2beat/discovery/dist/utils/UnixTime'
+import { EthereumAddress } from '@lz/libs'
 
 import { Config, DiscoverySubmoduleConfig } from './Config'
 import {
+  arbitrumChangelogWhitelist,
   arbitrumDiscoveryConfig,
   arbitrumEventsToWatch,
 } from './discovery/arbitrum'
 import {
+  avalancheChangelogWhitelist,
   avalancheDiscoveryConfig,
   avalancheEventsToWatch,
 } from './discovery/avalanche'
-import { baseDiscoveryConfig, baseEventsToWatch } from './discovery/base'
-import { bscDiscoveryConfig, bscEventsToWatch } from './discovery/bsc'
-import { celoDiscoveryConfig, celoEventsToWatch } from './discovery/celo'
 import {
+  baseChangelogWhitelist,
+  baseDiscoveryConfig,
+  baseEventsToWatch,
+} from './discovery/base'
+import {
+  bscChangelogWhitelist,
+  bscDiscoveryConfig,
+  bscEventsToWatch,
+} from './discovery/bsc'
+import {
+  celoChangelogWhitelist,
+  celoDiscoveryConfig,
+  celoEventsToWatch,
+} from './discovery/celo'
+import {
+  ethereumChangelogWhitelist,
   ethereumDiscoveryConfig,
   ethereumEventsToWatch,
 } from './discovery/ethereum'
-import { lineaDiscoveryConfig, lineaEventsToWatch } from './discovery/linea'
 import {
+  lineaChangelogWhitelist,
+  lineaDiscoveryConfig,
+  lineaEventsToWatch,
+} from './discovery/linea'
+import {
+  optimismChangelogWhitelist,
   optimismDiscoveryConfig,
   optimismEventsToWatch,
 } from './discovery/optimism'
 import {
+  polygonPosChangelogWhitelist,
   polygonPosDiscoveryConfig,
   polygonPosEventsToWatch,
 } from './discovery/polygon-pos'
 import {
+  polygonZkEvmChangelogWhitelist,
   polygonZkEvmDiscoveryConfig,
   polygonZkEvmEventsToWatch,
 } from './discovery/polygon-zkevm'
@@ -58,6 +81,7 @@ export function getCommonDiscoveryConfig(env: Env): Config['discovery'] {
         blockExplorerMinTimestamp: new Date(0),
         discoveryConfig: ethereumDiscoveryConfig,
         eventsToWatchConfig: ethereumEventsToWatch,
+        changelogWhitelist: ethereumChangelogWhitelist,
         multicallConfig: multicallConfig.ethereum,
       }),
       arbitrum: createConfig({
@@ -72,6 +96,7 @@ export function getCommonDiscoveryConfig(env: Env): Config['discovery'] {
         blockExplorerMinTimestamp: new Date('2021-05-28T22:15:00Z'),
         discoveryConfig: arbitrumDiscoveryConfig,
         eventsToWatchConfig: arbitrumEventsToWatch,
+        changelogWhitelist: arbitrumChangelogWhitelist,
         multicallConfig: multicallConfig.arbitrum,
       }),
       optimism: createConfig({
@@ -86,6 +111,7 @@ export function getCommonDiscoveryConfig(env: Env): Config['discovery'] {
         blockExplorerMinTimestamp: new Date('2021-01-14T15:52:00Z'),
         discoveryConfig: optimismDiscoveryConfig,
         eventsToWatchConfig: optimismEventsToWatch,
+        changelogWhitelist: optimismChangelogWhitelist,
         multicallConfig: multicallConfig.optimism,
       }),
       'polygon-pos': createConfig({
@@ -100,6 +126,7 @@ export function getCommonDiscoveryConfig(env: Env): Config['discovery'] {
         blockExplorerMinTimestamp: new Date('2020-05-30T07:48:00Z'),
         discoveryConfig: polygonPosDiscoveryConfig,
         eventsToWatchConfig: polygonPosEventsToWatch,
+        changelogWhitelist: polygonPosChangelogWhitelist,
         multicallConfig: multicallConfig.polygon_pos,
       }),
       'polygon-zkevm': createConfig({
@@ -114,6 +141,7 @@ export function getCommonDiscoveryConfig(env: Env): Config['discovery'] {
         blockExplorerMinTimestamp: new Date('2023-06-15T12:36:00Z'),
         discoveryConfig: polygonZkEvmDiscoveryConfig,
         eventsToWatchConfig: polygonZkEvmEventsToWatch,
+        changelogWhitelist: polygonZkEvmChangelogWhitelist,
         multicallConfig: multicallConfig.polygon_zkevm,
       }),
       base: createConfig({
@@ -128,6 +156,7 @@ export function getCommonDiscoveryConfig(env: Env): Config['discovery'] {
         blockExplorerMinTimestamp: new Date('2023-06-15T12:36:00Z'),
         discoveryConfig: baseDiscoveryConfig,
         eventsToWatchConfig: baseEventsToWatch,
+        changelogWhitelist: baseChangelogWhitelist,
         multicallConfig: multicallConfig.base,
       }),
       avalanche: createConfig({
@@ -142,6 +171,7 @@ export function getCommonDiscoveryConfig(env: Env): Config['discovery'] {
         blockExplorerMinTimestamp: new Date('2020-09-23T11:02:00Z'),
         discoveryConfig: avalancheDiscoveryConfig,
         eventsToWatchConfig: avalancheEventsToWatch,
+        changelogWhitelist: avalancheChangelogWhitelist,
         multicallConfig: multicallConfig.avalanche,
       }),
       linea: createConfig({
@@ -156,6 +186,7 @@ export function getCommonDiscoveryConfig(env: Env): Config['discovery'] {
         blockExplorerMinTimestamp: new Date('2023-07-06T13:15:00Z'),
         discoveryConfig: lineaDiscoveryConfig,
         eventsToWatchConfig: lineaEventsToWatch,
+        changelogWhitelist: lineaChangelogWhitelist,
         multicallConfig: multicallConfig.linea,
       }),
       bsc: createConfig({
@@ -170,6 +201,7 @@ export function getCommonDiscoveryConfig(env: Env): Config['discovery'] {
         blockExplorerMinTimestamp: new Date('2020-08-29T03:24:00Z'),
         discoveryConfig: bscDiscoveryConfig,
         eventsToWatchConfig: bscEventsToWatch,
+        changelogWhitelist: bscChangelogWhitelist,
         multicallConfig: multicallConfig.bsc,
       }),
       celo: createConfig({
@@ -184,6 +216,7 @@ export function getCommonDiscoveryConfig(env: Env): Config['discovery'] {
         blockExplorerMinTimestamp: new Date('2020-04-22T16:00:00Z'),
         discoveryConfig: celoDiscoveryConfig,
         eventsToWatchConfig: celoEventsToWatch,
+        changelogWhitelist: celoChangelogWhitelist,
         multicallConfig: multicallConfig.celo,
         unsupportedEtherscanMethods: {
           getContractCreation: true,
@@ -202,6 +235,7 @@ function configFromTemplate(env: Env) {
     blockExplorerMinTimestamp,
     discoveryConfig,
     eventsToWatchConfig,
+    changelogWhitelist,
     multicallConfig,
     unsupportedEtherscanMethods,
   }: {
@@ -229,6 +263,11 @@ function configFromTemplate(env: Env) {
      * Events that signify something changing
      */
     eventsToWatchConfig: EventsToWatchConfig
+
+    /**
+     * The list of addresses that are whitelisted for the changelog to process
+     */
+    changelogWhitelist: EthereumAddress[]
 
     /**
      * The minimum timestamp block explorer client can query
@@ -286,6 +325,7 @@ function configFromTemplate(env: Env) {
         ),
         discovery: discoveryConfig,
         eventsToWatch: eventsToWatchConfig,
+        changelogWhitelist,
         multicall: multicallConfig,
         unsupportedEtherscanMethods,
       },

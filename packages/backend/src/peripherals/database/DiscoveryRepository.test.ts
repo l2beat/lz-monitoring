@@ -26,6 +26,18 @@ describe(DiscoveryRepository.name, () => {
     blockNumber: 2,
   }
 
+  const record3 = {
+    discoveryOutput: mockDiscoveryOutput(3),
+    chainId,
+    blockNumber: 3,
+  }
+
+  const record4 = {
+    discoveryOutput: mockDiscoveryOutput(4),
+    chainId,
+    blockNumber: 4,
+  }
+
   it('adds single record and queries it', async () => {
     await repository.add(record)
 
@@ -78,6 +90,24 @@ describe(DiscoveryRepository.name, () => {
     expect(
       await repository.findAtOrBefore(record2.blockNumber + 1, chainId),
     ).toEqual(record2)
+  })
+
+  it('gets sorted outputs for given range', async () => {
+    // Messed-up order on purpose
+    await repository.add(record3)
+    await repository.add(record2)
+    await repository.add(record4)
+    await repository.add(record)
+
+    const result = await repository.getSortedInRange(
+      record.blockNumber,
+      record3.blockNumber,
+      chainId,
+    )
+
+    // first block number exclusive - last block number inclusive
+    // record1 and record4 skipped since those are out of query bounds
+    expect(result).toEqual([record2, record3])
   })
 })
 

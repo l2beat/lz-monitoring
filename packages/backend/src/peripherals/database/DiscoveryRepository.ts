@@ -56,6 +56,25 @@ export class DiscoveryRepository extends BaseRepository {
     const knex = await this.knex()
     return knex('discovery').delete()
   }
+
+  /**
+   * @param fromBlock exclusive
+   * @param toBlock inclusive
+   */
+  async getSortedInRange(
+    fromBlock: number,
+    toBlock: number,
+    chainId: ChainId,
+  ): Promise<DiscoveryRecord[]> {
+    const knex = await this.knex()
+    const rows = await knex('discovery')
+      .where('chain_id', Number(chainId))
+      .andWhere('block_number', '>', fromBlock)
+      .andWhere('block_number', '<=', toBlock)
+      .orderBy('block_number', 'asc')
+
+    return rows.map(toRecord)
+  }
 }
 
 function toRow(record: DiscoveryRecord): DiscoveryRow {
