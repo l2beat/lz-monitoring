@@ -86,7 +86,7 @@ describe(EventIndexer.name, () => {
     })
 
     it('should add blocks with events to eventRepository and blockNumber repository', async () => {
-      const startBlock = 15
+      const startBlockNumber = 15
       const maxEventRange = 10
       const chainId = ChainId.ETHEREUM
       const address = EthereumAddress.random()
@@ -100,18 +100,20 @@ describe(EventIndexer.name, () => {
         },
       ]
 
+      const blockWithEvent = mockBlockFromClient(startBlockNumber + 1)
       const blocksFromClient = [
-        mockBlockFromClient(startBlock + maxEventRange),
-        mockBlockFromClient(startBlock + 1),
+        mockBlockFromClient(startBlockNumber + maxEventRange),
+        blockWithEvent,
       ] as const
 
+      const eventLog = mockLog(blockWithEvent.number)
       const blockchainClient = mockObject<BlockchainClient>({
         getBlock: async (blockNumber) => {
           const block = blocksFromClient.find((b) => b.number === blockNumber)
           assert(block, `Block ${blockNumber.toString()} not found`)
           return block
         },
-        getLogsBatch: async () => [mockLog(startBlock + 1)],
+        getLogsBatch: async () => [eventLog],
       })
       const blockRepo = mockObject<BlockNumberRepository>({
         findAtOrBefore: async (time) =>
@@ -131,7 +133,7 @@ describe(EventIndexer.name, () => {
         eventsToWatch,
         {
           maxBlockBatchSize: maxEventRange,
-          startBlock,
+          startBlock: startBlockNumber,
         },
         mockObject<BlockNumberIndexer>({
           subscribe: () => undefined,
@@ -143,19 +145,19 @@ describe(EventIndexer.name, () => {
       expect(blockchainClient.getBlock).toHaveBeenCalledTimes(2)
       expect(blockchainClient.getBlock).toHaveBeenNthCalledWith(
         2,
-        startBlock + 1,
+        startBlockNumber + 1,
       )
       expect(blockchainClient.getLogsBatch).toHaveBeenCalledTimes(1)
       expect(blockchainClient.getLogsBatch).toHaveBeenCalledWith(
         address,
         topics,
-        startBlock,
-        startBlock + maxEventRange,
+        startBlockNumber,
+        startBlockNumber + maxEventRange,
       )
       expect(blockchainClient.getBlock).toHaveBeenCalledTimes(2)
       expect(blockchainClient.getBlock).toHaveBeenNthCalledWith(
         2,
-        startBlock + 1,
+        startBlockNumber + 1,
       )
       expect(blockRepo.addMany).toHaveBeenCalledTimes(1)
       expect(blockRepo.addMany).toHaveBeenNthCalledWith(
@@ -170,7 +172,8 @@ describe(EventIndexer.name, () => {
       expect(eventsRepo.addMany).toHaveBeenCalledTimes(1)
       expect(eventsRepo.addMany).toHaveBeenNthCalledWith(1, [
         {
-          blockNumber: startBlock + 1,
+          blockNumber: blockWithEvent.number,
+          txHash: Hash256(eventLog.transactionHash),
           chainId,
         },
       ])
@@ -197,13 +200,14 @@ describe(EventIndexer.name, () => {
         mockBlockFromClient(startBlock + 1),
       ] as const
 
+      const eventLog = mockLog(startBlock + 1)
       const blockchainClient = mockObject<BlockchainClient>({
         getBlock: async (blockNumber) => {
           const block = blocksFromClient.find((b) => b.number === blockNumber)
           assert(block, `Block ${blockNumber.toString()} not found`)
           return block
         },
-        getLogsBatch: async () => [mockLog(startBlock + 1)],
+        getLogsBatch: async () => [eventLog],
       })
       const blockRepo = mockObject<BlockNumberRepository>({
         findAtOrBefore: async (time) =>
@@ -272,7 +276,8 @@ describe(EventIndexer.name, () => {
       expect(eventsRepo.addMany).toHaveBeenCalledTimes(1)
       expect(eventsRepo.addMany).toHaveBeenNthCalledWith(1, [
         {
-          blockNumber: startBlock + 1,
+          blockNumber: eventLog.blockNumber,
+          txHash: Hash256(eventLog.transactionHash),
           chainId,
         },
       ])
@@ -298,13 +303,14 @@ describe(EventIndexer.name, () => {
 
       const blocksFromClient = [mockBlockFromClient(blockWithEvents)] as const
 
+      const eventLog = mockLog(blockWithEvents)
       const blockchainClient = mockObject<BlockchainClient>({
         getBlock: async (blockNumber) => {
           const block = blocksFromClient.find((b) => b.number === blockNumber)
           assert(block, `Block ${blockNumber.toString()} not found`)
           return block
         },
-        getLogsBatch: async () => [mockLog(blockWithEvents)],
+        getLogsBatch: async () => [eventLog],
       })
       const blockRepo = mockObject<BlockNumberRepository>({
         findByNumber: async () => undefined,
@@ -367,6 +373,7 @@ describe(EventIndexer.name, () => {
       expect(eventsRepo.addMany).toHaveBeenNthCalledWith(1, [
         {
           blockNumber: blockWithEvents,
+          txHash: Hash256(eventLog.transactionHash),
           chainId,
         },
       ])

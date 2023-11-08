@@ -1,6 +1,6 @@
 import { Logger } from '@l2beat/backend-tools'
 import { ChildIndexer } from '@l2beat/uif'
-import { ChainId, UnixTime } from '@lz/libs'
+import { ChainId, Hash256, UnixTime } from '@lz/libs'
 
 import { EventsToWatchConfig } from '../config/discoveryConfig'
 import { BlockchainClient } from '../peripherals/clients/BlockchainClient'
@@ -86,29 +86,38 @@ export class EventIndexer extends ChildIndexer {
     )
 
     const emitted = logs.flat()
-    const blocksWithEvents = emitted
-      .map((x) => x.blockNumber)
+    const txsWithEvents = emitted
+      .map((x) => ({
+        blockNumber: x.blockNumber,
+        txHash: Hash256(x.transactionHash),
+      }))
       // deduplicate array
-      .filter((x, i, a) => a.indexOf(x) === i)
+      .filter(
+        (x, i, a) =>
+          a.findIndex(
+            (y) => x.blockNumber === y.blockNumber && x.txHash === y.txHash,
+          ) === i,
+      )
 
     const blocksWithEventsToSave: EventRecord[] = []
-    for (const blockNumber of blocksWithEvents) {
+    for (const tx of txsWithEvents) {
       blocksWithEventsToSave.push({
         chainId: this.chainId,
-        blockNumber,
+        blockNumber: tx.blockNumber,
+        txHash: tx.txHash,
       })
       // saving all blocks with events is possibly not necessary
       const savedBlock = await this.blockNumberRepository.findByNumber(
-        blockNumber,
+        tx.blockNumber,
         this.chainId,
       )
       if (
         savedBlock ||
-        blocksToSave.find((x) => x.blockNumber === blockNumber)
+        blocksToSave.find((x) => x.blockNumber === tx.blockNumber)
       ) {
         continue
       }
-      const blockData = await this.blockchainClient.getBlock(blockNumber)
+      const blockData = await this.blockchainClient.getBlock(tx.blockNumber)
       blocksToSave.push({
         blockHash: blockData.hash,
         blockNumber: blockData.number,

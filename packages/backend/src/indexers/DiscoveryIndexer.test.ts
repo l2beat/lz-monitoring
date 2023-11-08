@@ -89,6 +89,7 @@ describe(DiscoveryIndexer.name, () => {
           {
             chainId,
             blockNumber: BLOCK_100.blockNumber,
+            txHash: Hash256.random(),
           },
         ],
       })
