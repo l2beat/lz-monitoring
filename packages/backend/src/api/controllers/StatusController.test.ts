@@ -135,7 +135,6 @@ describe(StatusController.name, () => {
           expect(status.chainName).toEqual('ethereum')
           expect(status.lastIndexedBlock).toEqual(null)
           expect(status.lastDiscoveredBlock).toEqual(null)
-          expect(status.delays).toEqual(null)
           expect(status.node).toEqual({
             blockNumber: deps.LATEST_BLOCK_NUMBER,
             blockTimestamp: deps.LATEST_BLOCK_TIMESTAMP,
@@ -178,7 +177,6 @@ describe(StatusController.name, () => {
           expect(status.chainName).toEqual('ethereum')
           expect(status.lastIndexedBlock).toEqual(null)
           expect(status.lastDiscoveredBlock).toEqual(null)
-          expect(status.delays).toEqual(null)
           expect(status.node).toEqual(null)
         })
       })
@@ -208,14 +206,7 @@ describe(StatusController.name, () => {
           expect(status.lastDiscoveredBlock).toEqual(
             deps.currDiscoveryResult.discoveryOutput.blockNumber,
           )
-          expect(status.delays).toEqual({
-            offset:
-              deps.LATEST_INDEXED_BLOCK_NUMBER -
-              deps.LATEST_DISCOVERY_BLOCK_NUMBER,
-            discovery:
-              deps.LATEST_BLOCK_NUMBER - deps.LATEST_DISCOVERY_BLOCK_NUMBER,
-            blocks: deps.LATEST_BLOCK_NUMBER - deps.LATEST_INDEXED_BLOCK_NUMBER,
-          })
+
           expect(status.node).toEqual({
             blockNumber: deps.LATEST_BLOCK_NUMBER,
             blockTimestamp: deps.LATEST_BLOCK_TIMESTAMP,
@@ -248,7 +239,6 @@ describe(StatusController.name, () => {
           expect(status.lastDiscoveredBlock).toEqual(
             deps.currDiscoveryResult.discoveryOutput.blockNumber,
           )
-          expect(status.delays).toEqual(null)
           expect(status.node).toEqual(null)
         })
       })
