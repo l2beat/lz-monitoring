@@ -24,11 +24,14 @@ export function getOverallHealth(status: DiscoveryStatus): ModuleHealthStatus {
 
   if (
     status.state === 'enabled' &&
-    status.delays &&
-    status.delays.discovery > 50
+    status.lastDiscoveredBlock &&
+    status.node &&
+    status.node.blockNumber - status.lastDiscoveredBlock > 50
   ) {
     warnings.push(
-      `Discovery is lagging behind the tip for more than 50 blocks (${status.delays.discovery} blocks)`,
+      `Discovery is lagging behind the tip for more than 50 blocks (${prettyDigitsGroups(
+        status.node.blockNumber - status.lastDiscoveredBlock,
+      )} blocks)`,
     )
   }
 
@@ -51,4 +54,8 @@ export function getOverallHealth(status: DiscoveryStatus): ModuleHealthStatus {
 
 export function healthToBorder(health: ModuleHealthStatus) {
   return health.health === 'healthy' ? 'border-[#A3C65B]' : 'border-[#F5C842]'
+}
+
+export function prettyDigitsGroups(num: number, separator = ','): string {
+  return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, separator)
 }

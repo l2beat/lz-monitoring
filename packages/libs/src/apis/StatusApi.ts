@@ -47,13 +47,6 @@ const DiscoveryEnabledStatus = z
         blockTimestamp: z.number(),
       }),
     ),
-    delays: z.nullable(
-      z.object({
-        discovery: z.number(),
-        blocks: z.number(),
-        offset: z.number(),
-      }),
-    ),
   })
   .merge(CommonDiscoveryStatus)
 
