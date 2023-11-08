@@ -56,6 +56,6 @@ export function healthToBorder(health: ModuleHealthStatus) {
   return health.health === 'healthy' ? 'border-[#A3C65B]' : 'border-[#F5C842]'
 }
 
-export function prettyDigitsGroups(num: number, separator = ' '): string {
+export function prettyDigitsGroups(num: number, separator = ','): string {
   return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, separator)
 }
