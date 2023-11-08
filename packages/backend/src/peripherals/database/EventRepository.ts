@@ -28,19 +28,20 @@ export class EventRepository extends BaseRepository {
    * @param fromBlock exclusive
    * @param toBlock inclusive
    */
-  async getSortedInRange(
+  async getSortedBlockNumbersInRange(
     fromBlock: number,
     toBlock: number,
     chainId: ChainId,
-  ): Promise<EventRecord[]> {
+  ): Promise<number[]> {
     const knex = await this.knex()
-    const rows = await knex('events')
+    const blockNumbers = await knex('events')
       .where('chain_id', Number(chainId))
       .andWhere('block_number', '>', fromBlock)
       .andWhere('block_number', '<=', toBlock)
+      .distinct('block_number')
       .orderBy('block_number', 'asc')
 
-    return rows.map(toRecord)
+    return blockNumbers.map((row) => row.block_number)
   }
 
   async deleteAfter(blockNumber: number, chainId: ChainId): Promise<number> {

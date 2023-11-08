@@ -13,13 +13,22 @@ import {
   EventRepository,
 } from '../peripherals/database/EventRepository'
 import { IndexerStateRepository } from '../peripherals/database/IndexerStateRepository'
+import { hashJson } from '../tools/hashJson'
 import { BlockNumberIndexer } from './BlockNumberIndexer'
+
+/**
+ * Changing this version will invalidate all existing data.
+ * Bump this version when changing the logic of the indexer.
+ * Last change: add txHash to EventRecord
+ */
+const EVENT_INDEXER_LOGIC_VERSION = 1
 
 export class EventIndexer extends ChildIndexer {
   private readonly id = 'EventIndexer'
   private readonly startBlock: number
   private readonly maxBlockBatchSize: number
   private readonly amtBatches: number
+  private readonly configHash: Hash256
 
   constructor(
     private readonly blockchainClient: BlockchainClient,
@@ -40,6 +49,20 @@ export class EventIndexer extends ChildIndexer {
     this.startBlock = opts.startBlock
     this.amtBatches = opts.amtBatches ?? 1
     this.maxBlockBatchSize = opts.maxBlockBatchSize
+    this.configHash = hashJson(EVENT_INDEXER_LOGIC_VERSION)
+  }
+
+  override async start(): Promise<void> {
+    const oldConfigHash = (
+      await this.indexerStateRepository.findById(this.id, this.chainId)
+    )?.configHash
+    const newConfigHash = this.configHash
+
+    if (oldConfigHash !== newConfigHash) {
+      await this.setSafeHeight(0)
+    }
+
+    return super.start()
   }
 
   override async update(fromBlock: number, toBlock: number): Promise<number> {
@@ -137,8 +160,7 @@ export class EventIndexer extends ChildIndexer {
   }
 
   protected override async invalidate(targetHeight: number): Promise<number> {
-    const blockNumber = Math.max(targetHeight, this.startBlock)
-    await this.eventRepository.deleteAfter(blockNumber, this.chainId)
+    await this.eventRepository.deleteAfter(targetHeight, this.chainId)
     return targetHeight
   }
 
@@ -155,6 +177,7 @@ export class EventIndexer extends ChildIndexer {
       id: this.id,
       chainId: this.chainId,
       height,
+      configHash: this.configHash,
     })
   }
 }

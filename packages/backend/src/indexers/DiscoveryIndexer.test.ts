@@ -85,13 +85,7 @@ describe(DiscoveryIndexer.name, () => {
         discover: async () => [],
       })
       const eventRepo = mockObject<EventRepository>({
-        getSortedInRange: async () => [
-          {
-            chainId,
-            blockNumber: BLOCK_100.blockNumber,
-            txHash: Hash256.random(),
-          },
-        ],
+        getSortedBlockNumbersInRange: async () => [BLOCK_100.blockNumber],
       })
       const discoveryRepository = mockObject<DiscoveryRepository>({
         add: async () => true,
@@ -146,7 +140,7 @@ describe(DiscoveryIndexer.name, () => {
         discover: async () => [],
       })
       const eventRepo = mockObject<EventRepository>({
-        getSortedInRange: async () => [],
+        getSortedBlockNumbersInRange: async () => [],
       })
       const discoveryRepository = mockObject<DiscoveryRepository>({
         add: async () => true,
@@ -171,8 +165,8 @@ describe(DiscoveryIndexer.name, () => {
       expect(await discoveryIndexer.update(1000, 2000)).toEqual(2000)
       expect(discoveryEngine.discover).toHaveBeenCalledTimes(0)
       expect(discoveryRepository.add).not.toHaveBeenCalled()
-      expect(eventRepo.getSortedInRange).toHaveBeenCalledTimes(1)
-      expect(eventRepo.getSortedInRange).toHaveBeenNthCalledWith(
+      expect(eventRepo.getSortedBlockNumbersInRange).toHaveBeenCalledTimes(1)
+      expect(eventRepo.getSortedBlockNumbersInRange).toHaveBeenNthCalledWith(
         1,
         1000,
         2000,

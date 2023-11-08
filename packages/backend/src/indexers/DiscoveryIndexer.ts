@@ -47,11 +47,12 @@ export class DiscoveryIndexer extends ChildIndexer {
   }
 
   async update(fromBlock: number, toBlock: number): Promise<number> {
-    const blocksWithEvents = await this.eventRepository.getSortedInRange(
-      fromBlock,
-      toBlock,
-      this.chainId,
-    )
+    const blocksWithEvents =
+      await this.eventRepository.getSortedBlockNumbersInRange(
+        fromBlock,
+        toBlock,
+        this.chainId,
+      )
     if (blocksWithEvents.length === 0) {
       return toBlock
     }
@@ -59,8 +60,8 @@ export class DiscoveryIndexer extends ChildIndexer {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const firstBlock = blocksWithEvents[0]!
     // we want to mark timestamp as safe and sometimes there is multiple blocks per timestamp (Arbitrum)
-    await this.runAndSaveDiscovery(firstBlock.blockNumber)
-    return firstBlock.blockNumber
+    await this.runAndSaveDiscovery(firstBlock)
+    return firstBlock
   }
 
   private async runAndSaveDiscovery(blockNumber: number): Promise<void> {

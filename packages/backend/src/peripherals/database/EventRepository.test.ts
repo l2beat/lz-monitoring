@@ -41,24 +41,26 @@ describe(EventRepository.name, () => {
         chainId,
       },
     ])
-    const actual = await repository.getSortedInRange(2, 6, chainId)
-    expect(actual).toEqual([
+    const actual = await repository.getSortedBlockNumbersInRange(2, 6, chainId)
+    expect(actual).toEqual([4, 5, 6])
+  })
+
+  it('getSortedBlockNumbersInRange ignores multiple records with the same block number', async () => {
+    const records = [
       {
-        blockNumber: 4,
-        txHash: Hash256FromNumber(4),
+        blockNumber: 1,
+        txHash: Hash256.random(),
         chainId,
       },
       {
-        blockNumber: 5,
-        txHash: Hash256FromNumber(5),
+        blockNumber: 1,
+        txHash: Hash256.random(),
         chainId,
       },
-      {
-        blockNumber: 6,
-        txHash: Hash256FromNumber(6),
-        chainId,
-      },
-    ])
+    ]
+    await repository.addMany(records)
+    const actual = await repository.getSortedBlockNumbersInRange(0, 1, chainId)
+    expect(actual).toEqual([1])
   })
 
   it('delete all records', async () => {
