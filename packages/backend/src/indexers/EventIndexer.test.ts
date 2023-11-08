@@ -1,19 +1,16 @@
 import { assert, Logger } from '@l2beat/backend-tools'
+import { ProviderWithCache } from '@l2beat/discovery'
 import { ChainId, EthereumAddress, Hash256, UnixTime } from '@lz/libs'
 import { expect, mockObject } from 'earl'
-import { providers } from 'ethers'
+import { BigNumber, providers } from 'ethers'
 
-import {
-  BlockchainClient,
-  BlockFromClient,
-} from '../peripherals/clients/BlockchainClient'
 import {
   BlockNumberRecord,
   BlockNumberRepository,
 } from '../peripherals/database/BlockNumberRepository'
 import { EventRepository } from '../peripherals/database/EventRepository'
 import { IndexerStateRepository } from '../peripherals/database/IndexerStateRepository'
-import { BlockNumberIndexer } from './BlockNumberIndexer'
+import { CacheInvalidationIndexer } from './CacheInvalidationIndexer'
 import { EventIndexer } from './EventIndexer'
 
 describe(EventIndexer.name, () => {
@@ -33,8 +30,8 @@ describe(EventIndexer.name, () => {
         },
       ]
 
-      const blockFromClient = mockBlockFromClient(startBlock + maxEventRange)
-      const blockchainClient = mockObject<BlockchainClient>({
+      const blockFromClient = mockBlockFromProvider(startBlock + maxEventRange)
+      const blockchainClient = mockObject<ProviderWithCache>({
         getBlock: async () => blockFromClient,
         getLogsBatch: async () => [],
       })
@@ -54,7 +51,7 @@ describe(EventIndexer.name, () => {
           maxBlockBatchSize: maxEventRange,
           startBlock,
         },
-        mockObject<BlockNumberIndexer>({
+        mockObject<CacheInvalidationIndexer>({
           subscribe: () => undefined,
         }),
 
@@ -77,7 +74,7 @@ describe(EventIndexer.name, () => {
       expect(blockRepo.addMany).toHaveBeenCalledTimes(1)
       expect(blockRepo.addMany).toHaveBeenNthCalledWith(1, [
         {
-          blockHash: blockFromClient.hash,
+          blockHash: Hash256(blockFromClient.hash),
           blockNumber: blockFromClient.number,
           chainId,
           timestamp: new UnixTime(blockFromClient.timestamp),
@@ -86,7 +83,7 @@ describe(EventIndexer.name, () => {
     })
 
     it('should add blocks with events to eventRepository and blockNumber repository', async () => {
-      const startBlock = 15
+      const startBlockNumber = 15
       const maxEventRange = 10
       const chainId = ChainId.ETHEREUM
       const address = EthereumAddress.random()
@@ -100,18 +97,20 @@ describe(EventIndexer.name, () => {
         },
       ]
 
+      const blockWithEvent = mockBlockFromProvider(startBlockNumber + 1)
       const blocksFromClient = [
-        mockBlockFromClient(startBlock + maxEventRange),
-        mockBlockFromClient(startBlock + 1),
+        mockBlockFromProvider(startBlockNumber + maxEventRange),
+        blockWithEvent,
       ] as const
 
-      const blockchainClient = mockObject<BlockchainClient>({
+      const eventLog = mockLog(blockWithEvent.number)
+      const blockchainClient = mockObject<ProviderWithCache>({
         getBlock: async (blockNumber) => {
           const block = blocksFromClient.find((b) => b.number === blockNumber)
           assert(block, `Block ${blockNumber.toString()} not found`)
           return block
         },
-        getLogsBatch: async () => [mockLog(startBlock + 1)],
+        getLogsBatch: async () => [eventLog],
       })
       const blockRepo = mockObject<BlockNumberRepository>({
         findAtOrBefore: async (time) =>
@@ -131,9 +130,9 @@ describe(EventIndexer.name, () => {
         eventsToWatch,
         {
           maxBlockBatchSize: maxEventRange,
-          startBlock,
+          startBlock: startBlockNumber,
         },
-        mockObject<BlockNumberIndexer>({
+        mockObject<CacheInvalidationIndexer>({
           subscribe: () => undefined,
         }),
         Logger.SILENT,
@@ -143,25 +142,25 @@ describe(EventIndexer.name, () => {
       expect(blockchainClient.getBlock).toHaveBeenCalledTimes(2)
       expect(blockchainClient.getBlock).toHaveBeenNthCalledWith(
         2,
-        startBlock + 1,
+        startBlockNumber + 1,
       )
       expect(blockchainClient.getLogsBatch).toHaveBeenCalledTimes(1)
       expect(blockchainClient.getLogsBatch).toHaveBeenCalledWith(
         address,
         topics,
-        startBlock,
-        startBlock + maxEventRange,
+        startBlockNumber,
+        startBlockNumber + maxEventRange,
       )
       expect(blockchainClient.getBlock).toHaveBeenCalledTimes(2)
       expect(blockchainClient.getBlock).toHaveBeenNthCalledWith(
         2,
-        startBlock + 1,
+        startBlockNumber + 1,
       )
       expect(blockRepo.addMany).toHaveBeenCalledTimes(1)
       expect(blockRepo.addMany).toHaveBeenNthCalledWith(
         1,
         blocksFromClient.map((block) => ({
-          blockHash: block.hash,
+          blockHash: Hash256(block.hash),
           blockNumber: block.number,
           chainId,
           timestamp: new UnixTime(block.timestamp),
@@ -170,7 +169,8 @@ describe(EventIndexer.name, () => {
       expect(eventsRepo.addMany).toHaveBeenCalledTimes(1)
       expect(eventsRepo.addMany).toHaveBeenNthCalledWith(1, [
         {
-          blockNumber: startBlock + 1,
+          blockNumber: blockWithEvent.number,
+          txHash: Hash256(eventLog.transactionHash),
           chainId,
         },
       ])
@@ -193,17 +193,18 @@ describe(EventIndexer.name, () => {
       ]
 
       const blocksFromClient = [
-        mockBlockFromClient(startBlock + maxEventRange * amtBatches),
-        mockBlockFromClient(startBlock + 1),
+        mockBlockFromProvider(startBlock + maxEventRange * amtBatches),
+        mockBlockFromProvider(startBlock + 1),
       ] as const
 
-      const blockchainClient = mockObject<BlockchainClient>({
+      const eventLog = mockLog(startBlock + 1)
+      const blockchainClient = mockObject<ProviderWithCache>({
         getBlock: async (blockNumber) => {
           const block = blocksFromClient.find((b) => b.number === blockNumber)
           assert(block, `Block ${blockNumber.toString()} not found`)
           return block
         },
-        getLogsBatch: async () => [mockLog(startBlock + 1)],
+        getLogsBatch: async () => [eventLog],
       })
       const blockRepo = mockObject<BlockNumberRepository>({
         findAtOrBefore: async (time) =>
@@ -226,7 +227,7 @@ describe(EventIndexer.name, () => {
           maxBlockBatchSize: maxEventRange,
           startBlock,
         },
-        mockObject<BlockNumberIndexer>({
+        mockObject<CacheInvalidationIndexer>({
           subscribe: () => undefined,
         }),
 
@@ -263,7 +264,7 @@ describe(EventIndexer.name, () => {
       expect(blockRepo.addMany).toHaveBeenNthCalledWith(
         1,
         blocksFromClient.map((block) => ({
-          blockHash: block.hash,
+          blockHash: Hash256(block.hash),
           blockNumber: block.number,
           chainId,
           timestamp: new UnixTime(block.timestamp),
@@ -272,7 +273,8 @@ describe(EventIndexer.name, () => {
       expect(eventsRepo.addMany).toHaveBeenCalledTimes(1)
       expect(eventsRepo.addMany).toHaveBeenNthCalledWith(1, [
         {
-          blockNumber: startBlock + 1,
+          blockNumber: eventLog.blockNumber,
+          txHash: Hash256(eventLog.transactionHash),
           chainId,
         },
       ])
@@ -296,15 +298,16 @@ describe(EventIndexer.name, () => {
         },
       ]
 
-      const blocksFromClient = [mockBlockFromClient(blockWithEvents)] as const
+      const blocksFromClient = [mockBlockFromProvider(blockWithEvents)] as const
 
-      const blockchainClient = mockObject<BlockchainClient>({
+      const eventLog = mockLog(blockWithEvents)
+      const blockchainClient = mockObject<ProviderWithCache>({
         getBlock: async (blockNumber) => {
           const block = blocksFromClient.find((b) => b.number === blockNumber)
           assert(block, `Block ${blockNumber.toString()} not found`)
           return block
         },
-        getLogsBatch: async () => [mockLog(blockWithEvents)],
+        getLogsBatch: async () => [eventLog],
       })
       const blockRepo = mockObject<BlockNumberRepository>({
         findByNumber: async () => undefined,
@@ -325,13 +328,12 @@ describe(EventIndexer.name, () => {
           maxBlockBatchSize: maxEventRange,
           startBlock,
         },
-        mockObject<BlockNumberIndexer>({
+        mockObject<CacheInvalidationIndexer>({
           subscribe: () => undefined,
         }),
 
         Logger.SILENT,
       )
-
       await indexer.update(0, toBlockNumber)
       expect(blockchainClient.getLogsBatch).toHaveBeenCalledTimes(2)
       expect(blockchainClient.getLogsBatch).toHaveBeenNthCalledWith(
@@ -357,7 +359,7 @@ describe(EventIndexer.name, () => {
       expect(blockRepo.addMany).toHaveBeenNthCalledWith(
         1,
         blocksFromClient.map((block) => ({
-          blockHash: block.hash,
+          blockHash: Hash256(block.hash),
           blockNumber: block.number,
           chainId,
           timestamp: new UnixTime(block.timestamp),
@@ -367,6 +369,7 @@ describe(EventIndexer.name, () => {
       expect(eventsRepo.addMany).toHaveBeenNthCalledWith(1, [
         {
           blockNumber: blockWithEvents,
+          txHash: Hash256(eventLog.transactionHash),
           chainId,
         },
       ])
@@ -383,21 +386,33 @@ function mockBlock(blockNumber: number): BlockNumberRecord {
   }
 }
 
-function mockBlockFromClient(blockTag: number | Hash256): BlockFromClient {
+function mockBlockFromProvider(blockTag: number | Hash256): providers.Block {
+  const base = {
+    transactions: [],
+    gasLimit: BigNumber.from(0),
+    gasUsed: BigNumber.from(0),
+    miner: EthereumAddress.random().toString(),
+    nonce: '0x',
+    difficulty: 0,
+    _difficulty: BigNumber.from(0),
+    extraData: '0x',
+  }
   if (typeof blockTag === 'number') {
     return {
-      hash: Hash256.random(),
-      parentHash: Hash256.random(),
+      ...base,
+      hash: Hash256.random().toString(),
+      parentHash: Hash256.random().toString(),
       number: blockTag,
       timestamp: blockTag * 1000,
     }
   }
 
   return {
-    hash: blockTag,
+    ...base,
+    hash: blockTag.toString(),
     number: 10,
     timestamp: 100,
-    parentHash: Hash256.random(),
+    parentHash: Hash256.random().toString(),
   }
 }
 

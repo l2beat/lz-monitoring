@@ -36,6 +36,7 @@ declare module 'knex/types/tables' {
   interface EventRow {
     chain_id: number
     block_number: number
+    tx_hash: string
   }
 
   interface ChangelogRow {
