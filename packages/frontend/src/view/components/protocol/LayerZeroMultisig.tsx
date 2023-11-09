@@ -3,12 +3,12 @@ import { useEffect, useState } from 'react'
 import Skeleton from 'react-loading-skeleton'
 
 import { useSafeApi } from '../../../hooks/useSafeApi'
+import { BlockchainAddress } from '../BlockchainAddress'
 import { PaginatedContainer, PaginationControls } from '../PaginatedContainer'
 import { ProtocolComponentCard } from '../ProtocolComponentCard'
 import { Row } from '../Row'
 import { SafeMultisigTransaction } from '../safe/SafeMultisigTransaction'
 import { Subsection } from '../Subsection'
-import { BlockchainAddress } from '../BlockchainAddress'
 
 interface Props {
   chainId: ChainId

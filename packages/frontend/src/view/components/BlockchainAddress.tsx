@@ -23,6 +23,10 @@ export function BlockchainAddress(props: {
     setTimeout(() => setHasCopied(false), 500)
   }
 
+  if (props.address === EthereumAddress.ZERO) {
+    return props.address.toString()
+  }
+
   return (
     <>
       <a href={explorerUrl} target="_blank" className="underline">
