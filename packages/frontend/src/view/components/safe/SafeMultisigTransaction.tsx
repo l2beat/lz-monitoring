@@ -77,6 +77,7 @@ export function SafeMultisigTransaction({
                 submissionDate={new Date(submissionDate)}
                 approvals={(transaction.confirmations ?? [])
                   .map((tx) => ({
+                    // TODO: signer is EthereumAddress, but it's not typed as such
                     signer: tx.owner,
                     date: new Date(tx.submissionDate),
                     method: tx.signatureType,
@@ -89,6 +90,7 @@ export function SafeMultisigTransaction({
           <TransactionProperty param="Block number" value={blockNumber} />
           <TransactionProperty
             param="Target"
+            // TODO: target is EthereumAddress, but it's not typed as such
             value={<span className="font-mono">{target}</span>}
           />
           <TransactionProperty param="Method" value={<Code>{method}</Code>} />

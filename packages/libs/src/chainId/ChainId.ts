@@ -18,7 +18,7 @@ ChainId.fromName = function (name: string): ChainId {
   return ChainId(+entry[0])
 }
 
-ChainId.getName = function (chainId: ChainId): string {
+ChainId.getName = function (chainId: ChainId): SupportedChainName {
   const chain = Object.entries(CHAIN_IDS).find(
     ([k]) => k === chainId.toString(),
   )

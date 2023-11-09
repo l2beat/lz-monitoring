@@ -8,20 +8,21 @@ import { ProtocolComponentCard } from '../ProtocolComponentCard'
 import { Row } from '../Row'
 import { SafeMultisigTransaction } from '../safe/SafeMultisigTransaction'
 import { Subsection } from '../Subsection'
+import { BlockchainAddress } from '../BlockchainAddress'
 
 interface Props {
+  chainId: ChainId
   address?: EthereumAddress
   threshold?: number
   owners?: EthereumAddress[]
   multisigAddress: EthereumAddress
-  chainId: ChainId
 }
 
 export function LayerZeroMultisig({
+  chainId,
   owners,
   address,
   threshold,
-  chainId,
   multisigAddress,
 }: Props) {
   const [isLoading, isError, allTransactions] = useSafeApi({
@@ -114,7 +115,11 @@ export function LayerZeroMultisig({
               value={
                 <div className="flex flex-col gap-1 text-center text-3xs md:gap-5 md:text-left md:text-xs">
                   {owners.map((owner, i) => (
-                    <span key={i}>{owner}</span>
+                    <BlockchainAddress
+                      key={i}
+                      chainId={chainId}
+                      address={owner}
+                    />
                   ))}
                 </div>
               }
