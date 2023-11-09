@@ -167,12 +167,16 @@ export function getCommonDiscoveryConfig(env: Env): Config['discovery'] {
         chainNamePrefix: 'AVALANCHE',
         startBlock: 12126063,
         blockExplorerPrefix: 'SNOWTRACE',
-        blockExplorerApiUrl: 'https://api.snowtrace.io/api',
+        blockExplorerApiUrl:
+          'https://api.routescan.io/v2/network/mainnet/evm/43114/etherscan/api',
         blockExplorerMinTimestamp: new Date('2020-09-23T11:02:00Z'),
         discoveryConfig: avalancheDiscoveryConfig,
         eventsToWatchConfig: avalancheEventsToWatch,
         changelogWhitelist: avalancheChangelogWhitelist,
         multicallConfig: multicallConfig.avalanche,
+        unsupportedEtherscanMethods: {
+          getContractCreation: true,
+        },
       }),
       linea: createConfig({
         /**
