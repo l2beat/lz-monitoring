@@ -7,12 +7,17 @@ import {
   Bytes,
   bytes32ToAddress,
   ChainId,
+  ChangelogSummary,
   DiscoveryApi,
   EthereumAddress,
   getChainIdFromEndpointId,
   RemoteChain,
 } from '@lz/libs'
 
+import {
+  ChangelogRepository,
+  ChangelogSummaryRecord,
+} from '../../../peripherals/database/ChangelogRepository'
 import { CurrentDiscoveryRepository } from '../../../peripherals/database/CurrentDiscoveryRepository'
 import {
   getAddressFromValue,
@@ -23,16 +28,19 @@ import {
 export class DiscoveryController {
   constructor(
     private readonly currentDiscoveryRepository: CurrentDiscoveryRepository,
+    private readonly changelogRepository: ChangelogRepository,
   ) {}
 
   async getDiscovery(chainId: ChainId): Promise<DiscoveryApi | undefined> {
     const discovery = await this.currentDiscoveryRepository.find(chainId)
+    const changelogSummary =
+      await this.changelogRepository.getChangesSummary(chainId)
 
     if (!discovery) {
       return
     }
 
-    return toDiscoveryApi(discovery.discoveryOutput)
+    return toDiscoveryApi(discovery.discoveryOutput, changelogSummary)
   }
 
   async getRawDiscovery(
@@ -48,7 +56,10 @@ export class DiscoveryController {
   }
 }
 
-function toDiscoveryApi(discoveryOutput: DiscoveryOutput): DiscoveryApi {
+function toDiscoveryApi(
+  discoveryOutput: DiscoveryOutput,
+  changelogSummary: ChangelogSummaryRecord[],
+): DiscoveryApi {
   const { contracts, blockNumber } = discoveryOutput
 
   const endpoint = contracts.find((c) => c.name === 'Endpoint')
@@ -57,15 +68,16 @@ function toDiscoveryApi(discoveryOutput: DiscoveryOutput): DiscoveryApi {
   return {
     blockNumber,
     contracts: {
-      endpoint: getEndpointContract(discoveryOutput),
-      ulnV2: getUlnV2Contract(discoveryOutput),
-      lzMultisig: getLzMultisig(discoveryOutput),
+      endpoint: getEndpointContract(discoveryOutput, changelogSummary),
+      ulnV2: getUlnV2Contract(discoveryOutput, changelogSummary),
+      lzMultisig: getLzMultisig(discoveryOutput, changelogSummary),
     },
   }
 }
 
 function getEndpointContract(
   discoveryOutput: DiscoveryOutput,
+  changelogSummary: ChangelogSummaryRecord[],
 ): DiscoveryApi['contracts']['endpoint'] {
   const endpoint = getContractByName('Endpoint', discoveryOutput)
 
@@ -78,6 +90,10 @@ function getEndpointContract(
 
   return {
     name: 'Endpoint',
+    changelogSummary: getChangelogSummaryApi(
+      changelogSummary,
+      endpoint.address,
+    ),
     address: endpoint.address,
     owner: getAddressFromValue(endpoint, 'owner'),
     defaultSendLibrary: getAddressFromValue(endpoint, 'defaultSendLibrary'),
@@ -91,11 +107,13 @@ function getEndpointContract(
 
 function getUlnV2Contract(
   discoveryOutput: DiscoveryOutput,
+  changelogSummary: ChangelogSummaryRecord[],
 ): DiscoveryApi['contracts']['ulnV2'] {
   const ulnV2 = getContractByName('UltraLightNodeV2', discoveryOutput)
 
   return {
     name: 'UltraLightNodeV2',
+    changelogSummary: getChangelogSummaryApi(changelogSummary, ulnV2.address),
     address: ulnV2.address,
     owner: getAddressFromValue(ulnV2, 'owner'),
     treasuryContract: getAddressFromValue(ulnV2, 'treasuryContract'),
@@ -207,6 +225,7 @@ function getRemoteChains(ulnV2: ContractParameters): RemoteChain[] {
 
 function getLzMultisig(
   discoveryOutput: DiscoveryOutput,
+  changelogSummary: ChangelogSummaryRecord[],
 ): DiscoveryApi['contracts']['lzMultisig'] | null {
   try {
     const lzMultisig = getContractByName('LayerZero Multisig', discoveryOutput)
@@ -220,11 +239,28 @@ function getLzMultisig(
 
     return {
       name: 'LayerZero Multisig',
+      changelogSummary: getChangelogSummaryApi(
+        changelogSummary,
+        lzMultisig.address,
+      ),
       address: lzMultisig.address,
       owners,
       threshold: getContractValue(lzMultisig, 'getThreshold'),
     }
   } catch (e) {
     return null
+  }
+}
+
+function getChangelogSummaryApi(
+  changelogSummaries: ChangelogSummaryRecord[],
+  address: EthereumAddress,
+): ChangelogSummary {
+  const changelogSummary = changelogSummaries.find((c) => c.address === address)
+
+  assert(changelogSummary, 'Changelog summary not found')
+  return {
+    count: changelogSummary.count,
+    lastChangeTimestamp: changelogSummary.lastChangeTimestamp,
   }
 }
