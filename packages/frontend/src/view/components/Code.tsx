@@ -9,7 +9,7 @@ export function Code({ children, className }: Props) {
   return (
     <pre
       className={cx(
-        'overflow-auto border border-gray-700 bg-gray-900 p-10 font-mono text-gray-500',
+        'scrollbar-track-gray-300 scrollbar-h-1.5 overflow-auto rounded bg-gray-400 p-3 font-mono text-xs text-gray-500 scrollbar scrollbar-thumb-[#eef36a]',
         className,
       )}
     >

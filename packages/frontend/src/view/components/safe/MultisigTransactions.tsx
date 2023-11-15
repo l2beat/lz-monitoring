@@ -1,13 +1,9 @@
 import { ChainId, EthereumAddress } from '@lz/libs'
 
 import { useSafeApi } from '../../../hooks/useSafeApi'
-import { cardFor } from '../cardFor'
-import { PaginatedContainer } from '../PaginatedContainer'
+import { ProtocolComponentCard } from '../ProtocolComponentCard'
 import { InlineSkeleton } from '../Skeleton'
-import {
-  SafeMultisigTransactionComponent,
-  SafeMultisigTransactionSkeleton,
-} from './SafeMultisigTransaction'
+import { SafeMultisigTransactionSkeleton } from './SafeMultisigTransaction'
 
 interface Props {
   multisigAddress: EthereumAddress
@@ -15,38 +11,31 @@ interface Props {
   chainId: ChainId
 }
 
-const Card = cardFor('Multisig transactions', 'deep-blue')
-
 export function MultisigTransactions(props: Props) {
   const [isLoading, isError, transactions] = useSafeApi(props)
 
   if (isLoading) {
     return (
-      <Card subtitle={<InlineSkeleton />}>
+      <ProtocolComponentCard title="txs" subtitle={<InlineSkeleton />}>
         <SafeMultisigTransactionSkeleton />
-      </Card>
+      </ProtocolComponentCard>
     )
   }
 
   if (isError) {
-    return <Card subtitle="Data could not be loaded ⚠️" />
+    return (
+      <ProtocolComponentCard
+        title="txs"
+        subtitle="Data could not be loaded ⚠️"
+      />
+    )
   }
 
   if (!transactions || transactions.length === 0) {
-    return <Card subtitle="No transactions executed" />
+    return (
+      <ProtocolComponentCard title="txs" subtitle="No transactions executed" />
+    )
   }
 
-  return (
-    <Card subtitle={props.multisigAddress}>
-      <PaginatedContainer itemsPerPage={1}>
-        {transactions.map((tx, i) => (
-          <SafeMultisigTransactionComponent
-            tx={tx}
-            key={i}
-            associatedAddresses={props.associatedAddresses}
-          />
-        ))}
-      </PaginatedContainer>
-    </Card>
-  )
+  return <ProtocolComponentCard title="txs" subtitle={props.multisigAddress} />
 }

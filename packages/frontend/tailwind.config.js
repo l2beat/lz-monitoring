@@ -13,10 +13,17 @@ module.exports = {
       sm: ['15px', '15px'],
       md: ['16px', '16px'],
       lg: ['18px', '18px'],
+      xl: ['24px', '24px'],
       xxl: ['32px', '32px'],
     },
     colors: {
       gray: {
+        20: '#3B3B40', // change me
+        50: '#36393D', // change me
+        100: '#27272A', // change me
+        200: '#19191B', // change me
+        300: '#5E5E5F', // change me
+        400: '#414145', // change me
         500: '#868686',
         600: '#626262',
         700: '#292929',
@@ -29,11 +36,16 @@ module.exports = {
       blue: '#71EDDE',
       black: '#000000',
       white: '#FFFFFF',
+      yellow: '#EEF36A',
     },
     zIndex: {
       dropdown: 100,
     },
   },
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
-  plugins: [require('@headlessui/tailwindcss')({ prefix: 'ui' })],
+  plugins: [
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    require('@headlessui/tailwindcss')({ prefix: 'ui' }),
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    require('tailwind-scrollbar'),
+  ],
 }
