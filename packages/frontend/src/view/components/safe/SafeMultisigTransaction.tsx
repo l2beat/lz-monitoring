@@ -1,8 +1,4 @@
-import {
-  EthereumAddress,
-  SafeMultisigTransaction,
-  SafeTransactionDecodedData,
-} from '@lz/libs'
+import { SafeMultisigTransaction, SafeTransactionDecodedData } from '@lz/libs'
 import cx from 'classnames'
 import React from 'react'
 import Skeleton from 'react-loading-skeleton'
@@ -10,18 +6,19 @@ import Skeleton from 'react-loading-skeleton'
 import { MinusIcon } from '../../icons/MinusIcon'
 import { PlusIcon } from '../../icons/PlusIcon'
 import { Code } from '../Code'
+import { ExecutionTimeline } from '../ExecutionTimeline'
 import { RowSection } from '../RowSection'
 import { InlineCodeSkeleton, InlineSkeleton } from '../Skeleton'
 import { decodeCall, paramToSummary, toUTC } from './utils'
 
 export function SafeMultisigTransactionComponent({
   tx,
+  allTxs,
   amountOfOwners,
-  associatedAddresses,
 }: {
   tx: SafeMultisigTransaction
+  allTxs: SafeMultisigTransaction[]
   amountOfOwners: number
-  associatedAddresses: EthereumAddress[]
 }) {
   const [isExpanded, setIsExpanded] = React.useState(false)
   // Data obtained from transaction payload itself
@@ -32,11 +29,8 @@ export function SafeMultisigTransactionComponent({
   const executionDate = tx.executionDate
     ? toUTC(tx.executionDate)
     : 'Not executed'
-  const requiredConfirmations = tx.confirmationsRequired
   const acquiredConfirmations = tx.confirmations?.length ?? 0
   const stringConfirmations = `${acquiredConfirmations}/${amountOfOwners}`
-  const executed = tx.isExecuted ? 'yes' : 'no'
-  const successful = tx.isSuccessful ? 'yes' : 'no'
   const nonce = tx.nonce
   const blockNumber = tx.blockNumber ?? 'Not executed'
   const target = tx.to
@@ -52,12 +46,12 @@ export function SafeMultisigTransactionComponent({
 
   const paramsSummary = params.map((inlineSummary) => `${inlineSummary}\n`)
 
-  const txStatus = getTransactionStatus(tx, [])
+  const txStatus = getTransactionStatus(tx, allTxs)
 
   return (
     <div
       className={cx(
-        'grid-cols-multisig col-span-5 grid border-y border-[#36393D] py-3 text-xs',
+        'col-span-5 grid grid-cols-multisig border-y border-[#36393D] py-3 text-xs',
         isExpanded ? 'bg-[#323236]' : 'bg-gray-100',
       )}
     >
@@ -82,7 +76,18 @@ export function SafeMultisigTransactionComponent({
         <div className="col-span-5 mt-3">
           <Row label="Submission date" value={submissionDate} />
           <Row label="Execution date" value={executionDate} />
-          <Row label="Target" value={target} />
+          <Row
+            label="Confirmations"
+            value={
+              <ExecutionTimeline
+                outcome={txStatus}
+                submissionDate={new Date(submissionDate)}
+                approvals={(tx.confirmations ?? []).map((t) => ({
+                  signer: t.owner,
+                }))}
+              />
+            }
+          />
           <Row label="Nonce" value={nonce} />
           <Row label="Block number" value={blockNumber} />
           <Row label="Target" value={target} />

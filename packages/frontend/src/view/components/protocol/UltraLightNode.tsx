@@ -1,6 +1,6 @@
 import { EthereumAddress, RemoteChain } from '@lz/libs'
 
-import { cardFor } from '../cardFor'
+import { ProtocolComponentCard } from '../ProtocolComponentCard'
 import { Row } from '../Row'
 import { RemoteChainComponent } from './RemoteChain'
 
@@ -12,15 +12,13 @@ interface Props {
   remoteChains?: RemoteChain[]
 }
 
-const Card = cardFor('Ultra Light Node', 'green')
-
 export function UltraLightNodeContract(props: Props): JSX.Element {
   return (
-    <Card subtitle={props.address}>
+    <ProtocolComponentCard title="UltraLight Node V2" subtitle={props.address}>
       <RemoteChainComponent remoteChains={props.remoteChains} />
       <Row label="Owner" value={props.owner} />
       <Row label="Treasury Contract" value={props.treasuryContract} />
       <Row label="LayerZero token" value={props.layerZeroToken} />
-    </Card>
+    </ProtocolComponentCard>
   )
 }

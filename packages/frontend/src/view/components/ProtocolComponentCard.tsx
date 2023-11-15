@@ -14,7 +14,7 @@ export function ProtocolComponentCard({
   description,
 }: Props) {
   return (
-    <section className={cx('rounded-lg bg-gray-200 p-8')}>
+    <section className={cx('mb-6 rounded-lg bg-gray-200 p-8')}>
       <div className="mb-6 flex items-center justify-between">
         <h2 className={cx('text-font-medium text-xl')}>{title}</h2>
         {subtitle && (

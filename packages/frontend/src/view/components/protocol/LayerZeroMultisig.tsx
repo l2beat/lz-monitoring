@@ -16,7 +16,6 @@ interface Props {
   threshold?: number
   owners?: EthereumAddress[]
   multisigAddress: EthereumAddress
-  associatedAddresses: EthereumAddress[]
   chainId: ChainId
 }
 
@@ -26,8 +25,7 @@ export function LayerZeroMultisig({
   threshold,
   chainId,
   multisigAddress,
-  associatedAddresses,
-}: Props): JSX.Element {
+}: Props) {
   const [isLoading, isError, transactions] = useSafeApi({
     chainId,
     multisigAddress,
@@ -118,8 +116,8 @@ export function LayerZeroMultisig({
               />
             </div>
 
-            <div>
-              <div className="bg-gray-20 grid-cols-multisig col-span-5 grid rounded py-3 text-left text-[13px] font-semibold text-[#AEAEAE]">
+            <div className="overflow-x-auto">
+              <div className="col-span-5 grid grid-cols-multisig rounded bg-gray-20 py-3 text-left text-[13px] font-semibold text-[#AEAEAE]">
                 <div className="px-6">SUBMITTED</div>
                 <div>METHOD</div>
                 <div>CONFIRMATIONS</div>
@@ -131,14 +129,14 @@ export function LayerZeroMultisig({
                   <SafeMultisigTransactionComponent
                     amountOfOwners={owners.length}
                     tx={tx}
+                    allTxs={transactions}
                     key={i}
-                    associatedAddresses={associatedAddresses}
                   />
                 ))}
               </PaginatedContainer>
             </div>
 
-            <span className="pb-2 pr-8 pt-5 text-right text-xs text-gray-500">
+            <span className="pb-3 pr-8 pt-5 text-right text-xs text-gray-500">
               {LOWER_PAGE_BOUND} - {UPPER_PAGE_BOUND} out of{' '}
               {transactions.length} transactions
             </span>

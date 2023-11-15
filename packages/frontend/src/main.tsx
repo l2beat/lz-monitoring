@@ -1,5 +1,6 @@
 import './index.css'
 import 'react-loading-skeleton/dist/skeleton.css'
+import 'react-vertical-timeline-component/style.min.css'
 
 import React from 'react'
 import ReactDOM from 'react-dom/client'
