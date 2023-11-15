@@ -9,7 +9,7 @@ import Skeleton from 'react-loading-skeleton'
 
 import { MinusIcon } from '../../icons/MinusIcon'
 import { PlusIcon } from '../../icons/PlusIcon'
-import { Row } from '../Row'
+import { Code } from '../Code'
 import { RowSection } from '../RowSection'
 import { InlineCodeSkeleton, InlineSkeleton } from '../Skeleton'
 import { decodeCall, paramToSummary, toUTC } from './utils'
@@ -54,64 +54,60 @@ export function SafeMultisigTransactionComponent({
 
   const txStatus = getTransactionStatus(tx, [])
 
-  if (true) {
-    return (
-      <tr className="border-y border-[#36393D] text-xs">
-        <td className="py-3.5 pl-6">
-          {getTimeDifference(new Date(tx.submissionDate))}
-        </td>
-        <td className="font-bold">{method}</td>
-        <td className={cx(statusToTextColor(txStatus))}>
-          {stringConfirmations}
-        </td>
-        <td>
-          <StatusBadge status={txStatus} />
-        </td>
-        <td>
-          <button
-            className="flex h-[22px] w-[22px] items-center justify-center rounded bg-yellow"
-            onClick={() => setIsExpanded(!isExpanded)}
-          >
-            {isExpanded ? <MinusIcon /> : <PlusIcon />}
-          </button>
-        </td>
-        <>TEST</>
-      </tr>
-    )
-  }
+  return (
+    <div
+      className={cx(
+        'grid-cols-multisig col-span-5 grid border-y border-[#36393D] py-3 text-xs',
+        isExpanded ? 'bg-[#323236]' : 'bg-gray-100',
+      )}
+    >
+      <div className="flex items-center px-6">
+        {getTimeDifference(new Date(tx.submissionDate))}
+      </div>
+      <div className="flex items-center font-bold">{method}</div>
+      <div className={cx('flex items-center', statusToTextColor(txStatus))}>
+        {stringConfirmations}
+      </div>
+      <StatusBadge status={txStatus} />
+      <div>
+        <button
+          className="flex h-[22px] w-[22px] items-center justify-center rounded bg-yellow"
+          onClick={() => setIsExpanded(!isExpanded)}
+        >
+          {isExpanded ? <MinusIcon /> : <PlusIcon />}
+        </button>
+      </div>
 
-  // return (
-  //   <ComponentLayout>
-  //     <Row label="Submission date" value={submissionDate} />
-  //     <Row label="Execution date" value={executionDate} />
-  //     <Row label="Required confirmations" value={requiredConfirmations} />
-  //     <Row label="Acquired confirmations" value={acquiredConfirmations} />
-  //     <Row label="Executed" value={executed} />
-  //     <Row label="Successful" value={successful} />
-
-  //     <Row label="Nonce" value={nonce} />
-  //     <Row label="Block number" value={blockNumber} />
-  //     <Row label="Target" value={target} />
-  //     <Row label="Method" value={<Code>{method}</Code>} />
-  //     <Row label="Call with params" value={<Code>{callWithParams}</Code>} />
-  //     <Row label="Raw data" value={<Code>{rawData}</Code>} />
-
-  //     {paramsSummary.length > 0 && (
-  //       <ExpandableRow className="mt-5" title="Params / Function calls">
-  //         <Code>{params.map((inlineSummary) => `${inlineSummary}\n`)}</Code>
-  //       </ExpandableRow>
-  //     )}
-
-  //     {tx.transfers.length > 0 && (
-  //       <ExpandableRow className="mt-5" title="Transfers">
-  //         <TokenTransfers
-  //           transfers={tx.transfers}
-  //           associatedAddresses={associatedAddresses}
-  //         />
-  //       </ExpandableRow>
-  //     )}
-  //   </ComponentLayout>
-  // )
+      {isExpanded && (
+        <div className="col-span-5 mt-3">
+          <Row label="Submission date" value={submissionDate} />
+          <Row label="Execution date" value={executionDate} />
+          <Row label="Target" value={target} />
+          <Row label="Nonce" value={nonce} />
+          <Row label="Block number" value={blockNumber} />
+          <Row label="Target" value={target} />
+          <Row
+            label="Method"
+            value={<Code>{decodedProperties?.signature}</Code>}
+          />
+          <Row label="Call with params" value={<Code>{callWithParams}</Code>} />
+          <Row label="Calldata" value={<Code>{rawData}</Code>} />
+          {paramsSummary.length > 0 && (
+            <Row
+              label="Decoded"
+              value={
+                <Code>
+                  {params.map((inlineSummary) => (
+                    <span className="leading-4">{inlineSummary}</span>
+                  ))}
+                </Code>
+              }
+            />
+          )}
+        </div>
+      )}
+    </div>
+  )
 }
 
 export function SafeMultisigTransactionSkeleton() {
@@ -162,6 +158,21 @@ function getDecodedProperties(tx: SafeMultisigTransaction) {
   }
 
   return null
+}
+
+function Row({
+  label,
+  value,
+}: {
+  label: React.ReactNode
+  value: React.ReactNode
+}) {
+  return (
+    <div className="flex w-full flex-row border-t border-[#4B4E51] py-4 pl-12 pr-8">
+      <div className="w-1/5 text-sm font-medium text-gray-500">{label}</div>
+      <div className="w-4/5 text-xs">{value}</div>
+    </div>
+  )
 }
 
 function getTimeDifference(date: Date) {
@@ -252,7 +263,7 @@ function StatusBadge({ status }: { status: TransactionStatus }) {
   return (
     <div
       className={cx(
-        'flex max-w-fit items-center justify-center rounded px-2.5 py-1.5 text-[13px]',
+        'flex h-[22px] max-w-fit items-center justify-center rounded px-2.5 text-[13px]',
         bgColor,
       )}
     >

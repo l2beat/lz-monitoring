@@ -3,7 +3,11 @@ module.exports = {
   content: ['./index.html', './src/**/*.{ts,tsx}'],
   darkMode: 'class',
   theme: {
-    extend: {},
+    extend: {
+      gridTemplateColumns: {
+        multisig: '3fr 6fr 4fr 3fr 1fr',
+      },
+    },
     fontFamily: {
       sans: ['Roboto', 'sans-serif'],
       mono: ['Roboto Mono', 'monospace'],
