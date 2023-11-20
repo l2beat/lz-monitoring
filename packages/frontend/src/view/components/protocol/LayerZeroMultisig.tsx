@@ -115,7 +115,7 @@ export function LayerZeroMultisig({
             <Row
               label="Owners"
               value={
-                <div className="text-3xs flex flex-col gap-1 text-center md:gap-5 md:text-left md:text-xs">
+                <div className="flex flex-col gap-1 text-center text-3xs md:gap-5 md:text-left md:text-xs">
                   {owners.map((owner, i) => (
                     <span key={i}>{owner}</span>
                   ))}
@@ -153,7 +153,7 @@ export function LayerZeroMultisig({
               </PaginatedContainer>
             </div>
 
-            <span className="text-gray-15 pb-3 pr-8 pt-5 text-right text-xs">
+            <span className="pb-3 pr-8 pt-5 text-right text-xs text-gray-15">
               {LOWER_PAGE_BOUND} - {UPPER_PAGE_BOUND} out of{' '}
               {transactions.length} transactions
             </span>

@@ -38,7 +38,7 @@ export function PaginationControls({
       key={i}
       onClick={() => setPage(i + 1)}
       className={cx(
-        'flex min-h-[30px] min-w-[30px] items-center justify-center rounded hover:bg-gray-50',
+        'flex min-h-[30px] min-w-[30px] items-center justify-center rounded transition-colors hover:bg-gray-50',
         currentPage === i + 1 && 'bg-gray-50',
       )}
     >
@@ -46,10 +46,13 @@ export function PaginationControls({
     </button>
   ))
 
+  const baseButtonClass =
+    'bg-yellow-100 flex h-[30px] w-[30px] items-center  transition-all duration-300 justify-center rounded brightness-100 filter hover:brightness-[120%]'
+
   return (
-    <div className="flex items-center gap-1 md:gap-3">
+    <div className="flex items-center gap-2 md:gap-3">
       <button
-        className="flex h-[30px] w-[30px] rotate-180 items-center justify-center rounded bg-yellow"
+        className={cx(baseButtonClass, 'rotate-180')}
         onClick={() => setPage(currentPage - 1)}
       >
         <SimpleArrowIcon />
@@ -58,7 +61,7 @@ export function PaginationControls({
       {pageTiles}
 
       <button
-        className="flex h-[30px] w-[30px] items-center justify-center rounded bg-yellow"
+        className={baseButtonClass}
         onClick={() => setPage(currentPage + 1)}
       >
         <SimpleArrowIcon />

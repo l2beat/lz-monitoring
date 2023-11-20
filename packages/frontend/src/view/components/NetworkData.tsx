@@ -24,7 +24,7 @@ function DataBlock({
 }) {
   return (
     <div className="flex flex-1 flex-col items-center gap-3 bg-gray-500 pb-8 pt-6">
-      <label className="text-gray-15 mb-3 text-xs">{label}</label>
+      <label className="mb-3 text-xs text-gray-15">{label}</label>
       <span className="w-3/5 text-center font-mono text-xxl">{value}</span>
     </div>
   )

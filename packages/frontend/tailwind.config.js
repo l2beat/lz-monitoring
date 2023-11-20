@@ -46,7 +46,9 @@ module.exports = {
       blue: '#71EDDE',
       black: '#000000',
       white: '#FFFFFF',
-      yellow: '#EEF36A',
+      yellow: {
+        100: '#EEF36A',
+      },
     },
     zIndex: {
       dropdown: 100,

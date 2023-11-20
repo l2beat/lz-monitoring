@@ -49,7 +49,7 @@ export function SafeMultisigTransactionComponent({
     <div
       className={cx(
         'col-span-5 grid min-w-[800px] grid-cols-multisig border-b border-[#36393D] py-3 text-xs',
-        isExpanded ? 'bg-gray-75 rounded border-none' : 'bg-gray-500',
+        isExpanded ? 'rounded border-none bg-gray-75' : 'bg-gray-500',
       )}
     >
       <div className="flex items-center px-6">
@@ -62,7 +62,7 @@ export function SafeMultisigTransactionComponent({
       <StatusBadge status={txStatus} />
       <div>
         <button
-          className="flex h-[22px] w-[22px] items-center justify-center rounded bg-yellow"
+          className="flex h-[22px] w-[22px] items-center justify-center rounded bg-yellow-100 brightness-100 filter   transition-all duration-300 hover:brightness-[120%]"
           onClick={() => setIsExpanded(!isExpanded)}
         >
           {isExpanded ? <MinusIcon /> : <PlusIcon />}
@@ -149,7 +149,7 @@ function Row({
 }) {
   return (
     <div className="flex w-full flex-row border-t border-[#4B4E51] py-4 pl-12 pr-8">
-      <div className="text-gray-15 w-1/5 text-sm font-medium">{label}</div>
+      <div className="w-1/5 text-sm font-medium text-gray-15">{label}</div>
       <div className="w-4/5 text-xs">{value}</div>
     </div>
   )
