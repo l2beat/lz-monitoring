@@ -1,6 +1,6 @@
 import { ChainId, getPrettyChainName } from '@lz/libs'
 import cx from 'classnames'
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 import { ArbitrumIcon } from '../icons/blockchains/ArbitrumIcon'
 import { AvalancheIcon } from '../icons/blockchains/AvalancheIcon'
@@ -47,8 +47,8 @@ export function NetworkDropdownSelector(props: Props) {
     .map((props) => <PillSelector {...props} />)
 
   return (
-    <section className="bg-gray-500 px-6 py-8 md:flex md:justify-center">
-      <div className="md:max-w-[1650px]">
+    <section className="bg-gray-500 px-6 py-8 md:justify-center">
+      <div className="mx-auto max-w-fit">
         <span className="text-xs text-gray-15">Select network</span>
         <div className="scrollbar-h-1.5 flex items-stretch gap-3 overflow-x-auto py-2 scrollbar scrollbar-track-gray-50 scrollbar-thumb-[#eef36a]">
           {pills}
@@ -71,9 +71,11 @@ function PillSelector({
 }) {
   const focusRef = useRef<HTMLDivElement>(null)
 
-  if (focusRef.current && isActive) {
-    focusRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' })
-  }
+  useEffect(() => {
+    if (focusRef.current && isActive) {
+      focusRef.current.scrollIntoView({ behavior: 'smooth', inline: 'center' })
+    }
+  }, [focusRef, isActive])
 
   return (
     <div
