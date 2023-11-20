@@ -1,4 +1,4 @@
-import { ChainId, getLzIdFromChainId } from '@lz/libs'
+import { ChainId, getEndpointIdFromChainId } from '@lz/libs'
 
 import { MaxWidthLayout } from './Layout'
 
@@ -13,7 +13,10 @@ export function NetworkData({ chainId, latestBlock }: Props): JSX.Element {
       <MaxWidthLayout>
         <section className="flex flex-col gap-5 md:flex-row">
           <DataBlock label="Chain ID" value={chainId.toString()} />
-          <DataBlock label="Endpoint ID" value={getLzIdFromChainId(chainId)} />
+          <DataBlock
+            label="Endpoint ID"
+            value={getEndpointIdFromChainId(chainId)}
+          />
           <DataBlock label="Latest block" value={latestBlock} />
         </section>
       </MaxWidthLayout>

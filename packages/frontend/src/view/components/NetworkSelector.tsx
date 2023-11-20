@@ -1,6 +1,17 @@
-import { ChainId } from '@lz/libs'
+import { ChainId, getPrettyChainName } from '@lz/libs'
+import cx from 'classnames'
+import { useState } from 'react'
 
-import { Dropdown, DropdownOption } from './Dropdown'
+import { ArbitrumIcon } from '../icons/blockchains/ArbitrumIcon'
+import { AvalancheIcon } from '../icons/blockchains/AvalancheIcon'
+import { BaseIcon } from '../icons/blockchains/BaseIcon'
+import { BinanceSmartChainIcon } from '../icons/blockchains/BinanceSmartChainIcon'
+import { CeloIcon } from '../icons/blockchains/CeloIcon'
+import { EthereumIcon } from '../icons/blockchains/EthereumIcon'
+import { LineaIcon } from '../icons/blockchains/LineaIcon'
+import { OptimismIcon } from '../icons/blockchains/OptimismIcon'
+import { PolygonPosIcon } from '../icons/blockchains/PolygonPosIcon'
+import { PolygonZkEvmIcon } from '../icons/blockchains/PolygonZkEvmIcon'
 
 interface Props {
   chainId: ChainId
@@ -9,32 +20,83 @@ interface Props {
 }
 
 export function NetworkDropdownSelector(props: Props) {
-  const options = props.chainsToDisplay.map((chainToDisplay) => ({
-    label: ChainId.getName(chainToDisplay),
-    value: ChainId.getName(chainToDisplay),
-  }))
+  // We want almost instance user feedback, but api call
+  // and refresh itself will take a bit thus affecting ux
+  const [optimisticSelect, setOptimisticSelect] = useState<ChainId>(
+    props.chainId,
+  )
 
-  function onChange(option: DropdownOption) {
-    const chainId = ChainId.fromName(option.value)
+  function setChainId(chainId: ChainId) {
+    setOptimisticSelect(chainId)
     props.setChainId(chainId)
   }
 
-  const defaultValue = options.find(
-    (option) => option.value === ChainId.getName(props.chainId),
-  )
-
   if (!props.chainsToDisplay.includes(props.chainId)) {
-    props.setChainId(props.chainsToDisplay[0])
+    setChainId(props.chainsToDisplay[0])
   }
 
+  const pills = props.chainsToDisplay.map((chainToDisplay, i) => (
+    <PillSelector
+      key={i}
+      icon={getIconForChain(chainToDisplay)}
+      label={getPrettyChainName(chainToDisplay)}
+      isActive={chainToDisplay === optimisticSelect}
+      onClick={() => setChainId(chainToDisplay)}
+    />
+  ))
+
   return (
-    <section className="bg-gray-900 px-6 pb-0 pt-6">
-      <label className="mb-4 text-xs text-gray-500">Select network</label>
-      <Dropdown
-        defaultValue={defaultValue}
-        onChange={onChange}
-        options={options}
-      />
+    <section className="flex justify-center bg-gray-500 px-6 py-8">
+      <div className="scrollbar-h-1.5 flex items-stretch gap-3 overflow-auto overflow-x-auto py-2 scrollbar scrollbar-track-gray-50 scrollbar-thumb-[#eef36a]">
+        {pills}
+      </div>
     </section>
   )
+}
+
+function PillSelector(props: {
+  icon: React.ReactNode
+  label: string
+  isActive: boolean
+  onClick: () => void
+}) {
+  return (
+    <div
+      className={cx(
+        'flex min-w-fit cursor-pointer items-center justify-center gap-1 rounded px-5 py-3 text-center',
+        props.isActive ? 'bg-yellow-100 text-black' : 'bg-gray-300 text-white',
+      )}
+      onClick={props.onClick}
+    >
+      <div className="flex h-[25px] w-[25px] items-center justify-center">
+        {props.icon}
+      </div>
+      <span>{props.label}</span>
+    </div>
+  )
+}
+
+function getIconForChain(chain: ChainId): React.ReactNode {
+  switch (chain) {
+    case ChainId.ARBITRUM:
+      return <ArbitrumIcon />
+    case ChainId.AVALANCHE:
+      return <AvalancheIcon />
+    case ChainId.BASE:
+      return <BaseIcon />
+    case ChainId.BSC:
+      return <BinanceSmartChainIcon />
+    case ChainId.CELO:
+      return <CeloIcon />
+    case ChainId.ETHEREUM:
+      return <EthereumIcon />
+    case ChainId.LINEA:
+      return <LineaIcon />
+    case ChainId.OPTIMISM:
+      return <OptimismIcon />
+    case ChainId.POLYGON_ZKEVM:
+      return <PolygonZkEvmIcon />
+    case ChainId.POLYGON_POS:
+      return <PolygonPosIcon />
+  }
 }

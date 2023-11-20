@@ -9,7 +9,7 @@ import {
   ChainId,
   DiscoveryApi,
   EthereumAddress,
-  getChainIdFromLzId,
+  getChainIdFromEndpointId,
   RemoteChain,
 } from '@lz/libs'
 
@@ -130,7 +130,7 @@ function getRemoteChains(ulnV2: ContractParameters): RemoteChain[] {
 
   for (const [lzChainId] of Object.entries(defaultAdapterParams)) {
     const lzChainIdNumber = Number(lzChainId)
-    const chainId = getChainIdFromLzId(lzChainIdNumber)
+    const chainId = getChainIdFromEndpointId(lzChainIdNumber)
     if (!chainId) continue
     let adapterParams = defaultAdapterParams[lzChainIdNumber]
     assert(
