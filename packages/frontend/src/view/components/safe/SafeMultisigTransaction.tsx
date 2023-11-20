@@ -48,8 +48,8 @@ export function SafeMultisigTransactionComponent({
   return (
     <div
       className={cx(
-        'col-span-5 grid min-w-[800px] grid-cols-multisig border-y border-[#36393D] py-3 text-xs',
-        isExpanded ? 'bg-[#323236]' : 'bg-gray-100',
+        'col-span-5 grid min-w-[800px] grid-cols-multisig border-b border-[#36393D] py-3 text-xs',
+        isExpanded ? 'bg-gray-75 rounded border-none' : 'bg-gray-500',
       )}
     >
       <div className="flex items-center px-6">
@@ -91,7 +91,10 @@ export function SafeMultisigTransactionComponent({
           />
           <Row label="Nonce" value={nonce} />
           <Row label="Block number" value={blockNumber} />
-          <Row label="Target" value={target} />
+          <Row
+            label="Target"
+            value={<span className="font-mono">{target}</span>}
+          />
           <Row
             label="Method"
             value={<Code>{decodedProperties?.signature}</Code>}
@@ -146,7 +149,7 @@ function Row({
 }) {
   return (
     <div className="flex w-full flex-row border-t border-[#4B4E51] py-4 pl-12 pr-8">
-      <div className="w-1/5 text-sm font-medium text-gray-500">{label}</div>
+      <div className="text-gray-15 w-1/5 text-sm font-medium">{label}</div>
       <div className="w-4/5 text-xs">{value}</div>
     </div>
   )

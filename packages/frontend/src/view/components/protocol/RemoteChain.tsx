@@ -96,7 +96,5 @@ export function RemoteChainComponent({
 }
 
 function ComponentLayout({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="border-y border-black bg-gray-800 py-3">{children}</div>
-  )
+  return <div className="border-y bg-gray-800 py-3">{children}</div>
 }

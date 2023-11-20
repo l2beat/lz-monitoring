@@ -38,7 +38,7 @@ export function ExecutionTimeline({
           Approved
         </span>
         {approval.signer}
-        <span className="text-gray-600">
+        <span className="text-gray-50">
           {approval.date.toLocaleString()}{' '}
           {approval.method && `via ${approval.method}`}
         </span>
@@ -115,7 +115,7 @@ function variantToTextColor(variant: Variant) {
     : variant === 'orange'
     ? 'text-[#EE964B]'
     : variant === 'gray'
-    ? 'text-gray-500'
+    ? 'text-gray-15'
     : 'text-[#E74C3C]'
 }
 
@@ -125,7 +125,7 @@ function variantToBackgroundColor(variant: Variant) {
     : variant === 'orange'
     ? 'bg-[#EE964B]'
     : variant === 'gray'
-    ? 'bg-gray-500'
+    ? 'bg-gray-15'
     : 'bg-[#E74C3C]'
 }
 
