@@ -4,12 +4,9 @@ import { SkeletonTheme } from 'react-loading-skeleton'
 import { config } from '../../../config'
 import { useChainQueryParam } from '../../../hooks/useChainQueryParam'
 import { useDiscoveryApi } from '../../../hooks/useDiscoveryApi'
-import { NetworkData } from '../NetworkData'
 import { NetworkDropdownSelector } from '../NetworkSelector'
 import { Warning } from '../Warning'
-import { EndpointContract } from './EndpointContract'
 import { LayerZeroMultisig } from './LayerZeroMultisig'
-import { UltraLightNodeContract } from './UltraLightNode'
 
 export function ProtocolInformation({
   chainsToDisplay,
@@ -56,18 +53,18 @@ export function ProtocolInformation({
 
   return (
     <>
-      <SkeletonTheme baseColor="#0D0D0D" highlightColor="#525252">
+      <SkeletonTheme baseColor="#27272A" highlightColor="#525252">
         <NetworkDropdownSelector
           chainId={discoveryResponse.chainId}
           chainsToDisplay={chainsToDisplay}
           setChainId={setChain}
         />
-        <NetworkData
+        {/* <NetworkData
           chainId={discoveryResponse.chainId}
           latestBlock={discoveryResponse.data.blockNumber}
-        />
-        <EndpointContract {...discoveryResponse.data.contracts.endpoint} />
-        <UltraLightNodeContract {...discoveryResponse.data.contracts.ulnV2} />
+        /> */}
+        {/* <EndpointContract {...discoveryResponse.data.contracts.endpoint} />
+        <UltraLightNodeContract {...discoveryResponse.data.contracts.ulnV2} /> */}
 
         {shouldDisplayMultisigTransactions && (
           <LayerZeroMultisig

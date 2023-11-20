@@ -47,7 +47,7 @@ export function PaginationControls({
   ))
 
   return (
-    <div className="flex items-center gap-3">
+    <div className="flex items-center gap-1 md:gap-3">
       <button
         className="flex h-[30px] w-[30px] rotate-180 items-center justify-center rounded bg-yellow"
         onClick={() => setPage(currentPage - 1)}

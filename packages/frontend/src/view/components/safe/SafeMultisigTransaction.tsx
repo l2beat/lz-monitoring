@@ -1,14 +1,11 @@
 import { SafeMultisigTransaction, SafeTransactionDecodedData } from '@lz/libs'
 import cx from 'classnames'
 import React from 'react'
-import Skeleton from 'react-loading-skeleton'
 
 import { MinusIcon } from '../../icons/MinusIcon'
 import { PlusIcon } from '../../icons/PlusIcon'
 import { Code } from '../Code'
 import { ExecutionTimeline } from '../ExecutionTimeline'
-import { RowSection } from '../RowSection'
-import { InlineCodeSkeleton, InlineSkeleton } from '../Skeleton'
 import { decodeCall, paramToSummary, toUTC } from './utils'
 
 export function SafeMultisigTransactionComponent({
@@ -51,7 +48,7 @@ export function SafeMultisigTransactionComponent({
   return (
     <div
       className={cx(
-        'col-span-5 grid grid-cols-multisig border-y border-[#36393D] py-3 text-xs',
+        'col-span-5 grid min-w-[800px] grid-cols-multisig border-y border-[#36393D] py-3 text-xs',
         isExpanded ? 'bg-[#323236]' : 'bg-gray-100',
       )}
     >
@@ -82,9 +79,13 @@ export function SafeMultisigTransactionComponent({
               <ExecutionTimeline
                 outcome={txStatus}
                 submissionDate={new Date(submissionDate)}
-                approvals={(tx.confirmations ?? []).map((t) => ({
-                  signer: t.owner,
-                }))}
+                approvals={(tx.confirmations ?? [])
+                  .map((t) => ({
+                    signer: t.owner,
+                    date: new Date(t.submissionDate),
+                    method: t.signatureType,
+                  }))
+                  .sort((a, b) => b.date.getTime() - a.date.getTime())}
               />
             }
           />
@@ -111,35 +112,6 @@ export function SafeMultisigTransactionComponent({
           )}
         </div>
       )}
-    </div>
-  )
-}
-
-export function SafeMultisigTransactionSkeleton() {
-  const inlinePropSkeletons = new Array(9)
-    .fill(0)
-    .map((_, i) => (
-      <Row key={i} label={<Skeleton />} value={<InlineSkeleton />} />
-    ))
-
-  const codeSkeletons = new Array(3)
-    .fill(0)
-    .map((_, i) => (
-      <Row key={i} label={<Skeleton />} value={<InlineCodeSkeleton />} />
-    ))
-
-  return (
-    <ComponentLayout>
-      {inlinePropSkeletons}
-      {codeSkeletons}
-    </ComponentLayout>
-  )
-}
-
-function ComponentLayout({ children }: { children: React.ReactNode[] }) {
-  return (
-    <div className="mb-10">
-      <RowSection>{children}</RowSection>
     </div>
   )
 }

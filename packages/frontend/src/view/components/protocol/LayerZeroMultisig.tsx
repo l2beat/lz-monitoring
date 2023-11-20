@@ -1,15 +1,12 @@
 import { ChainId, EthereumAddress } from '@lz/libs'
 import { useState } from 'react'
+import Skeleton from 'react-loading-skeleton'
 
 import { useSafeApi } from '../../../hooks/useSafeApi'
 import { PaginatedContainer, PaginationControls } from '../PaginatedContainer'
 import { ProtocolComponentCard } from '../ProtocolComponentCard'
 import { Row } from '../Row'
-import {
-  SafeMultisigTransactionComponent,
-  SafeMultisigTransactionSkeleton,
-} from '../safe/SafeMultisigTransaction'
-import { InlineSkeleton } from '../Skeleton'
+import { SafeMultisigTransactionComponent } from '../safe/SafeMultisigTransaction'
 
 interface Props {
   address?: EthereumAddress
@@ -59,9 +56,29 @@ export function LayerZeroMultisig({
     return (
       <ProtocolComponentCard
         title="LayerZero Multisig"
-        subtitle={<InlineSkeleton />}
+        subtitle={<Skeleton width={320} />}
+        description={<Skeleton count={2} />}
       >
-        <SafeMultisigTransactionSkeleton />
+        <Subsection>
+          <Row
+            label={<Skeleton width={120} />}
+            value={<Skeleton width={320} />}
+          />
+          <RowSeparator />
+          <Row
+            label={<Skeleton width={120} />}
+            value={<Skeleton count={5} className="mt-1 md:mt-3" width={320} />}
+          />
+        </Subsection>
+
+        <Subsection>
+          <div className="flex flex-col items-center justify-between gap-3 py-3 md:flex-row md:gap-0">
+            <Skeleton width={120} />
+            <Skeleton width={220} />
+          </div>
+
+          <Skeleton count={10} height={25} />
+        </Subsection>
       </ProtocolComponentCard>
     )
   }
@@ -88,7 +105,7 @@ export function LayerZeroMultisig({
     <ProtocolComponentCard
       title="LayerZero Multisig"
       subtitle={subtitle}
-      description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+      description="Safe multi-signature contract managed by LayerZero. Owner of Endpoint and UltraLightNodeV2 contracts. Any configuration change must be made through the LayerZero multisig wallet. Transaction information is being fetched from safe transaction service."
     >
       {hasData && (
         <>
@@ -98,16 +115,16 @@ export function LayerZeroMultisig({
             <Row
               label="Owners"
               value={
-                <div className="flex flex-col gap-5 text-xs">
+                <div className="flex flex-col gap-1 text-center text-[11px] text-xs md:gap-5 md:text-left md:text-xs">
                   {owners.map((owner, i) => (
-                    <span key={i}>{owner.toString()}</span>
+                    <span key={i}>{owner}</span>
                   ))}
                 </div>
               }
             />
           </Subsection>
           <Subsection>
-            <div className="flex items-center justify-between py-3 text-md font-medium">
+            <div className="flex flex-col items-center justify-between gap-3 py-3 text-md font-medium md:flex-row md:gap-0">
               <h1>Multisig transactions</h1>
               <PaginationControls
                 amountOfPages={TOTAL_PAGES_AMOUNT}
@@ -117,7 +134,7 @@ export function LayerZeroMultisig({
             </div>
 
             <div className="overflow-x-auto">
-              <div className="col-span-5 grid grid-cols-multisig rounded bg-gray-20 py-3 text-left text-[13px] font-semibold text-[#AEAEAE]">
+              <div className="col-span-5 grid min-w-[800px] grid-cols-multisig rounded bg-gray-20 py-3 text-left text-[13px] font-semibold text-[#AEAEAE]">
                 <div className="px-6">SUBMITTED</div>
                 <div>METHOD</div>
                 <div>CONFIRMATIONS</div>
@@ -149,7 +166,7 @@ export function LayerZeroMultisig({
 
 function Subsection({ children }: { children: React.ReactNode }) {
   return (
-    <div className="mb-6 flex flex-col rounded-lg bg-gray-100 px-6 py-2">
+    <div className="mb-6 flex flex-col rounded-lg bg-gray-100 py-2 md:px-6">
       {children}
     </div>
   )

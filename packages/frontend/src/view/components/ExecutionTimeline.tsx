@@ -4,6 +4,8 @@ type Outcome = 'PENDING' | 'EXECUTED' | 'DISCARDED'
 
 interface Approval {
   signer: string
+  date: Date
+  method?: string
 }
 
 interface Props {
@@ -36,6 +38,10 @@ export function ExecutionTimeline({
           Approved
         </span>
         {approval.signer}
+        <span className="text-gray-600">
+          {approval.date.toLocaleString()}{' '}
+          {approval.method && `via ${approval.method}`}
+        </span>
       </TimelineNode>
       <Timeline variant="orange" />
     </>
@@ -66,7 +72,7 @@ type Size = 'small' | 'large'
 function Timeline({ variant }: { variant: Variant }) {
   return (
     <div
-      className={cx('h-[40px] w-[1px]', variantToBackgroundColor(variant))}
+      className={cx('h-[52px] w-[1px]', variantToBackgroundColor(variant))}
     />
   )
 }

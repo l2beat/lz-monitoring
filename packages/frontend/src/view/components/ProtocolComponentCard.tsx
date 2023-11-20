@@ -14,11 +14,11 @@ export function ProtocolComponentCard({
   description,
 }: Props) {
   return (
-    <section className={cx('mb-6 rounded-lg bg-gray-200 p-8')}>
-      <div className="mb-6 flex items-center justify-between">
-        <h2 className={cx('text-font-medium text-xl')}>{title}</h2>
+    <section className={cx('mb-6 rounded-lg bg-gray-200 p-3 md:p-8')}>
+      <div className="mb-3 flex flex-col items-center justify-between gap-2 md:mb-6 md:flex-row">
+        <h2 className={cx('text-xl')}>{title}</h2>
         {subtitle && (
-          <span className="p-0 font-mono text-[12px] text-md text-gray-600">
+          <span className="font-mono text-[12px] text-gray-600 md:text-md">
             {subtitle}
           </span>
         )}
