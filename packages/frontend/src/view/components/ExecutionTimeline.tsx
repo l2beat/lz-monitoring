@@ -131,12 +131,12 @@ function variantToBackgroundColor(variant: Variant) {
 
 function outcomeToDescription(outcome: Outcome) {
   if (outcome === 'EXECUTED') {
-    return 'The transaction was executed successfully'
+    return 'The transaction was executed successfully.'
   }
 
   if (outcome === 'DISCARDED') {
-    return 'Another transactions with same nonce has been submitted'
+    return 'A new transaction with an identical nonce has been submitted.'
   }
 
-  return 'Transaction is waiting for confirmations'
+  return 'Transaction is waiting for signatures.'
 }
