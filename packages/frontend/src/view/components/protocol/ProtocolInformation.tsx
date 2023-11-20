@@ -8,7 +8,9 @@ import { Layout } from '../Layout'
 import { NetworkData } from '../NetworkData'
 import { NetworkDropdownSelector } from '../NetworkSelector'
 import { Warning } from '../Warning'
+import { EndpointContract } from './EndpointContract'
 import { LayerZeroMultisig } from './LayerZeroMultisig'
+import { UltraLightNodeContract } from './UltraLightNode'
 
 export function ProtocolInformation({
   chainsToDisplay,
@@ -65,8 +67,8 @@ export function ProtocolInformation({
         latestBlock={discoveryResponse.data.blockNumber}
       />
       <Layout>
-        {/* <EndpointContract {...discoveryResponse.data.contracts.endpoint} />
-      <UltraLightNodeContract {...discoveryResponse.data.contracts.ulnV2} /> */}
+        <EndpointContract {...discoveryResponse.data.contracts.endpoint} />
+        <UltraLightNodeContract {...discoveryResponse.data.contracts.ulnV2} />
 
         {shouldDisplayMultisigTransactions && (
           <SkeletonTheme baseColor="#27272A" highlightColor="#525252">
