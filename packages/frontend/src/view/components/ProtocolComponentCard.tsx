@@ -16,7 +16,7 @@ export function ProtocolComponentCard({
       <div className="flex flex-col items-center justify-between gap-2 md:mb-6 md:flex-row">
         <h2 className="text-xl">{title}</h2>
         {subtitle && (
-          <span className="text-gray-30 font-mono text-[12px] md:text-md">
+          <span className="font-mono text-[12px] text-gray-30 md:text-md">
             {subtitle}
           </span>
         )}
