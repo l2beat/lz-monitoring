@@ -36,9 +36,7 @@ export function Main() {
   return (
     <>
       <Navbar />
-      <Layout>
-        <ProtocolInformation chainsToDisplay={chainsToDisplay} />
-      </Layout>
+      <ProtocolInformation chainsToDisplay={chainsToDisplay} />
     </>
   )
 }
