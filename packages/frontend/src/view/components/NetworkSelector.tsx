@@ -64,7 +64,9 @@ function PillSelector(props: {
     <div
       className={cx(
         'flex min-w-fit cursor-pointer items-center justify-center gap-1 rounded px-5 py-3 text-center',
-        props.isActive ? 'bg-yellow-100 text-black' : 'bg-gray-300 text-white',
+        props.isActive
+          ? 'bg-yellow-100 text-black'
+          : 'bg-gray-300 text-white brightness-100 filter transition-all duration-300 hover:brightness-[130%]',
       )}
       onClick={props.onClick}
     >
