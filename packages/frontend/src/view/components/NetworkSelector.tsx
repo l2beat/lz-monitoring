@@ -1,6 +1,6 @@
 import { ChainId, getPrettyChainName } from '@lz/libs'
 import cx from 'classnames'
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 
 import { ArbitrumIcon } from '../icons/blockchains/ArbitrumIcon'
 import { AvalancheIcon } from '../icons/blockchains/AvalancheIcon'
@@ -58,26 +58,38 @@ export function NetworkDropdownSelector(props: Props) {
   )
 }
 
-function PillSelector(props: {
+function PillSelector({
+  icon,
+  label,
+  isActive,
+  onClick,
+}: {
   icon: React.ReactNode
   label: string
   isActive: boolean
   onClick: () => void
 }) {
+  const focusRef = useRef<HTMLDivElement>(null)
+
+  if (focusRef.current && isActive) {
+    focusRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' })
+  }
+
   return (
     <div
+      ref={focusRef}
       className={cx(
-        'flex min-w-fit cursor-pointer items-center justify-center gap-1 rounded px-5 py-3 text-center',
-        props.isActive
+        'flex min-w-fit cursor-pointer items-center justify-center gap-1 rounded py-3 pl-4 pr-6 text-center',
+        isActive
           ? 'bg-yellow-100 text-black'
           : 'bg-gray-300 text-white brightness-100 filter transition-all duration-300 hover:brightness-[130%]',
       )}
-      onClick={props.onClick}
+      onClick={onClick}
     >
-      <div className="flex h-[25px] w-[25px] items-center justify-center">
-        {props.icon}
+      <div className="flex h-[30px] w-[30px] items-center justify-center">
+        {icon}
       </div>
-      <span>{props.label}</span>
+      <span className="text-xs">{label}</span>
     </div>
   )
 }
