@@ -1,5 +1,5 @@
 import { ChainId, EthereumAddress } from '@lz/libs'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Skeleton from 'react-loading-skeleton'
 
 import { useSafeApi } from '../../../hooks/useSafeApi'
@@ -41,11 +41,9 @@ export function LayerZeroMultisig({
     allTransactions?.length ?? 0,
   )
 
-  function setNormalizedPage(page: number) {
-    if (page > 0 && page <= TOTAL_PAGES_AMOUNT) {
-      setPage(page)
-    }
-  }
+  useEffect(() => {
+    setPage(1)
+  }, [allTransactions])
 
   // Currently lack of multisig data is dictated either lack of support for multisig for given chain or we lack some data (this must be addressed in the future)
   const hasData = address && threshold && owners
@@ -129,7 +127,7 @@ export function LayerZeroMultisig({
                 <PaginationControls
                   amountOfPages={TOTAL_PAGES_AMOUNT}
                   currentPage={page}
-                  setPage={setNormalizedPage}
+                  setPage={setPage}
                 />
               </div>
               <span className="w-full pt-3 text-center text-xs text-gray-15 md:text-right">

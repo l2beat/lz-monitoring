@@ -53,7 +53,7 @@ export function PaginationControls({
     <div className="flex items-center gap-2 md:gap-3">
       <button
         className={cx(baseButtonClass, 'rotate-180')}
-        onClick={() => setPage(currentPage - 1)}
+        onClick={() => setPage(Math.max(currentPage - 1, 1))}
       >
         <SimpleArrowIcon />
       </button>
@@ -62,7 +62,7 @@ export function PaginationControls({
 
       <button
         className={baseButtonClass}
-        onClick={() => setPage(currentPage + 1)}
+        onClick={() => setPage(Math.min(currentPage + 1, amountOfPages))}
       >
         <SimpleArrowIcon />
       </button>
