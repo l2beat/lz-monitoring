@@ -80,7 +80,7 @@ function PillSelector({
         'flex min-w-fit cursor-pointer items-center justify-center gap-1 rounded  py-1.5 pl-4 pr-6 text-center md:py-3',
         isActive
           ? 'bg-yellow-100 text-black'
-          : 'bg-gray-300 text-white brightness-100 filter transition-all duration-300 hover:brightness-[130%]',
+          : 'bg-gray-300 text-white brightness-100 filter transition-all duration-300 hover:brightness-[120%]',
       )}
       onClick={onClick}
     >
