@@ -84,9 +84,7 @@ function PillSelector({
       )}
       onClick={onClick}
     >
-      <div className="flex h-[30px] w-[30px] items-center justify-center">
-        {icon}
-      </div>
+      <div className="flex h-6 w-6 items-center justify-center">{icon}</div>
       <span className="text-xs">{label}</span>
     </div>
   )
