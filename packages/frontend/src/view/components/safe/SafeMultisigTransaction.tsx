@@ -243,7 +243,7 @@ function StatusBadge({ status }: { status: TransactionStatus }) {
   return (
     <div
       className={cx(
-        'flex h-[22px] max-w-fit items-center justify-center rounded px-2.5 text-[13px]',
+        'flex h-[22px] max-w-fit items-center justify-center rounded px-2 text-2xs',
         bgColor,
       )}
     >
