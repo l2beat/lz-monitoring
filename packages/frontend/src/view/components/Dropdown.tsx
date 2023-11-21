@@ -32,8 +32,8 @@ export function Dropdown(props: Props): JSX.Element {
         <div className={cx('relative', props.className)}>
           <Listbox.Button
             className={cx(
-              'flex h-full w-full items-center justify-between bg-gray-750 pl-6 font-mono',
-              !selectedOption && 'text-gray-500',
+              'flex h-full w-full items-center justify-between bg-gray-800 pl-6 font-mono',
+              !selectedOption && 'text-gray-15',
             )}
           >
             {selectedOption?.label ?? 'Select an option'}
