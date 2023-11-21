@@ -114,6 +114,26 @@ describe(ChangelogRepository.name, () => {
     })
   })
 
+  describe(ChangelogRepository.prototype.getFullChangelog.name, () => {
+    it('finds full changelog', async () => {
+      const expectedTimestamp = new UnixTime(1000)
+      const blockRepo = new BlockNumberRepository(database, Logger.SILENT)
+      await blockRepo.add({
+        blockNumber: record1.blockNumber,
+        chainId: record1.chainId,
+        timestamp: expectedTimestamp,
+        blockHash: Hash256.random(),
+      })
+      await repository.addMany([record1, record2])
+      const result = await repository.getFullChangelog(
+        record1.chainId,
+        record1.targetAddress,
+      )
+
+      expect(result).toEqual([{ ...record1, timestamp: expectedTimestamp }])
+    })
+  })
+
   describe(ChangelogRepository.prototype.deleteAll.name, () => {
     it('deletes all records', async () => {
       await repository.addMany([record1, record2])

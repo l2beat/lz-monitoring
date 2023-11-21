@@ -18,6 +18,12 @@ export interface ChangelogSummaryRecord {
   count: number
   lastChangeTimestamp: UnixTime
 }
+interface FullChangelogRow extends ChangelogRow {
+  unix_timestamp: Date
+}
+export interface FullChangelogRecord extends ChangelogRecord {
+  timestamp: UnixTime
+}
 
 export class ChangelogRepository extends BaseRepository {
   constructor(database: Database, logger: Logger) {
@@ -48,6 +54,7 @@ export class ChangelogRepository extends BaseRepository {
           .select(
             'target_address',
             knex.raw('max(block_number) as max_block'),
+            // todo: we should count distinct transactions, not blocks
             knex.raw('count(distinct block_number) as count'),
           )
           .from('changelog_entries')
@@ -66,6 +73,23 @@ export class ChangelogRepository extends BaseRepository {
       address: EthereumAddress(row.target_address),
       count: Number(row.count),
       lastChangeTimestamp: UnixTime.fromDate(row.unix_timestamp),
+    }))
+  }
+
+  async getFullChangelog(
+    chainId: ChainId,
+    address: EthereumAddress,
+  ): Promise<FullChangelogRecord[]> {
+    const knex = await this.knex()
+    const rows = await knex
+      .select<FullChangelogRow[]>('c.*', 'b.unix_timestamp')
+      .from('changelog_entries as c')
+      .where('c.chain_id', chainId)
+      .andWhere('target_address', address.toString())
+      .join('block_numbers as b', 'b.block_number', 'c.block_number')
+    return rows.map((r) => ({
+      ...toRecord(r),
+      timestamp: UnixTime.fromDate(r.unix_timestamp),
     }))
   }
 

@@ -15,7 +15,9 @@ import {
 import { ChainId, EthereumAddress } from '@lz/libs'
 import { providers } from 'ethers'
 
+import { ChangelogController } from '../api/controllers/ChangelogController'
 import { DiscoveryController } from '../api/controllers/discovery/DiscoveryController'
+import { createChangelogRouter } from '../api/routes/changelog'
 import { createDiscoveryRouter } from '../api/routes/discovery'
 import { Config } from '../config'
 import { AvailableConfigs, EthereumLikeDiscoveryConfig } from '../config/Config'
@@ -123,10 +125,12 @@ export function createDiscoveryModule({
     currentDiscoveryRepository,
     changelogRepository,
   )
+  const changelogController = new ChangelogController(changelogRepository)
   const discoveryRouter = createDiscoveryRouter(discoveryController)
+  const changelogRouter = createChangelogRouter(changelogController)
 
   return {
-    routers: [discoveryRouter],
+    routers: [discoveryRouter, changelogRouter],
     start: async () => {
       statusLogger.info('Starting discovery module')
 
