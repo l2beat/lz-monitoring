@@ -13,10 +13,17 @@ export function ExpandableContainer(props: Props) {
   const [isExpanded, setIsExpanded] = useState(false)
 
   const expandText = isExpanded ? props.hideText : props.showText
+
   return (
     <div className="w-full">
       <div
-        className={cx(isExpanded ? 'max-h-100' : 'max-h-0', 'overflow-hidden')}
+        className={cx(
+          'transition-max-height overflow-hidden duration-500 ease-linear',
+          // Just a bit of a hack to get the animation to work
+          // Setting max-height to some value that given component won't ever reach
+          // will force the animation to run
+          isExpanded ? 'max-h-[2000px]' : 'max-h-0',
+        )}
       >
         {props.children}
       </div>

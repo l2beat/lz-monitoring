@@ -7,6 +7,9 @@ module.exports = {
       gridTemplateColumns: {
         multisig: '3fr 6fr 4fr 3fr 1fr',
       },
+      transitionProperty: {
+        'max-height': 'max-height',
+      },
     },
     fontFamily: {
       sans: ['Roboto', 'sans-serif'],
