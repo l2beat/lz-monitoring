@@ -71,9 +71,7 @@ type Size = 'small' | 'large'
 
 function Timeline({ variant }: { variant: Variant }) {
   return (
-    <div
-      className={cx('h-[52px] w-[1px]', variantToBackgroundColor(variant))}
-    />
+    <div className={cx('h-[52px] w-px', variantToBackgroundColor(variant))} />
   )
 }
 
