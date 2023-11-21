@@ -124,13 +124,19 @@ export function LayerZeroMultisig({
             />
           </Subsection>
           <Subsection>
-            <div className="flex flex-col items-center justify-between gap-3 py-3 text-md font-medium md:flex-row md:gap-0">
-              <h1>Multisig transactions</h1>
-              <PaginationControls
-                amountOfPages={TOTAL_PAGES_AMOUNT}
-                currentPage={page}
-                setPage={setNormalizedPage}
-              />
+            <div className="flex flex-col py-3 text-md font-medium">
+              <div className="flex flex-col items-center justify-between gap-3 md:flex-row md:gap-0">
+                <h1>Multisig transactions</h1>
+                <PaginationControls
+                  amountOfPages={TOTAL_PAGES_AMOUNT}
+                  currentPage={page}
+                  setPage={setNormalizedPage}
+                />
+              </div>
+              <span className="w-full pt-3 text-center text-xs text-gray-15 md:text-right">
+                {LOWER_PAGE_BOUND} - {UPPER_PAGE_BOUND} out of{' '}
+                {transactions.length} transactions
+              </span>
             </div>
 
             <div className="overflow-x-auto">
@@ -152,11 +158,6 @@ export function LayerZeroMultisig({
                 ))}
               </PaginatedContainer>
             </div>
-
-            <span className="pb-3 pr-8 pt-5 text-right text-xs text-gray-15">
-              {LOWER_PAGE_BOUND} - {UPPER_PAGE_BOUND} out of{' '}
-              {transactions.length} transactions
-            </span>
           </Subsection>
         </>
       )}
