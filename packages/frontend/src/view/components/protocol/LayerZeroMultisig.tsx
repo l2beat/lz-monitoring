@@ -105,7 +105,7 @@ export function LayerZeroMultisig({
     <ProtocolComponentCard
       title="LayerZero Multisig"
       subtitle={subtitle}
-      description="Safe multi-signature contract managed by LayerZero. Owner of Endpoint and UltraLightNodeV2 contracts. Any configuration change must be made through the LayerZero multisig wallet. Transaction information is being fetched from safe transaction service."
+      description="Safe multi-signature contract managed by LayerZero. Owner of the Endpoint and the UltraLightNodeV2 contracts. Any configuration change must be made through the LayerZero multisig wallet. Transaction information is being fetched from the safe transaction service."
     >
       {hasData && (
         <>
