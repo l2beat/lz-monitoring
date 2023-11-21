@@ -41,8 +41,6 @@ export function SafeMultisigTransaction({
     decodedProperties?.callWithParams ?? 'Could not be decoded ⚠️'
   const params = decodedProperties?.params ?? []
 
-  const paramsSummary = params.map((inlineSummary) => `${inlineSummary}\n`)
-
   const txStatus = getTransactionStatus(transaction, allTransactions)
 
   return (
@@ -95,25 +93,22 @@ export function SafeMultisigTransaction({
             param="Target"
             value={<span className="font-mono">{target}</span>}
           />
-          <TransactionProperty
-            param="Method"
-            value={<Code>{decodedProperties?.signature}</Code>}
-          />
+          <TransactionProperty param="Method" value={<Code>{method}</Code>} />
           <TransactionProperty
             param="Call with params"
             value={<Code>{callWithParams}</Code>}
           />
           <TransactionProperty
-            param="Calldata"
+            param="Raw calldata"
             value={<Code>{rawData}</Code>}
           />
-          {paramsSummary.length > 0 && (
+          {params.length > 0 && (
             <TransactionProperty
               param="Decoded"
               value={
                 <Code>
                   {params.map((inlineSummary) => (
-                    <span className="leading-4">{inlineSummary}</span>
+                    <span className="leading-5">{inlineSummary}</span>
                   ))}
                 </Code>
               }
