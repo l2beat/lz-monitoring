@@ -166,7 +166,7 @@ export function getCommonDiscoveryConfig(env: Env): Config['discovery'] {
          */
         chainNamePrefix: 'AVALANCHE',
         startBlock: 12126063,
-        blockExplorerPrefix: 'SNOWTRACE',
+        blockExplorerPrefix: 'AVALANCHE_ROUTESCAN',
         blockExplorerApiUrl:
           'https://api.routescan.io/v2/network/mainnet/evm/43114/etherscan/api',
         blockExplorerMinTimestamp: new Date('2020-09-23T11:02:00Z'),
@@ -177,6 +177,7 @@ export function getCommonDiscoveryConfig(env: Env): Config['discovery'] {
         unsupportedEtherscanMethods: {
           getContractCreation: true,
         },
+        explorerApiKeyRequired: false,
       }),
       linea: createConfig({
         /**
@@ -242,6 +243,7 @@ function configFromTemplate(env: Env) {
     changelogWhitelist,
     multicallConfig,
     unsupportedEtherscanMethods,
+    explorerApiKeyRequired = true,
   }: {
     /**
      * The prefix of the environment variables that configure the chain.
@@ -292,6 +294,11 @@ function configFromTemplate(env: Env) {
      * Etherscan unsupported methods
      */
     unsupportedEtherscanMethods?: EtherscanUnsupportedMethods
+
+    /**
+     * Whether the block explorer API key is required
+     */
+    explorerApiKeyRequired?: boolean
   }): DiscoverySubmoduleConfig {
     const isEnabled = env.boolean(`${chainNamePrefix}_DISCOVERY_ENABLED`, false)
     const isVisible = env.boolean(`${chainNamePrefix}_VISIBLE`, false)
@@ -320,7 +327,9 @@ function configFromTemplate(env: Env) {
           `${chainNamePrefix}_EVENT_INDEXER_AMT_BATCHES`,
         ),
         blockExplorerApiUrl,
-        blockExplorerApiKey: env.string(`${blockExplorerPrefix}_API_KEY`),
+        blockExplorerApiKey: explorerApiKeyRequired
+          ? env.string(`${blockExplorerPrefix}_API_KEY`)
+          : '',
         blockExplorerMinTimestamp: new UnixTime(
           env.integer(
             `${blockExplorerPrefix}_MIN_TIMESTAMP`,
