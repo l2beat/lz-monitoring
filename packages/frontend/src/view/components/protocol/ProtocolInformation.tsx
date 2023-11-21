@@ -1,4 +1,4 @@
-import { ChainId, endpoints } from '@lz/libs'
+import { ChainId, endpoints, getPrettyChainName } from '@lz/libs'
 import { SkeletonTheme } from 'react-loading-skeleton'
 
 import { config } from '../../../config'
@@ -31,6 +31,10 @@ export function ProtocolInformation({
     setParamChain(chain)
   }
 
+  if (!chainsToDisplay.includes(paramChain)) {
+    setParamChain(chainsToDisplay[0])
+  }
+
   const multisigAddress = discoveryResponse?.data.contracts.lzMultisig?.address
 
   const shouldDisplayMultisigTransactions =
@@ -43,11 +47,11 @@ export function ProtocolInformation({
         <NetworkDropdownSelector
           chainId={paramChain}
           chainsToDisplay={chainsToDisplay}
-          setChainId={setChain}
+          setChain={setChain}
         />
         {isError && (
           <Warning
-            title={`Failed to load data for ${ChainId.getName(paramChain)}`}
+            title={`Failed to load data for ${getPrettyChainName(paramChain)}`}
             subtitle="Insights might not be yet available. Please try again later."
           />
         )}
@@ -60,7 +64,7 @@ export function ProtocolInformation({
       <NetworkDropdownSelector
         chainId={discoveryResponse.chainId}
         chainsToDisplay={chainsToDisplay}
-        setChainId={setChain}
+        setChain={setChain}
       />
       <NetworkData
         chainId={discoveryResponse.chainId}

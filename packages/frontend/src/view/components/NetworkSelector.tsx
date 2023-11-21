@@ -15,33 +15,29 @@ import { PolygonZkEvmIcon } from '../icons/blockchains/PolygonZkEvmIcon'
 
 interface Props {
   chainId: ChainId
-  setChainId: (chainId: ChainId) => void
+  setChain: (chainId: ChainId) => void
   chainsToDisplay: [ChainId, ...ChainId[]]
 }
 
-export function NetworkDropdownSelector(props: Props) {
-  // We want almost instance user feedback, but api call
-  // and refresh itself will take a bit thus affecting ux
-  const [optimisticSelect, setOptimisticSelect] = useState<ChainId>(
-    props.chainId,
-  )
+export function NetworkDropdownSelector({
+  chainId,
+  chainsToDisplay,
+  setChain,
+}: Props) {
+  const [optimisticSelect, setOptimisticSelect] = useState<ChainId>(chainId)
 
-  function setChainId(chainId: ChainId) {
+  function onClick(chainId: ChainId) {
     setOptimisticSelect(chainId)
-    props.setChainId(chainId)
+    setChain(chainId)
   }
 
-  if (!props.chainsToDisplay.includes(props.chainId)) {
-    setChainId(props.chainsToDisplay[0])
-  }
-
-  const pills = props.chainsToDisplay
+  const pills = chainsToDisplay
     .map((chainToDisplay, i) => ({
       key: i,
       icon: getIconForChain(chainToDisplay),
       label: getPrettyChainName(chainToDisplay),
       isActive: chainToDisplay === optimisticSelect,
-      onClick: () => setChainId(chainToDisplay),
+      onClick: () => onClick(chainToDisplay),
     }))
     .sort((a, b) => a.label.localeCompare(b.label))
     .map((props) => <PillSelector {...props} />)
