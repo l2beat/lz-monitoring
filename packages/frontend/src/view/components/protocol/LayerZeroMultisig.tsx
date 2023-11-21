@@ -139,7 +139,7 @@ export function LayerZeroMultisig({
               </span>
             </div>
 
-            <div className="overflow-x-auto">
+            <div className="mb-3 overflow-x-auto">
               <div className="col-span-5 grid min-w-[800px] grid-cols-multisig rounded bg-gray-300 py-3 text-left text-[13px] font-semibold text-[#AEAEAE]">
                 <div className="px-6">SUBMITTED</div>
                 <div>METHOD</div>
