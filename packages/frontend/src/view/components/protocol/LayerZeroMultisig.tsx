@@ -115,7 +115,7 @@ export function LayerZeroMultisig({
             <Row
               label="Owners"
               value={
-                <div className="flex flex-col gap-1 text-center text-3xs md:gap-5 md:text-left md:text-xs">
+                <div className="text-3xs flex flex-col gap-1 text-center md:gap-5 md:text-left md:text-xs">
                   {owners.map((owner, i) => (
                     <span key={i}>{owner}</span>
                   ))}
@@ -133,14 +133,14 @@ export function LayerZeroMultisig({
                   setPage={setNormalizedPage}
                 />
               </div>
-              <span className="w-full pt-3 text-center text-xs text-gray-15 md:text-right">
+              <span className="text-gray-15 w-full pt-3 text-center text-xs md:text-right">
                 {LOWER_PAGE_BOUND} - {UPPER_PAGE_BOUND} out of{' '}
-                {transactions.length} transactions
+                {allTransactions.length} transactions
               </span>
             </div>
 
             <div className="mb-3 overflow-x-auto">
-              <div className="col-span-5 grid min-w-[800px] grid-cols-multisig rounded bg-gray-300 py-3 text-left text-[13px] font-semibold text-[#AEAEAE]">
+              <div className="grid-cols-multisig bg-gray-300 col-span-5 grid min-w-[800px] rounded py-3 text-left text-[13px] font-semibold text-[#AEAEAE]">
                 <div className="px-6">SUBMITTED</div>
                 <div>METHOD</div>
                 <div>CONFIRMATIONS</div>
@@ -174,5 +174,5 @@ function Subsection({ children }: { children: React.ReactNode }) {
 }
 
 function RowSeparator() {
-  return <div className="h-px w-full bg-gray-400" />
+  return <div className="bg-gray-400 h-px w-full" />
 }
