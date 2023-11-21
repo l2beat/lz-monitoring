@@ -44,7 +44,6 @@ export function useChainQueryParam({
 
   useEffect(() => {
     setCurrentParam(serialize(deserializedParam))
-    // Do we need to add `setCurrentParam` to deps?
   }, [deserializedParam, setCurrentParam])
 
   return [deserializedParam, setDeserializedParam] as const
