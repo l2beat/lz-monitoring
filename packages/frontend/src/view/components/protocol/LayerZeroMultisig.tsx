@@ -6,7 +6,7 @@ import { useSafeApi } from '../../../hooks/useSafeApi'
 import { PaginatedContainer, PaginationControls } from '../PaginatedContainer'
 import { ProtocolComponentCard } from '../ProtocolComponentCard'
 import { Row } from '../Row'
-import { SafeMultisigTransactionComponent } from '../safe/SafeMultisigTransaction'
+import { SafeMultisigTransaction } from '../safe/SafeMultisigTransaction'
 
 interface Props {
   address?: EthereumAddress
@@ -23,7 +23,7 @@ export function LayerZeroMultisig({
   chainId,
   multisigAddress,
 }: Props) {
-  const [isLoading, isError, transactions] = useSafeApi({
+  const [isLoading, isError, allTransactions] = useSafeApi({
     chainId,
     multisigAddress,
   })
@@ -32,12 +32,12 @@ export function LayerZeroMultisig({
 
   const TXS_PER_PAGE = 12
   const TOTAL_PAGES_AMOUNT = Math.ceil(
-    (transactions?.length ?? 0) / TXS_PER_PAGE,
+    (allTransactions?.length ?? 0) / TXS_PER_PAGE,
   )
   const LOWER_PAGE_BOUND = TXS_PER_PAGE * (page - 1) + 1
   const UPPER_PAGE_BOUND = Math.min(
     TXS_PER_PAGE * page,
-    transactions?.length ?? 0,
+    allTransactions?.length ?? 0,
   )
 
   function setNormalizedPage(page: number) {
@@ -92,7 +92,7 @@ export function LayerZeroMultisig({
     )
   }
 
-  if (!transactions || transactions.length === 0) {
+  if (!allTransactions || allTransactions.length === 0) {
     return (
       <ProtocolComponentCard
         title="LayerZero Multisig"
@@ -135,7 +135,7 @@ export function LayerZeroMultisig({
               </div>
               <span className="w-full pt-3 text-center text-xs text-gray-15 md:text-right">
                 {LOWER_PAGE_BOUND} - {UPPER_PAGE_BOUND} out of{' '}
-                {transactions.length} transactions
+                {allTransactions.length} transactions
               </span>
             </div>
 
@@ -148,11 +148,11 @@ export function LayerZeroMultisig({
                 <div />
               </div>
               <PaginatedContainer itemsPerPage={TXS_PER_PAGE} page={page}>
-                {transactions.map((tx, i) => (
-                  <SafeMultisigTransactionComponent
+                {allTransactions.map((transaction, i) => (
+                  <SafeMultisigTransaction
                     amountOfOwners={owners.length}
-                    tx={tx}
-                    allTxs={transactions}
+                    transaction={transaction}
+                    allTransactions={allTransactions}
                     key={i}
                   />
                 ))}

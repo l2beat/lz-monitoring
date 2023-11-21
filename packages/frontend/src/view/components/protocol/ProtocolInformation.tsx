@@ -1,9 +1,10 @@
-import { ChainId, endpoints } from '@lz/libs'
+import { ChainId, endpoints, getPrettyChainName } from '@lz/libs'
 import { SkeletonTheme } from 'react-loading-skeleton'
 
 import { config } from '../../../config'
 import { useChainQueryParam } from '../../../hooks/useChainQueryParam'
 import { useDiscoveryApi } from '../../../hooks/useDiscoveryApi'
+import { Layout } from '../Layout'
 import { NetworkData } from '../NetworkData'
 import { NetworkDropdownSelector } from '../NetworkSelector'
 import { Warning } from '../Warning'
@@ -30,6 +31,10 @@ export function ProtocolInformation({
     setParamChain(chain)
   }
 
+  if (!chainsToDisplay.includes(paramChain)) {
+    setParamChain(chainsToDisplay[0])
+  }
+
   const multisigAddress = discoveryResponse?.data.contracts.lzMultisig?.address
 
   const shouldDisplayMultisigTransactions =
@@ -42,11 +47,11 @@ export function ProtocolInformation({
         <NetworkDropdownSelector
           chainId={paramChain}
           chainsToDisplay={chainsToDisplay}
-          setChainId={setChain}
+          setChain={setChain}
         />
         {isError && (
           <Warning
-            title={`Failed to load data for ${ChainId.getName(paramChain)}`}
+            title={`Failed to load data for ${getPrettyChainName(paramChain)}`}
             subtitle="Insights might not be yet available. Please try again later."
           />
         )}
@@ -59,24 +64,26 @@ export function ProtocolInformation({
       <NetworkDropdownSelector
         chainId={discoveryResponse.chainId}
         chainsToDisplay={chainsToDisplay}
-        setChainId={setChain}
+        setChain={setChain}
       />
       <NetworkData
         chainId={discoveryResponse.chainId}
         latestBlock={discoveryResponse.data.blockNumber}
       />
-      <EndpointContract {...discoveryResponse.data.contracts.endpoint} />
-      <UltraLightNodeContract {...discoveryResponse.data.contracts.ulnV2} />
+      <Layout>
+        <EndpointContract {...discoveryResponse.data.contracts.endpoint} />
+        <UltraLightNodeContract {...discoveryResponse.data.contracts.ulnV2} />
 
-      {shouldDisplayMultisigTransactions && (
-        <SkeletonTheme baseColor="#27272A" highlightColor="#525252">
-          <LayerZeroMultisig
-            {...discoveryResponse.data.contracts.lzMultisig}
-            multisigAddress={multisigAddress}
-            chainId={discoveryResponse.chainId}
-          />
-        </SkeletonTheme>
-      )}
+        {shouldDisplayMultisigTransactions && (
+          <SkeletonTheme baseColor="#27272A" highlightColor="#525252">
+            <LayerZeroMultisig
+              {...discoveryResponse.data.contracts.lzMultisig}
+              multisigAddress={multisigAddress}
+              chainId={discoveryResponse.chainId}
+            />
+          </SkeletonTheme>
+        )}
+      </Layout>
     </>
   )
 }

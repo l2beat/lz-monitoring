@@ -38,5 +38,6 @@ const SafeTransactionDecodedData = z
   .object({
     method: z.string(),
     parameters: z.array(SafeTransactionDecodedParam),
+    to: z.optional(z.string()),
   })
   .nullable()

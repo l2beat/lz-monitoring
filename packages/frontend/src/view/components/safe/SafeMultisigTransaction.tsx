@@ -8,42 +8,40 @@ import { Code } from '../Code'
 import { ExecutionTimeline } from '../ExecutionTimeline'
 import { decodeCall, paramToSummary, toUTC } from './utils'
 
-export function SafeMultisigTransactionComponent({
-  tx,
-  allTxs,
+export function SafeMultisigTransaction({
+  transaction,
+  allTransactions,
   amountOfOwners,
 }: {
-  tx: SafeMultisigTransaction
-  allTxs: SafeMultisigTransaction[]
+  transaction: SafeMultisigTransaction
+  allTransactions: SafeMultisigTransaction[]
   amountOfOwners: number
 }) {
   const [isExpanded, setIsExpanded] = React.useState(false)
   // Data obtained from transaction payload itself
-  const submissionDate = toUTC(tx.submissionDate)
+  const submissionDate = toUTC(transaction.submissionDate)
 
   // It may be nullable in case of not executed transactions
   // typings are yet another time wrong
-  const executionDate = tx.executionDate
-    ? toUTC(tx.executionDate)
+  const executionDate = transaction.executionDate
+    ? toUTC(transaction.executionDate)
     : 'Not executed'
-  const acquiredConfirmations = tx.confirmations?.length ?? 0
+  const acquiredConfirmations = transaction.confirmations?.length ?? 0
   const stringConfirmations = `${acquiredConfirmations}/${amountOfOwners}`
-  const nonce = tx.nonce
-  const blockNumber = tx.blockNumber ?? 'Not executed'
-  const target = tx.to
-  const rawData = tx.data ?? 'No Data'
+  const nonce = transaction.nonce
+  const blockNumber = transaction.blockNumber ?? 'Not executed'
+  const target = transaction.to
+  const rawData = transaction.data ?? 'No Data'
 
   // Data obtained from decoding
-  const decodedProperties = getDecodedProperties(tx)
+  const decodedProperties = getDecodedProperties(transaction)
 
   const method = decodedProperties?.method ?? 'Could not be decoded ⚠️'
   const callWithParams =
     decodedProperties?.callWithParams ?? 'Could not be decoded ⚠️'
   const params = decodedProperties?.params ?? []
 
-  const paramsSummary = params.map((inlineSummary) => `${inlineSummary}\n`)
-
-  const txStatus = getTransactionStatus(tx, allTxs)
+  const txStatus = getTransactionStatus(transaction, allTransactions)
 
   return (
     <div
@@ -53,7 +51,7 @@ export function SafeMultisigTransactionComponent({
       )}
     >
       <div className="flex items-center px-6">
-        {getTimeDifference(new Date(tx.submissionDate))}
+        {getTimeDifference(new Date(transaction.submissionDate))}
       </div>
       <div className="flex items-center font-bold">{method}</div>
       <div className={cx('flex items-center', statusToTextColor(txStatus))}>
@@ -62,7 +60,7 @@ export function SafeMultisigTransactionComponent({
       <StatusBadge status={txStatus} />
       <div>
         <button
-          className="flex h-[22px] w-[22px] items-center justify-center rounded bg-yellow-100 brightness-100 filter   transition-all duration-300 hover:brightness-[120%]"
+          className="flex h-[22px] w-[22px] items-center justify-center rounded bg-yellow-100 brightness-100 filter transition-all duration-300 hover:brightness-[120%]"
           onClick={() => setIsExpanded(!isExpanded)}
         >
           {isExpanded ? <MinusIcon /> : <PlusIcon />}
@@ -71,43 +69,46 @@ export function SafeMultisigTransactionComponent({
 
       {isExpanded && (
         <div className="col-span-5 mt-3">
-          <Row label="Submission date" value={submissionDate} />
-          <Row label="Execution date" value={executionDate} />
-          <Row
-            label="Confirmations"
+          <TransactionProperty param="Submission date" value={submissionDate} />
+          <TransactionProperty param="Execution date" value={executionDate} />
+          <TransactionProperty
+            param="Confirmations"
             value={
               <ExecutionTimeline
                 outcome={txStatus}
                 submissionDate={new Date(submissionDate)}
-                approvals={(tx.confirmations ?? [])
-                  .map((t) => ({
-                    signer: t.owner,
-                    date: new Date(t.submissionDate),
-                    method: t.signatureType,
+                approvals={(transaction.confirmations ?? [])
+                  .map((tx) => ({
+                    signer: tx.owner,
+                    date: new Date(tx.submissionDate),
+                    method: tx.signatureType,
                   }))
                   .sort((a, b) => b.date.getTime() - a.date.getTime())}
               />
             }
           />
-          <Row label="Nonce" value={nonce} />
-          <Row label="Block number" value={blockNumber} />
-          <Row
-            label="Target"
+          <TransactionProperty param="Nonce" value={nonce} />
+          <TransactionProperty param="Block number" value={blockNumber} />
+          <TransactionProperty
+            param="Target"
             value={<span className="font-mono">{target}</span>}
           />
-          <Row
-            label="Method"
-            value={<Code>{decodedProperties?.signature}</Code>}
+          <TransactionProperty param="Method" value={<Code>{method}</Code>} />
+          <TransactionProperty
+            param="Call with params"
+            value={<Code>{callWithParams}</Code>}
           />
-          <Row label="Call with params" value={<Code>{callWithParams}</Code>} />
-          <Row label="Calldata" value={<Code>{rawData}</Code>} />
-          {paramsSummary.length > 0 && (
-            <Row
-              label="Decoded"
+          <TransactionProperty
+            param="Raw calldata"
+            value={<Code>{rawData}</Code>}
+          />
+          {params.length > 0 && (
+            <TransactionProperty
+              param="Decoded"
               value={
                 <Code>
                   {params.map((inlineSummary) => (
-                    <span className="leading-4">{inlineSummary}</span>
+                    <span className="leading-5">{inlineSummary}</span>
                   ))}
                 </Code>
               }
@@ -140,16 +141,16 @@ function getDecodedProperties(tx: SafeMultisigTransaction) {
   return null
 }
 
-function Row({
-  label,
+function TransactionProperty({
+  param,
   value,
 }: {
-  label: React.ReactNode
+  param: React.ReactNode
   value: React.ReactNode
 }) {
   return (
     <div className="flex w-full flex-row border-t border-[#4B4E51] py-4 pl-12 pr-8">
-      <div className="w-1/5 text-sm font-medium text-gray-15">{label}</div>
+      <div className="w-1/5 text-sm font-medium text-gray-15">{param}</div>
       <div className="w-4/5 text-xs">{value}</div>
     </div>
   )

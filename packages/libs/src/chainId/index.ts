@@ -1,2 +1,3 @@
 export * from './ChainId'
-export * from './lzChainId'
+export * from './endpointId'
+export * from './names'

@@ -52,6 +52,7 @@ module.exports = {
     },
     zIndex: {
       dropdown: 100,
+      'network-selector': 101,
     },
   },
   plugins: [

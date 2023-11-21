@@ -14,6 +14,7 @@ export type Param =
   | ExtendCommonParam<{ type: 'nested'; calls: Call[] }>
 
 export interface Call {
+  to?: string
   method: string
   params: Param[]
   signature: string
@@ -36,6 +37,7 @@ export function decodeCall(
     params: normalizedParams,
     signature,
     functionCall,
+    to: call.to,
   }
 }
 
@@ -47,7 +49,9 @@ export function decodeParam(param: SafeTransactionDecodedParam): Param {
       value: param.value,
       valueType: param.type,
       calls: param.valueDecoded.flatMap((value) =>
-        value.dataDecoded ? decodeCall(value.dataDecoded) : [],
+        value.dataDecoded
+          ? decodeCall({ ...value.dataDecoded, to: value.to })
+          : [],
       ),
     }
   }
@@ -94,9 +98,11 @@ export function paramToSummary(param: Param): string {
   // Assumption is that nested calls params are primitives
   const nestedCallsSummary = param.calls
     .map((call) => {
+      const to = call.to ? `on ${call.to}` : ''
+
       return `call ${call.method}(${call.params
         .map(paramToSummary)
-        .join(', ')})`
+        .join(', ')}) ${to}`
     })
     .join('\n')
 
