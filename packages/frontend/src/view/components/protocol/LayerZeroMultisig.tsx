@@ -6,7 +6,9 @@ import { useSafeApi } from '../../../hooks/useSafeApi'
 import { PaginatedContainer, PaginationControls } from '../PaginatedContainer'
 import { ProtocolComponentCard } from '../ProtocolComponentCard'
 import { Row } from '../Row'
+import { RowSeparator } from '../RowSeparator'
 import { SafeMultisigTransaction } from '../safe/SafeMultisigTransaction'
+import { Subsection } from '../Subsection'
 
 interface Props {
   address?: EthereumAddress
@@ -163,16 +165,4 @@ export function LayerZeroMultisig({
       )}
     </ProtocolComponentCard>
   )
-}
-
-function Subsection({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="mt-5 flex flex-col rounded-lg bg-gray-500 py-2 md:px-6">
-      {children}
-    </div>
-  )
-}
-
-function RowSeparator() {
-  return <div className="h-px w-full bg-gray-400" />
 }

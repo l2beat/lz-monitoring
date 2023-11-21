@@ -2,10 +2,9 @@ import { SafeMultisigTransaction, SafeTransactionDecodedData } from '@lz/libs'
 import cx from 'classnames'
 import React from 'react'
 
-import { MinusIcon } from '../../icons/MinusIcon'
-import { PlusIcon } from '../../icons/PlusIcon'
 import { Code } from '../Code'
 import { ExecutionTimeline } from '../ExecutionTimeline'
+import { ExpandButton } from '../ExpandButton'
 import { decodeCall, paramToSummary, toUTC } from './utils'
 
 export function SafeMultisigTransaction({
@@ -59,12 +58,10 @@ export function SafeMultisigTransaction({
       </div>
       <StatusBadge status={txStatus} />
       <div>
-        <button
-          className="flex h-[22px] w-[22px] items-center justify-center rounded bg-yellow-100 brightness-100 filter transition-all duration-300 hover:brightness-[120%]"
+        <ExpandButton
           onClick={() => setIsExpanded(!isExpanded)}
-        >
-          {isExpanded ? <MinusIcon /> : <PlusIcon />}
-        </button>
+          isExpanded={isExpanded}
+        />
       </div>
 
       {isExpanded && (

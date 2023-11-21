@@ -4,6 +4,7 @@ import { useChainQueryParam } from '../../../hooks/useChainQueryParam'
 import { Code } from '../Code'
 import { Dropdown, DropdownOption } from '../Dropdown'
 import { Row } from '../Row'
+import { RowSeparator } from '../RowSeparator'
 import { toDropdownOption } from './utils'
 
 interface Props {
@@ -43,20 +44,19 @@ export function RemoteChainComponent({
   }
 
   return (
-    <ComponentLayout>
-      <div className="mb-0.5 flex h-10 items-center">
-        <Row
-          label="Remote chain"
-          value={
-            <Dropdown
-              defaultValue={toDropdownOption(selectedChain)}
-              options={dropdownOptions}
-              onChange={onDropdownSelect}
-              className="w-full"
-            />
-          }
-        />
-      </div>
+    <div>
+      <Row
+        label="Remote chain"
+        value={
+          <Dropdown
+            defaultValue={toDropdownOption(selectedChain)}
+            options={dropdownOptions}
+            onChange={onDropdownSelect}
+            className="w-full"
+          />
+        }
+      />
+      <RowSeparator />
 
       <Row
         label="Default app config"
@@ -64,6 +64,8 @@ export function RemoteChainComponent({
           <Code>{JSON.stringify(remoteChain.defaultAppConfig, null, 2)}</Code>
         }
       />
+      <RowSeparator />
+
       <Row
         label="Default adapter params"
         value={
@@ -72,6 +74,7 @@ export function RemoteChainComponent({
           </Code>
         }
       />
+      <RowSeparator />
 
       <Row
         label="Inbound proof library"
@@ -81,6 +84,7 @@ export function RemoteChainComponent({
           </Code>
         }
       />
+      <RowSeparator />
       <Row
         label="Supported outbound proof"
         value={
@@ -89,12 +93,8 @@ export function RemoteChainComponent({
           </Code>
         }
       />
-
+      <RowSeparator />
       <Row label="Ultra Light Node" value={remoteChain.uln} />
-    </ComponentLayout>
+    </div>
   )
-}
-
-function ComponentLayout({ children }: { children: React.ReactNode }) {
-  return <div className="border-y bg-gray-800 py-3">{children}</div>
 }

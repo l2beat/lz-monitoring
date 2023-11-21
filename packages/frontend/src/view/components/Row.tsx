@@ -6,11 +6,11 @@ export function Row({
   value: React.ReactNode
 }) {
   return (
-    <div className="flex flex-1 flex-col items-center md:flex-row">
-      <div className="pb-2 pt-1 text-sm font-medium text-gray-15 md:w-1/5">
+    <div className="flex flex-col items-center justify-center py-0.5 md:flex-row">
+      <div className="p-2 text-sm font-medium leading-5 text-gray-15 md:w-1/5 md:p-0">
         {label}
       </div>
-      <div className=" pb-2 pt-1 font-mono text-xs md:w-4/5 md:py-4">
+      <div className="p-2 font-mono text-3xs md:w-4/5 md:p-0 md:py-4 md:text-sm">
         {value}
       </div>
     </div>
