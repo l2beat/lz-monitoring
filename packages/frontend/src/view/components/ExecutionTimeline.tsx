@@ -86,8 +86,8 @@ function TimelineNode({
   variant: Variant
   size: Size
 }) {
-  const sizeClass = size === 'small' ? 'h-[10px] w-[10px]' : 'h-[13px] w-[13px]'
-  const sizeOffset = size === 'small' ? 'top-[-2px] left-5' : 'top-[0px] left-6'
+  const sizeClass = size === 'small' ? 'h-2.5 w-2.5' : 'h-[13px] w-[13px]'
+  const sizeOffset = size === 'small' ? '-top-0.5 left-5' : 'top-0 left-6'
 
   return (
     <div
