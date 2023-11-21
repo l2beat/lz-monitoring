@@ -43,7 +43,7 @@ export function NetworkDropdownSelector({
     .map((props) => <PillSelector {...props} />)
 
   return (
-    <section className="bg-gray-500 px-6 py-8 md:justify-center">
+    <section className="bg-gray-500 p-6 md:justify-center">
       <div className="mx-auto max-w-fit">
         <span className="text-xs text-gray-15">Select network</span>
         <div className="scrollbar-h-1.5 flex items-stretch gap-3 overflow-x-auto py-2 scrollbar scrollbar-track-gray-50 scrollbar-thumb-[#eef36a]">
