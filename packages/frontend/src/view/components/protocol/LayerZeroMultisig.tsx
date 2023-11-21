@@ -166,7 +166,7 @@ export function LayerZeroMultisig({
 
 function Subsection({ children }: { children: React.ReactNode }) {
   return (
-    <div className="mb-6 flex flex-col rounded-lg bg-gray-500 py-2 md:px-6">
+    <div className="mt-5 flex flex-col rounded-lg bg-gray-500 py-2 md:px-6">
       {children}
     </div>
   )

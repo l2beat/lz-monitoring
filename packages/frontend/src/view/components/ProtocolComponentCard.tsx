@@ -12,17 +12,17 @@ export function ProtocolComponentCard({
   description,
 }: Props) {
   return (
-    <section className="mb-6 rounded-lg bg-gray-900 p-3 pt-8 md:p-8">
-      <div className="flex flex-col items-center justify-between gap-2 md:mb-6 md:flex-row">
-        <h2 className="text-xl">{title}</h2>
+    <section className="m-4 mb-6 rounded-lg bg-gray-900 px-4 pb-6 pt-6 md:m-0 md:p-8">
+      <div className="flex flex-col justify-between md:mb-4 md:flex-row">
+        <h2 className="mb-4 w-full text-xl md:mb-0">{title}</h2>
         {subtitle && (
-          <span className="font-mono text-[12px] text-gray-30 md:text-md">
+          <span className="mb-4 text-2xs text-gray-30 md:mb-0 md:text-md">
             {subtitle}
           </span>
         )}
       </div>
       {description && (
-        <div className="mb-1 p-4 text-justify text-sm leading-5 md:mb-6 md:p-0">
+        <div className="mb-4 text-justify text-sm leading-5 md:mb-6 md:p-0">
           {description}
         </div>
       )}
