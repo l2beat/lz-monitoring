@@ -18,7 +18,7 @@ export function ProtocolComponentCard({
   return (
     <section
       className={cx(
-        'm-4 rounded-lg bg-gray-900 px-4 pb-6 pt-6 md:m-0 md:mb-10 md:p-8',
+        'm-4 rounded-lg bg-gray-900 px-5 py-6 md:m-0 md:mb-10 md:p-8',
         className,
       )}
     >
