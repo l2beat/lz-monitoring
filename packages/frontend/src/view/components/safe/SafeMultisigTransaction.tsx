@@ -2,9 +2,10 @@ import { SafeMultisigTransaction, SafeTransactionDecodedData } from '@lz/libs'
 import cx from 'classnames'
 import React from 'react'
 
+import { MinusIcon } from '../../icons/MinusIcon'
+import { PlusIcon } from '../../icons/PlusIcon'
 import { Code } from '../Code'
 import { ExecutionTimeline } from '../ExecutionTimeline'
-import { ExpandButton } from '../ExpandButton'
 import { decodeCall, paramToSummary, toUTC } from './utils'
 
 export function SafeMultisigTransaction({
@@ -44,8 +45,9 @@ export function SafeMultisigTransaction({
 
   return (
     <div
+      onClick={() => setIsExpanded(!isExpanded)}
       className={cx(
-        'col-span-5 grid min-w-[800px] grid-cols-multisig border-b border-[#36393D] py-3 text-xs',
+        'col-span-5 grid min-w-[800px] cursor-pointer grid-cols-multisig border-b border-[#36393D] py-3 text-xs',
         isExpanded ? 'rounded border-none bg-gray-75' : 'bg-gray-500',
       )}
     >
@@ -58,14 +60,13 @@ export function SafeMultisigTransaction({
       </div>
       <StatusBadge status={txStatus} />
       <div>
-        <ExpandButton
-          onClick={() => setIsExpanded(!isExpanded)}
-          isExpanded={isExpanded}
-        />
+        <button className="flex h-[22px] w-[22px] items-center justify-center rounded bg-yellow-100 brightness-100 filter transition-all duration-300 hover:brightness-[120%]">
+          {isExpanded ? <MinusIcon /> : <PlusIcon />}
+        </button>
       </div>
 
       {isExpanded && (
-        <div className="col-span-5 mt-3">
+        <div className="col-span-5 mt-3 cursor-auto">
           <TransactionProperty param="Submission date" value={submissionDate} />
           <TransactionProperty param="Execution date" value={executionDate} />
           <TransactionProperty
