@@ -6,7 +6,6 @@ import { useSafeApi } from '../../../hooks/useSafeApi'
 import { PaginatedContainer, PaginationControls } from '../PaginatedContainer'
 import { ProtocolComponentCard } from '../ProtocolComponentCard'
 import { Row } from '../Row'
-import { RowSeparator } from '../RowSeparator'
 import { SafeMultisigTransaction } from '../safe/SafeMultisigTransaction'
 import { Subsection } from '../Subsection'
 
@@ -66,7 +65,6 @@ export function LayerZeroMultisig({
             label={<Skeleton width={120} />}
             value={<Skeleton width={320} />}
           />
-          <RowSeparator />
           <Row
             label={<Skeleton width={120} />}
             value={<Skeleton count={5} className="mt-1 md:mt-3" width={320} />}
@@ -113,7 +111,6 @@ export function LayerZeroMultisig({
         <>
           <Subsection>
             <Row label="Threshold" value={`${threshold}/${owners.length}`} />
-            <RowSeparator />
             <Row
               label="Owners"
               value={

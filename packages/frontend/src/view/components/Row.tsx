@@ -6,7 +6,7 @@ export function Row({
   value: React.ReactNode
 }) {
   return (
-    <div className="flex flex-col items-center justify-center py-0.5 md:flex-row">
+    <div className="flex flex-col items-center justify-center border-b border-gray-400 py-0.5 last:border-none md:flex-row ">
       <div className="py-2 pr-2 text-sm font-medium leading-5 text-gray-15 md:w-1/5 md:py-0">
         {label}
       </div>

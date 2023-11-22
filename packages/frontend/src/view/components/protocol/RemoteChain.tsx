@@ -4,7 +4,6 @@ import { useChainQueryParam } from '../../../hooks/useChainQueryParam'
 import { Code } from '../Code'
 import { Dropdown, DropdownOption } from '../Dropdown'
 import { Row } from '../Row'
-import { RowSeparator } from '../RowSeparator'
 import { toDropdownOption } from './utils'
 
 interface Props {
@@ -56,7 +55,6 @@ export function RemoteChainComponent({
           />
         }
       />
-      <RowSeparator />
 
       <Row
         label="Default app config"
@@ -64,7 +62,6 @@ export function RemoteChainComponent({
           <Code>{JSON.stringify(remoteChain.defaultAppConfig, null, 2)}</Code>
         }
       />
-      <RowSeparator />
 
       <Row
         label="Default adapter params"
@@ -74,7 +71,6 @@ export function RemoteChainComponent({
           </Code>
         }
       />
-      <RowSeparator />
 
       <Row
         label="Inbound proof library"
@@ -84,7 +80,6 @@ export function RemoteChainComponent({
           </Code>
         }
       />
-      <RowSeparator />
       <Row
         label="Supported outbound proof"
         value={
@@ -93,7 +88,6 @@ export function RemoteChainComponent({
           </Code>
         }
       />
-      <RowSeparator />
       <Row label="Ultra Light Node" value={remoteChain.uln} />
     </div>
   )

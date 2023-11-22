@@ -3,7 +3,6 @@ import { EthereumAddress, RemoteChain } from '@lz/libs'
 import { ExpandableContainer } from '../ExpandableContainer'
 import { ProtocolComponentCard } from '../ProtocolComponentCard'
 import { Row } from '../Row'
-import { RowSeparator } from '../RowSeparator'
 import { Subsection } from '../Subsection'
 import { RemoteChainComponent } from './RemoteChain'
 
@@ -27,9 +26,7 @@ export function UltraLightNodeContract(props: Props): JSX.Element {
         </Subsection>
         <Subsection>
           <Row label="Owner" value={props.owner} />
-          <RowSeparator />
           <Row label="Treasury Contract" value={props.treasuryContract} />
-          <RowSeparator />
 
           <Row label="LayerZero token" value={props.layerZeroToken} />
         </Subsection>
