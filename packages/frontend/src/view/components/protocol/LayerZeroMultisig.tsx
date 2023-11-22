@@ -7,6 +7,7 @@ import { PaginatedContainer, PaginationControls } from '../PaginatedContainer'
 import { ProtocolComponentCard } from '../ProtocolComponentCard'
 import { Row } from '../Row'
 import { SafeMultisigTransaction } from '../safe/SafeMultisigTransaction'
+import { Subsection } from '../Subsection'
 
 interface Props {
   address?: EthereumAddress
@@ -64,7 +65,6 @@ export function LayerZeroMultisig({
             label={<Skeleton width={120} />}
             value={<Skeleton width={320} />}
           />
-          <RowSeparator />
           <Row
             label={<Skeleton width={120} />}
             value={<Skeleton count={5} className="mt-1 md:mt-3" width={320} />}
@@ -111,7 +111,6 @@ export function LayerZeroMultisig({
         <>
           <Subsection>
             <Row label="Threshold" value={`${threshold}/${owners.length}`} />
-            <RowSeparator />
             <Row
               label="Owners"
               value={
@@ -163,16 +162,4 @@ export function LayerZeroMultisig({
       )}
     </ProtocolComponentCard>
   )
-}
-
-function Subsection({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="mt-5 flex flex-col rounded-lg bg-gray-500 py-2 md:px-6">
-      {children}
-    </div>
-  )
-}
-
-function RowSeparator() {
-  return <div className="h-px w-full bg-gray-400" />
 }
