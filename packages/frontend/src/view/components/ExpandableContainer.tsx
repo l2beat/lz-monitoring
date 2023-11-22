@@ -18,7 +18,7 @@ export function ExpandableContainer(props: Props) {
     <div className="w-full">
       <div
         className={cx(
-          'transition-max-height overflow-hidden duration-500 ease-linear',
+          'overflow-hidden transition-max-height duration-500',
           // Just a bit of a hack to get the animation to work
           // Setting max-height to some value that given component won't ever reach
           // will force the animation to run
