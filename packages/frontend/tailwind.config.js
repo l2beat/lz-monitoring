@@ -41,6 +41,7 @@ module.exports = {
         900: '#19191B',
         1000: '#0D0D0D',
       },
+      zinc: '#71717A',
       orange: '#FFB36D',
       green: '#CDED71',
       blue: '#71EDDE',
@@ -48,11 +49,15 @@ module.exports = {
       white: '#FFFFFF',
       yellow: {
         100: '#EEF36A',
+        200: '#C1C72B',
+        300: '#6E7121',
+        500: '#363718',
       },
     },
     zIndex: {
       dropdown: 100,
       'network-selector': 101,
+      tooltip: 200,
     },
   },
   plugins: [

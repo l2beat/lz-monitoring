@@ -1,11 +1,10 @@
-import { ChainId, ChangelogApi, EthereumAddress } from '@lz/libs'
+import {
+  ChainId,
+  ChangelogApi,
+  ChangelogApiEntry,
+  EthereumAddress,
+} from '@lz/libs'
 import { useEffect, useState } from 'react'
-
-interface ChangelogData {
-  data: ChangelogApi
-  chainId: ChainId
-  address: EthereumAddress
-}
 
 interface UseChangelogApiHookOptions {
   shouldFetch: boolean
@@ -15,17 +14,24 @@ interface UseChangelogApiHookOptions {
   intervalMs?: number
 }
 
+interface ChangelogData {
+  perDay: Map<number, ChangelogApiEntry[]> | null
+  availableYears: number[] | null
+}
+
 // todo: we can refactor to remove repetitions with useDiscoveryApi
 export function useChangelogApi({
   shouldFetch,
   chainId,
   address,
   apiUrl,
-  intervalMs = 10_000,
 }: UseChangelogApiHookOptions) {
   const [isLoading, setIsLoading] = useState(true)
   const [isError, setIsError] = useState(false)
-  const [data, setData] = useState<ChangelogData | null>(null)
+  const [data, setData] = useState<ChangelogData>({
+    perDay: null,
+    availableYears: null,
+  })
 
   useEffect(() => {
     if (!shouldFetch) {
@@ -48,7 +54,11 @@ export function useChangelogApi({
 
         const data = await result.text()
         const parsed = ChangelogApi.parse(JSON.parse(data))
-        setData({ data: parsed, chainId, address })
+
+        setData({
+          perDay: getChangesPerDay(parsed),
+          availableYears: getAvailableYears(parsed),
+        })
         setIsError(false)
       } catch (e) {
         console.error(e)
@@ -59,13 +69,38 @@ export function useChangelogApi({
     }
 
     void fetchData()
-
-    const fetchDataInterval = setInterval(() => {
-      void fetchData()
-    }, intervalMs)
-
-    return () => clearInterval(fetchDataInterval)
-  }, [chainId, intervalMs, apiUrl, address, shouldFetch])
+  }, [chainId, apiUrl, address, shouldFetch])
 
   return [data, isLoading, isError] as const
+}
+
+function getAvailableYears(changes: ChangelogApiEntry[]): number[] {
+  // return array of all years from the first year with changes
+  // to the current year
+  const currentYear = new Date().getUTCFullYear()
+  const firstYear = changes[0]?.timestamp.toDate().getUTCFullYear()
+  if (!firstYear) {
+    return []
+  }
+  const years = []
+  for (let year = currentYear; year >= firstYear; year--) {
+    years.push(year)
+  }
+  return years
+}
+
+function getChangesPerDay(
+  changes: ChangelogApiEntry[],
+): Map<number, ChangelogApiEntry[]> {
+  const changelogPerDay = new Map<number, ChangelogApiEntry[]>()
+  changes.forEach((change) => {
+    const day = change.timestamp.toStartOf('day').toNumber()
+    const changes = changelogPerDay.get(day)
+    if (!changes) {
+      changelogPerDay.set(day, [change])
+      return
+    }
+    changes.push(change)
+  })
+  return changelogPerDay
 }
