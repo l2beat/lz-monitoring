@@ -6,7 +6,7 @@ import Skeleton from 'react-loading-skeleton'
 import { config } from '../../../config'
 import { useChangelogApi } from '../../../hooks/useChangelogApi'
 import { CloseIcon } from '../../icons/CloseIcon'
-import { Tooltip } from '../tooltip/Tooltip'
+import { Tooltip } from '../Tooltip'
 import { ChangelogEntry } from './ChangelogEntry'
 
 interface ChangelogSummaryProps {

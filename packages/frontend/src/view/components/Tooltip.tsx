@@ -1,7 +1,5 @@
 import { useRef } from 'react'
 
-import { clamp } from './clamp'
-
 interface TooltipProps {
   text: string
   children: React.ReactNode
@@ -121,4 +119,8 @@ function getPosition(
     triangleTop,
     isInverted,
   }
+}
+
+function clamp(value: number, min: number, max: number) {
+  return Math.max(min, Math.min(max, value))
 }
