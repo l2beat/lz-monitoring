@@ -3,6 +3,7 @@ import {
   ChangelogApi,
   ChangelogApiEntry,
   EthereumAddress,
+  UnixTime,
 } from '@lz/libs'
 import { useEffect, useState } from 'react'
 
@@ -17,6 +18,7 @@ interface UseChangelogApiHookOptions {
 interface ChangelogData {
   perDay: Map<number, ChangelogApiEntry[]> | null
   availableYears: number[] | null
+  startTimestamp: UnixTime | null
 }
 
 // todo: we can refactor to remove repetitions with useDiscoveryApi
@@ -31,6 +33,7 @@ export function useChangelogApi({
   const [data, setData] = useState<ChangelogData>({
     perDay: null,
     availableYears: null,
+    startTimestamp: null,
   })
 
   useEffect(() => {
@@ -58,6 +61,7 @@ export function useChangelogApi({
         setData({
           perDay: getChangesPerDay(parsed),
           availableYears: getAvailableYears(parsed),
+          startTimestamp: parsed[0]?.timestamp ?? null,
         })
         setIsError(false)
       } catch (e) {
