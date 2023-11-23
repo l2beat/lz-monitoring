@@ -151,7 +151,7 @@ export abstract class BaseRepository {
   // eslint-disable-next-line @typescript-eslint/ban-types
   protected wrapAdd<T extends AddMethod>(method: T): T {
     return this.wrap(method, (id) =>
-      this.logger.info({ method: method.name, id: id.valueOf() }),
+      this.logger.debug({ method: method.name, id: id.valueOf() }),
     )
   }
 
@@ -172,7 +172,7 @@ export abstract class BaseRepository {
 
   protected wrapDelete<T extends DeleteMethod>(method: T): T {
     return this.wrap(method, (count) =>
-      this.logger.info({ method: method.name, count }),
+      this.logger.debug({ method: method.name, count }),
     )
   }
 

@@ -30,14 +30,18 @@ export function LatestIndexerStates({ status }: { status: DiscoveryStatus }) {
             const lastIndexedBlockOffset = lastIndexedBlock - state.height
             const nodeBlockTip =
               status.state === 'enabled' ? status.node?.blockNumber ?? 0 : 0
-            const nodeBlockTipOffset = nodeBlockTip - state.height
+
+            const nodeBlockTipOffset =
+              status.state === 'enabled'
+                ? prettyDigitsGroups(nodeBlockTip - state.height)
+                : 'N/A'
 
             return (
               <tr className="h-[40px] font-mono">
                 <td>{formatIndexerName(state.id)}</td>
                 <td>{prettyDigitsGroups(state.height)}</td>
                 <td>{prettyDigitsGroups(lastIndexedBlockOffset)}</td>
-                <td>{prettyDigitsGroups(nodeBlockTipOffset)}</td>
+                <td>{nodeBlockTipOffset}</td>
               </tr>
             )
           })}
