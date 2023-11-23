@@ -47,12 +47,21 @@ export function PaginationControls({
   ))
 
   const baseButtonClass =
-    'bg-yellow-100 flex h-[30px] w-[30px] items-center  transition-all duration-300 justify-center rounded brightness-100 filter hover:brightness-[120%]'
+    'flex h-[30px] w-[30px] items-center transition-all duration-300 justify-center rounded brightness-100 filter hover:brightness-[120%]'
+
+  const notAllowedClass =
+    'bg-yellow-300 cursor-not-allowed hover:brightness-[100%]'
+
+  const allowedClass = 'bg-yellow-100'
 
   return (
     <div className="flex items-center gap-2 md:gap-3">
       <button
-        className={cx(baseButtonClass, 'rotate-180')}
+        className={cx(
+          baseButtonClass,
+          'rotate-180',
+          currentPage === 1 ? notAllowedClass : allowedClass,
+        )}
         onClick={() => setPage(Math.max(currentPage - 1, 1))}
       >
         <SimpleArrowIcon />
@@ -61,7 +70,10 @@ export function PaginationControls({
       {pageTiles}
 
       <button
-        className={baseButtonClass}
+        className={cx(
+          baseButtonClass,
+          currentPage === amountOfPages ? notAllowedClass : allowedClass,
+        )}
         onClick={() => setPage(Math.min(currentPage + 1, amountOfPages))}
       >
         <SimpleArrowIcon />
