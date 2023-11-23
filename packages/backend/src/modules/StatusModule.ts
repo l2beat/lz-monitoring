@@ -64,15 +64,6 @@ export function createStatusModule({
     }
   })
 
-  const statusPoller = new StatusPoller(
-    chainModuleStatuses,
-    indexerRepository,
-    blockRepository,
-    logger,
-    config.discovery.checks.statusCheckIntervalMs,
-    config.discovery.checks.statusCheckMaxDelayMs,
-  )
-
   const statusController = new StatusController(
     chainModuleStatuses,
     blockRepository,
@@ -84,7 +75,18 @@ export function createStatusModule({
 
   return {
     start: async () => {
-      await statusPoller.start()
+      if (config.discovery.checks) {
+        const statusPoller = new StatusPoller(
+          chainModuleStatuses,
+          indexerRepository,
+          blockRepository,
+          logger,
+          config.discovery.checks.statusCheckIntervalMs,
+          config.discovery.checks.statusCheckMaxDelayMs,
+        )
+
+        await statusPoller.start()
+      }
     },
     routers: [statusRouter],
   }

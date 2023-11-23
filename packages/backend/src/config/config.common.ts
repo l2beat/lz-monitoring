@@ -68,7 +68,7 @@ export function getCommonDiscoveryConfig(env: Env): Config['discovery'] {
 
   return {
     callsPerMinute: env.integer('RPC_CALLS_PER_MINUTE', 1000),
-    checks: {
+    checks: env.boolean('STATUS_CHECK_ENABLED', false) && {
       statusCheckIntervalMs: env.integer(
         'STATUS_CHECK_INTERVAL_MS',
         1000 * 60 * 60, // 1 hour

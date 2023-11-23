@@ -19,10 +19,12 @@ export interface Config {
     Partial<LoggerOptions>
   readonly health: HealthConfig
   readonly discovery: {
-    readonly checks: {
-      readonly statusCheckMaxDelayMs: number
-      readonly statusCheckIntervalMs: number
-    }
+    readonly checks:
+      | false
+      | {
+          readonly statusCheckMaxDelayMs: number
+          readonly statusCheckIntervalMs: number
+        }
     readonly callsPerMinute: number
     readonly modules: {
       readonly ethereum: DiscoverySubmoduleConfig
