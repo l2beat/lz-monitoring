@@ -71,7 +71,7 @@ class StatusPoller {
 
         if (!indexerWithMaxHeight) {
           // indexer might just start so no report here
-          return []
+          return false
         }
 
         const blockAtMaxHeight = await this.blockRepository.findByNumber(
