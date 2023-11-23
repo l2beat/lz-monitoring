@@ -49,7 +49,6 @@ export function Tooltip(props: TooltipProps) {
 
 function hide(tooltip: HTMLElement | null) {
   if (!tooltip) {
-    console.log('no tooltip')
     return
   }
   tooltip.style.display = 'none'
