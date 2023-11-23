@@ -61,29 +61,35 @@ export function ProtocolInformation({
 
   return (
     <>
-      <NetworkDropdownSelector
-        chainId={discoveryResponse.chainId}
-        chainsToDisplay={chainsToDisplay}
-        setChain={setChain}
-      />
-      <NetworkData
-        chainId={discoveryResponse.chainId}
-        latestBlock={discoveryResponse.data.blockNumber}
-      />
-      <Layout>
-        <EndpointContract {...discoveryResponse.data.contracts.endpoint} />
-        <UltraLightNodeContract {...discoveryResponse.data.contracts.ulnV2} />
+      <SkeletonTheme baseColor="#27272A" highlightColor="#525252">
+        <NetworkDropdownSelector
+          chainId={discoveryResponse.chainId}
+          chainsToDisplay={chainsToDisplay}
+          setChain={setChain}
+        />
+        <NetworkData
+          chainId={discoveryResponse.chainId}
+          latestBlock={discoveryResponse.data.blockNumber}
+        />
+        <Layout>
+          <EndpointContract
+            chainId={paramChain}
+            {...discoveryResponse.data.contracts.endpoint}
+          />
+          <UltraLightNodeContract
+            chainId={paramChain}
+            {...discoveryResponse.data.contracts.ulnV2}
+          />
 
-        {shouldDisplayMultisigTransactions && (
-          <SkeletonTheme baseColor="#27272A" highlightColor="#525252">
+          {shouldDisplayMultisigTransactions && (
             <LayerZeroMultisig
               {...discoveryResponse.data.contracts.lzMultisig}
               multisigAddress={multisigAddress}
               chainId={discoveryResponse.chainId}
             />
-          </SkeletonTheme>
-        )}
-      </Layout>
+          )}
+        </Layout>
+      </SkeletonTheme>
     </>
   )
 }

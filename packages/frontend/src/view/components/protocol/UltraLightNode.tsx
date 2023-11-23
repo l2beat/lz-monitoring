@@ -1,5 +1,6 @@
-import { EthereumAddress, RemoteChain } from '@lz/libs'
+import { ChainId, EthereumAddress, RemoteChain } from '@lz/libs'
 
+import { ChangelogSummary } from '../changelog/ChangelogSummary'
 import { ExpandableContainer } from '../ExpandableContainer'
 import { ProtocolComponentCard } from '../ProtocolComponentCard'
 import { Row } from '../Row'
@@ -7,7 +8,8 @@ import { Subsection } from '../Subsection'
 import { RemoteChainComponent } from './RemoteChain'
 
 interface Props {
-  address?: EthereumAddress
+  chainId: ChainId
+  address: EthereumAddress
   owner?: EthereumAddress
   treasuryContract?: EthereumAddress
   layerZeroToken?: EthereumAddress
@@ -17,6 +19,7 @@ interface Props {
 export function UltraLightNodeContract(props: Props): JSX.Element {
   return (
     <ProtocolComponentCard title="UltraLight Node V2" subtitle={props.address}>
+      <ChangelogSummary chainId={props.chainId} address={props.address} />
       <ExpandableContainer
         showText="View contract parameters"
         hideText="Hide contract parameters"
