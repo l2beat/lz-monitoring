@@ -55,6 +55,6 @@ export class ChangelogController {
       })
     }
 
-    return changelog.sort((a, b) => b.blockNumber - a.blockNumber)
+    return changelog.sort((a, b) => a.blockNumber - b.blockNumber)
   }
 }
