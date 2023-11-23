@@ -66,7 +66,7 @@ export class EventIndexer extends ChildIndexer {
   }
 
   override async update(fromBlock: number, toBlock: number): Promise<number> {
-    const fromBlockNumber = fromBlock === 0 ? this.startBlock : fromBlock
+    const fromBlockNumber = fromBlock === 0 ? this.startBlock : fromBlock + 1 // Exclusive
 
     const updateTo = Math.min(
       fromBlockNumber + this.amtBatches * this.maxBlockBatchSize,
@@ -152,6 +152,7 @@ export class EventIndexer extends ChildIndexer {
     if (blocksToSave.length > 0) {
       await this.blockNumberRepository.addMany(blocksToSave)
     }
+
     if (blocksWithEventsToSave.length > 0) {
       await this.eventRepository.addMany(blocksWithEventsToSave)
     }
