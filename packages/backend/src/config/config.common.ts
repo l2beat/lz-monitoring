@@ -68,6 +68,16 @@ export function getCommonDiscoveryConfig(env: Env): Config['discovery'] {
 
   return {
     callsPerMinute: env.integer('RPC_CALLS_PER_MINUTE', 1000),
+    checks: {
+      statusCheckIntervalMs: env.integer(
+        'STATUS_CHECK_INTERVAL_MS',
+        1000 * 60 * 60, // 1 hour
+      ),
+      statusCheckMaxDelayMs: env.integer(
+        'STATUS_CHECK_MAX_DELAY_MS',
+        1000 * 60 * 10, // 10 minutes
+      ),
+    },
     modules: {
       ethereum: createConfig({
         chainNamePrefix: 'ETHEREUM',
