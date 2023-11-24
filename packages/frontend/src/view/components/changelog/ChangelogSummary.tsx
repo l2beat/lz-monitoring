@@ -1,6 +1,6 @@
 import { ChainId, ChangelogApiEntry, EthereumAddress, UnixTime } from '@lz/libs'
 import cx from 'classnames'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Skeleton from 'react-loading-skeleton'
 
 import { config } from '../../../config'
@@ -24,6 +24,11 @@ export function ChangelogSummary(props: ChangelogSummaryProps) {
   const [changesDetails, setChangesDetails] = useState<
     null | ChangelogApiEntry[]
   >(null)
+
+  // reset changes details when chainId changes
+  useEffect(() => {
+    setChangesDetails(null)
+  }, [props.chainId])
 
   if (isError) {
     return <div>Failed to load changelog</div>
