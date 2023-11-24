@@ -36,7 +36,11 @@ export function BlockchainAddress(props: {
   return (
     <span className="flex items-center">
       <Tooltip text={'Show on ' + explorerName}>
-        <a href={explorerUrl} target="_blank" className="block p-1 underline">
+        <a
+          href={explorerUrl}
+          target="_blank"
+          className="block p-1 font-mono underline"
+        >
           {props.address}
         </a>
       </Tooltip>

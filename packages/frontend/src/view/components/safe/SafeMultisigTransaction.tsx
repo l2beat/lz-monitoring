@@ -9,6 +9,7 @@ import React from 'react'
 
 import { MinusIcon } from '../../icons/MinusIcon'
 import { PlusIcon } from '../../icons/PlusIcon'
+import { BlockchainAddress } from '../BlockchainAddress'
 import { Code } from '../Code'
 import { ExecutionTimeline } from '../ExecutionTimeline'
 import { decodeCall, paramToSummary, toUTC } from './utils'
@@ -85,7 +86,6 @@ export function SafeMultisigTransaction({
                 submissionDate={new Date(submissionDate)}
                 approvals={(transaction.confirmations ?? [])
                   .map((tx) => ({
-                    // TODO: signer is EthereumAddress, but it's not typed as such
                     signer: EthereumAddress(tx.owner),
                     date: new Date(tx.submissionDate),
                     method: tx.signatureType,
@@ -98,8 +98,12 @@ export function SafeMultisigTransaction({
           <TransactionProperty param="Block number" value={blockNumber} />
           <TransactionProperty
             param="Target"
-            // TODO: target is EthereumAddress, but it's not typed as such
-            value={<span className="font-mono">{target}</span>}
+            value={
+              <BlockchainAddress
+                address={EthereumAddress(target)}
+                chainId={chainId}
+              />
+            }
           />
           <TransactionProperty param="Method" value={<Code>{method}</Code>} />
           <TransactionProperty
