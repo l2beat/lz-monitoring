@@ -268,9 +268,7 @@ function createDiscoveryEngine(
     config.unsupportedEtherscanMethods,
   )
 
-  const discoveryLogger = config.loggerEnabled
-    ? DiscoveryLogger.CLI
-    : DiscoveryLogger.SILENT
+  const discoveryLogger = DiscoveryLogger.SERVER
 
   const providerCache = new ProviderCache(cacheRepository)
   const providerWithCache = new ProviderWithCache(
