@@ -21,7 +21,7 @@ export const BLOCK_EXPLORER_URLS: Record<SupportedChainName, string> = {
   bsc: 'https://bscscan.com/',
   avalanche: 'https://snowtrace.dev/',
   celo: 'https://celoscan.io/',
-  linea: 'https://linea.build/',
+  linea: 'https://lineascan.build/',
   base: 'https://basescan.org/',
   gnosis: 'https://gnosisscan.io/',
 }
@@ -39,7 +39,7 @@ const BLOCK_EXPLORER_NAMES: Record<SupportedChainName, string> = {
   bsc: 'BscScan',
   avalanche: 'SnowTrace',
   celo: 'CeloScan',
-  linea: 'Linea',
+  linea: 'LineaScan',
   base: 'BaseScan',
   gnosis: 'GnosisScan',
 }
