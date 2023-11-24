@@ -79,7 +79,7 @@ function Year(props: YearProps) {
         availableYears={props.availableYears ?? [currentYear]}
       >
         <Skeleton
-          containerClassName="flex flex-col [&>br]:hidden gap-2"
+          containerClassName="flex flex-col [&>br]:hidden gap-2 py-1"
           count={7}
           className="h-3 rounded-md"
         />
@@ -139,7 +139,7 @@ function YearWrapper(props: {
         ))}
       </div>
       <div className="shrink overflow-x-auto pb-2 scrollbar scrollbar-track-gray-50 scrollbar-thumb-yellow-100">
-        <div className="mb-2 flex w-[844px] justify-around">
+        <div className="mb-2 flex w-[847px] justify-around">
           {[
             'Jan',
             'Feb',
@@ -187,8 +187,8 @@ function Square(props: SquareProps) {
   const color = getColor(props.changes.length, isExcluded)
 
   return (
-    <div className="px-0.5 py-1">
-      <Tooltip text={text} disabled={isExcluded || !props.active}>
+    <Tooltip text={text} disabled={isExcluded || !props.active}>
+      <div className="px-0.5 py-1">
         <div
           className={cx(
             'h-3 w-3',
@@ -201,8 +201,8 @@ function Square(props: SquareProps) {
             }
           }}
         />
-      </Tooltip>
-    </div>
+      </div>
+    </Tooltip>
   )
 }
 

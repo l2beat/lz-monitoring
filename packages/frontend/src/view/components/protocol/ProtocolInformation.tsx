@@ -73,11 +73,11 @@ export function ProtocolInformation({
         />
         <Layout>
           <EndpointContract
-            chainId={paramChain}
+            chainId={discoveryResponse.chainId}
             {...discoveryResponse.data.contracts.endpoint}
           />
           <UltraLightNodeContract
-            chainId={paramChain}
+            chainId={discoveryResponse.chainId}
             {...discoveryResponse.data.contracts.ulnV2}
           />
 

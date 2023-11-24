@@ -59,9 +59,11 @@ export function useChangelogApi({
         const parsed = ChangelogApi.parse(JSON.parse(data))
 
         setData({
-          perDay: getChangesPerDay(parsed),
-          availableYears: getAvailableYears(parsed),
-          startTimestamp: parsed[0]?.timestamp ?? null,
+          perDay: new Map(
+            parsed.perDay.map((x) => [x.timestamp.toNumber(), x.perBlock]),
+          ),
+          availableYears: parsed.availableYears,
+          startTimestamp: parsed.startTimestamp,
         })
         setIsError(false)
       } catch (e) {
@@ -73,38 +75,7 @@ export function useChangelogApi({
     }
 
     void fetchData()
-  }, [chainId, apiUrl, address, shouldFetch])
+  }, [shouldFetch, chainId, apiUrl, address])
 
   return [data, isLoading, isError] as const
-}
-
-function getAvailableYears(changes: ChangelogApiEntry[]): number[] {
-  // return array of all years from the first year with changes
-  // to the current year
-  const currentYear = new Date().getUTCFullYear()
-  const firstYear = changes[0]?.timestamp.toDate().getUTCFullYear()
-  if (!firstYear) {
-    return []
-  }
-  const years = []
-  for (let year = currentYear; year >= firstYear; year--) {
-    years.push(year)
-  }
-  return years
-}
-
-function getChangesPerDay(
-  changes: ChangelogApiEntry[],
-): Map<number, ChangelogApiEntry[]> {
-  const changelogPerDay = new Map<number, ChangelogApiEntry[]>()
-  changes.forEach((change) => {
-    const day = change.timestamp.toStartOf('day').toNumber()
-    const changes = changelogPerDay.get(day)
-    if (!changes) {
-      changelogPerDay.set(day, [change])
-      return
-    }
-    changes.push(change)
-  })
-  return changelogPerDay
 }

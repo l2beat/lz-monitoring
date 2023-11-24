@@ -22,5 +22,14 @@ export const ChangelogApiEntry = z.object({
 })
 export type ChangelogApiEntry = z.infer<typeof ChangelogApiEntry>
 
-export const ChangelogApi = z.array(ChangelogApiEntry)
+export const ChangelogApi = z.object({
+  perDay: z.array(
+    z.object({
+      timestamp: branded(z.number(), (t) => new UnixTime(t)),
+      perBlock: z.array(ChangelogApiEntry),
+    }),
+  ),
+  availableYears: z.array(z.number()),
+  startTimestamp: branded(z.number(), (t) => new UnixTime(t)),
+})
 export type ChangelogApi = z.infer<typeof ChangelogApi>

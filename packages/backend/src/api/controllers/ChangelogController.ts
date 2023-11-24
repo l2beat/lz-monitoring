@@ -1,5 +1,11 @@
 import { assert } from '@l2beat/backend-tools'
-import { ChainId, ChangelogApi, EthereumAddress } from '@lz/libs'
+import {
+  ChainId,
+  ChangelogApi,
+  ChangelogApiEntry,
+  EthereumAddress,
+  UnixTime,
+} from '@lz/libs'
 
 import { ChangelogRepository } from '../../peripherals/database/ChangelogRepository'
 
@@ -54,7 +60,55 @@ export class ChangelogController {
         changes,
       })
     }
+    const perDay = getChangesPerDay(changelog)
+    const availableYears = getAvailableYears(perDay)
+    const startTimestamp = perDay[0]?.timestamp ?? null
+    assert(startTimestamp, 'startTimestamp not found')
 
-    return changelog.sort((a, b) => a.blockNumber - b.blockNumber)
+    return {
+      perDay,
+      availableYears,
+      startTimestamp,
+    }
   }
+}
+
+function getChangesPerDay(
+  changes: ChangelogApiEntry[],
+): { timestamp: UnixTime; perBlock: ChangelogApiEntry[] }[] {
+  const changelogPerDay = new Map<number, ChangelogApiEntry[]>()
+  changes.forEach((change) => {
+    const day = change.timestamp.toStartOf('day').toNumber()
+    const changes = changelogPerDay.get(day)
+    if (!changes) {
+      changelogPerDay.set(day, [change])
+      return
+    }
+    changes.push(change)
+  })
+  const result = []
+  for (const [day, changes] of changelogPerDay) {
+    result.push({
+      timestamp: new UnixTime(day),
+      perBlock: changes,
+    })
+  }
+  return result.sort((a, b) => a.timestamp.toNumber() - b.timestamp.toNumber())
+}
+
+function getAvailableYears(
+  getChangesPerDay: { timestamp: UnixTime; perBlock: ChangelogApiEntry[] }[],
+): number[] {
+  // return array of all years from the first year with changes
+  // to the current year
+  const currentYear = new Date().getUTCFullYear()
+  const firstYear = getChangesPerDay[0]?.timestamp.toDate().getUTCFullYear()
+  if (!firstYear) {
+    return []
+  }
+  const years = []
+  for (let year = currentYear; year >= firstYear; year--) {
+    years.push(year)
+  }
+  return years
 }
