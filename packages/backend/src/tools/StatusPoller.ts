@@ -65,38 +65,38 @@ class StatusPoller {
           (state) => state.chainId === chainId,
         )
 
-        const indexerWithMaxHeight = indexerState.sort(
-          (a, b) => b.height - a.height,
+        const indexerWithLowestHeight = indexerState.sort(
+          (a, b) => a.height - b.height,
         )[0]
 
-        if (!indexerWithMaxHeight) {
+        if (!indexerWithLowestHeight) {
           // indexer might just start so no report here
           return false
         }
 
-        const blockAtMaxHeight = await this.blockRepository.findByNumber(
-          indexerWithMaxHeight.height,
+        const blockAtLowestHeight = await this.blockRepository.findByNumber(
+          indexerWithLowestHeight.height,
           chainId,
         )
 
-        if (!blockAtMaxHeight) {
+        if (!blockAtLowestHeight) {
           this.logger.error('Indexer is at height that has not been indexed', {
-            id: indexerWithMaxHeight.id,
-            height: indexerWithMaxHeight.height,
+            id: indexerWithLowestHeight.id,
+            height: indexerWithLowestHeight.height,
             chainId,
             chainName,
           })
           return false
         }
 
-        const timestampOffset =
-          tip.timestamp - blockAtMaxHeight.timestamp.toNumber()
+        const timestampOffsetMs =
+          (tip.timestamp - blockAtLowestHeight.timestamp.toNumber()) * 1000
 
-        const blockOffset = tip.number - blockAtMaxHeight.blockNumber
+        const blockOffset = tip.number - blockAtLowestHeight.blockNumber
 
-        if (timestampOffset > this.maxAcceptableDelayMs) {
+        if (timestampOffsetMs > this.maxAcceptableDelayMs) {
           this.logger.error(`Chain is lagging behind too much (${chainName})`, {
-            timestampOffset,
+            timestampOffsetMs,
             blockOffset,
             chainId,
             chainName,
