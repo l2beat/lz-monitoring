@@ -14,11 +14,16 @@ interface Props {
   treasuryContract?: EthereumAddress
   layerZeroToken?: EthereumAddress
   remoteChains?: RemoteChain[]
+  isLoading?: boolean
 }
 
 export function UltraLightNodeContract(props: Props): JSX.Element {
   return (
-    <ProtocolComponentCard title="UltraLight Node V2" subtitle={props.address}>
+    <ProtocolComponentCard
+      title="UltraLight Node V2"
+      subtitle={props.address}
+      isLoading={props.isLoading}
+    >
       <ChangelogSummary chainId={props.chainId} address={props.address} />
       <ExpandableContainer
         showText="View contract parameters"

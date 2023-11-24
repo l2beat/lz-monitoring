@@ -13,11 +13,16 @@ interface Props {
   defaultSendLibrary?: EthereumAddress
   defaultReceiveLibrary?: EthereumAddress
   libraryLookup?: EthereumAddress[]
+  isLoading?: boolean
 }
 
 export function EndpointContract(props: Props): JSX.Element {
   return (
-    <ProtocolComponentCard title="Endpoint" subtitle={props.address}>
+    <ProtocolComponentCard
+      title="Endpoint"
+      subtitle={props.address}
+      isLoading={props.isLoading}
+    >
       <ChangelogSummary chainId={props.chainId} address={props.address} />
       <ExpandableContainer
         showText="View contract parameters"

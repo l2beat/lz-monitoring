@@ -1,5 +1,7 @@
 import cx from 'classnames'
 
+import { LoadingCover } from './LoadingCover'
+
 interface Props {
   title: React.ReactNode
   isLoading?: boolean
@@ -24,11 +26,7 @@ export function ProtocolComponentCard({
         className,
       )}
     >
-      {isLoading && (
-        <div className="absolute left-0 top-0 flex min-h-full w-full items-center justify-center bg-gray-900/90">
-          <div className="border-r-none h-[40px] w-[40px] animate-spin rounded-[50%] border-[2px] border-t-yellow-100" />
-        </div>
-      )}
+      {isLoading && <LoadingCover />}
       <div className={cx('flex flex-col justify-between md:mb-4 md:flex-row')}>
         <h2 className="mb-4 w-full text-xl md:mb-0">{title}</h2>
         {subtitle && (

@@ -1,17 +1,24 @@
 import { ChainId, getEndpointIdFromChainId } from '@lz/libs'
 
 import { MaxWidthLayout } from './Layout'
+import { LoadingCover } from './LoadingCover'
 
 interface Props {
   chainId: ChainId
   latestBlock: number
+  isLoading?: boolean
 }
 
-export function NetworkData({ chainId, latestBlock }: Props): JSX.Element {
+export function NetworkData({
+  chainId,
+  latestBlock,
+  isLoading = true,
+}: Props): JSX.Element {
   return (
     <section className="mb-4 bg-gray-900 p-4 md:mb-10 md:p-8">
       <MaxWidthLayout>
-        <section className="flex items-stretch gap-2.5 md:gap-5">
+        <section className="relative flex items-stretch gap-2.5 md:gap-5">
+          {isLoading && <LoadingCover />}
           <DataBlock label="Chain ID" value={chainId.toString()} />
           <DataBlock
             label="Endpoint ID"
