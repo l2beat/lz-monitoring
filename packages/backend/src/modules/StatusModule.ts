@@ -14,6 +14,7 @@ import { BlockNumberRepository } from '../peripherals/database/BlockNumberReposi
 import { CurrentDiscoveryRepository } from '../peripherals/database/CurrentDiscoveryRepository'
 import { IndexerStateRepository } from '../peripherals/database/IndexerStateRepository'
 import { Database } from '../peripherals/database/shared/Database'
+import { StatusPoller } from '../tools/StatusPoller'
 import { ApplicationModule } from './ApplicationModule'
 
 interface StatusModuleDependencies {
@@ -73,6 +74,20 @@ export function createStatusModule({
   const statusRouter = createStatusRouter(statusController)
 
   return {
+    start: async () => {
+      if (config.discovery.checks) {
+        const statusPoller = new StatusPoller(
+          chainModuleStatuses,
+          indexerRepository,
+          blockRepository,
+          logger,
+          config.discovery.checks.statusCheckIntervalMs,
+          config.discovery.checks.statusCheckMaxDelayMs,
+        )
+
+        await statusPoller.start()
+      }
+    },
     routers: [statusRouter],
   }
 }
