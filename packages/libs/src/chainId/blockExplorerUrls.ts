@@ -25,3 +25,21 @@ export const BLOCK_EXPLORER_URLS: Record<SupportedChainName, string> = {
   base: 'https://basescan.org/',
   gnosis: 'https://gnosisscan.io/',
 }
+
+export function getBlockExplorerName(chainId: ChainId): string {
+  return BLOCK_EXPLORER_NAMES[ChainId.getName(chainId)]
+}
+
+const BLOCK_EXPLORER_NAMES: Record<SupportedChainName, string> = {
+  ethereum: 'Etherscan',
+  arbitrum: 'Arbiscan',
+  optimism: 'Optimistic Etherscan',
+  'polygon-pos': 'PolygonScan',
+  'polygon-zkevm': 'zkEVM PolygonScan',
+  bsc: 'BscScan',
+  avalanche: 'SnowTrace',
+  celo: 'CeloScan',
+  linea: 'Linea',
+  base: 'BaseScan',
+  gnosis: 'GnosisScan',
+}

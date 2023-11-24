@@ -1,8 +1,14 @@
-import { ChainId, EthereumAddress, getBlockExplorerUrl } from '@lz/libs'
+import {
+  ChainId,
+  EthereumAddress,
+  getBlockExplorerName,
+  getBlockExplorerUrl,
+} from '@lz/libs'
 import { useState } from 'react'
 
 import { CopyIcon } from '../icons/CopyIcon'
 import { OkIcon } from '../icons/OkIcon'
+import { Tooltip } from './Tooltip'
 
 export function BlockchainAddress(props: {
   address: EthereumAddress
@@ -11,7 +17,7 @@ export function BlockchainAddress(props: {
   const [hasCopied, setHasCopied] = useState(false)
 
   const explorerUrl = getBlockExplorerUrl(props.address, props.chainId)
-
+  const explorerName = getBlockExplorerName(props.chainId)
   async function copyTextToClipboard(text: string) {
     if ('clipboard' in navigator) {
       await navigator.clipboard.writeText(text)
@@ -28,16 +34,20 @@ export function BlockchainAddress(props: {
   }
 
   return (
-    <>
-      <a href={explorerUrl} target="_blank" className="underline">
-        {props.address}
-      </a>
-      <button
-        className="ml-2 fill-gray-500 hover:fill-white"
-        onClick={() => void copyTextToClipboard(props.address.toString())}
-      >
-        {hasCopied ? <OkIcon /> : <CopyIcon />}
-      </button>
-    </>
+    <span className="flex items-center">
+      <Tooltip text={'Show on ' + explorerName}>
+        <a href={explorerUrl} target="_blank" className="block p-1 underline">
+          {props.address}
+        </a>
+      </Tooltip>
+      <Tooltip text={hasCopied ? 'Copied!' : 'Copy to clipboard'}>
+        <button
+          className="fill-zinc p-1 hover:fill-white"
+          onClick={() => void copyTextToClipboard(props.address.toString())}
+        >
+          {hasCopied ? <OkIcon /> : <CopyIcon />}
+        </button>
+      </Tooltip>
+    </span>
   )
 }

@@ -49,8 +49,11 @@ export function LayerZeroMultisig({
   // Currently lack of multisig data is dictated either lack of support for multisig for given chain or we lack some data (this must be addressed in the future)
   const hasData = address && threshold && owners
 
-  const subtitle =
-    address ?? 'Protocol on this chain is not owned by Safe Multisig'
+  const subtitle = address ? (
+    <BlockchainAddress address={address} chainId={chainId} />
+  ) : (
+    'Protocol on this chain is not owned by Safe Multisig'
+  )
 
   if (isLoading) {
     return (
@@ -113,7 +116,7 @@ export function LayerZeroMultisig({
             <Row
               label="Owners"
               value={
-                <div className="flex flex-col gap-1 text-center text-3xs md:gap-5 md:text-left md:text-xs">
+                <div className="flex flex-col gap-1 text-center text-3xs md:gap-2 md:text-left md:text-xs">
                   {owners.map((owner, i) => (
                     <BlockchainAddress
                       key={i}
@@ -152,6 +155,7 @@ export function LayerZeroMultisig({
               <PaginatedContainer itemsPerPage={TXS_PER_PAGE} page={page}>
                 {allTransactions.map((transaction, i) => (
                   <SafeMultisigTransaction
+                    chainId={chainId}
                     amountOfOwners={owners.length}
                     transaction={transaction}
                     allTransactions={allTransactions}

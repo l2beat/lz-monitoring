@@ -1,4 +1,9 @@
-import { SafeMultisigTransaction, SafeTransactionDecodedData } from '@lz/libs'
+import {
+  ChainId,
+  EthereumAddress,
+  SafeMultisigTransaction,
+  SafeTransactionDecodedData,
+} from '@lz/libs'
 import cx from 'classnames'
 import React from 'react'
 
@@ -12,10 +17,12 @@ export function SafeMultisigTransaction({
   transaction,
   allTransactions,
   amountOfOwners,
+  chainId,
 }: {
   transaction: SafeMultisigTransaction
   allTransactions: SafeMultisigTransaction[]
   amountOfOwners: number
+  chainId: ChainId
 }) {
   const [isExpanded, setIsExpanded] = React.useState(false)
   // Data obtained from transaction payload itself
@@ -73,12 +80,13 @@ export function SafeMultisigTransaction({
             param="Confirmations"
             value={
               <ExecutionTimeline
+                chainId={chainId}
                 outcome={txStatus}
                 submissionDate={new Date(submissionDate)}
                 approvals={(transaction.confirmations ?? [])
                   .map((tx) => ({
                     // TODO: signer is EthereumAddress, but it's not typed as such
-                    signer: tx.owner,
+                    signer: EthereumAddress(tx.owner),
                     date: new Date(tx.submissionDate),
                     method: tx.signatureType,
                   }))
