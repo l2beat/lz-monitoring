@@ -69,7 +69,7 @@ function Year(props: YearProps) {
 
   const allWeeks = getAllWeeks(year)
   const firstDay = new Date(Date.UTC(year, 0, 1))
-  let currDay = UnixTime.fromDate(firstDay)
+  let currDay = UnixTime.fromDate(firstDay).add(-1, 'days')
 
   if (props.isLoading) {
     return (
@@ -108,9 +108,7 @@ function Year(props: YearProps) {
                   key={`${i}-${j}`}
                   active={day === '0'}
                   date={currDay.toDate()}
-                  startDate={
-                    props.startTimestamp?.toStartOf('day').toDate() ?? null
-                  }
+                  startDate={props.startTimestamp?.toDate() ?? null}
                   changes={changes ?? []}
                   setChangesDetails={props.setChangesDetails}
                 />
@@ -248,6 +246,11 @@ interface YearSelectorProps {
 }
 
 function YearSelector(props: YearSelectorProps) {
+  if (!props.availableYears.includes(props.year)) {
+    const currentYear = new Date().getUTCFullYear()
+    props.setYear(currentYear)
+  }
+
   return (
     <div className="mt-6 flex flex-col gap-1">
       {props.availableYears.map((year, i) => (

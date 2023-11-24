@@ -60,7 +60,10 @@ export class ChangelogController {
         changes,
       })
     }
-    const perDay = getChangesPerDay(changelog)
+    const sortedChangelog = changelog.sort(
+      (a, b) => a.blockNumber - b.blockNumber,
+    )
+    const perDay = getChangesPerDay(sortedChangelog)
     const availableYears = getAvailableYears(perDay)
     const startTimestamp = perDay[0]?.timestamp ?? null
     assert(startTimestamp, 'startTimestamp not found')
