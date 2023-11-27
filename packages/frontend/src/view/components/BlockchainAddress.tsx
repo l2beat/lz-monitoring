@@ -34,19 +34,19 @@ export function BlockchainAddress(props: {
   }
 
   return (
-    <span className="flex items-center">
+    <span className="flex items-center gap-2">
       <Tooltip text={'Show on ' + explorerName}>
         <a
           href={explorerUrl}
           target="_blank"
-          className="block p-1 font-mono underline"
+          className="block font-mono underline"
         >
           {props.address}
         </a>
       </Tooltip>
       <Tooltip text={hasCopied ? 'Copied!' : 'Copy to clipboard'}>
         <button
-          className="fill-zinc p-1 hover:fill-white"
+          className="fill-zinc hover:fill-white"
           onClick={() => void copyTextToClipboard(props.address.toString())}
         >
           {hasCopied ? <OkIcon /> : <CopyIcon />}
