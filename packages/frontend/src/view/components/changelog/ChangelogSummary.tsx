@@ -281,7 +281,7 @@ function YearSelector(props: YearSelectorProps) {
 }
 
 function VerticalDivider() {
-  return <div className="border-zinc-500 mb-3 mt-6 w-0 border-l" />
+  return <div className="mb-3 mt-6 w-0 border-l border-zinc-500" />
 }
 
 function getAllWeeks(year: number) {

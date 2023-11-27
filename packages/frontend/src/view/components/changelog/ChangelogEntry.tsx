@@ -20,9 +20,9 @@ export function ChangelogEntry(props: { change: ChangelogApiEntry }) {
         <div className="grow border-l border-yellow-100" />
       </div>
       <div className="flex grow flex-col overflow-hidden">
-        <span className="text-zinc-500 text-md leading-none">
+        <span className="text-md leading-none text-zinc-500">
           {titleStart} in block {/* TODO: should be a link */}
-          <span className="bg-blue-800 text-blue-500 inline-block rounded-sm px-1 py-0.5">
+          <span className="inline-block rounded-sm bg-blue-800 px-1 py-0.5 text-blue-500">
             {props.change.blockNumber.toString()}
           </span>{' '}
           at{' '}
@@ -46,7 +46,7 @@ function SingleChange(props: { change: Change }) {
   //TODO: maybe we can get the description for this key
 
   return (
-    <div className="border-zinc-700 mt-4 rounded-lg border p-2">
+    <div className="mt-4 rounded-lg border border-zinc-700 p-2">
       <div
         className="flex cursor-pointer items-center justify-between p-4"
         onClick={() => setIsExpanded(!isExpanded)}
@@ -55,7 +55,7 @@ function SingleChange(props: { change: Change }) {
           <span className="text-zinc-500">
             {props.change.modificationType} in
           </span>{' '}
-          <span className="text-pink-500 bg-pink-700 rounded-sm px-1 py-0.5">
+          <span className="rounded-sm bg-pink-700 px-1 py-0.5 text-pink-500">
             {path.join('=>')}
           </span>
         </span>
@@ -67,7 +67,7 @@ function SingleChange(props: { change: Change }) {
         <div className="flex flex-col gap-3 px-4 pb-4">
           {props.change.previousValue && (
             <div>
-              <div className="text-zinc-500 mb-2 text-xs">Previous value</div>
+              <div className="mb-2 text-xs text-zinc-500">Previous value</div>
               <Code>
                 <span className="bg-red leading-tight">
                   {prettyJsonString(props.change.previousValue)}
@@ -77,7 +77,7 @@ function SingleChange(props: { change: Change }) {
           )}
           {props.change.currentValue && (
             <div>
-              <div className="text-zinc-500 mb-2 text-xs">New value</div>
+              <div className="mb-2 text-xs text-zinc-500">New value</div>
               <Code>
                 <span className="bg-green leading-tight">
                   {prettyJsonString(props.change.currentValue)}
