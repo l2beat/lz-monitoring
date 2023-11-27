@@ -123,12 +123,25 @@ export class UnixTime {
     return this.toDate().toISOString().slice(0, 10)
   }
 
+  toMMDDYYYY(): string {
+    // ex: November 1st, 2020
+    const date = this.toDate()
+    const month = date.toLocaleString('default', { month: 'long' })
+    const day = date.getDate()
+    const year = date.getFullYear()
+    return `${month} ${day}, ${year}`
+  }
+
   toDays(): number {
     if (this.timestamp % UnixTime.DAY !== 0) {
       throw new Error('Timestamp must be a full day')
     }
 
     return this.timestamp / UnixTime.DAY
+  }
+
+  toTimeOfDay(): string {
+    return this.toDate().toISOString().slice(11, 19)
   }
 
   static isSafeToCast(timestamp: number): boolean {

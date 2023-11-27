@@ -46,15 +46,21 @@ export function ChangelogSummary(props: ChangelogSummaryProps) {
           isLoading={isLoading}
         />
         {changesDetails && (
-          <div className="flex justify-end">
-            <button onClick={() => setChangesDetails(null)}>
-              <CloseIcon />
-            </button>
-          </div>
+          <>
+            <div className="my-6 flex items-center justify-between">
+              <span className="font-medium">
+                {changesDetails[0]?.timestamp.toMMDDYYYY()}
+              </span>
+              <button onClick={() => setChangesDetails(null)}>
+                <CloseIcon />
+              </button>
+            </div>
+
+            {changesDetails.map((change, i) => (
+              <ChangelogEntry key={i} change={change} />
+            ))}
+          </>
         )}
-        {changesDetails?.map((change, i) => (
-          <ChangelogEntry key={i} change={change} />
-        ))}
       </div>
     </>
   )
@@ -275,7 +281,7 @@ function YearSelector(props: YearSelectorProps) {
 }
 
 function VerticalDivider() {
-  return <div className="mb-3 mt-6 w-0 border-l border-zinc" />
+  return <div className="border-zinc-500 mb-3 mt-6 w-0 border-l" />
 }
 
 function getAllWeeks(year: number) {

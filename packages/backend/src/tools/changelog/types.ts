@@ -1,5 +1,5 @@
 import { ContractParameters } from '@l2beat/discovery-types'
-import { ChainId, EthereumAddress } from '@lz/libs'
+import { ChainId, EthereumAddress, ModificationType } from '@lz/libs'
 
 export type {
   ChangelogEntry,
@@ -18,22 +18,6 @@ type FieldDifference =
   | ArrayElementAdded
   | ArrayElementDeleted
   | ArrayElementEdited
-
-type ModificationType =
-  | PrefixLiteral<'OBJECT', ObjectModification>
-  | PrefixLiteral<'ARRAY', ArrayModification>
-
-type PrefixLiteral<
-  Prefix extends string,
-  Literal extends string,
-> = `${Prefix}_${Literal}`
-
-type ObjectModification =
-  | 'NEW_PROPERTY'
-  | 'DELETED_PROPERTY'
-  | 'EDITED_PROPERTY'
-
-type ArrayModification = 'NEW_ELEMENT' | 'DELETED_ELEMENT' | 'EDITED_ELEMENT'
 
 interface TemplateModification<
   Type extends ModificationType,

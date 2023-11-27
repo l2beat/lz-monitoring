@@ -46,7 +46,7 @@ export function BlockchainAddress(props: {
       </Tooltip>
       <Tooltip text={hasCopied ? 'Copied!' : 'Copy to clipboard'}>
         <button
-          className="fill-zinc hover:fill-white"
+          className="fill-zinc-500 hover:fill-white"
           onClick={() => void copyTextToClipboard(props.address.toString())}
         >
           {hasCopied ? <OkIcon /> : <CopyIcon />}
