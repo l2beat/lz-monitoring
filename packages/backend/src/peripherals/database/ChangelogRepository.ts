@@ -51,8 +51,8 @@ export class ChangelogRepository extends BaseRepository {
     const knex = await this.knex()
 
     const summaryRows = await knex
-      .with('changes', (qb) => {
-        void qb
+      .with('changes', async (qb) => {
+        await qb
           .select(
             'target_address',
             knex.raw('max(block_number) as max_block'),
@@ -85,12 +85,12 @@ export class ChangelogRepository extends BaseRepository {
     const knex = await this.knex()
     const rows = await knex
       .with('changes', async (qb) => {
-        void (await qb
+        await qb
           .select('c.*', 'b.unix_timestamp')
           .from('changelog_entries as c')
           .where('c.chain_id', chainId)
           .andWhere('target_address', address.toString())
-          .join('block_numbers as b', 'b.block_number', 'c.block_number'))
+          .join('block_numbers as b', 'b.block_number', 'c.block_number')
       })
       .select<FullChangelogRow[]>('e.tx_hash', 'changes.*')
       .from('changes')
