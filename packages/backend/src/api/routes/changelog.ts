@@ -25,7 +25,6 @@ export function createChangelogRouter(
           ctx.params.chainId,
           ctx.params.contract,
         )
-
         ctx.body = data
       },
     ),

@@ -1,6 +1,6 @@
 import { ChainId, ChangelogApiEntry, EthereumAddress, UnixTime } from '@lz/libs'
 import cx from 'classnames'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Skeleton from 'react-loading-skeleton'
 
 import { config } from '../../../config'
@@ -25,6 +25,11 @@ export function ChangelogSummary(props: ChangelogSummaryProps) {
     null | ChangelogApiEntry[]
   >(null)
 
+  // reset changes details when chainId changes
+  useEffect(() => {
+    setChangesDetails(null)
+  }, [props.chainId])
+
   if (isError) {
     return <div>Failed to load changelog</div>
   }
@@ -34,6 +39,7 @@ export function ChangelogSummary(props: ChangelogSummaryProps) {
       <div className="mb-4 rounded-lg bg-gray-500 px-6 py-4">
         <h3 className="mb-2 font-medium">Changelog</h3>
         <Year
+          startTimestamp={data.startTimestamp}
           changelogPerDay={data.perDay}
           availableYears={data.availableYears}
           setChangesDetails={setChangesDetails}
@@ -55,6 +61,7 @@ export function ChangelogSummary(props: ChangelogSummaryProps) {
 }
 
 interface YearProps {
+  startTimestamp: UnixTime | null
   availableYears: number[] | null
   changelogPerDay: Map<number, ChangelogApiEntry[]> | null
   setChangesDetails: (changes: ChangelogApiEntry[]) => void
@@ -67,7 +74,7 @@ function Year(props: YearProps) {
 
   const allWeeks = getAllWeeks(year)
   const firstDay = new Date(Date.UTC(year, 0, 1))
-  let currDay = UnixTime.fromDate(firstDay)
+  let currDay = UnixTime.fromDate(firstDay).add(-1, 'days')
 
   if (props.isLoading) {
     return (
@@ -77,7 +84,7 @@ function Year(props: YearProps) {
         availableYears={props.availableYears ?? [currentYear]}
       >
         <Skeleton
-          containerClassName="flex flex-col [&>br]:hidden gap-2"
+          containerClassName="flex flex-col [&>br]:hidden gap-2 py-1"
           count={7}
           className="h-3 rounded-md"
         />
@@ -91,9 +98,9 @@ function Year(props: YearProps) {
       setYear={setYear}
       availableYears={props.availableYears ?? [currentYear]}
     >
-      <div className="flex gap-1">
+      <div className="flex">
         {allWeeks.map((week, i) => (
-          <div className="flex flex-col gap-2" key={i}>
+          <div className="flex flex-col" key={i}>
             {week.map((day, j) => {
               if (day === '0') {
                 currDay = currDay.add(1, 'days')
@@ -106,6 +113,7 @@ function Year(props: YearProps) {
                   key={`${i}-${j}`}
                   active={day === '0'}
                   date={currDay.toDate()}
+                  startDate={props.startTimestamp?.toDate() ?? null}
                   changes={changes ?? []}
                   setChangesDetails={props.setChangesDetails}
                 />
@@ -125,8 +133,8 @@ function YearWrapper(props: {
   setYear: (year: number) => void
 }) {
   return (
-    <div className="flex gap-2">
-      <div className="mt-6 flex flex-col items-center gap-2 pb-2">
+    <div className="flex gap-1.5">
+      <div className="mt-6 flex flex-col items-center gap-2 pb-1">
         {['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((day, i) => (
           <div key={i} className="h-3 text-xs font-semibold text-gray-100">
             {day}
@@ -134,7 +142,7 @@ function YearWrapper(props: {
         ))}
       </div>
       <div className="shrink overflow-x-auto pb-2 scrollbar scrollbar-track-gray-50 scrollbar-thumb-yellow-100">
-        <div className="mb-3 flex w-[844px] justify-around">
+        <div className="mb-2 flex w-[847px] justify-around">
           {[
             'Jan',
             'Feb',
@@ -167,20 +175,23 @@ function YearWrapper(props: {
 }
 
 interface SquareProps {
-  date?: Date
+  startDate: Date | null
+  date: Date
   active: boolean
   changes: ChangelogApiEntry[]
   setChangesDetails: (changes: ChangelogApiEntry[]) => void
 }
 function Square(props: SquareProps) {
   const hasChanges = props.changes.length > 0
+  const isExcluded =
+    (props.startDate && props.date < props.startDate) || props.date > new Date()
 
   const text = getText(props.changes.length, props.date)
-  const color = getColor(props.changes.length)
+  const color = getColor(props.changes.length, isExcluded)
 
   return (
-    <div>
-      <Tooltip text={text}>
+    <Tooltip text={text} disabled={isExcluded || !props.active}>
+      <div className="px-0.5 py-1">
         <div
           className={cx(
             'h-3 w-3',
@@ -193,16 +204,12 @@ function Square(props: SquareProps) {
             }
           }}
         />
-      </Tooltip>
-    </div>
+      </div>
+    </Tooltip>
   )
 }
 
-function getText(changesNumber: number, date?: Date) {
-  if (!date) {
-    return ''
-  }
-
+function getText(changesNumber: number, date: Date) {
   let text = ''
   if (changesNumber === 0) {
     text = 'No changes on '
@@ -215,7 +222,11 @@ function getText(changesNumber: number, date?: Date) {
   return text + date.toDateString()
 }
 
-function getColor(changesNumber: number) {
+function getColor(changesNumber: number, isExcluded: boolean) {
+  if (isExcluded) {
+    return 'bg-gray-400'
+  }
+
   const steps = {
     1: 'bg-yellow-300',
     2: 'bg-yellow-200',
@@ -240,6 +251,11 @@ interface YearSelectorProps {
 }
 
 function YearSelector(props: YearSelectorProps) {
+  if (!props.availableYears.includes(props.year)) {
+    const currentYear = new Date().getUTCFullYear()
+    props.setYear(currentYear)
+  }
+
   return (
     <div className="mt-6 flex flex-col gap-1">
       {props.availableYears.map((year, i) => (
@@ -259,7 +275,7 @@ function YearSelector(props: YearSelectorProps) {
 }
 
 function VerticalDivider() {
-  return <div className="mb-2 mt-6 w-0 border-l border-zinc" />
+  return <div className="mb-3 mt-6 w-0 border-l border-zinc" />
 }
 
 function getAllWeeks(year: number) {
