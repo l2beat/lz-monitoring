@@ -1,5 +1,5 @@
 import { Logger } from '@l2beat/backend-tools'
-import { ChainId, EthereumAddress, UnixTime } from '@lz/libs'
+import { ChainId, EthereumAddress, Hash256, UnixTime } from '@lz/libs'
 import type { ChangelogRow } from 'knex/types/tables'
 
 import { ChangelogEntry } from '../../tools/changelog/types'
@@ -20,9 +20,11 @@ export interface ChangelogSummaryRecord {
 }
 interface FullChangelogRow extends ChangelogRow {
   unix_timestamp: Date
+  tx_hash: string
 }
 export interface FullChangelogRecord extends ChangelogRecord {
   timestamp: UnixTime
+  txHash: Hash256
 }
 
 export class ChangelogRepository extends BaseRepository {
@@ -82,14 +84,22 @@ export class ChangelogRepository extends BaseRepository {
   ): Promise<FullChangelogRecord[]> {
     const knex = await this.knex()
     const rows = await knex
-      .select<FullChangelogRow[]>('c.*', 'b.unix_timestamp')
-      .from('changelog_entries as c')
-      .where('c.chain_id', chainId)
-      .andWhere('target_address', address.toString())
-      .join('block_numbers as b', 'b.block_number', 'c.block_number')
+      .with('changes', async (qb) => {
+        void (await qb
+          .select('c.*', 'b.unix_timestamp')
+          .from('changelog_entries as c')
+          .where('c.chain_id', chainId)
+          .andWhere('target_address', address.toString())
+          .join('block_numbers as b', 'b.block_number', 'c.block_number'))
+      })
+      .select<FullChangelogRow[]>('e.tx_hash', 'changes.*')
+      .from('changes')
+      .leftJoin('events as e', 'e.block_number', 'changes.block_number')
+
     return rows.map((r) => ({
       ...toRecord(r),
       timestamp: UnixTime.fromDate(r.unix_timestamp),
+      txHash: Hash256(r.tx_hash),
     }))
   }
 
