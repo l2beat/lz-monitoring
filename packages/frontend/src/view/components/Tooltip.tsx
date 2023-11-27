@@ -32,7 +32,7 @@ export function Tooltip(props: TooltipProps) {
       </div>
 
       <div
-        className="fixed z-tooltip hidden rounded-md bg-gray-700 px-3 py-1"
+        className="fixed z-tooltip  hidden whitespace-nowrap rounded-md bg-gray-400 px-3 py-2 font-sans text-sm leading-none text-white"
         ref={tooltipRef}
       >
         <svg
@@ -40,7 +40,7 @@ export function Tooltip(props: TooltipProps) {
           width="16"
           height="8"
           viewBox="0 0 16 8"
-          className="fixed h-2 w-4 fill-gray-700 stroke-1"
+          className="fixed h-2 w-4 fill-gray-400 stroke-1"
         >
           <path d="M0 8L8 1L16 8" />
         </svg>
@@ -67,7 +67,7 @@ function show(
     return
   }
 
-  const { left, triangleLeft, top, triangleTop, isInverted } = getPosition(
+  const { left, triangleLeft, top, triangleTop } = getPosition(
     activeElement,
     tooltip,
     tooltipTriangle,
@@ -75,7 +75,7 @@ function show(
   tooltip.style.left = `${left}px`
   tooltip.style.top = `${top}px`
   tooltipTriangle.style.top = `${triangleTop}px`
-  tooltipTriangle.style.transform = isInverted ? 'rotate(180deg)' : ''
+  tooltipTriangle.style.transform = 'rotate(180deg)'
   tooltipTriangle.style.left = `${triangleLeft}px`
   tooltip.classList.add('block')
   tooltip.classList.remove('hidden')
@@ -95,20 +95,8 @@ function getPosition(
     10,
     window.innerWidth - 10 - tooltipWidth,
   )
-  const isOverflowingOnBottom =
-    rect.y + rect.height + 7 + tooltipHeight >= window.innerHeight
-  const isOverflowingOnTop = rect.top - tooltipHeight <= 7
-  let top, triangleTop: number
-  let isInverted: boolean
-  if (!isOverflowingOnBottom || isOverflowingOnTop) {
-    top = rect.bottom + 7
-    triangleTop = rect.bottom
-    isInverted = false
-  } else {
-    top = rect.top - 7 - tooltipHeight
-    triangleTop = rect.top - 7
-    isInverted = true
-  }
+  const top = rect.top - 7 - tooltipHeight
+  const triangleTop = rect.top - 7
 
   const triangleLeft = clamp(
     rect.left + rect.width / 2 - 8,
@@ -122,7 +110,6 @@ function getPosition(
     triangleLeft,
     top,
     triangleTop,
-    isInverted,
   }
 }
 

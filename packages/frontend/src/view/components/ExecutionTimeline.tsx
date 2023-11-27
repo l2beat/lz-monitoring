@@ -1,9 +1,12 @@
+import { ChainId, EthereumAddress } from '@lz/libs'
 import cx from 'classnames'
+
+import { BlockchainAddress } from './BlockchainAddress'
 
 type Outcome = 'PENDING' | 'EXECUTED' | 'DISCARDED'
 
 interface Approval {
-  signer: string
+  signer: EthereumAddress
   date: Date
   method?: string
 }
@@ -12,12 +15,15 @@ interface Props {
   outcome: Outcome
   approvals: Approval[]
   submissionDate: Date
+  // improvement: set ChainId in a context
+  chainId: ChainId
 }
 
 export function ExecutionTimeline({
   outcome,
   approvals,
   submissionDate,
+  chainId,
 }: Props) {
   const outcomeVariant =
     outcome === 'PENDING' ? 'orange' : outcome === 'EXECUTED' ? 'green' : 'red'
@@ -37,7 +43,7 @@ export function ExecutionTimeline({
         <span className={cx('font-medium', variantToTextColor('orange'))}>
           Approved
         </span>
-        {approval.signer}
+        <BlockchainAddress address={approval.signer} chainId={chainId} />
         <span className="text-gray-50">
           {approval.date.toLocaleString()}{' '}
           {approval.method && `via ${approval.method}`}

@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import Skeleton from 'react-loading-skeleton'
 
 import { useSafeApi } from '../../../hooks/useSafeApi'
+import { BlockchainAddress } from '../BlockchainAddress'
 import { PaginatedContainer, PaginationControls } from '../PaginatedContainer'
 import { ProtocolComponentCard } from '../ProtocolComponentCard'
 import { Row } from '../Row'
@@ -10,18 +11,18 @@ import { SafeMultisigTransaction } from '../safe/SafeMultisigTransaction'
 import { Subsection } from '../Subsection'
 
 interface Props {
+  chainId: ChainId
   address?: EthereumAddress
   threshold?: number
   owners?: EthereumAddress[]
   multisigAddress: EthereumAddress
-  chainId: ChainId
 }
 
 export function LayerZeroMultisig({
+  chainId,
   owners,
   address,
   threshold,
-  chainId,
   multisigAddress,
 }: Props) {
   const [isLoading, isError, allTransactions] = useSafeApi({
@@ -48,8 +49,11 @@ export function LayerZeroMultisig({
   // Currently lack of multisig data is dictated either lack of support for multisig for given chain or we lack some data (this must be addressed in the future)
   const hasData = address && threshold && owners
 
-  const subtitle =
-    address ?? 'Protocol on this chain is not owned by Safe Multisig'
+  const subtitle = address ? (
+    <BlockchainAddress address={address} chainId={chainId} />
+  ) : (
+    'Protocol on this chain is not owned by Safe Multisig'
+  )
 
   if (isLoading) {
     return (
@@ -112,9 +116,13 @@ export function LayerZeroMultisig({
             <Row
               label="Owners"
               value={
-                <div className="flex flex-col gap-1 text-center text-3xs md:gap-5 md:text-left md:text-xs">
+                <div className="flex flex-col gap-1 text-center text-3xs md:gap-2 md:text-left md:text-xs">
                   {owners.map((owner, i) => (
-                    <span key={i}>{owner}</span>
+                    <BlockchainAddress
+                      key={i}
+                      chainId={chainId}
+                      address={owner}
+                    />
                   ))}
                 </div>
               }
@@ -147,6 +155,7 @@ export function LayerZeroMultisig({
               <PaginatedContainer itemsPerPage={TXS_PER_PAGE} page={page}>
                 {allTransactions.map((transaction, i) => (
                   <SafeMultisigTransaction
+                    chainId={chainId}
                     amountOfOwners={owners.length}
                     transaction={transaction}
                     allTransactions={allTransactions}

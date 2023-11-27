@@ -1,6 +1,7 @@
 import { ChainId, RemoteChain } from '@lz/libs'
 
 import { useChainQueryParam } from '../../../hooks/useChainQueryParam'
+import { BlockchainAddress } from '../BlockchainAddress'
 import { Code } from '../Code'
 import { Dropdown, DropdownOption } from '../Dropdown'
 import { Row } from '../Row'
@@ -88,7 +89,15 @@ export function RemoteChainComponent({
           </Code>
         }
       />
-      <Row label="Ultra Light Node" value={remoteChain.uln} />
+      <Row
+        label="Ultra Light Node"
+        value={
+          <BlockchainAddress
+            address={remoteChain.uln}
+            chainId={selectedChain}
+          />
+        }
+      />
     </div>
   )
 }
