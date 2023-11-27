@@ -1,6 +1,7 @@
 import { assert } from '@l2beat/backend-tools'
 import {
   ChainId,
+  Change,
   ChangelogApi,
   ChangelogApiEntry,
   EthereumAddress,
@@ -21,20 +22,14 @@ export class ChangelogController {
       contract,
     )
 
-    const changesMap = new Map<
-      number,
-      {
-        parameterPath: string[]
-        previousValue: string | null
-        currentValue: string | null
-      }[]
-    >()
+    const changesMap = new Map<number, Change[]>()
 
     for (const entry of fullChangelog) {
       const change = changesMap.get(entry.blockNumber)
       if (!change) {
         changesMap.set(entry.blockNumber, [
           {
+            modificationType: entry.modificationType,
             parameterPath: entry.parameterPath,
             previousValue: entry.previousValue,
             currentValue: entry.currentValue,
@@ -43,6 +38,7 @@ export class ChangelogController {
         continue
       }
       change.push({
+        modificationType: entry.modificationType,
         parameterPath: entry.parameterPath,
         previousValue: entry.previousValue,
         currentValue: entry.currentValue,
