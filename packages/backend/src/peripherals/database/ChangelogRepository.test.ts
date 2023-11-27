@@ -14,12 +14,16 @@ describe(ChangelogRepository.name, () => {
   const eventRepo = new EventRepository(database, Logger.SILENT)
   const chainId = ChainId.ETHEREUM
 
-  before(() =>
-    [repository, blockRepo, eventRepo].forEach((repo) => void repo.deleteAll()),
-  )
-  afterEach(() =>
-    [repository, blockRepo, eventRepo].forEach((repo) => void repo.deleteAll()),
-  )
+  before(async () => {
+    for (const repo of [repository, blockRepo, eventRepo]) {
+      await repo.deleteAll()
+    }
+  })
+  afterEach(async () => {
+    for (const repo of [repository, blockRepo, eventRepo]) {
+      await repo.deleteAll()
+    }
+  })
 
   const record1: ChangelogRecord = {
     targetName: 'contract1',
