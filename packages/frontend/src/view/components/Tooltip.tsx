@@ -3,12 +3,17 @@ import { useRef } from 'react'
 interface TooltipProps {
   text: string
   children: React.ReactNode
+  disabled?: boolean
 }
 
 export function Tooltip(props: TooltipProps) {
   const activeRef = useRef(null)
   const tooltipRef = useRef(null)
   const tooltipTriangleRef = useRef(null)
+
+  if (props.disabled) {
+    return <>{props.children}</>
+  }
 
   return (
     <>
