@@ -3,6 +3,7 @@ import { SkeletonTheme } from 'react-loading-skeleton'
 
 import { config } from '../../../config'
 import { AddressInfoContext } from '../../../hooks/addressInfoContext'
+import { ChainInfoContext } from '../../../hooks/chainIdContext'
 import { useChainQueryParam } from '../../../hooks/useChainQueryParam'
 import { useDiscoveryApi } from '../../../hooks/useDiscoveryApi'
 import { Layout } from '../Layout'
@@ -62,35 +63,29 @@ export function ProtocolInformation({
 
   return (
     <SkeletonTheme baseColor="#27272A" highlightColor="#525252">
-      <AddressInfoContext.Provider value={discoveryResponse.data.addressInfo}>
-        <NetworkDropdownSelector
-          chainId={discoveryResponse.chainId}
-          chainsToDisplay={chainsToDisplay}
-          setChain={setChain}
-        />
-        <NetworkData
-          chainId={discoveryResponse.chainId}
-          latestBlock={discoveryResponse.data.blockNumber}
-        />
-        <Layout>
-          <EndpointContract
-            chainId={discoveryResponse.chainId}
-            {...discoveryResponse.data.contracts.endpoint}
-          />
-          <UltraLightNodeContract
-            chainId={discoveryResponse.chainId}
-            {...discoveryResponse.data.contracts.ulnV2}
-          />
-
-          {shouldDisplayMultisigTransactions && (
-            <LayerZeroMultisig
-              {...discoveryResponse.data.contracts.lzMultisig}
-              multisigAddress={multisigAddress}
-              chainId={discoveryResponse.chainId}
+      <NetworkDropdownSelector
+        chainId={discoveryResponse.chainId}
+        chainsToDisplay={chainsToDisplay}
+        setChain={setChain}
+      />
+      <ChainInfoContext.Provider value={discoveryResponse.chainId}>
+        <AddressInfoContext.Provider value={discoveryResponse.data.addressInfo}>
+          <NetworkData latestBlock={discoveryResponse.data.blockNumber} />
+          <Layout>
+            <EndpointContract {...discoveryResponse.data.contracts.endpoint} />
+            <UltraLightNodeContract
+              {...discoveryResponse.data.contracts.ulnV2}
             />
-          )}
-        </Layout>
-      </AddressInfoContext.Provider>
+
+            {shouldDisplayMultisigTransactions && (
+              <LayerZeroMultisig
+                {...discoveryResponse.data.contracts.lzMultisig}
+                multisigAddress={multisigAddress}
+              />
+            )}
+          </Layout>
+        </AddressInfoContext.Provider>
+      </ChainInfoContext.Provider>
     </SkeletonTheme>
   )
 }

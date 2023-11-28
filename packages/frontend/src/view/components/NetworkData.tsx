@@ -1,13 +1,14 @@
-import { ChainId, getEndpointIdFromChainId } from '@lz/libs'
+import { getEndpointIdFromChainId } from '@lz/libs'
 
+import { useChainId } from '../../hooks/chainIdContext'
 import { MaxWidthLayout } from './Layout'
 
 interface Props {
-  chainId: ChainId
   latestBlock: number
 }
 
-export function NetworkData({ chainId, latestBlock }: Props): JSX.Element {
+export function NetworkData({ latestBlock }: Props): JSX.Element {
+  const chainId = useChainId()
   return (
     <section className="mb-4 bg-gray-900 p-4 md:mb-10 md:p-8">
       <MaxWidthLayout>

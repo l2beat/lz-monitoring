@@ -1,7 +1,8 @@
-import { ChainId, EthereumAddress } from '@lz/libs'
+import { EthereumAddress } from '@lz/libs'
 import { useEffect, useState } from 'react'
 import Skeleton from 'react-loading-skeleton'
 
+import { useChainId } from '../../../hooks/chainIdContext'
 import { useSafeApi } from '../../../hooks/useSafeApi'
 import { BlockchainAddress } from '../BlockchainAddress'
 import { PaginatedContainer, PaginationControls } from '../PaginatedContainer'
@@ -11,7 +12,6 @@ import { SafeMultisigTransaction } from '../safe/SafeMultisigTransaction'
 import { Subsection } from '../Subsection'
 
 interface Props {
-  chainId: ChainId
   address?: EthereumAddress
   threshold?: number
   owners?: EthereumAddress[]
@@ -19,12 +19,12 @@ interface Props {
 }
 
 export function LayerZeroMultisig({
-  chainId,
   owners,
   address,
   threshold,
   multisigAddress,
 }: Props) {
+  const chainId = useChainId()
   const [isLoading, isError, allTransactions] = useSafeApi({
     chainId,
     multisigAddress,
@@ -50,7 +50,7 @@ export function LayerZeroMultisig({
   const hasData = address && threshold && owners
 
   const subtitle = address ? (
-    <BlockchainAddress address={address} chainId={chainId} full />
+    <BlockchainAddress address={address} full />
   ) : (
     'Protocol on this chain is not owned by Safe Multisig'
   )
@@ -118,11 +118,7 @@ export function LayerZeroMultisig({
               value={
                 <div className="flex flex-col gap-1 text-center text-3xs md:gap-2 md:text-left md:text-xs">
                   {owners.map((owner, i) => (
-                    <BlockchainAddress
-                      key={i}
-                      chainId={chainId}
-                      address={owner}
-                    />
+                    <BlockchainAddress key={i} address={owner} />
                   ))}
                 </div>
               }
@@ -155,7 +151,6 @@ export function LayerZeroMultisig({
               <PaginatedContainer itemsPerPage={TXS_PER_PAGE} page={page}>
                 {allTransactions.map((transaction, i) => (
                   <SafeMultisigTransaction
-                    chainId={chainId}
                     amountOfOwners={owners.length}
                     transaction={transaction}
                     allTransactions={allTransactions}

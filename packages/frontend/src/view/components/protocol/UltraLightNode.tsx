@@ -1,4 +1,4 @@
-import { ChainId, EthereumAddress, RemoteChain } from '@lz/libs'
+import { EthereumAddress, RemoteChain } from '@lz/libs'
 
 import { BlockchainAddress } from '../BlockchainAddress'
 import { ChangelogSummary } from '../changelog/ChangelogSummary'
@@ -9,7 +9,6 @@ import { Subsection } from '../Subsection'
 import { RemoteChainComponent } from './RemoteChain'
 
 interface Props {
-  chainId: ChainId
   address: EthereumAddress
   owner: EthereumAddress
   treasuryContract: EthereumAddress
@@ -21,15 +20,9 @@ export function UltraLightNodeContract(props: Props): JSX.Element {
   return (
     <ProtocolComponentCard
       title="UltraLight Node V2"
-      subtitle={
-        <BlockchainAddress
-          chainId={props.chainId}
-          address={props.address}
-          full
-        />
-      }
+      subtitle={<BlockchainAddress address={props.address} full />}
     >
-      <ChangelogSummary chainId={props.chainId} address={props.address} />
+      <ChangelogSummary address={props.address} />
       <ExpandableContainer
         showText="View contract parameters"
         hideText="Hide contract parameters"
@@ -40,31 +33,16 @@ export function UltraLightNodeContract(props: Props): JSX.Element {
         <Subsection>
           <Row
             label="Owner"
-            value={
-              <BlockchainAddress
-                chainId={props.chainId}
-                address={props.owner}
-              />
-            }
+            value={<BlockchainAddress address={props.owner} />}
           />
           <Row
             label="Treasury Contract"
-            value={
-              <BlockchainAddress
-                chainId={props.chainId}
-                address={props.treasuryContract}
-              />
-            }
+            value={<BlockchainAddress address={props.treasuryContract} />}
           />
 
           <Row
             label="LayerZero token"
-            value={
-              <BlockchainAddress
-                chainId={props.chainId}
-                address={props.layerZeroToken}
-              />
-            }
+            value={<BlockchainAddress address={props.layerZeroToken} />}
           />
         </Subsection>
       </ExpandableContainer>

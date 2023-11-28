@@ -1,5 +1,4 @@
 import {
-  ChainId,
   EthereumAddress,
   getBlockExplorerName,
   getBlockExplorerUrl,
@@ -7,20 +6,18 @@ import {
 import { useState } from 'react'
 
 import { useAddressInfo } from '../../hooks/addressInfoContext'
+import { useChainId } from '../../hooks/chainIdContext'
 import { CopyIcon } from '../icons/CopyIcon'
 import { OkIcon } from '../icons/OkIcon'
 import { UnverifiedIcon } from '../icons/UnverifiedIcon'
 import { Tooltip } from './Tooltip'
 
-export function BlockchainAddress(props: {
+interface Props {
   address: EthereumAddress
-  chainId: ChainId
   full?: boolean
-}) {
-  const addressInfo = useAddressInfo(props.address)
-  const explorerUrl = getBlockExplorerUrl(props.address, props.chainId)
-  const explorerName = getBlockExplorerName(props.chainId)
+}
 
+export function BlockchainAddress(props: Props) {
   const [hasCopied, setHasCopied] = useState(false)
   async function copyTextToClipboard(text: string) {
     if ('clipboard' in navigator) {
@@ -32,6 +29,11 @@ export function BlockchainAddress(props: {
     setHasCopied(true)
     setTimeout(() => setHasCopied(false), 500)
   }
+
+  const addressInfo = useAddressInfo(props.address)
+  const chainId = useChainId()
+  const explorerUrl = getBlockExplorerUrl(props.address, chainId)
+  const explorerName = getBlockExplorerName(chainId)
 
   if (props.address === EthereumAddress.ZERO) {
     return props.address.toString()
