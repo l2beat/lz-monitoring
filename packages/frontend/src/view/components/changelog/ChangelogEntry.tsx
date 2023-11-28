@@ -1,10 +1,11 @@
-import { Change, ChangelogApiEntry } from '@lz/libs'
+import { Change, ChangelogApiEntry, Hash256 } from '@lz/libs'
 import { useState } from 'react'
 
 import { DotIcon } from '../../icons/DotIcon'
 import { SolidMinusIcon } from '../../icons/MinusIcon'
 import { SolidPlusIcon } from '../../icons/PlusIcon'
 import { Code } from '../Code'
+import { Tooltip } from '../Tooltip'
 
 export function ChangelogEntry(props: { change: ChangelogApiEntry }) {
   const isPlural = props.change.changes.length > 1
@@ -21,7 +22,8 @@ export function ChangelogEntry(props: { change: ChangelogApiEntry }) {
       </div>
       <div className="flex grow flex-col overflow-hidden">
         <span className="text-md leading-none text-zinc-500">
-          {titleStart} in block {/* TODO: should be a link */}
+          {titleStart} in tx <PossibleTxs txs={props.change.possibleTxHashes} />{' '}
+          in block {/* TODO: should be a link */}
           <span className="inline-block rounded-sm bg-blue-800 px-1 py-0.5 text-blue-500">
             {props.change.blockNumber.toString()}
           </span>{' '}
@@ -36,6 +38,38 @@ export function ChangelogEntry(props: { change: ChangelogApiEntry }) {
         ))}
       </div>
     </div>
+  )
+}
+
+function PossibleTxs(props: { txs: Hash256[] }) {
+  if (props.txs.length === 0) {
+    return <>unknown</>
+  }
+
+  if (props.txs.length > 1) {
+    return props.txs
+      .map<React.ReactNode>((tx, i) => <Tx key={i} tx={tx} />)
+      .reduce<React.ReactNode[]>(
+        (acc, elem) => (acc.length === 0 ? [elem] : [...acc, ' or ', elem]),
+        [],
+      )
+  }
+  return (
+    <>
+      {/* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */}
+      <Tx tx={props.txs[0]!} />
+    </>
+  )
+}
+
+function Tx(props: { tx: Hash256 }) {
+  // TODO: should be a link to block explorer
+  return (
+    <Tooltip text={props.tx.toString()} className="inline-block cursor-pointer">
+      <span className="inline-block rounded-sm bg-blue-800 px-1 py-0.5 text-blue-500">
+        {txEllipsis(props.tx)}
+      </span>
+    </Tooltip>
   )
 }
 
@@ -93,4 +127,8 @@ function SingleChange(props: { change: Change }) {
 
 function prettyJsonString(json: string) {
   return JSON.stringify(JSON.parse(json), null, '\t')
+}
+
+function txEllipsis(tx: Hash256) {
+  return tx.slice(0, 5) + '...' + tx.slice(-3)
 }

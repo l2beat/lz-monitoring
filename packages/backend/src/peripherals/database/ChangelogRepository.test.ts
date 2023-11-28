@@ -5,14 +5,25 @@ import { expect } from 'earl'
 import { setupDatabaseTestSuite } from '../../test/database'
 import { BlockNumberRepository } from './BlockNumberRepository'
 import { ChangelogRecord, ChangelogRepository } from './ChangelogRepository'
+import { EventRepository } from './EventRepository'
 
 describe(ChangelogRepository.name, () => {
   const { database } = setupDatabaseTestSuite()
   const repository = new ChangelogRepository(database, Logger.SILENT)
+  const blockRepo = new BlockNumberRepository(database, Logger.SILENT)
+  const eventRepo = new EventRepository(database, Logger.SILENT)
   const chainId = ChainId.ETHEREUM
 
-  before(() => repository.deleteAll())
-  afterEach(() => repository.deleteAll())
+  before(async () => {
+    for (const repo of [repository, blockRepo, eventRepo]) {
+      await repo.deleteAll()
+    }
+  })
+  afterEach(async () => {
+    for (const repo of [repository, blockRepo, eventRepo]) {
+      await repo.deleteAll()
+    }
+  })
 
   const record1: ChangelogRecord = {
     targetName: 'contract1',
@@ -51,7 +62,6 @@ describe(ChangelogRepository.name, () => {
   describe(ChangelogRepository.prototype.getChangesSummary.name, () => {
     it('finds changes summary', async () => {
       const expectedTimestamp = new UnixTime(1000)
-      const blockRepo = new BlockNumberRepository(database, Logger.SILENT)
       await blockRepo.addMany([
         {
           blockNumber: record1.blockNumber,
@@ -117,20 +127,60 @@ describe(ChangelogRepository.name, () => {
   describe(ChangelogRepository.prototype.getFullChangelog.name, () => {
     it('finds full changelog', async () => {
       const expectedTimestamp = new UnixTime(1000)
-      const blockRepo = new BlockNumberRepository(database, Logger.SILENT)
       await blockRepo.add({
         blockNumber: record1.blockNumber,
         chainId: record1.chainId,
         timestamp: expectedTimestamp,
         blockHash: Hash256.random(),
       })
+      const txHash = Hash256.random()
+      await eventRepo.addMany([
+        {
+          chainId: record1.chainId,
+          blockNumber: record1.blockNumber,
+          txHash,
+        },
+      ])
       await repository.addMany([record1, record2])
       const result = await repository.getFullChangelog(
         record1.chainId,
         record1.targetAddress,
       )
 
-      expect(result).toEqual([{ ...record1, timestamp: expectedTimestamp }])
+      expect(result).toEqual([
+        { ...record1, timestamp: expectedTimestamp, txHash },
+      ])
+    })
+
+    it('returns array if multiple events in the same block', async () => {
+      const expectedTimestamp = new UnixTime(1000)
+      await blockRepo.add({
+        blockNumber: record1.blockNumber,
+        chainId: record1.chainId,
+        timestamp: expectedTimestamp,
+        blockHash: Hash256.random(),
+      })
+      const event1 = {
+        chainId: record1.chainId,
+        blockNumber: record1.blockNumber,
+        txHash: Hash256.random(),
+      }
+      const event2 = {
+        chainId: record1.chainId,
+        blockNumber: record1.blockNumber,
+        txHash: Hash256.random(),
+      }
+      await eventRepo.addMany([event1, event2])
+      await repository.addMany([record1, record2])
+      const result = await repository.getFullChangelog(
+        record1.chainId,
+        record1.targetAddress,
+      )
+
+      expect(result).toEqualUnsorted([
+        { ...record1, timestamp: expectedTimestamp, txHash: event1.txHash },
+        { ...record1, timestamp: expectedTimestamp, txHash: event2.txHash },
+      ])
     })
   })
 

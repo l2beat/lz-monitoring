@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-import { branded, UnixTime } from '../utils'
+import { branded, Hash256, UnixTime } from '../utils'
 
 const ObjectModification = z.union([
   z.literal('OBJECT_NEW_PROPERTY'),
@@ -34,7 +34,7 @@ export type Change = z.infer<typeof Change>
 export const ChangelogApiEntry = z.object({
   timestamp: branded(z.number(), (t) => new UnixTime(t)),
   blockNumber: z.number(),
-  // transactionHash: branded(z.string(), Hash256),
+  possibleTxHashes: z.array(branded(z.string(), Hash256)),
   changes: z.array(Change),
 })
 export type ChangelogApiEntry = z.infer<typeof ChangelogApiEntry>

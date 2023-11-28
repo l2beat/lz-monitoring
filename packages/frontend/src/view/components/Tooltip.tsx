@@ -4,6 +4,7 @@ interface TooltipProps {
   text: string
   children: React.ReactNode
   disabled?: boolean
+  className?: string
 }
 
 export function Tooltip(props: TooltipProps) {
@@ -27,6 +28,7 @@ export function Tooltip(props: TooltipProps) {
           )
         }}
         onMouseLeave={() => hide(tooltipRef.current)}
+        className={props.className}
       >
         {props.children}
       </div>
