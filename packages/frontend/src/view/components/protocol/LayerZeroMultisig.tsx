@@ -116,7 +116,7 @@ export function LayerZeroMultisig({
             <Row
               label="Owners"
               value={
-                <div className="flex flex-col gap-1 text-center text-3xs md:gap-2 md:text-left md:text-xs">
+                <div className="flex flex-col items-center gap-1 text-3xs md:items-start md:gap-2 md:text-left md:text-xs">
                   {owners.map((owner, i) => (
                     <BlockchainAddress key={i} address={owner} />
                   ))}

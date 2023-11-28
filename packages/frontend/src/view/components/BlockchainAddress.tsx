@@ -40,7 +40,7 @@ export function BlockchainAddress(props: Props) {
   }
 
   return (
-    <span className="flex items-center gap-2">
+    <span className="inline-flex items-center gap-2">
       {addressInfo && !addressInfo.verified && (
         <Tooltip text="Address is not verified">
           <UnverifiedIcon />
@@ -49,9 +49,14 @@ export function BlockchainAddress(props: Props) {
 
       {addressInfo && !props.full ? (
         <>
-          <Tooltip text={props.address.toString()}>
+          <Tooltip text={props.address.toString()} className="md:hidden">
             <a href={explorerUrl} target="_blank" className="underline">
               {addressEllipsis(props.address)}
+            </a>{' '}
+          </Tooltip>
+          <Tooltip text={'Show on ' + explorerName} className="hidden md:block">
+            <a href={explorerUrl} target="_blank" className="underline">
+              {props.address.toString()}
             </a>{' '}
           </Tooltip>{' '}
           <span className="text-xs text-zinc-500 no-underline">
@@ -65,7 +70,8 @@ export function BlockchainAddress(props: Props) {
             target="_blank"
             className="block whitespace-nowrap font-mono underline"
           >
-            {props.address}
+            <span className="sm:hidden">{addressEllipsis(props.address)}</span>
+            <span className="hidden sm:inline"> {props.address}</span>
           </a>
         </Tooltip>
       )}

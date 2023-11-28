@@ -19,7 +19,7 @@ interface Props {
 export function UltraLightNodeContract(props: Props): JSX.Element {
   return (
     <ProtocolComponentCard
-      title="UltraLight Node V2"
+      title="UltraLightNodeV2"
       subtitle={<BlockchainAddress address={props.address} full />}
     >
       <ChangelogSummary address={props.address} />

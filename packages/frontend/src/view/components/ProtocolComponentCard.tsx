@@ -25,7 +25,7 @@ export function ProtocolComponentCard({
       <div className="flex flex-col justify-between md:mb-4 md:flex-row">
         <h2 className="mb-4 w-full text-xl md:mb-0">{title}</h2>
         {subtitle && (
-          <span className="mb-4 overflow-hidden text-ellipsis text-2xs text-gray-30 md:mb-0 md:overflow-visible md:text-md">
+          <span className="mb-4 text-ellipsis text-2xs text-gray-30 md:mb-0 md:overflow-visible md:text-md">
             {subtitle}
           </span>
         )}
