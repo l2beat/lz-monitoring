@@ -50,7 +50,7 @@ export function LayerZeroMultisig({
   const hasData = address && threshold && owners
 
   const subtitle = address ? (
-    <BlockchainAddress address={address} chainId={chainId} />
+    <BlockchainAddress address={address} chainId={chainId} full />
   ) : (
     'Protocol on this chain is not owned by Safe Multisig'
   )

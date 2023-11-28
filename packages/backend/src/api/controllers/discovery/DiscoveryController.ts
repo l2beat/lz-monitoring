@@ -60,10 +60,18 @@ function toDiscoveryApi(
   discoveryOutput: DiscoveryOutput,
   changelogSummary: ChangelogSummaryRecord[],
 ): DiscoveryApi {
-  const { contracts, blockNumber } = discoveryOutput
+  const { contracts, blockNumber, eoas } = discoveryOutput
 
   const endpoint = contracts.find((c) => c.name === 'Endpoint')
   assert(endpoint, 'Endpoint not found')
+
+  const addressInfo: DiscoveryApi['addressInfo'] = contracts
+    .map((contract) => ({
+      address: contract.address,
+      name: contract.name,
+      verified: !contract.unverified,
+    }))
+    .concat(eoas.map((eoa) => ({ address: eoa, name: 'EOA', verified: true })))
 
   return {
     blockNumber,
@@ -72,6 +80,7 @@ function toDiscoveryApi(
       ulnV2: getUlnV2Contract(discoveryOutput, changelogSummary),
       lzMultisig: getLzMultisig(discoveryOutput, changelogSummary),
     },
+    addressInfo,
   }
 }
 

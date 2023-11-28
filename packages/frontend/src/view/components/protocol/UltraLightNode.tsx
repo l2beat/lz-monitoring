@@ -22,7 +22,11 @@ export function UltraLightNodeContract(props: Props): JSX.Element {
     <ProtocolComponentCard
       title="UltraLight Node V2"
       subtitle={
-        <BlockchainAddress chainId={props.chainId} address={props.address} />
+        <BlockchainAddress
+          chainId={props.chainId}
+          address={props.address}
+          full
+        />
       }
     >
       <ChangelogSummary chainId={props.chainId} address={props.address} />

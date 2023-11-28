@@ -21,7 +21,11 @@ export function EndpointContract(props: Props): JSX.Element {
     <ProtocolComponentCard
       title="Endpoint"
       subtitle={
-        <BlockchainAddress chainId={props.chainId} address={props.address} />
+        <BlockchainAddress
+          chainId={props.chainId}
+          address={props.address}
+          full
+        />
       }
     >
       <ChangelogSummary chainId={props.chainId} address={props.address} />

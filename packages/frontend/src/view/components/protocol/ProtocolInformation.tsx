@@ -2,6 +2,7 @@ import { ChainId, endpoints, getPrettyChainName } from '@lz/libs'
 import { SkeletonTheme } from 'react-loading-skeleton'
 
 import { config } from '../../../config'
+import { AddressInfoContext } from '../../../hooks/addressInfoContext'
 import { useChainQueryParam } from '../../../hooks/useChainQueryParam'
 import { useDiscoveryApi } from '../../../hooks/useDiscoveryApi'
 import { Layout } from '../Layout'
@@ -60,8 +61,8 @@ export function ProtocolInformation({
   }
 
   return (
-    <>
-      <SkeletonTheme baseColor="#27272A" highlightColor="#525252">
+    <SkeletonTheme baseColor="#27272A" highlightColor="#525252">
+      <AddressInfoContext.Provider value={discoveryResponse.data.addressInfo}>
         <NetworkDropdownSelector
           chainId={discoveryResponse.chainId}
           chainsToDisplay={chainsToDisplay}
@@ -89,7 +90,7 @@ export function ProtocolInformation({
             />
           )}
         </Layout>
-      </SkeletonTheme>
-    </>
+      </AddressInfoContext.Provider>
+    </SkeletonTheme>
   )
 }
