@@ -36,7 +36,12 @@ export function BlockchainAddress(props: Props) {
   const explorerName = getBlockExplorerName(chainId)
 
   if (props.address === EthereumAddress.ZERO) {
-    return props.address.toString()
+    return (
+      <>
+        <span className="sm:hidden">{addressEllipsis(props.address)}</span>
+        <span className="hidden sm:inline"> {props.address}</span>
+      </>
+    )
   }
 
   return (
@@ -59,7 +64,7 @@ export function BlockchainAddress(props: Props) {
               {props.address.toString()}
             </a>{' '}
           </Tooltip>{' '}
-          <span className="text-xs text-zinc-500 no-underline">
+          <span className="whitespace-nowrap text-xs text-zinc-500">
             ({addressInfo.name})
           </span>
         </>
