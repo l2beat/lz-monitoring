@@ -1,23 +1,24 @@
-import { ChainId, ChangelogApiEntry, EthereumAddress, UnixTime } from '@lz/libs'
+import { ChangelogApiEntry, EthereumAddress, UnixTime } from '@lz/libs'
 import cx from 'classnames'
 import { useEffect, useState } from 'react'
 import Skeleton from 'react-loading-skeleton'
 
 import { config } from '../../../config'
+import { useChainId } from '../../../hooks/chainIdContext'
 import { useChangelogApi } from '../../../hooks/useChangelogApi'
 import { CloseIcon } from '../../icons/CloseIcon'
 import { Tooltip } from '../Tooltip'
 import { ChangelogEntry } from './ChangelogEntry'
 
 interface ChangelogSummaryProps {
-  chainId: ChainId
   address: EthereumAddress
 }
 
 export function ChangelogSummary(props: ChangelogSummaryProps) {
+  const chainId = useChainId()
   const [data, isLoading, isError] = useChangelogApi({
     shouldFetch: true,
-    chainId: props.chainId,
+    chainId: chainId,
     address: props.address,
     apiUrl: config.apiUrl,
   })
@@ -28,7 +29,7 @@ export function ChangelogSummary(props: ChangelogSummaryProps) {
   // reset changes details when chainId changes
   useEffect(() => {
     setChangesDetails(null)
-  }, [props.chainId])
+  }, [chainId])
 
   if (isError) {
     return <div>Failed to load changelog</div>

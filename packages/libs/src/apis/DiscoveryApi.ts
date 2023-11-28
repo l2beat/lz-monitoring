@@ -66,5 +66,12 @@ export const DiscoveryApi = z.object({
       })
       .nullable(),
   }),
+  addressInfo: z.array(
+    z.object({
+      address: branded(z.string(), EthereumAddress),
+      name: z.string(),
+      verified: z.boolean(),
+    }),
+  ),
 })
 export type DiscoveryApi = z.infer<typeof DiscoveryApi>

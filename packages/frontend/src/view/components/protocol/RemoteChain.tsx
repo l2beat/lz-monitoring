@@ -91,12 +91,7 @@ export function RemoteChainComponent({
       />
       <Row
         label="Ultra Light Node"
-        value={
-          <BlockchainAddress
-            address={remoteChain.uln}
-            chainId={selectedChain}
-          />
-        }
+        value={<BlockchainAddress address={remoteChain.uln} />}
       />
     </div>
   )

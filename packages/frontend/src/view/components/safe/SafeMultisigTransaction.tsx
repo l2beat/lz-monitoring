@@ -1,5 +1,4 @@
 import {
-  ChainId,
   EthereumAddress,
   SafeMultisigTransaction,
   SafeTransactionDecodedData,
@@ -18,12 +17,10 @@ export function SafeMultisigTransaction({
   transaction,
   allTransactions,
   amountOfOwners,
-  chainId,
 }: {
   transaction: SafeMultisigTransaction
   allTransactions: SafeMultisigTransaction[]
   amountOfOwners: number
-  chainId: ChainId
 }) {
   const [isExpanded, setIsExpanded] = React.useState(false)
   // Data obtained from transaction payload itself
@@ -81,7 +78,6 @@ export function SafeMultisigTransaction({
             param="Confirmations"
             value={
               <ExecutionTimeline
-                chainId={chainId}
                 outcome={txStatus}
                 submissionDate={new Date(submissionDate)}
                 approvals={(transaction.confirmations ?? [])
@@ -98,12 +94,7 @@ export function SafeMultisigTransaction({
           <TransactionProperty param="Block number" value={blockNumber} />
           <TransactionProperty
             param="Target"
-            value={
-              <BlockchainAddress
-                address={EthereumAddress(target)}
-                chainId={chainId}
-              />
-            }
+            value={<BlockchainAddress address={EthereumAddress(target)} />}
           />
           <TransactionProperty param="Method" value={<Code>{method}</Code>} />
           <TransactionProperty
