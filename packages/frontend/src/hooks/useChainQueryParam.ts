@@ -22,8 +22,9 @@ function deserialize(value: string): ChainId | null {
 interface UseChainQueryParamOptions {
   /**
    * Chain ID to use if the query param is not set
+   * If not set, value will be nullable
    */
-  fallback: ChainId
+  fallback?: ChainId
 
   /**
    * Key used to store the query param
@@ -32,19 +33,32 @@ interface UseChainQueryParamOptions {
 }
 
 // We can do that in the generic way such as `useSerializableQueryParam<T>` but it's not needed for now
-export function useChainQueryParam({
+export function useChainQueryParam<Params extends UseChainQueryParamOptions>({
   fallback,
   paramName,
-}: UseChainQueryParamOptions) {
+}: Params) {
   const [currentParam, setCurrentParam] = useQueryParam(paramName)
 
-  const [deserializedParam, setDeserializedParam] = useState<ChainId>(
-    currentParam ? deserialize(currentParam) ?? fallback : fallback,
+  const actualFallback = fallback ?? null
+
+  // Deserialize string into ChainId if present
+  // Otherwise persist null/fallback
+  const param = currentParam
+    ? deserialize(currentParam) ?? actualFallback
+    : actualFallback
+
+  const [deserializedParam, setDeserializedParam] = useState<ChainId | null>(
+    param,
   )
 
   useEffect(() => {
-    setCurrentParam(serialize(deserializedParam))
+    setCurrentParam(deserializedParam ? serialize(deserializedParam) : null)
   }, [deserializedParam, setCurrentParam])
 
-  return [deserializedParam, setDeserializedParam] as const
+  return [
+    deserializedParam,
+    setDeserializedParam,
+  ] as Params['fallback'] extends ChainId
+    ? [ChainId, React.Dispatch<React.SetStateAction<ChainId>>]
+    : [ChainId | null, React.Dispatch<React.SetStateAction<ChainId | null>>]
 }

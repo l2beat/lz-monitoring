@@ -16,34 +16,31 @@ interface Props {
 export function RemoteChainComponent({
   remoteChains,
 }: Props): JSX.Element | null {
-  const [selectedChain, setSelectedChain] = useChainQueryParam({
-    fallback: ChainId.ETHEREUM,
+  const [selectedRemoteChain, setSelectedRemoteChain] = useChainQueryParam({
     paramName: 'remote-chain',
   })
-
-  function onDropdownSelect(option: DropdownOption): void {
-    const chain = remoteChains?.find((chain) => chain.name === option.value)
-
-    if (!chain) {
-      return
-    }
-
-    setSelectedChain(ChainId.fromName(chain.name))
-  }
 
   if (!remoteChains) {
     return null
   }
 
+  function onDropdownSelect(option: DropdownOption): void {
+    const chain = remoteChains?.find((chain) => chain.name === option.value)
+
+    setSelectedRemoteChain(chain ? ChainId.fromName(chain.name) : null)
+  }
+
   const dropdownOptions = remoteChains.map(toDropdownOption)
 
-  const remoteChain = remoteChains.find(
-    (chain) => chain.name === ChainId.getName(selectedChain),
-  )
+  const remoteChain = selectedRemoteChain
+    ? remoteChains.find(
+        (chain) => chain.name === ChainId.getName(selectedRemoteChain),
+      )
+    : null
 
-  if (!remoteChain) {
-    return null
-  }
+  const nullableDefault = selectedRemoteChain
+    ? { defaultValue: toDropdownOption(selectedRemoteChain) }
+    : {}
 
   return (
     <div className="rounded-lg bg-[#35353A]">
@@ -52,79 +49,83 @@ export function RemoteChainComponent({
         label={'Remote Chain'}
         value={
           <Dropdown
-            defaultValue={toDropdownOption(selectedChain)}
             options={dropdownOptions}
             onChange={onDropdownSelect}
+            {...nullableDefault}
           />
         }
       />
 
-      <>
-        <Subparams title="Default app config">
-          <Subparam
-            label="Inbound proof library"
-            value={remoteChain.defaultAppConfig.inboundProofLib}
+      {remoteChain && selectedRemoteChain && (
+        <>
+          <Subparams title="Default app config">
+            <Subparam
+              label="Inbound proof library"
+              value={remoteChain.defaultAppConfig.inboundProofLib}
+            />
+            <Subparam
+              label="Inbound proof confirm"
+              value={remoteChain.defaultAppConfig.inboundProofConfirm}
+            />
+            <Subparam
+              label="Outbound proof confirm"
+              value={remoteChain.defaultAppConfig.outboundBlockConfirm}
+            />
+            <Subparam
+              label="Outbound proof confirm"
+              value={remoteChain.defaultAppConfig.outboundProofType}
+            />
+            <Subparam
+              label="Oracle"
+              value={
+                <BlockchainAddress
+                  address={remoteChain.defaultAppConfig.oracle}
+                />
+              }
+            />
+          </Subparams>
+
+          <Subparams title="Default adapter params">
+            <div className="grid grid-cols-adapter-params ">
+              <div className="col-span-4 grid min-w-[800px] grid-cols-adapter-params rounded bg-gray-300 py-3 text-center text-[13px] font-semibold text-[#AEAEAE]">
+                <span className="px-6">Proof Type</span>
+                <span>Version</span>
+                <span>Value (Gas)</span>
+                <span>Raw</span>
+              </div>
+              {remoteChain.defaultAdapterParams.map((adapterParams) => {
+                const unpacked = unpackAdapterParams(
+                  adapterParams.adapterParams,
+                )
+
+                return (
+                  <div className="col-span-4 my-2 grid grid-cols-adapter-params items-center justify-center border-b border-gray-200 text-center text-xs last:border-none">
+                    <span>{adapterParams.proofType}</span>
+                    <span>{unpacked[0]}</span>
+                    <span>{unpacked[1]}</span>
+                    <Code>{adapterParams.adapterParams}</Code>
+                  </div>
+                )
+              })}
+            </div>
+          </Subparams>
+
+          <InlineSubparam
+            label="Supported outbound proof"
+            value={remoteChain.supportedOutboundProof.map((proof) => (
+              <div>{proof}</div>
+            ))}
           />
-          <Subparam
-            label="Inbound proof confirm"
-            value={remoteChain.defaultAppConfig.inboundProofConfirm}
-          />
-          <Subparam
-            label="Outbound proof confirm"
-            value={remoteChain.defaultAppConfig.outboundBlockConfirm}
-          />
-          <Subparam
-            label="Outbound proof confirm"
-            value={remoteChain.defaultAppConfig.outboundProofType}
-          />
-          <Subparam
-            label="Oracle"
+          <InlineSubparam
+            label="Corresponding Ultra Light Node"
             value={
-              <BlockchainAddress
-                address={remoteChain.defaultAppConfig.oracle}
-              />
+              <ChainInfoContext.Provider value={selectedRemoteChain}>
+                <BlockchainAddress address={remoteChain.uln} />
+              </ChainInfoContext.Provider>
             }
           />
-        </Subparams>
-
-        <Subparams title="Default adapter params">
-          <div className="grid-cols-adapter-params grid ">
-            <div className="grid-cols-adapter-params col-span-4 grid min-w-[800px] rounded bg-gray-300 py-3 text-center text-[13px] font-semibold text-[#AEAEAE]">
-              <span className="px-6">Proof Type</span>
-              <span>Version</span>
-              <span>Value (Gas)</span>
-              <span>Raw</span>
-            </div>
-            {remoteChain.defaultAdapterParams.map((adapterParams) => {
-              const unpacked = unpackAdapterParams(adapterParams.adapterParams)
-
-              return (
-                <div className="grid-cols-adapter-params col-span-4 my-2 grid items-center justify-center border-b border-gray-200 text-center text-xs last:border-none">
-                  <span>{adapterParams.proofType}</span>
-                  <span>{unpacked[0]}</span>
-                  <span>{unpacked[1]}</span>
-                  <Code>{adapterParams.adapterParams}</Code>
-                </div>
-              )
-            })}
-          </div>
-        </Subparams>
-
-        <InlineSubparam
-          label="Supported outbound proof"
-          value={remoteChain.supportedOutboundProof.map((proof) => (
-            <div>{proof}</div>
-          ))}
-        />
-        <InlineSubparam
-          label="Corresponding Ultra Light Node"
-          value={
-            <ChainInfoContext.Provider value={selectedChain}>
-              <BlockchainAddress address={remoteChain.uln} />
-            </ChainInfoContext.Provider>
-          }
-        />
-      </>
+        </>
+      )}
     </div>
   )
 }
@@ -167,16 +168,22 @@ function InlineSubparam({
   value: React.ReactNode
 }) {
   return (
-    <div className="flex w-full items-center border-t border-[#4B4E51] px-6 py-3">
+    <div className="flex w-full border-t border-[#4B4E51] px-6 py-3">
       <span className="w-[30%] text-sm font-medium text-gray-15">{label}</span>
-      <span className="text-x4 flex flex-col gap-2 pl-6">{value}</span>
+      <span className="text-x4  flex flex-col items-center gap-2 pl-6">
+        {value}
+      </span>
     </div>
   )
 }
 
+/**
+ * @notice Unpacks only V1 adapter params due to the hardcoded padding and felts
+ */
 function unpackAdapterParams(adapterParams: string) {
   const felts = ['uint16', 'uint256']
 
+  // Packed values are not padded enough to be decoded
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const padded = '0x' + adapterParams.split('0x')[1]!.padStart(128, '0')
 
