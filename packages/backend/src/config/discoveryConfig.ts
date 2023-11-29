@@ -12,6 +12,7 @@ interface TemplateVariables {
   addresses: {
     ultraLightNodeV2: string
     endpoint: string
+    relayer: string
     layerZeroMultisig?: string
   }
 }
@@ -27,6 +28,7 @@ function createConfigFromTemplate(
       unsafeAddresses.ultraLightNodeV2,
     ).toString(),
     endpoint: EthereumAddress(unsafeAddresses.endpoint).toString(),
+    relayer: EthereumAddress(unsafeAddresses.relayer).toString(),
     layerZeroMultisig:
       unsafeAddresses.layerZeroMultisig !== undefined
         ? EthereumAddress(unsafeAddresses.layerZeroMultisig).toString()
@@ -47,6 +49,7 @@ function createConfigFromTemplate(
     names: {
       [addresses.ultraLightNodeV2]: 'UltraLightNodeV2',
       [addresses.endpoint]: 'Endpoint',
+      [addresses.relayer]: 'Relayer',
       ...multisigNameEntry,
     },
     overrides: {
