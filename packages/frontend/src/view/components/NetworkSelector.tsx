@@ -2,16 +2,7 @@ import { ChainId, getPrettyChainName } from '@lz/libs'
 import cx from 'classnames'
 import { useEffect, useRef, useState } from 'react'
 
-import { ArbitrumIcon } from '../icons/blockchains/ArbitrumIcon'
-import { AvalancheIcon } from '../icons/blockchains/AvalancheIcon'
-import { BaseIcon } from '../icons/blockchains/BaseIcon'
-import { BinanceSmartChainIcon } from '../icons/blockchains/BinanceSmartChainIcon'
-import { CeloIcon } from '../icons/blockchains/CeloIcon'
-import { EthereumIcon } from '../icons/blockchains/EthereumIcon'
-import { LineaIcon } from '../icons/blockchains/LineaIcon'
-import { OptimismIcon } from '../icons/blockchains/OptimismIcon'
-import { PolygonPosIcon } from '../icons/blockchains/PolygonPosIcon'
-import { PolygonZkEvmIcon } from '../icons/blockchains/PolygonZkEvmIcon'
+import { BlockchainIcon } from './BlockchainIcon'
 
 interface Props {
   chainId: ChainId
@@ -34,7 +25,7 @@ export function NetworkDropdownSelector({
   const pills = chainsToDisplay
     .map((chainToDisplay, i) => ({
       key: i,
-      icon: getIconForChain(chainToDisplay),
+      icon: <BlockchainIcon chainId={chainToDisplay} />,
       label: getPrettyChainName(chainToDisplay),
       isActive: chainToDisplay === optimisticSelect,
       onClick: () => onClick(chainToDisplay),
@@ -92,29 +83,4 @@ function PillSelector({
       <span className="text-xs">{label}</span>
     </div>
   )
-}
-
-function getIconForChain(chain: ChainId): React.ReactNode {
-  switch (chain) {
-    case ChainId.ARBITRUM:
-      return <ArbitrumIcon />
-    case ChainId.AVALANCHE:
-      return <AvalancheIcon />
-    case ChainId.BASE:
-      return <BaseIcon />
-    case ChainId.BSC:
-      return <BinanceSmartChainIcon />
-    case ChainId.CELO:
-      return <CeloIcon />
-    case ChainId.ETHEREUM:
-      return <EthereumIcon />
-    case ChainId.LINEA:
-      return <LineaIcon />
-    case ChainId.OPTIMISM:
-      return <OptimismIcon />
-    case ChainId.POLYGON_ZKEVM:
-      return <PolygonZkEvmIcon />
-    case ChainId.POLYGON_POS:
-      return <PolygonPosIcon />
-  }
 }

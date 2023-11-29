@@ -1,8 +1,10 @@
 import { Listbox } from '@headlessui/react'
+import { ChainId, getPrettyChainName } from '@lz/libs'
 import cx from 'classnames'
 import { useState } from 'react'
 
 import { DropdownArrowIcon } from '../icons/DropdownArrowIcon'
+import { BlockchainIcon } from './BlockchainIcon'
 
 export interface DropdownOption {
   label: string
@@ -13,7 +15,6 @@ interface Props {
   options: DropdownOption[]
   defaultValue?: DropdownOption
   onChange: (option: DropdownOption) => void
-  className?: string
 }
 
 export function Dropdown(props: Props): JSX.Element {
@@ -29,31 +30,47 @@ export function Dropdown(props: Props): JSX.Element {
   return (
     <Listbox value={selectedOption} onChange={onChange}>
       {({ open }) => (
-        <div className={cx('relative', props.className)}>
+        <div className="relative w-full font-sans">
           <Listbox.Button
             className={cx(
-              'flex h-full w-full items-center justify-between bg-gray-800 pl-6 font-mono',
+              'flex w-full items-center justify-between border-b bg-gray-200 pl-6',
               !selectedOption && 'text-gray-15',
+              open
+                ? 'rounded-t-lg border-gray-50'
+                : 'border-transparent rounded-lg',
             )}
           >
-            {selectedOption?.label ?? 'Select an option'}
-            <span className="h-10 w-10 shrink-0 bg-white p-1">
+            {selectedOption?.value ? (
+              <span className="flex items-center gap-2 text-xs">
+                <BlockchainIcon
+                  chainId={ChainId.fromName(selectedOption.value)}
+                />
+                {getPrettyChainName(ChainId.fromName(selectedOption.value))}
+              </span>
+            ) : (
+              <span>Select chain</span>
+            )}
+            <span className="m-1 flex h-8 w-8 shrink-0 items-center justify-center rounded bg-yellow-100 p-0.5">
               <DropdownArrowIcon
                 className={cx(open && 'rotate-180', 'transition-all')}
               />
             </span>
           </Listbox.Button>
-          <Listbox.Options className="absolute z-dropdown w-full">
-            {props.options.map((option) => (
-              <Listbox.Option
-                key={option.value}
-                value={option}
-                className="mr-10 py-1 pl-6 font-mono ui-active:bg-white ui-active:text-black 
-                          ui-not-active:bg-black ui-not-active:text-white"
-              >
-                {option.label}
-              </Listbox.Option>
-            ))}
+          <Listbox.Options className="absolute z-[102] w-full">
+            {props.options
+              .sort((a, b) => a.value.localeCompare(b.value))
+              .filter((option) => option.value !== selectedOption?.value)
+              .map((option) => (
+                <Listbox.Option
+                  key={option.value}
+                  value={option}
+                  className="flex w-full cursor-pointer items-center gap-3 px-6 py-2 text-xs first:pt-3 last:rounded last:pb-3 ui-active:bg-white 
+                          ui-active:text-black ui-not-active:bg-gray-200 ui-not-active:text-white"
+                >
+                  <BlockchainIcon chainId={ChainId.fromName(option.value)} />
+                  {getPrettyChainName(ChainId.fromName(option.value))}
+                </Listbox.Option>
+              ))}
           </Listbox.Options>
         </div>
       )}
