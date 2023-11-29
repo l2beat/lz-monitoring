@@ -30,7 +30,7 @@ export function Dropdown(props: Props): JSX.Element {
   return (
     <Listbox value={selectedOption} onChange={onChange}>
       {({ open }) => (
-        <div className="relative w-full font-sans">
+        <div className="relative w-full cursor-pointer font-sans">
           <Listbox.Button
             className={cx(
               'flex w-full items-center justify-between border-b bg-gray-200 pl-6',
