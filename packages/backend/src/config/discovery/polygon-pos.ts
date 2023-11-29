@@ -16,7 +16,6 @@ export {
 const addresses = {
   ultraLightNodeV2: '0x4D73AdB72bC3DD368966edD0f0b2148401A178E2',
   endpoint: '0x3c2269811836af69497E5F486A85D7316753cf62',
-  relayer: '0x75dc8e5f50c8221a82ca6af64af811caa983b65f',
   layerZeroMultisig: '0xF1a5F92F5F89e8b539136276f827BF1648375312',
 }
 

@@ -12,7 +12,6 @@ export { lineaChangelogWhitelist, lineaDiscoveryConfig, lineaEventsToWatch }
 const addresses = {
   ultraLightNodeV2: '0x38de71124f7a447a01d67945a51edce9ff491251',
   endpoint: '0xb6319cC6c8c27A8F5dAF0dD3DF91EA35C4720dd7',
-  relayer: '0xA658742d33ebd2ce2F0bdFf73515Aa797Fd161D9',
   // No multisig support
 }
 
