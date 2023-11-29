@@ -56,10 +56,6 @@ export const DiscoveryApi = z.object({
       layerZeroToken: branded(z.string(), EthereumAddress),
       remoteChains: z.array(RemoteChain),
     }),
-    relayer: z.object({
-      name: z.literal('Relayer'),
-      address: branded(z.string(), EthereumAddress),
-    }),
     lzMultisig: z
       .object({
         name: z.literal('LayerZero Multisig'),

@@ -79,7 +79,6 @@ function toDiscoveryApi(
       endpoint: getEndpointContract(discoveryOutput, changelogSummary),
       ulnV2: getUlnV2Contract(discoveryOutput, changelogSummary),
       lzMultisig: getLzMultisig(discoveryOutput, changelogSummary),
-      relayer: getRelayerContract(discoveryOutput),
     },
     addressInfo,
   }
@@ -259,17 +258,6 @@ function getLzMultisig(
     }
   } catch (e) {
     return null
-  }
-}
-
-function getRelayerContract(
-  discoveryOutput: DiscoveryOutput,
-): DiscoveryApi['contracts']['relayer'] {
-  const relayer = getContractByName('Relayer', discoveryOutput)
-
-  return {
-    name: 'Relayer',
-    address: relayer.address,
   }
 }
 
