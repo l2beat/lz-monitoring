@@ -60,30 +60,35 @@ export function RemoteChainComponent({
         <>
           <Block title="Default app config">
             <Row
+              hideBorder
               dense
               className="md:pl-7"
               label="Inbound proof library"
               value={remoteChain.defaultAppConfig.inboundProofLib}
             />
             <Row
+              hideBorder
               dense
               className="md:pl-7"
               label="Inbound proof confirm"
               value={remoteChain.defaultAppConfig.inboundProofConfirm}
             />
             <Row
+              hideBorder
               dense
               className="md:pl-7"
               label="Outbound block confirm"
               value={remoteChain.defaultAppConfig.outboundBlockConfirm}
             />
             <Row
+              hideBorder
               dense
               className="md:pl-7"
               label="Outbound proof type"
               value={remoteChain.defaultAppConfig.outboundProofType}
             />
             <Row
+              hideBorder
               dense
               className="md:pl-7"
               label="Oracle"
@@ -94,6 +99,7 @@ export function RemoteChainComponent({
               }
             />
             <Row
+              hideBorder
               dense
               className="md:pl-7"
               label="Relayer"
@@ -129,29 +135,35 @@ export function RemoteChainComponent({
               })}
             </div>
           </Block>
+          <Section>
+            <Row
+              dense
+              hideBorder
+              className="md:pl-7"
+              label="Supported outbound proof"
+              value={
+                <div className="flex flex-col gap-3">
+                  {remoteChain.supportedOutboundProof.map((proof) => (
+                    <span>{proof}</span>
+                  ))}
+                </div>
+              }
+            />
+          </Section>
 
-          <Row
-            dense
-            className="md:pl-7"
-            label="Supported outbound proof"
-            value={
-              <div className="flex flex-col gap-3">
-                {remoteChain.supportedOutboundProof.map((proof) => (
-                  <span>{proof}</span>
-                ))}
-              </div>
-            }
-          />
-          <Row
-            dense
-            className="md:pl-7"
-            label="Ultra Light Node"
-            value={
-              <ChainInfoContext.Provider value={selectedRemoteChain}>
-                <BlockchainAddress address={remoteChain.uln} />
-              </ChainInfoContext.Provider>
-            }
-          />
+          <Section>
+            <Row
+              dense
+              hideBorder
+              className="md:pl-7"
+              label="Ultra Light Node"
+              value={
+                <ChainInfoContext.Provider value={selectedRemoteChain}>
+                  <BlockchainAddress address={remoteChain.uln} />
+                </ChainInfoContext.Provider>
+              }
+            />
+          </Section>
         </>
       )}
     </div>
@@ -171,6 +183,10 @@ function Block({
       <div className="flex flex-col md:gap-2">{children}</div>
     </div>
   )
+}
+
+function Section({ children }: { children: React.ReactNode }) {
+  return <div className=" border-t border-[#4B4E51]">{children}</div>
 }
 
 /**
