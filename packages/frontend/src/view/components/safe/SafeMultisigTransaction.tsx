@@ -50,24 +50,28 @@ export function SafeMultisigTransaction({
 
   return (
     <div
-      onClick={() => setIsExpanded(!isExpanded)}
       className={cx(
-        'col-span-5 grid min-w-[800px] cursor-pointer grid-cols-multisig border-b border-[#36393D] py-3 text-xs',
+        'col-span-5 grid min-w-[800px] grid-cols-multisig border-b border-[#36393D] py-3 text-xs',
         isExpanded ? 'rounded border-none bg-gray-75' : 'bg-gray-500',
       )}
     >
-      <div className="flex items-center px-6">
-        {getTimeDifference(new Date(transaction.submissionDate))}
-      </div>
-      <div className="flex items-center font-bold">{method}</div>
-      <div className={cx('flex items-center', statusToTextColor(txStatus))}>
-        {stringConfirmations}
-      </div>
-      <StatusBadge status={txStatus} />
-      <div>
-        <button className="flex h-[22px] w-[22px] items-center justify-center rounded bg-yellow-100 brightness-100 filter transition-all duration-300 hover:brightness-[120%]">
-          {isExpanded ? <MinusIcon /> : <PlusIcon />}
-        </button>
+      <div
+        className="col-span-5 grid min-w-[800px] cursor-pointer grid-cols-multisig"
+        onClick={() => setIsExpanded(!isExpanded)}
+      >
+        <div className="flex items-center px-6">
+          {getTimeDifference(new Date(transaction.submissionDate))}
+        </div>
+        <div className="flex items-center font-bold">{method}</div>
+        <div className={cx('flex items-center', statusToTextColor(txStatus))}>
+          {stringConfirmations}
+        </div>
+        <StatusBadge status={txStatus} />
+        <div>
+          <button className="flex h-[22px] w-[22px] items-center justify-center rounded bg-yellow-100 brightness-100 filter transition-all duration-300 hover:brightness-[120%]">
+            {isExpanded ? <MinusIcon /> : <PlusIcon />}
+          </button>
+        </div>
       </div>
 
       {isExpanded && (
