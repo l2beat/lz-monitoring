@@ -85,6 +85,7 @@ function createConfigFromTemplate(
               'inboundBlockConfirm',
               'outboundProofType',
               'outboundBlockConfirm',
+              'relayer',
               'oracle',
             ],
             groupBy: 'chainId',

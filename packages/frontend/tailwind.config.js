@@ -6,6 +6,7 @@ module.exports = {
     extend: {
       gridTemplateColumns: {
         multisig: '3fr 6fr 4fr 3fr 1fr',
+        'adapter-params': '2fr 1fr 2fr 7fr',
       },
     },
     fontFamily: {

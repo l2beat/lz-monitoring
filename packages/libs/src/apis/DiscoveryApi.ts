@@ -19,6 +19,7 @@ const DefaultAppConfig = z.object({
   outboundProofType: z.number(),
   outboundBlockConfirm: z.number(),
   oracle: branded(z.string(), EthereumAddress),
+  relayer: branded(z.string(), EthereumAddress),
 })
 export type DefaultAppConfig = z.infer<typeof DefaultAppConfig>
 
