@@ -11,7 +11,7 @@ export function Warning({
     <section className="mb-12 p-6">
       <div className="flex items-center justify-center gap-3 p-5">
         <div className="w-[45px]">
-          <WarningIcon stroke="#EEF36A" />
+          <WarningIcon className="stroke-yellow-100" />
         </div>
         <div className="flex flex-col gap-1">
           <span className="text-lg">{title}</span>
