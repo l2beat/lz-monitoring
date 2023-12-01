@@ -28,13 +28,12 @@ export function UltraLightNodeContract(props: Props): JSX.Element {
         hideText="Hide contract parameters"
       >
         <Subsection>
-          <RemoteChainComponent remoteChains={props.remoteChains} />
-        </Subsection>
-        <Subsection>
           <Row
             label="Owner"
             value={<BlockchainAddress address={props.owner} />}
+            hideBorder
           />
+          <RemoteChainComponent remoteChains={props.remoteChains} />
           <Row
             label="Treasury Contract"
             value={<BlockchainAddress address={props.treasuryContract} />}

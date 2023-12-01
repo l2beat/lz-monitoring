@@ -191,6 +191,7 @@ function getRemoteChains(ulnV2: ContractParameters): RemoteChain[] {
       'Outbound block confirm not found for chain ' + lzChainId,
     )
     assert(appConfig.oracle, 'Oracle not found for chain ' + lzChainId)
+    assert(appConfig.relayer, 'Relayer not found for chain ' + lzChainId)
 
     const inboundProofLibrary = inboundProofLibraries[lzChainIdNumber]
     assert(
@@ -218,6 +219,7 @@ function getRemoteChains(ulnV2: ContractParameters): RemoteChain[] {
         outboundProofType: +appConfig.outboundProofType,
         outboundBlockConfirm: +appConfig.outboundBlockConfirm,
         oracle: EthereumAddress(appConfig.oracle.toString()),
+        relayer: EthereumAddress(appConfig.relayer.toString()),
       },
       defaultAdapterParams: adapterParams,
       supportedOutboundProof: Array.isArray(supportedOutboundProof)

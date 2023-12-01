@@ -1,5 +1,7 @@
 import { ChainId, RemoteChain } from '@lz/libs'
+import { ethers } from 'ethers'
 
+import { ChainInfoContext } from '../../../hooks/chainIdContext'
 import { useChainQueryParam } from '../../../hooks/useChainQueryParam'
 import { BlockchainAddress } from '../BlockchainAddress'
 import { Code } from '../Code'
@@ -14,85 +16,190 @@ interface Props {
 export function RemoteChainComponent({
   remoteChains,
 }: Props): JSX.Element | null {
-  const [selectedChain, setSelectedChain] = useChainQueryParam({
-    fallback: ChainId.ETHEREUM,
+  const [selectedRemoteChain, setSelectedRemoteChain] = useChainQueryParam({
     paramName: 'remote-chain',
   })
-
-  function onDropdownSelect(option: DropdownOption): void {
-    const chain = remoteChains?.find((chain) => chain.name === option.value)
-
-    if (!chain) {
-      return
-    }
-
-    setSelectedChain(ChainId.fromName(chain.name))
-  }
 
   if (!remoteChains) {
     return null
   }
 
-  const dropdownOptions = remoteChains.map(toDropdownOption)
+  function onDropdownSelect(option: DropdownOption): void {
+    const chain = remoteChains?.find((chain) => chain.name === option.value)
 
-  const remoteChain = remoteChains.find(
-    (chain) => chain.name === ChainId.getName(selectedChain),
-  )
-
-  if (!remoteChain) {
-    return null
+    setSelectedRemoteChain(chain ? ChainId.fromName(chain.name) : null)
   }
 
+  const dropdownOptions = remoteChains.map(toDropdownOption)
+
+  const remoteChain = selectedRemoteChain
+    ? remoteChains.find(
+        (chain) => chain.name === ChainId.getName(selectedRemoteChain),
+      )
+    : null
+
+  const nullableDefault = selectedRemoteChain
+    ? { defaultValue: toDropdownOption(selectedRemoteChain) }
+    : {}
+
   return (
-    <div>
+    <div className="rounded-lg bg-[#35353A]">
       <Row
-        label="Remote chain"
+        className="px-6"
+        label="Remote Chain"
         value={
           <Dropdown
-            defaultValue={toDropdownOption(selectedChain)}
             options={dropdownOptions}
             onChange={onDropdownSelect}
-            className="w-full"
+            {...nullableDefault}
           />
         }
       />
 
-      <Row
-        label="Default app config"
-        value={
-          <Code>{JSON.stringify(remoteChain.defaultAppConfig, null, 2)}</Code>
-        }
-      />
+      {remoteChain && selectedRemoteChain && (
+        <>
+          <Block title="Default app config">
+            <Row
+              hideBorder
+              dense
+              className="md:pl-7"
+              label="Inbound proof library"
+              value={remoteChain.defaultAppConfig.inboundProofLib}
+            />
+            <Row
+              hideBorder
+              dense
+              className="md:pl-7"
+              label="Inbound proof confirm"
+              value={remoteChain.defaultAppConfig.inboundProofConfirm}
+            />
+            <Row
+              hideBorder
+              dense
+              className="md:pl-7"
+              label="Outbound block confirm"
+              value={remoteChain.defaultAppConfig.outboundBlockConfirm}
+            />
+            <Row
+              hideBorder
+              dense
+              className="md:pl-7"
+              label="Outbound proof type"
+              value={remoteChain.defaultAppConfig.outboundProofType}
+            />
+            <Row
+              hideBorder
+              dense
+              className="md:pl-7"
+              label="Oracle"
+              value={
+                <BlockchainAddress
+                  address={remoteChain.defaultAppConfig.oracle}
+                />
+              }
+            />
+            <Row
+              hideBorder
+              dense
+              className="md:pl-7"
+              label="Relayer"
+              value={
+                <BlockchainAddress
+                  address={remoteChain.defaultAppConfig.relayer}
+                />
+              }
+            />
+          </Block>
 
-      <Row
-        label="Default adapter params"
-        value={
-          <Code>
-            {JSON.stringify(remoteChain.defaultAdapterParams, null, 2)}
-          </Code>
-        }
-      />
+          <Block title="Default adapter params">
+            <div className="grid grid-cols-adapter-params overflow-x-auto">
+              <div className="col-span-4 grid min-w-[800px] grid-cols-adapter-params rounded bg-gray-300 py-3 text-center text-[13px] font-semibold text-[#AEAEAE]">
+                <span className="px-6">Proof Type</span>
+                <span>Version</span>
+                <span>Value (Gas)</span>
+                <span>Raw</span>
+              </div>
+              {remoteChain.defaultAdapterParams.map((adapterParams) => {
+                const unpacked = unpackAdapterParams(
+                  adapterParams.adapterParams,
+                )
 
-      <Row
-        label="Inbound proof library"
-        value={
-          <Code>
-            {JSON.stringify(remoteChain.inboundProofLibrary, null, 2)}
-          </Code>
-        }
-      />
-      <Row
-        label="Supported outbound proof"
-        value={
-          <Code>
-            {JSON.stringify(remoteChain.supportedOutboundProof, null, 2)}
-          </Code>
-        }
-      />
-      <Row
-        label="Ultra Light Node"
-        value={<BlockchainAddress address={remoteChain.uln} />}
-      />
+                return (
+                  <div className="col-span-4 my-2 grid grid-cols-adapter-params items-center justify-center border-b border-gray-200 text-center text-xs last:border-none">
+                    <span>{adapterParams.proofType}</span>
+                    <span>{unpacked[0]}</span>
+                    <span>{unpacked[1]}</span>
+                    <Code>{adapterParams.adapterParams}</Code>
+                  </div>
+                )
+              })}
+            </div>
+          </Block>
+          <Section>
+            <Row
+              dense
+              hideBorder
+              className="md:pl-7"
+              label="Supported outbound proof"
+              value={
+                <div className="flex flex-col gap-3">
+                  {remoteChain.supportedOutboundProof.map((proof) => (
+                    <span>{proof}</span>
+                  ))}
+                </div>
+              }
+            />
+          </Section>
+
+          <Section>
+            <Row
+              dense
+              hideBorder
+              className="md:pl-7"
+              label="Ultra Light Node"
+              value={
+                <ChainInfoContext.Provider value={selectedRemoteChain}>
+                  <BlockchainAddress address={remoteChain.uln} />
+                </ChainInfoContext.Provider>
+              }
+            />
+          </Section>
+        </>
+      )}
     </div>
   )
+}
+
+function Block({
+  title,
+  children,
+}: {
+  title: string
+  children: React.ReactNode
+}) {
+  return (
+    <div className="flex flex-col border-t border-[#4B4E51] px-6 py-3">
+      <span className="pb-3 text-sm font-medium text-gray-15">{title}</span>
+      <div className="flex flex-col md:gap-2">{children}</div>
+    </div>
+  )
+}
+
+function Section({ children }: { children: React.ReactNode }) {
+  return <div className=" border-t border-[#4B4E51]">{children}</div>
+}
+
+/**
+ * @notice Unpacks only V1 adapter params due to the hardcoded padding and felts
+ */
+function unpackAdapterParams(adapterParams: string) {
+  const felts = ['uint16', 'uint256']
+
+  // Packed values are not padded enough to be decoded
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  const padded = '0x' + adapterParams.split('0x')[1]!.padStart(128, '0')
+
+  const unpacked = ethers.utils.defaultAbiCoder.decode(felts, padded)
+
+  return unpacked.map(String)
 }

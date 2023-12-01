@@ -65,7 +65,7 @@ export function BlockchainAddress(props: Props) {
             </a>{' '}
           </Tooltip>{' '}
           <span className="whitespace-nowrap text-xs text-zinc-500">
-            ({addressInfo.name})
+            {addressInfo.name.length > 0 && `(${addressInfo.name})`}
           </span>
         </>
       ) : (

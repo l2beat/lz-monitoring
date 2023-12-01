@@ -16,7 +16,9 @@ export function ExpandableContainer(props: Props) {
   return (
     <div className="w-full">
       <div
-        className={cx(isExpanded ? 'max-h-100' : 'max-h-0', 'overflow-hidden')}
+        className={cx(
+          isExpanded ? 'h-100 overflow-visible' : 'h-0 overflow-hidden',
+        )}
       >
         {props.children}
       </div>
