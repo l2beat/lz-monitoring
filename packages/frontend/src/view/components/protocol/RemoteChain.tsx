@@ -38,9 +38,12 @@ export function RemoteChainComponent({
       )
     : null
 
-  const nullableDefault = selectedRemoteChain
-    ? { defaultValue: toDropdownOption(selectedRemoteChain) }
-    : {}
+  const hasAnyRemoteConfigurations = remoteChains.length > 0
+
+  const nullableDefault =
+    selectedRemoteChain && hasAnyRemoteConfigurations
+      ? { defaultValue: toDropdownOption(selectedRemoteChain) }
+      : {}
 
   return (
     <div className="rounded-lg bg-[#35353A]">
@@ -48,11 +51,17 @@ export function RemoteChainComponent({
         className="px-6"
         label="Remote Chain"
         value={
-          <Dropdown
-            options={dropdownOptions}
-            onChange={onDropdownSelect}
-            {...nullableDefault}
-          />
+          hasAnyRemoteConfigurations ? (
+            <Dropdown
+              options={dropdownOptions}
+              onChange={onDropdownSelect}
+              {...nullableDefault}
+            />
+          ) : (
+            <div className="text-right text-gray-15">
+              There are no remote configurations for this chain
+            </div>
+          )
         }
       />
 

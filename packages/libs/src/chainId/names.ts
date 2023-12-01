@@ -9,7 +9,7 @@ export function getPrettyChainName(chain: ChainId): string {
     case ChainId.BASE:
       return 'Base'
     case ChainId.BSC:
-      return 'Binance Smart Chain'
+      return 'BNB Smart Chain'
     case ChainId.CELO:
       return 'Celo'
     case ChainId.ETHEREUM:
