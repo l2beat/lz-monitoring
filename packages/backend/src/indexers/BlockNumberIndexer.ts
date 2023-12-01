@@ -1,4 +1,4 @@
-import { Logger } from '@l2beat/backend-tools'
+import { assert, Logger } from '@l2beat/backend-tools'
 import { ChildIndexer } from '@l2beat/uif'
 import { ChainId, UnixTime } from '@lz/libs'
 
@@ -12,17 +12,6 @@ import { LatestBlockNumberIndexer } from './LatestBlockNumberIndexer'
 
 export class BlockNumberIndexer extends ChildIndexer {
   private lastKnownNumber = 0
-
-  /**
-   * Whether to skip reorgs
-   * If true, the indexer will not update the database with reorged blocks
-   * This is true for now, as we have problems with BlockNumberIndexer lagging behind
-   * on Arbitrum and Optimism
-   * This changes the behavior of the indexer, as it only downloads the latest block
-   * I am keeping this as a temporary solution as we probably want to have support for
-   * reorgs in the future, but we need to fix the lagging problem first.
-   */
-  private readonly skipReorgs: boolean = true
 
   /**
    * List of reorged blocks
@@ -45,10 +34,8 @@ export class BlockNumberIndexer extends ChildIndexer {
     private readonly chainId: ChainId,
     latestBlockNumberIndexer: LatestBlockNumberIndexer,
     logger: Logger,
-    skipReorgs?: boolean,
   ) {
     super(logger.tag(ChainId.getName(chainId)), [latestBlockNumberIndexer])
-    this.skipReorgs = skipReorgs ?? this.skipReorgs
   }
 
   override async start(): Promise<void> {
@@ -60,19 +47,6 @@ export class BlockNumberIndexer extends ChildIndexer {
   }
 
   async update(_fromBlock: number, toBlock: number): Promise<number> {
-    if (this.skipReorgs) {
-      const block = await this.blockchainClient.getBlock(toBlock)
-      const record = {
-        blockNumber: block.number,
-        blockHash: block.hash,
-        timestamp: new UnixTime(block.timestamp),
-        chainId: this.chainId,
-      }
-      await this.blockRepository.add(record)
-
-      return record.blockNumber
-    }
-
     if (this.reorgedBlocks.length > 0) {
       // we do not need to check if lastKnown < to because we are sure that
       // those blocks are from the past
@@ -86,7 +60,7 @@ export class BlockNumberIndexer extends ChildIndexer {
       return toBlock
     }
 
-    return this.advanceChain(this.lastKnownNumber + 1)
+    return this.advanceChain(toBlock)
   }
 
   async invalidate(to: number): Promise<number> {
@@ -96,22 +70,37 @@ export class BlockNumberIndexer extends ChildIndexer {
   }
 
   private async advanceChain(blockNumber: number): Promise<number> {
-    let [block, parent] = await Promise.all([
-      this.blockchainClient.getBlock(blockNumber),
-      this.getKnownBlock(blockNumber - 1),
+    const [lastTrueBlock, lastSavedBlock] = await Promise.all([
+      this.blockchainClient.getBlock(this.lastKnownNumber),
+      this.blockRepository.findLast(this.chainId),
     ])
 
-    if (block.parentHash !== parent.blockHash) {
-      const changed = [block]
+    if (lastSavedBlock && lastTrueBlock.hash !== lastSavedBlock.blockHash) {
+      assert(
+        lastTrueBlock.number === lastSavedBlock.blockNumber,
+        'lastTrueBlock.number !== lastSavedBlock.blockNumber',
+      )
+      const changed = []
 
-      let current = blockNumber
-      while (block.parentHash !== parent.blockHash) {
-        current--
-        ;[block, parent] = await Promise.all([
-          this.blockchainClient.getBlock(block.parentHash),
-          this.getKnownBlock(current - 1),
-        ])
-        changed.push(block)
+      let prevTrueBlock = lastTrueBlock
+      let prevSavedBlock = lastSavedBlock
+
+      while (prevTrueBlock.hash !== prevSavedBlock.blockHash) {
+        changed.push(prevTrueBlock)
+
+        const current = await this.blockRepository.findBlockNumberBefore(
+          prevSavedBlock.blockNumber,
+          this.chainId,
+        )
+
+        if (!current) {
+          break
+        }
+
+        prevSavedBlock = current
+        prevTrueBlock = await this.blockchainClient.getBlock(
+          prevSavedBlock.blockNumber,
+        )
       }
 
       this.reorgedBlocks = changed.reverse().map((block) => {
@@ -123,20 +112,19 @@ export class BlockNumberIndexer extends ChildIndexer {
         }
       })
 
-      return parent.blockNumber
+      return prevSavedBlock.blockNumber
     }
 
-    const record: BlockNumberRecord = {
-      blockNumber: block.number,
-      blockHash: block.hash,
-      timestamp: new UnixTime(block.timestamp),
+    const newBlock = await this.blockchainClient.getBlock(blockNumber)
+    await this.blockRepository.add({
+      blockNumber: newBlock.number,
+      timestamp: new UnixTime(newBlock.timestamp),
       chainId: this.chainId,
-    }
+      blockHash: newBlock.hash,
+    })
+    this.lastKnownNumber = newBlock.number
 
-    await this.blockRepository.add(record)
-    this.lastKnownNumber = block.number
-
-    return block.number
+    return newBlock.number
   }
 
   async setSafeHeight(height: number): Promise<void> {
@@ -150,26 +138,5 @@ export class BlockNumberIndexer extends ChildIndexer {
   async getSafeHeight(): Promise<number> {
     const record = await this.indexerRepository.findById(this.id, this.chainId)
     return record?.height ?? 0
-  }
-
-  private async getKnownBlock(blockNumber: number): Promise<BlockNumberRecord> {
-    const known = await this.blockRepository.findByNumber(
-      blockNumber,
-      this.chainId,
-    )
-    if (known) {
-      return known
-    }
-    const downloaded = await this.blockchainClient.getBlock(blockNumber)
-
-    const record: BlockNumberRecord = {
-      blockNumber: downloaded.number,
-      blockHash: downloaded.hash,
-      timestamp: new UnixTime(downloaded.timestamp),
-      chainId: this.chainId,
-    }
-    await this.blockRepository.add(record)
-
-    return record
   }
 }
