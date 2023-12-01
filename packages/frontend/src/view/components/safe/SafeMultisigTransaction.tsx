@@ -51,8 +51,8 @@ export function SafeMultisigTransaction({
   return (
     <div
       className={cx(
-        'col-span-5 grid min-w-[800px] grid-cols-multisig border-b border-[#36393D] py-3 text-xs',
-        isExpanded ? 'rounded border-none bg-gray-75' : 'bg-gray-500',
+        'col-span-5 grid min-w-[800px] grid-cols-multisig border-b border-gray-700 py-3 text-xs',
+        isExpanded ? 'rounded border-none bg-gray-750' : 'bg-gray-800',
       )}
     >
       <div
@@ -156,8 +156,8 @@ function TransactionProperty({
   value: React.ReactNode
 }) {
   return (
-    <div className="flex w-full flex-row border-t border-[#4B4E51] py-4 pl-12 pr-8">
-      <div className="w-1/5 text-sm font-medium text-gray-15">{param}</div>
+    <div className="flex w-full flex-row border-t border-zinc-400 py-4 pl-12 pr-8">
+      <div className="w-1/5 text-sm font-medium text-gray-100">{param}</div>
       <div className="w-4/5 text-xs">{value}</div>
     </div>
   )

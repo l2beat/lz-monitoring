@@ -18,7 +18,7 @@ export function Row(props: Props) {
     <div
       className={cx(
         'flex flex-col items-center justify-center py-0.5 md:flex-row',
-        !props.hideBorder && 'border-b border-gray-400 last:border-none',
+        !props.hideBorder && 'border-b border-gray-700 last:border-none',
         props.className,
       )}
     >
@@ -40,7 +40,7 @@ export function RowLabel({
   return (
     <div
       className={cx(
-        'py-2 pr-2 text-sm font-medium leading-5 text-gray-15 md:w-1/5 md:py-0',
+        'py-2 pr-2 text-sm font-medium leading-5 text-gray-100 md:w-1/5 md:py-0',
         widthRation,
       )}
     >

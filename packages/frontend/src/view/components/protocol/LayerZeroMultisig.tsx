@@ -134,14 +134,14 @@ export function LayerZeroMultisig({
                   setPage={setPage}
                 />
               </div>
-              <span className="w-full pt-3 text-center text-xs text-gray-15 md:text-right">
+              <span className="w-full pt-3 text-center text-xs text-gray-100 md:text-right">
                 {LOWER_PAGE_BOUND} - {UPPER_PAGE_BOUND} out of{' '}
                 {allTransactions.length} transactions
               </span>
             </div>
 
             <div className="mb-3 overflow-x-auto">
-              <div className="col-span-5 grid min-w-[800px] grid-cols-multisig rounded bg-gray-300 py-3 text-left text-[13px] font-semibold text-[#AEAEAE]">
+              <div className="col-span-5 grid min-w-[800px] grid-cols-multisig rounded bg-gray-600 py-3 text-left text-[13px] font-semibold text-gray-50">
                 <div className="px-6">SUBMITTED</div>
                 <div>METHOD</div>
                 <div>CONFIRMATIONS</div>

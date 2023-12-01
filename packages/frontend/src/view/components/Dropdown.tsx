@@ -33,8 +33,8 @@ export function Dropdown(props: Props): JSX.Element {
         <div className="relative w-full cursor-pointer font-sans">
           <Listbox.Button
             className={cx(
-              'flex w-full items-center justify-between border-b bg-gray-200 pl-6',
-              !selectedOption && 'text-gray-15',
+              'flex w-full items-center justify-between border-b bg-gray-500 pl-6',
+              !selectedOption && 'text-gray-100',
               open
                 ? 'rounded-t-lg border-gray-50'
                 : 'border-transparent rounded-lg',
@@ -65,7 +65,7 @@ export function Dropdown(props: Props): JSX.Element {
                   key={option.value}
                   value={option}
                   className="flex w-full cursor-pointer items-center gap-3 px-6 py-2 text-xs first:pt-3 last:rounded last:pb-3 ui-active:bg-white 
-                          ui-active:text-black ui-not-active:bg-gray-200 ui-not-active:text-white"
+                          ui-active:text-black ui-not-active:bg-gray-500 ui-not-active:text-white"
                 >
                   <BlockchainIcon chainId={ChainId.fromName(option.value)} />
                   {getPrettyChainName(ChainId.fromName(option.value))}
