@@ -8,7 +8,7 @@ import { useChainQueryParam } from '../../../hooks/useChainQueryParam'
 import { useDiscoveryApi } from '../../../hooks/useDiscoveryApi'
 import { Layout } from '../Layout'
 import { NetworkData } from '../NetworkData'
-import { NetworkDropdownSelector } from '../NetworkSelector'
+import { NetworkSelector } from '../NetworkSelector'
 import { Warning } from '../Warning'
 import { EndpointContract } from './EndpointContract'
 import { LayerZeroMultisig } from './LayerZeroMultisig'
@@ -46,7 +46,7 @@ export function ProtocolInformation({
   if (!discoveryResponse || isError) {
     return (
       <>
-        <NetworkDropdownSelector
+        <NetworkSelector
           chainId={paramChain}
           chainsToDisplay={chainsToDisplay}
           setChain={setChain}
@@ -63,7 +63,7 @@ export function ProtocolInformation({
 
   return (
     <SkeletonTheme baseColor="#27272A" highlightColor="#525252">
-      <NetworkDropdownSelector
+      <NetworkSelector
         chainId={discoveryResponse.chainId}
         chainsToDisplay={chainsToDisplay}
         setChain={setChain}
