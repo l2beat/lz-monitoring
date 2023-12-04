@@ -4,13 +4,13 @@ import {
   getErrorMessage,
   tryParseEtherscanResponse,
 } from '@l2beat/discovery'
+// eslint-disable-next-line import/no-internal-modules
+import { EthereumAddress } from '@l2beat/discovery/dist/utils/EthereumAddress'
 import {
   ContractSource,
   ContractSourceResult,
   // eslint-disable-next-line import/no-internal-modules
-} from '@l2beat/discovery/dist/utils/BlockchainExplorer'
-// eslint-disable-next-line import/no-internal-modules
-import { EthereumAddress } from '@l2beat/discovery/dist/utils/EthereumAddress'
+} from '@l2beat/discovery/dist/utils/EtherscanLikeClient'
 
 class RoutescanError extends Error {}
 
