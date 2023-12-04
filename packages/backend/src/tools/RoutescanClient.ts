@@ -63,6 +63,7 @@ export class RoutescanClient extends EtherscanLikeClient {
       throw new TypeError(message)
     }
 
+    // Patch point
     if (etherscanResponse.message === 'NOTOK' && action === 'getsourcecode') {
       this.logger.debug({
         type: 'success',
@@ -90,6 +91,7 @@ export class RoutescanClient extends EtherscanLikeClient {
       address: address.toString(),
     })
 
+    // Patch point
     if (response === 'Contract source code not verified') {
       return UnverifiedContractMonkeyPatch
     }
