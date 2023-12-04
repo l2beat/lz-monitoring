@@ -20,6 +20,7 @@ export function UltraLightNodeContract(props: Props): JSX.Element {
   return (
     <ProtocolComponentCard
       title="UltraLightNodeV2"
+      description="The contract is used as the default messaging library. It handles the message payload packing on the source chain and verification on the destination chain. It stores all the User Application’s configurations."
       subtitle={<BlockchainAddress address={props.address} full />}
     >
       <ChangelogSummary address={props.address} />
