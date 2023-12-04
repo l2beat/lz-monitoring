@@ -262,22 +262,15 @@ function createDiscoveryEngine(
   const httpClient = new HttpClient()
 
   // FIXME: Monkey patch for Routescan, remove once resolved
-  const discoveryClient =
-    chainId === ChainId.AVALANCHE
-      ? new RoutescanClient(
-          httpClient,
-          config.blockExplorerApiUrl,
-          config.blockExplorerApiKey,
-          config.blockExplorerMinTimestamp,
-          config.unsupportedEtherscanMethods,
-        )
-      : new EtherscanLikeClient(
-          httpClient,
-          config.blockExplorerApiUrl,
-          config.blockExplorerApiKey,
-          config.blockExplorerMinTimestamp,
-          config.unsupportedEtherscanMethods,
-        )
+  const ExplorerClient = getExplorerClient(chainId)
+
+  const discoveryClient = new ExplorerClient(
+    httpClient,
+    config.blockExplorerApiUrl,
+    config.blockExplorerApiKey,
+    config.blockExplorerMinTimestamp,
+    config.unsupportedEtherscanMethods,
+  )
 
   const discoveryLogger = config.loggerEnabled
     ? DiscoveryLogger.CLI
@@ -313,4 +306,13 @@ function createDiscoveryEngine(
   )
   const discoveryEngine = new DiscoveryEngine(addressAnalyzer, discoveryLogger)
   return { discoveryEngine, providerWithCache }
+}
+
+function getExplorerClient(chainId: ChainId): typeof EtherscanLikeClient {
+  switch (chainId) {
+    case ChainId.AVALANCHE:
+      return RoutescanClient
+    default:
+      return EtherscanLikeClient
+  }
 }
