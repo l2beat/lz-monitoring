@@ -39,6 +39,7 @@ import { IndexerStateRepository } from '../peripherals/database/IndexerStateRepo
 import { MilestoneRepository } from '../peripherals/database/MilestoneRepository'
 import { ProviderCacheRepository } from '../peripherals/database/ProviderCacheRepository'
 import { Database } from '../peripherals/database/shared/Database'
+import { RoutescanClient } from '../tools/RoutescanClient'
 import { ApplicationModule } from './ApplicationModule'
 
 interface DiscoverySubmoduleDependencies {
@@ -260,13 +261,23 @@ function createDiscoveryEngine(
 ): { discoveryEngine: DiscoveryEngine; providerWithCache: ProviderWithCache } {
   const httpClient = new HttpClient()
 
-  const discoveryClient = new EtherscanLikeClient(
-    httpClient,
-    config.blockExplorerApiUrl,
-    config.blockExplorerApiKey,
-    config.blockExplorerMinTimestamp,
-    config.unsupportedEtherscanMethods,
-  )
+  // FIXME: Monkey patch for Routescan, remove once resolved
+  const discoveryClient =
+    chainId === ChainId.AVALANCHE
+      ? new RoutescanClient(
+          httpClient,
+          config.blockExplorerApiUrl,
+          config.blockExplorerApiKey,
+          config.blockExplorerMinTimestamp,
+          config.unsupportedEtherscanMethods,
+        )
+      : new EtherscanLikeClient(
+          httpClient,
+          config.blockExplorerApiUrl,
+          config.blockExplorerApiKey,
+          config.blockExplorerMinTimestamp,
+          config.unsupportedEtherscanMethods,
+        )
 
   const discoveryLogger = config.loggerEnabled
     ? DiscoveryLogger.CLI
