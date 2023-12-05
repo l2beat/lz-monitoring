@@ -1,7 +1,7 @@
 import { EthereumAddress } from '../utils'
 import { ChainId, SupportedChainName } from './ChainId'
 
-export function getBlockExplorerUrl(
+export function getExplorerAddressUrl(
   address: EthereumAddress,
   chainId: ChainId,
 ): string {
@@ -9,6 +9,24 @@ export function getBlockExplorerUrl(
     BLOCK_EXPLORER_URLS[ChainId.getName(chainId)] +
     'address/' +
     address.toString()
+  )
+}
+
+export function getExplorerTransactionUrl(
+  transactionHash: string,
+  chainId: ChainId,
+): string {
+  return BLOCK_EXPLORER_URLS[ChainId.getName(chainId)] + 'tx/' + transactionHash
+}
+
+export function getExplorerBlockUrl(
+  blockNumber: number,
+  chainId: ChainId,
+): string {
+  return (
+    BLOCK_EXPLORER_URLS[ChainId.getName(chainId)] +
+    'block/' +
+    blockNumber.toString()
   )
 }
 
