@@ -32,7 +32,7 @@ export function LatestIndexerStates({ status }: { status: DiscoveryStatus }) {
               status.state === 'enabled' ? status.node?.blockNumber ?? 0 : 0
 
             const nodeBlockTipOffset =
-              status.state === 'enabled'
+              status.state === 'enabled' && status.node
                 ? prettyDigitsGroups(nodeBlockTip - state.height)
                 : 'N/A'
 

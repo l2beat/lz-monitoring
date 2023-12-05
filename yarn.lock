@@ -750,27 +750,20 @@
     dotenv "^16.3.1"
     error-stack-parser "^2.1.4"
 
-"@l2beat/discovery-types@^0.4.1":
-  version "0.4.1"
-  resolved "https://registry.yarnpkg.com/@l2beat/discovery-types/-/discovery-types-0.4.1.tgz#174be097d96a9e5b3dd0ba61e88b35642e70c2e5"
-  integrity sha512-e9m2Yb4K0jkwCToQyu6h1bXf921gXJQ1M38c5LlH/dG1SpY3EwuJzZ1XGjY/UWxHe1eElNw7Ge+zwQuWT7ObEw==
+"@l2beat/discovery-types@^0.6.0":
+  version "0.6.0"
+  resolved "https://registry.yarnpkg.com/@l2beat/discovery-types/-/discovery-types-0.6.0.tgz#b09873584bf7b7abb78a38676317f9cb53655039"
+  integrity sha512-za7ILHowmRXsWcwKBsIw0eIb/0fwTUMzUmCbEORhCLNUCYaKp4StWdFb6WIq9EF7QhoKTN0ex43tYm5mYFqBvQ==
   dependencies:
     zod "^3.22.2"
 
-"@l2beat/discovery-types@^0.5.0":
-  version "0.5.0"
-  resolved "https://registry.yarnpkg.com/@l2beat/discovery-types/-/discovery-types-0.5.0.tgz#a1e84c060397b05a273eb99380e22951b1d1681e"
-  integrity sha512-R90CBX94VwT3O7D731/LQEjAbNZ8L5JsGZm4wD8A3tmN+6z0zt81oX/YFPSLAUVpgzN2+hs96pN6jfCsR9K8Cw==
-  dependencies:
-    zod "^3.22.2"
-
-"@l2beat/discovery@^0.23.0":
-  version "0.23.0"
-  resolved "https://registry.yarnpkg.com/@l2beat/discovery/-/discovery-0.23.0.tgz#2bfbf6c835024a264c9ac4656500e8750a4412eb"
-  integrity sha512-9QueDwSk8IYQqJ0URfyQOTi3ySFOskPPYN05RUbayd+OupnS/jvA8OFL4lK8CPn2xLdhq48zvYUrlNKHtKYKsg==
+"@l2beat/discovery@^0.26.0":
+  version "0.26.0"
+  resolved "https://registry.yarnpkg.com/@l2beat/discovery/-/discovery-0.26.0.tgz#43e183ad2bb34af929835dbbec000c3ee8c432da"
+  integrity sha512-DOAuc/1QPtS6xRT8sOT6JcbgGZ66o2RtOkdfQGXUgy/HPUD2UipVb9JXCyfVBguB0M0qlt+s2Qf+JnqF2vHReA==
   dependencies:
     "@l2beat/backend-tools" "^0.5.0"
-    "@l2beat/discovery-types" "^0.5.0"
+    "@l2beat/discovery-types" "^0.6.0"
     chalk "^4.1.2"
     deep-diff "^1.0.2"
     dotenv "^16.0.3"
@@ -3180,13 +3173,13 @@ glob@7.2.0:
     once "^1.3.0"
     path-is-absolute "^1.0.0"
 
-glob@^10.2.5:
-  version "10.3.4"
-  resolved "https://registry.yarnpkg.com/glob/-/glob-10.3.4.tgz#c85c9c7ab98669102b6defda76d35c5b1ef9766f"
-  integrity sha512-6LFElP3A+i/Q8XQKEvZjkEWEOTgAIALR9AO2rwT8bgPhDd1anmqDJDZ6lLddI4ehxxxR1S5RIqKe1uapMQfYaQ==
+glob@^10.3.7:
+  version "10.3.10"
+  resolved "https://registry.yarnpkg.com/glob/-/glob-10.3.10.tgz#0351ebb809fd187fe421ab96af83d3a70715df4b"
+  integrity sha512-fa46+tv1Ak0UPK1TOy/pZrIybNNt4HCv7SDzwyfiOZkvZLEbjsZkJBPtDHVshZjbecAoAGSC20MjLDG/qr679g==
   dependencies:
     foreground-child "^3.1.0"
-    jackspeak "^2.0.3"
+    jackspeak "^2.3.5"
     minimatch "^9.0.1"
     minipass "^5.0.0 || ^6.0.2 || ^7.0.0"
     path-scurry "^1.10.1"
@@ -3699,10 +3692,10 @@ iterator.prototype@^1.1.0:
     has-symbols "^1.0.3"
     reflect.getprototypeof "^1.0.3"
 
-jackspeak@^2.0.3:
-  version "2.3.3"
-  resolved "https://registry.yarnpkg.com/jackspeak/-/jackspeak-2.3.3.tgz#95e4cbcc03b3eb357bf6bcce14a903fb3d1151e1"
-  integrity sha512-R2bUw+kVZFS/h1AZqBKrSgDmdmjApzgY0AlCPumopFiAlbUxE2gf+SCuBzQ0cP5hHmUmFYF5yw55T97Th5Kstg==
+jackspeak@^2.3.5:
+  version "2.3.6"
+  resolved "https://registry.yarnpkg.com/jackspeak/-/jackspeak-2.3.6.tgz#647ecc472238aee4b06ac0e461acc21a8c505ca8"
+  integrity sha512-N3yCS/NegsOBokc8GAdM8UcmfsKiSS8cipheD/nivzr700H+nsMOxJjQnvwOcRYVuFkdH0wGUvW2WbXGmrZGbQ==
   dependencies:
     "@isaacs/cliui" "^8.0.2"
   optionalDependencies:
@@ -3940,9 +3933,9 @@ lru-cache@^6.0.0:
     yallist "^4.0.0"
 
 "lru-cache@^9.1.1 || ^10.0.0":
-  version "10.0.1"
-  resolved "https://registry.yarnpkg.com/lru-cache/-/lru-cache-10.0.1.tgz#0a3be479df549cca0e5d693ac402ff19537a6b7a"
-  integrity sha512-IJ4uwUTi2qCccrioU6g9g/5rvvVl13bsdczUUcqbciD9iLr095yj8DQKdObriEvuNSx325N1rV1O0sJFszx75g==
+  version "10.1.0"
+  resolved "https://registry.yarnpkg.com/lru-cache/-/lru-cache-10.1.0.tgz#2098d41c2dc56500e6c88584aa656c84de7d0484"
+  integrity sha512-/1clY/ui8CzjKFyjdvwPWJUYKiFVXG2I2cY0ssG7h4+hwk+XOIX7ZSG9Q7TW8TW3Kp3BUSqgFWBLgL4PJ+Blag==
 
 lru_map@^0.3.3:
   version "0.3.3"
@@ -4116,9 +4109,9 @@ minipass@^5.0.0:
   integrity sha512-3FnjYuehv9k6ovOEbyOswadCDPX1piCfhV8ncmYtHOjuPwylVWsghTLo7rabjC3Rx5xD4HDx8Wm1xnMF7S5qFQ==
 
 "minipass@^5.0.0 || ^6.0.2 || ^7.0.0":
-  version "7.0.3"
-  resolved "https://registry.yarnpkg.com/minipass/-/minipass-7.0.3.tgz#05ea638da44e475037ed94d1c7efcc76a25e1974"
-  integrity sha512-LhbbwCfz3vsb12j/WkWQPZfKTsgqIe1Nf/ti1pKjYESGLHIVjWU96G9/ljLH4F9mWNVhlQOm0VySdAWzf05dpg==
+  version "7.0.4"
+  resolved "https://registry.yarnpkg.com/minipass/-/minipass-7.0.4.tgz#dbce03740f50a4786ba994c1fb908844d27b038c"
+  integrity sha512-jYofLM5Dam9279rdkWzqHozUo4ybjdZmCsDHePy5V/PbBcVMiSZR97gmAy45aqi8CK1lG2ECd356FU86avfwUQ==
 
 minizlib@^2.0.0, minizlib@^2.1.1:
   version "2.1.2"
@@ -4936,11 +4929,11 @@ rimraf@^3.0.2:
     glob "^7.1.3"
 
 rimraf@^5.0.0:
-  version "5.0.1"
-  resolved "https://registry.yarnpkg.com/rimraf/-/rimraf-5.0.1.tgz#0881323ab94ad45fec7c0221f27ea1a142f3f0d0"
-  integrity sha512-OfFZdwtd3lZ+XZzYP/6gTACubwFcHdLRqS9UX3UwpU2dnGQYkPFISRwvM3w9IiB2w7bW5qGo/uAwE4SmXXSKvg==
+  version "5.0.5"
+  resolved "https://registry.yarnpkg.com/rimraf/-/rimraf-5.0.5.tgz#9be65d2d6e683447d2e9013da2bf451139a61ccf"
+  integrity sha512-CqDakW+hMe/Bz202FPEymy68P+G50RfMQK+Qo5YUqc9SPipvbGjCGKd0RSKEelbsfQuw3g5NZDSrlZZAJurH1A==
   dependencies:
-    glob "^10.2.5"
+    glob "^10.3.7"
 
 rollup@^3.27.1:
   version "3.29.0"
