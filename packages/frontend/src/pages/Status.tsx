@@ -82,12 +82,12 @@ export function Status(): JSX.Element {
             <span>Filters</span>
             <div
               className={cx(
-                'flex h-6 w-6 cursor-pointer items-center justify-between transition-all duration-300 hover:rotate-[-12deg]',
+                'flex h-6 w-6 cursor-pointer items-center justify-between transition-all duration-300 hover:rotate-[12deg]',
                 isLoading && 'animate-spin',
               )}
               onClick={() => void forceFetch()}
             >
-              <RefreshIcon fill="#FFFFFF" />
+              <RefreshIcon fill="#FFFFFF" className="-scale-x-[1]" />
             </div>
           </div>
 
