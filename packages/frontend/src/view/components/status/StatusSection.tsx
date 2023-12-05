@@ -25,15 +25,6 @@ export function StatusSection(props: Props) {
   const moduleHealth = getOverallHealth(props.status)
   const borderColor = healthToBorder(moduleHealth)
 
-  const nextChainFocus =
-    props.focusedChain === props.status.chainId ? null : props.status.chainId
-
-  console.dir({
-    nextChainFocus,
-    focusedChain: props.focusedChain,
-    status: props.status,
-  })
-
   return (
     <section className={cx('mb-12 border-t bg-gray-900 p-6', borderColor)}>
       {moduleHealth.health === 'unhealthy' && (
@@ -54,7 +45,13 @@ export function StatusSection(props: Props) {
           <Tooltip text="Toggle focus lock on this chain">
             <div
               className="flex h-8 w-8 cursor-pointer items-center justify-center"
-              onClick={() => props.setFocusedChainId(nextChainFocus)}
+              onClick={() =>
+                props.setFocusedChainId(
+                  props.focusedChain === props.status.chainId
+                    ? null
+                    : props.status.chainId,
+                )
+              }
             >
               <FocusLockIcon fill="#FFFFFF" />
             </div>
