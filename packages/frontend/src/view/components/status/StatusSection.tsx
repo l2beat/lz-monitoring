@@ -1,6 +1,8 @@
-import { DiscoveryStatus } from '@lz/libs'
+import { ChainId, DiscoveryStatus } from '@lz/libs'
 import cx from 'classnames'
 
+import { FocusLockIcon } from '../../icons/FocusLockIcon'
+import { Tooltip } from '../Tooltip'
 import { ChainHighlight } from './ChainHighlight'
 import { LastDiscoveredBlock } from './LastDiscoveredBlock'
 import { LastIndexedBlock } from './LastIndexedBlock'
@@ -15,11 +17,22 @@ import {
 
 interface Props {
   status: DiscoveryStatus
+  focusedChain: ChainId | null
+  setFocusedChainId: (chainId: ChainId | null) => void
 }
 
 export function StatusSection(props: Props) {
   const moduleHealth = getOverallHealth(props.status)
   const borderColor = healthToBorder(moduleHealth)
+
+  const nextChainFocus =
+    props.focusedChain === props.status.chainId ? null : props.status.chainId
+
+  console.dir({
+    nextChainFocus,
+    focusedChain: props.focusedChain,
+    status: props.status,
+  })
 
   return (
     <section className={cx('mb-12 border-t bg-gray-900 p-6', borderColor)}>
@@ -33,9 +46,19 @@ export function StatusSection(props: Props) {
         </div>
       )}
       <div className="w-100 mb-6 flex justify-between">
-        <div className="text-xxl font-medium">
-          {capitalizeFirstLetter(props.status.chainName)}
-          <ChainHighlight chain={props.status.chainId} />
+        <div className="flex">
+          <div className="text-xxl font-medium">
+            {capitalizeFirstLetter(props.status.chainName)}
+            <ChainHighlight chain={props.status.chainId} />
+          </div>
+          <Tooltip text="Toggle focus lock on this chain">
+            <div
+              className="flex h-8 w-8 cursor-pointer items-center justify-center"
+              onClick={() => props.setFocusedChainId(nextChainFocus)}
+            >
+              <FocusLockIcon fill="#FFFFFF" />
+            </div>
+          </Tooltip>
         </div>
         <StateHighlight
           state={props.status.state}

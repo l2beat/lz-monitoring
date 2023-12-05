@@ -6,19 +6,35 @@ interface UseStatusApiHookOptions {
 }
 
 export function useStatusApi({ apiUrl }: UseStatusApiHookOptions) {
+  const [isLoading, setIsLoading] = useState(true)
+  const [isError, setIsError] = useState(false)
   const [response, setResponse] = useState<DiscoveryStatusResponse | null>(null)
 
-  useEffect(() => {
-    async function fetchData() {
+  async function fetchData() {
+    setIsLoading(true)
+    try {
       const result = await fetch(apiUrl + 'status/discovery')
-
-      const data = await result.text()
-      const parsed = DiscoveryStatusResponse.parse(JSON.parse(data))
+      const text = await result.text()
+      const parsed = DiscoveryStatusResponse.parse(JSON.parse(text))
       setResponse(parsed)
+    } catch (e) {
+      console.error(e)
+      setIsError(true)
+    } finally {
+      setIsLoading(false)
     }
+  }
 
+  useEffect(() => {
     void fetchData()
+
+    const fetchDataInterval = setInterval(() => {
+      void fetchData()
+    }, 10_000)
+
+    return () => clearInterval(fetchDataInterval)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [apiUrl])
 
-  return [response] as const
+  return [response, isLoading, isError, fetchData] as const
 }
