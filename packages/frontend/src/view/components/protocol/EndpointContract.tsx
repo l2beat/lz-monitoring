@@ -19,6 +19,7 @@ export function EndpointContract(props: Props): JSX.Element {
   return (
     <ProtocolComponentCard
       title="Endpoint"
+      description="The Endpoint contract handles the cross-chain messages transmission, verification, and receipt. It routes messages to the correct messaging library and keeps all message payloads across versions. Ownership of the contract can be renounced by the owner."
       subtitle={<BlockchainAddress address={props.address} full />}
     >
       <ChangelogSummary address={props.address} />
