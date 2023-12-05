@@ -48,21 +48,24 @@ export function ChangelogSummary(props: ChangelogSummaryProps) {
     <>
       <div className="mb-4 rounded-lg bg-gray-800 px-6 py-4">
         <h3 className="mb-2 font-medium">Changelog</h3>
-        <div className="m-2 flex gap-2">
+        <div className="b-gray-100 relative m-2 flex items-center gap-2 rounded border p-2">
+          <span className="absolute bottom-[100%] left-1/2 -translate-x-1/2 -translate-y-1 animate-pulse rounded-full bg-red px-2 py-px text-[10px] font-medium text-white ">
+            FILTERS DESIGN IN PROGRESS
+          </span>
           {Object.entries(categories).map(([id, name], i) => (
-            <div key={i} className="flex items-center gap-2">
-              <button
-                className={cx(
-                  'p-2 text-xs font-medium',
-                  id === category && 'rounded bg-gray-100',
-                )}
-                onClick={() => setCategory(id as Category)}
-              >
-                {name}
-              </button>
-            </div>
+            <button
+              key={i}
+              className={cx(
+                'p-2 text-xs font-medium',
+                id === category && 'bg-gray-300 rounded',
+              )}
+              onClick={() => setCategory(id as Category)}
+            >
+              {name}
+            </button>
           ))}
         </div>
+
         <Year
           startTimestamp={data.startTimestamp}
           changelogPerDay={filteredData}
