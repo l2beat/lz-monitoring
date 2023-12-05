@@ -30,7 +30,7 @@ export class ChangelogController {
       chainId,
       contract,
     )
-    const fullMilestones = await this.milestoneRepository.getByChainByAddress(
+    const fullMilestones = await this.milestoneRepository.getByChainAndAddress(
       chainId,
       contract,
     )

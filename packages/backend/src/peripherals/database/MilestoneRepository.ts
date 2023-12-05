@@ -41,7 +41,7 @@ export class MilestoneRepository extends BaseRepository {
       .delete()
   }
 
-  async getByChainByAddress(
+  async getByChainAndAddress(
     chainId: ChainId,
     address: EthereumAddress,
   ): Promise<MilestoneRecord[]> {
