@@ -37,7 +37,7 @@ export function ChangelogSummary(props: ChangelogSummaryProps) {
 
   return (
     <>
-      <div className="mb-4 rounded-lg bg-gray-500 px-6 py-4">
+      <div className="mb-4 rounded-lg bg-gray-800 px-6 py-4">
         <h3 className="mb-2 font-medium">Changelog</h3>
         <Year
           startTimestamp={data.startTimestamp}
@@ -143,12 +143,12 @@ function YearWrapper(props: {
     <div className="flex gap-1.5">
       <div className="mt-6 flex flex-col items-center gap-2 pb-1">
         {['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((day, i) => (
-          <div key={i} className="h-3 text-xs font-semibold text-gray-100">
+          <div key={i} className="h-3 text-xs font-semibold text-gray-200">
             {day}
           </div>
         ))}
       </div>
-      <div className="shrink overflow-x-auto pb-2 scrollbar scrollbar-track-gray-50 scrollbar-thumb-yellow-100">
+      <div className="shrink overflow-x-auto pb-2 scrollbar scrollbar-track-gray-400 scrollbar-thumb-yellow-100">
         <div className="mb-2 flex w-[847px] justify-around">
           {[
             'Jan',
@@ -164,7 +164,7 @@ function YearWrapper(props: {
             'Nov',
             'Dec',
           ].map((month, i) => (
-            <div key={i} className="h-3 text-xs font-semibold text-gray-100">
+            <div key={i} className="h-3 text-xs font-semibold text-gray-200">
               {month}
             </div>
           ))}
@@ -231,7 +231,7 @@ function getText(changesNumber: number, date: Date) {
 
 function getColor(changesNumber: number, isExcluded: boolean) {
   if (isExcluded) {
-    return 'bg-gray-400'
+    return 'bg-gray-700'
   }
 
   const steps = {
@@ -270,7 +270,7 @@ function YearSelector(props: YearSelectorProps) {
           key={i}
           className={cx(
             'px-2 py-1 text-2xs',
-            props.year === year && 'rounded bg-gray-300',
+            props.year === year && 'rounded bg-gray-600',
           )}
           onClick={() => props.setYear(year)}
         >

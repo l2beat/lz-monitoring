@@ -44,20 +44,20 @@ export function NetworkSelector(props: Props) {
   return (
     <section
       className={cx(
-        'sticky top-0 z-network-selector bg-gray-500 px-3.5 md:justify-center md:px-6',
+        'sticky top-0 z-network-selector bg-gray-800 px-3.5 md:justify-center md:px-6',
         isSmall ? 'py-2 md:pb-3 md:pt-2' : 'py-3.5 md:pb-6 md:pt-4',
       )}
     >
       <div className="mx-auto max-w-fit">
         <span
           className={cx(
-            'block  overflow-hidden text-xs text-gray-15 transition-all',
+            'block  overflow-hidden text-xs text-gray-100 transition-all',
             isSmall ? 'max-h-0' : 'max-h-3.5',
           )}
         >
           Select network
         </span>
-        <div className="scrollbar-h-1.5 flex items-stretch gap-3 overflow-x-auto py-2 scrollbar scrollbar-track-gray-50 scrollbar-thumb-[#eef36a]">
+        <div className="scrollbar-h-1.5 flex items-stretch gap-3 overflow-x-auto py-2 scrollbar scrollbar-track-gray-400 scrollbar-thumb-yellow-100">
           {sortedChains.map((chain) => (
             <PillSelector
               key={chain.key}
@@ -106,7 +106,7 @@ function PillSelector({
         'flex min-w-fit cursor-pointer items-center justify-center gap-1 rounded  py-1.5 pl-4 pr-6 text-center transition-all ',
         isActive
           ? 'bg-yellow-100 text-black'
-          : 'bg-gray-300 text-white brightness-100 filter transition-all duration-300 hover:brightness-[120%]',
+          : 'bg-gray-600 text-white brightness-100 filter transition-all duration-300 hover:brightness-[120%]',
         isSmall ? 'md:py-2' : 'md:py-3',
       )}
       onClick={onClick}

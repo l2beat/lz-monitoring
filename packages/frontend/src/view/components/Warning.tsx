@@ -15,7 +15,9 @@ export function Warning({
         </div>
         <div className="flex flex-col gap-1">
           <span className="text-lg">{title}</span>
-          {subtitle && <span className="text-sm text-gray-15">{subtitle}</span>}
+          {subtitle && (
+            <span className="text-sm text-gray-100">{subtitle}</span>
+          )}
         </div>
       </div>
     </section>

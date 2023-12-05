@@ -116,7 +116,7 @@ function variantToTextColor(variant: Variant) {
     : variant === 'orange'
     ? 'text-[#EE964B]'
     : variant === 'gray'
-    ? 'text-gray-15'
+    ? 'text-gray-100'
     : 'text-[#E74C3C]'
 }
 
@@ -126,7 +126,7 @@ function variantToBackgroundColor(variant: Variant) {
     : variant === 'orange'
     ? 'bg-[#EE964B]'
     : variant === 'gray'
-    ? 'bg-gray-15'
+    ? 'bg-gray-100'
     : 'bg-[#E74C3C]'
 }
 

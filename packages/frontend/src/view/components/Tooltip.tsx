@@ -34,7 +34,7 @@ export function Tooltip(props: TooltipProps) {
       </div>
 
       <div
-        className="fixed z-tooltip hidden whitespace-nowrap rounded-md bg-gray-400 px-3 py-2 font-sans text-sm leading-none text-white"
+        className="fixed z-tooltip hidden whitespace-nowrap rounded-md bg-gray-700 px-3 py-2 font-sans text-sm leading-none text-white"
         ref={tooltipRef}
       >
         <svg
@@ -42,7 +42,7 @@ export function Tooltip(props: TooltipProps) {
           width="16"
           height="8"
           viewBox="0 0 16 8"
-          className="fixed h-2 w-4 fill-gray-400 stroke-1"
+          className="fixed h-2 w-4 fill-gray-700 stroke-1"
         >
           <path d="M0 8L8 1L16 8" />
         </svg>
