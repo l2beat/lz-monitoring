@@ -4,14 +4,23 @@ import {
   Change,
   ChangelogApi,
   ChangelogApiEntry,
+  ChangelogCategory,
   EthereumAddress,
+  Milestone,
   UnixTime,
 } from '@lz/libs'
 
-import { ChangelogRepository } from '../../peripherals/database/ChangelogRepository'
+import {
+  ChangelogRepository,
+  FullChangelogRecord,
+} from '../../peripherals/database/ChangelogRepository'
+import { MilestoneRepository } from '../../peripherals/database/MilestoneRepository'
 
 export class ChangelogController {
-  constructor(private readonly changelogRepository: ChangelogRepository) {}
+  constructor(
+    private readonly changelogRepository: ChangelogRepository,
+    private readonly milestoneRepository: MilestoneRepository,
+  ) {}
 
   async getChangelog(
     chainId: ChainId,
@@ -21,32 +30,39 @@ export class ChangelogController {
       chainId,
       contract,
     )
+    const fullMilestones = await this.milestoneRepository.getByChainByAddress(
+      chainId,
+      contract,
+    )
 
-    const changesMap = new Map<number, Change[]>()
+    const milestonesMap = new Map<number, Milestone>()
+    for (const entry of fullMilestones) {
+      milestonesMap.set(entry.blockNumber, {
+        operation: entry.operation,
+      })
+    }
 
+    const changesPerBlock = new Map<number, Change[]>()
     for (const entry of fullChangelog) {
-      const change = changesMap.get(entry.blockNumber)
-      if (!change) {
-        changesMap.set(entry.blockNumber, [
-          {
-            modificationType: entry.modificationType,
-            parameterPath: entry.parameterPath,
-            previousValue: entry.previousValue,
-            currentValue: entry.currentValue,
-          },
-        ])
-        continue
-      }
-      change.push({
+      const milestone = milestonesMap.get(entry.blockNumber)
+      const category = getCategory(entry, milestone)
+      const change = {
+        category,
         modificationType: entry.modificationType,
         parameterPath: entry.parameterPath,
         previousValue: entry.previousValue,
         currentValue: entry.currentValue,
-      })
+      }
+      const changes = changesPerBlock.get(entry.blockNumber)
+      if (!changes) {
+        changesPerBlock.set(entry.blockNumber, [change])
+        continue
+      }
+      changes.push(change)
     }
 
     const changelog = []
-    for (const [blockNumber, changes] of changesMap) {
+    for (const [blockNumber, changes] of changesPerBlock) {
       const fullChanges = fullChangelog.filter(
         (x) => x.blockNumber === blockNumber,
       )
@@ -75,6 +91,40 @@ export class ChangelogController {
       startTimestamp,
     }
   }
+}
+
+/**
+ * This function is a heuristic that helps us to determine
+ * the category of a change. Any change in our config will
+ * require changing this function logic.
+ */
+function getCategory(
+  entry: FullChangelogRecord,
+  milestone?: Milestone,
+): ChangelogCategory {
+  if (milestone) {
+    // WE ASSUME THAT THE ONLY MILESTONE IS CONTRACT_ADDED
+    assert(milestone.operation === 'CONTRACT_ADDED')
+    return milestone.operation
+  }
+
+  const remotePaths = [
+    'ulnLookup',
+    'defaultAppConfig',
+    'defaultAdapterParams',
+    'inboundProofLibrary',
+    'supportedOutboundProof',
+  ]
+
+  if (!entry.parameterPath.some((x) => remotePaths.includes(x))) {
+    return 'OTHER'
+  }
+
+  if (entry.modificationType === 'OBJECT_NEW_PROPERTY') {
+    return 'REMOTE_ADDED'
+  }
+
+  return 'REMOTE_CHANGED'
 }
 
 function getChangesPerDay(

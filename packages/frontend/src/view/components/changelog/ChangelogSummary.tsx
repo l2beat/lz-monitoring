@@ -6,6 +6,11 @@ import Skeleton from 'react-loading-skeleton'
 import { config } from '../../../config'
 import { useChainId } from '../../../hooks/chainIdContext'
 import { useChangelogApi } from '../../../hooks/useChangelogApi'
+import {
+  categories,
+  Category,
+  useChangelogCategories,
+} from '../../../hooks/useChangelogCategories'
 import { CloseIcon } from '../../icons/CloseIcon'
 import { Tooltip } from '../Tooltip'
 import { ChangelogEntry } from './ChangelogEntry'
@@ -22,6 +27,10 @@ export function ChangelogSummary(props: ChangelogSummaryProps) {
     address: props.address,
     apiUrl: config.apiUrl,
   })
+
+  const [filteredData, category, setCategory] = useChangelogCategories(
+    data.perDay ?? new Map<number, ChangelogApiEntry[]>(),
+  )
   const [changesDetails, setChangesDetails] = useState<
     null | ChangelogApiEntry[]
   >(null)
@@ -29,7 +38,7 @@ export function ChangelogSummary(props: ChangelogSummaryProps) {
   // reset changes details when chainId changes
   useEffect(() => {
     setChangesDetails(null)
-  }, [chainId])
+  }, [chainId, category])
 
   if (isError) {
     return <div>Failed to load changelog</div>
@@ -39,9 +48,24 @@ export function ChangelogSummary(props: ChangelogSummaryProps) {
     <>
       <div className="mb-4 rounded-lg bg-gray-800 px-6 py-4">
         <h3 className="mb-2 font-medium">Changelog</h3>
+        <div className="m-2 flex gap-2">
+          {Object.entries(categories).map(([id, name], i) => (
+            <div key={i} className="flex items-center gap-2">
+              <button
+                className={cx(
+                  'p-2 text-xs font-medium',
+                  id === category && 'rounded bg-gray-100',
+                )}
+                onClick={() => setCategory(id as Category)}
+              >
+                {name}
+              </button>
+            </div>
+          ))}
+        </div>
         <Year
           startTimestamp={data.startTimestamp}
-          changelogPerDay={data.perDay}
+          changelogPerDay={filteredData}
           availableYears={data.availableYears}
           setChangesDetails={setChangesDetails}
           isLoading={isLoading}
