@@ -4,11 +4,11 @@ import { useEffect, useState } from 'react'
 export type Category = ChangelogCategory | 'ALL'
 
 export const categories: Record<Category, string> = {
+  ALL: 'All',
   CONTRACT_ADDED: 'Contract added',
   REMOTE_CHANGED: 'Remote config changed',
   REMOTE_ADDED: 'Remote config added',
   OTHER: 'Other',
-  ALL: 'All',
 }
 
 // returns only the changes that match the selected category
