@@ -29,7 +29,7 @@ export function ChangelogSummary(props: ChangelogSummaryProps) {
   })
 
   const [filteredData, category, setCategory] = useChangelogCategories(
-    data.perDay ?? new Map<number, ChangelogApiEntry[]>(),
+    data.perDay,
   )
   const [changesDetails, setChangesDetails] = useState<
     null | ChangelogApiEntry[]
