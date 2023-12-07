@@ -13,7 +13,7 @@ export const categories: Record<Category, string> = {
 
 // returns only the changes that match the selected category
 export function useChangelogCategories(
-  changelogPerDay: Map<number, ChangelogApiEntry[]>,
+  changelogPerDay: Map<number, ChangelogApiEntry[]> | null,
 ) {
   const [selectedCategory, setSelectedCategory] = useState<Category>('ALL')
   const [filteredChangelog, setFilteredChangelog] = useState<
@@ -21,6 +21,10 @@ export function useChangelogCategories(
   >(new Map())
 
   useEffect(() => {
+    if (!changelogPerDay) {
+      return
+    }
+
     if (selectedCategory === 'ALL') {
       setFilteredChangelog(changelogPerDay)
       return
