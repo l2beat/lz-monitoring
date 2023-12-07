@@ -12,10 +12,11 @@ import { SafeMultisigTransaction } from '../safe/SafeMultisigTransaction'
 import { Subsection } from '../Subsection'
 
 interface Props {
+  multisigAddress: EthereumAddress
   address?: EthereumAddress
   threshold?: number
   owners?: EthereumAddress[]
-  multisigAddress: EthereumAddress
+  isLoading?: boolean
 }
 
 export function LayerZeroMultisig({
@@ -23,9 +24,10 @@ export function LayerZeroMultisig({
   address,
   threshold,
   multisigAddress,
+  isLoading,
 }: Props) {
   const chainId = useChainId()
-  const [isLoading, isError, allTransactions] = useSafeApi({
+  const [isSafeLoading, isSafeError, allTransactions] = useSafeApi({
     chainId,
     multisigAddress,
   })
@@ -55,12 +57,13 @@ export function LayerZeroMultisig({
     'Protocol on this chain is not owned by Safe Multisig'
   )
 
-  if (isLoading) {
+  if (isSafeLoading) {
     return (
       <ProtocolComponentCard
         title="LayerZero Multisig"
         subtitle={<Skeleton width={320} />}
         description={<Skeleton count={2} />}
+        isLoading={isLoading}
       >
         <Subsection>
           <Row
@@ -85,7 +88,7 @@ export function LayerZeroMultisig({
     )
   }
 
-  if (isError) {
+  if (isSafeError) {
     return (
       <ProtocolComponentCard
         title="LayerZero Multisig"
@@ -108,6 +111,7 @@ export function LayerZeroMultisig({
       title="LayerZero Multisig"
       subtitle={subtitle}
       description="Safe multi-signature contract managed by LayerZero. Owner of the Endpoint and the UltraLightNodeV2 contracts. Any configuration change must be made through the LayerZero multisig wallet. Transaction information is being fetched from the safe transaction service."
+      isLoading={isLoading}
     >
       {hasData && (
         <>

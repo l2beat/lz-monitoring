@@ -52,7 +52,8 @@ module.exports = {
     },
     zIndex: {
       dropdown: 100,
-      'network-selector': 101,
+      'loading-cover': 101,
+      'network-selector': 102,
       tooltip: 200,
     },
   },
