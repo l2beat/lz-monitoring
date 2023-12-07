@@ -88,7 +88,6 @@ export function ProtocolInformation({
               <LayerZeroMultisig
                 {...discoveryResponse.data.contracts.lzMultisig}
                 multisigAddress={multisigAddress}
-                isLoading={isDiscoveryLoading}
               />
             )}
           </Layout>

@@ -16,7 +16,6 @@ interface Props {
   address?: EthereumAddress
   threshold?: number
   owners?: EthereumAddress[]
-  isLoading?: boolean
 }
 
 export function LayerZeroMultisig({
