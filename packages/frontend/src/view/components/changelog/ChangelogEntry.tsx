@@ -1,4 +1,4 @@
-import { Change, ChangelogApiEntry, Hash256 } from '@lz/libs'
+import { Change, ChangelogApiEntry, Hash256, ModificationType } from '@lz/libs'
 import { useState } from 'react'
 
 import { DotIcon } from '../../icons/DotIcon'
@@ -76,7 +76,7 @@ function SingleChange(props: { change: Change }) {
       >
         <span className="text-xs">
           <span className="text-zinc-500">
-            {props.change.modificationType} in
+            {getModificationTypeText(props.change.modificationType)}
           </span>{' '}
           <span className="rounded-sm bg-pink-700 px-1 py-0.5 text-pink-500">
             {path.join('=>')}
@@ -100,7 +100,7 @@ function SingleChange(props: { change: Change }) {
           )}
           {props.change.currentValue && (
             <div>
-              <div className="mb-2 text-xs text-zinc-500">New value</div>
+              <div className="mb-2 text-xs text-zinc-500">Current value</div>
               <Code>
                 <span className="bg-green leading-tight">
                   {prettyJsonString(props.change.currentValue)}
@@ -114,6 +114,26 @@ function SingleChange(props: { change: Change }) {
   )
 }
 
+function getModificationTypeText(type: ModificationType) {
+  switch (type) {
+    case 'ARRAY_DELETED_ELEMENT':
+    case 'OBJECT_DELETED_PROPERTY':
+      return 'Removed value from'
+    case 'ARRAY_EDITED_ELEMENT':
+    case 'OBJECT_EDITED_PROPERTY':
+      return 'Edited value in'
+    case 'ARRAY_NEW_ELEMENT':
+    case 'OBJECT_NEW_PROPERTY':
+      return 'New value in'
+    default:
+      assertUnreachable(type)
+  }
+}
+
 function prettyJsonString(json: string) {
   return JSON.stringify(JSON.parse(json), null, '\t')
+}
+
+function assertUnreachable(_: never): never {
+  throw new Error('There are more values to handle.')
 }

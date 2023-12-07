@@ -126,7 +126,10 @@ export function createDiscoveryModule({
     currentDiscoveryRepository,
     changelogRepository,
   )
-  const changelogController = new ChangelogController(changelogRepository)
+  const changelogController = new ChangelogController(
+    changelogRepository,
+    milestoneRepository,
+  )
   const discoveryRouter = createDiscoveryRouter(discoveryController)
   const changelogRouter = createChangelogRouter(changelogController)
 

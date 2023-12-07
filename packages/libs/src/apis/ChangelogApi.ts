@@ -16,6 +16,14 @@ const ArrayModification = z.union([
 const ModificationType = z.union([ObjectModification, ArrayModification])
 export type ModificationType = z.infer<typeof ModificationType>
 
+const ChangelogCategory = z.union([
+  z.literal('CONTRACT_ADDED'),
+  z.literal('REMOTE_ADDED'),
+  z.literal('REMOTE_CHANGED'),
+  z.literal('OTHER'),
+])
+export type ChangelogCategory = z.infer<typeof ChangelogCategory>
+
 // TODO: remove this
 export const ChangelogSummary = z.object({
   count: z.number(),
@@ -28,8 +36,17 @@ export const Change = z.object({
   parameterPath: z.array(z.string()),
   previousValue: z.nullable(z.string()),
   currentValue: z.nullable(z.string()),
+  category: ChangelogCategory,
 })
 export type Change = z.infer<typeof Change>
+
+export const Milestone = z.object({
+  operation: z.union([
+    z.literal('CONTRACT_ADDED'),
+    z.literal('CONTRACT_REMOVED'),
+  ]),
+})
+export type Milestone = z.infer<typeof Milestone>
 
 export const ChangelogApiEntry = z.object({
   timestamp: branded(z.number(), (t) => new UnixTime(t)),

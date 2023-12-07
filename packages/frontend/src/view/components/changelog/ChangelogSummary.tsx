@@ -6,6 +6,11 @@ import Skeleton from 'react-loading-skeleton'
 import { config } from '../../../config'
 import { useChainId } from '../../../hooks/chainIdContext'
 import { useChangelogApi } from '../../../hooks/useChangelogApi'
+import {
+  categories,
+  Category,
+  useChangelogCategories,
+} from '../../../hooks/useChangelogCategories'
 import { CloseIcon } from '../../icons/CloseIcon'
 import { Tooltip } from '../Tooltip'
 import { ChangelogEntry } from './ChangelogEntry'
@@ -22,6 +27,10 @@ export function ChangelogSummary(props: ChangelogSummaryProps) {
     address: props.address,
     apiUrl: config.apiUrl,
   })
+
+  const [filteredData, category, setCategory] = useChangelogCategories(
+    data.perDay ?? new Map<number, ChangelogApiEntry[]>(),
+  )
   const [changesDetails, setChangesDetails] = useState<
     null | ChangelogApiEntry[]
   >(null)
@@ -29,7 +38,7 @@ export function ChangelogSummary(props: ChangelogSummaryProps) {
   // reset changes details when chainId changes
   useEffect(() => {
     setChangesDetails(null)
-  }, [chainId])
+  }, [chainId, category])
 
   if (isError) {
     return <div>Failed to load changelog</div>
@@ -38,10 +47,27 @@ export function ChangelogSummary(props: ChangelogSummaryProps) {
   return (
     <>
       <div className="mb-4 rounded-lg bg-gray-800 px-6 py-4">
-        <h3 className="mb-2 font-medium">Changelog</h3>
+        <h3 className="mb-3 font-medium">Changelog</h3>
+        <div className="relative mb-3 flex items-center gap-1">
+          {Object.entries(categories).map(([id, name], i) => (
+            <button
+              key={i}
+              className={cx(
+                'rounded-full px-3 py-1.5 text-2xs font-medium',
+                id === category
+                  ? 'bg-yellow-100 text-black'
+                  : 'bg-zinc-700 hover:bg-gray-200',
+              )}
+              onClick={() => setCategory(id as Category)}
+            >
+              {name}
+            </button>
+          ))}
+        </div>
+
         <Year
           startTimestamp={data.startTimestamp}
-          changelogPerDay={data.perDay}
+          changelogPerDay={filteredData}
           availableYears={data.availableYears}
           setChangesDetails={setChangesDetails}
           isLoading={isLoading}
@@ -264,13 +290,15 @@ function YearSelector(props: YearSelectorProps) {
   }
 
   return (
-    <div className="mt-6 flex flex-col gap-1">
+    <div className="mt-6 flex flex-col gap-1.5">
       {props.availableYears.map((year, i) => (
         <button
           key={i}
           className={cx(
-            'px-2 py-1 text-2xs',
-            props.year === year && 'rounded bg-gray-600',
+            'rounded-full px-2 py-1.5 text-2xs',
+            props.year === year
+              ? 'bg-yellow-100 text-black'
+              : 'bg-zinc-700 hover:bg-gray-200',
           )}
           onClick={() => props.setYear(year)}
         >

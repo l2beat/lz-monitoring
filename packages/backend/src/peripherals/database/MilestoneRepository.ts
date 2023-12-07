@@ -40,6 +40,18 @@ export class MilestoneRepository extends BaseRepository {
       .andWhere('block_number', '>', blockNumber)
       .delete()
   }
+
+  async getByChainAndAddress(
+    chainId: ChainId,
+    address: EthereumAddress,
+  ): Promise<MilestoneRecord[]> {
+    const knex = await this.knex()
+    const rows = await knex('milestone_entries')
+      .select('*')
+      .where('chain_id', Number(chainId))
+      .andWhere('target_address', address.toString())
+    return rows.map(toRecord)
+  }
 }
 
 function toRow(record: MilestoneRecord): MilestoneRow {
