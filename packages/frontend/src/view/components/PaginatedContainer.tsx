@@ -33,26 +33,26 @@ export function PaginationControls({
   currentPage: number
   setPage: (page: number) => void
 }) {
+  const baseButtonClass =
+    'flex h-[30px] w-[30px] items-center justify-center rounded'
+
   const pageTiles = Array.from({ length: amountOfPages }, (_, i) => (
     <button
       key={i}
       onClick={() => setPage(i + 1)}
       className={cx(
-        'flex min-h-[30px] min-w-[30px] items-center justify-center rounded transition-colors hover:bg-gray-50',
-        currentPage === i + 1 && 'bg-gray-50',
+        baseButtonClass,
+        'transition-color duration-150',
+        currentPage === i + 1 ? 'bg-gray-200' : 'hover:bg-gray-400',
       )}
     >
       {i + 1}
     </button>
   ))
 
-  const baseButtonClass =
-    'flex h-[30px] w-[30px] items-center transition-all duration-300 justify-center rounded brightness-100 filter hover:brightness-[120%]'
-
-  const notAllowedClass =
-    'bg-yellow-300 cursor-not-allowed hover:brightness-[100%]'
-
-  const allowedClass = 'bg-yellow-100'
+  const notAllowedClass = 'bg-yellow-300 cursor-not-allowed'
+  const allowedClass =
+    'bg-yellow-100 transition-all brightness-100 filter hover:brightness-[120%] duration-300'
 
   return (
     <div className="flex items-center gap-2 md:gap-3">
