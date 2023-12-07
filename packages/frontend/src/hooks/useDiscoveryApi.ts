@@ -1,6 +1,8 @@
 import { ChainId, DiscoveryApi } from '@lz/libs'
 import { useEffect, useState } from 'react'
 
+import { hasBeenAborted } from './utils'
+
 interface DiscoveryData {
   data: DiscoveryApi
   chainId: ChainId
@@ -22,14 +24,21 @@ export function useDiscoveryApi({
   const [data, setData] = useState<DiscoveryData | null>(null)
 
   useEffect(() => {
+    const abortController = new AbortController()
+
     setIsLoading(true)
+    setIsError(false)
     async function fetchData() {
       try {
         const result = await fetch(
           apiUrl + 'discovery/' + ChainId.getName(chainId),
+          {
+            signal: abortController.signal,
+          },
         )
 
         if (!result.ok) {
+          setIsLoading(false)
           setIsError(true)
         }
 
@@ -37,11 +46,12 @@ export function useDiscoveryApi({
         const parsed = DiscoveryApi.parse(JSON.parse(data))
         setData({ data: parsed, chainId })
         setIsError(false)
-      } catch (e) {
-        console.error(e)
-        setIsError(true)
-      } finally {
         setIsLoading(false)
+      } catch (e) {
+        if (hasBeenAborted(e)) {
+          return
+        }
+        setIsError(true)
       }
     }
 
@@ -51,7 +61,10 @@ export function useDiscoveryApi({
       void fetchData()
     }, intervalMs)
 
-    return () => clearInterval(fetchDataInterval)
+    return () => {
+      clearInterval(fetchDataInterval)
+      abortController.abort()
+    }
   }, [chainId, intervalMs, apiUrl])
 
   return [data, isLoading, isError] as const
