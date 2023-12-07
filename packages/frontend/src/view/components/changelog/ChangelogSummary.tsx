@@ -295,7 +295,7 @@ function YearSelector(props: YearSelectorProps) {
         <button
           key={i}
           className={cx(
-            'px- rounded-full py-1.5 text-2xs',
+            'rounded-full px-2 py-1.5 text-2xs',
             props.year === year
               ? 'bg-yellow-100 text-black'
               : 'bg-zinc-700 hover:bg-gray-200',
