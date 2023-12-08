@@ -115,7 +115,9 @@ export function SafeMultisigTransaction({
               value={
                 <Code>
                   {params.map((inlineSummary) => (
-                    <span className="leading-5">{inlineSummary}</span>
+                    <span className="leading-5">
+                      {paramToSummary(inlineSummary).concat('\n')}
+                    </span>
                   ))}
                 </Code>
               }
@@ -141,7 +143,7 @@ function getDecodedProperties(tx: SafeMultisigTransaction) {
       method: decodedCall.method,
       signature: decodedCall.signature,
       callWithParams: decodedCall.functionCall,
-      params: decodedCall.params.map(paramToSummary),
+      params: decodedCall.params,
     }
   }
 
