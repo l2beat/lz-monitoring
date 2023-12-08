@@ -17,6 +17,7 @@ import { ChangelogEntry } from './ChangelogEntry'
 
 interface ChangelogSummaryProps {
   address: EthereumAddress
+  showFilters?: boolean
 }
 
 export function ChangelogSummary(props: ChangelogSummaryProps) {
@@ -48,22 +49,24 @@ export function ChangelogSummary(props: ChangelogSummaryProps) {
     <>
       <div className="mb-4 rounded-lg bg-gray-800 px-6 py-4">
         <h3 className="mb-3 font-medium">Changelog</h3>
-        <div className="relative mb-3 flex items-center gap-1">
-          {Object.entries(categories).map(([id, name], i) => (
-            <button
-              key={i}
-              className={cx(
-                'rounded-full px-3 py-1.5 text-2xs font-medium',
-                id === category
-                  ? 'bg-yellow-100 text-black'
-                  : 'bg-zinc-700 hover:bg-gray-200',
-              )}
-              onClick={() => setCategory(id as Category)}
-            >
-              {name}
-            </button>
-          ))}
-        </div>
+        {props.showFilters && (
+          <div className="relative mb-3 flex items-center gap-1">
+            {Object.entries(categories).map(([id, name], i) => (
+              <button
+                key={i}
+                className={cx(
+                  'rounded-full px-3 py-1.5 text-2xs font-medium',
+                  id === category
+                    ? 'bg-yellow-100 text-black'
+                    : 'bg-zinc-700 hover:bg-gray-200',
+                )}
+                onClick={() => setCategory(id as Category)}
+              >
+                {name}
+              </button>
+            ))}
+          </div>
+        )}
 
         <Year
           startTimestamp={data.startTimestamp}
