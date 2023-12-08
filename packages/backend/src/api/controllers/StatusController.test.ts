@@ -41,6 +41,7 @@ describe(StatusController.name, () => {
 
         const blockRepo = mockObject<BlockNumberRepository>({
           findLast: () => Promise.resolve(undefined),
+          findByNumber: () => Promise.resolve(undefined),
         })
 
         const controller = new StatusController(
@@ -94,9 +95,10 @@ describe(StatusController.name, () => {
           chainId: deps.lastIndexedBlock.chainId,
           timestamp: deps.lastIndexedBlock.timestamp,
         })
-        expect(status.lastDiscoveredBlock).toEqual(
-          deps.LATEST_DISCOVERY_BLOCK_NUMBER,
-        )
+        expect(status.lastDiscoveredBlock).toEqual({
+          blockNumber: deps.LATEST_DISCOVERY_BLOCK_NUMBER,
+          timestamp: new UnixTime(deps.LATEST_BLOCK_TIMESTAMP),
+        })
       })
     })
   })
@@ -203,9 +205,10 @@ describe(StatusController.name, () => {
           expect(status.chainId).toEqual(ChainId.ETHEREUM)
           expect(status.chainName).toEqual('ethereum')
           expect(status.lastIndexedBlock).toEqual(deps.lastIndexedBlock)
-          expect(status.lastDiscoveredBlock).toEqual(
-            deps.currDiscoveryResult.discoveryOutput.blockNumber,
-          )
+          expect(status.lastDiscoveredBlock).toEqual({
+            blockNumber: deps.LATEST_DISCOVERY_BLOCK_NUMBER,
+            timestamp: new UnixTime(deps.LATEST_BLOCK_TIMESTAMP),
+          })
 
           expect(status.node).toEqual({
             blockNumber: deps.LATEST_BLOCK_NUMBER,
@@ -236,9 +239,10 @@ describe(StatusController.name, () => {
           expect(status.chainId).toEqual(ChainId.ETHEREUM)
           expect(status.chainName).toEqual('ethereum')
           expect(status.lastIndexedBlock).toEqual(deps.lastIndexedBlock)
-          expect(status.lastDiscoveredBlock).toEqual(
-            deps.currDiscoveryResult.discoveryOutput.blockNumber,
-          )
+          expect(status.lastDiscoveredBlock).toEqual({
+            blockNumber: deps.LATEST_DISCOVERY_BLOCK_NUMBER,
+            timestamp: new UnixTime(deps.LATEST_BLOCK_TIMESTAMP),
+          })
           expect(status.node).toEqual(null)
         })
       })
@@ -292,6 +296,13 @@ function mockDeps() {
 
   const blockRepo = mockObject<BlockNumberRepository>({
     findLast: () => Promise.resolve(lastIndexedBlock),
+    findByNumber: () =>
+      Promise.resolve({
+        blockNumber: LATEST_DISCOVERY_BLOCK_NUMBER,
+        timestamp: new UnixTime(LATEST_BLOCK_TIMESTAMP),
+        chainId: ChainId.ETHEREUM,
+        blockHash: Hash256.random(),
+      }),
   })
   const discoveryRepo = mockObject<CurrentDiscoveryRepository>({
     find: () => Promise.resolve(currDiscoveryResult),
