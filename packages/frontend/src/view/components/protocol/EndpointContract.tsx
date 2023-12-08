@@ -32,7 +32,12 @@ export function EndpointContract(props: Props): JSX.Element {
         <Subsection>
           <Row
             label="Owner"
-            value={<BlockchainAddress address={props.owner} />}
+            value={
+              <BlockchainAddress
+                warnOnEoa="Protocol on this chain is owned by an EOA"
+                address={props.owner}
+              />
+            }
           />
           <Row
             label="Default send library"

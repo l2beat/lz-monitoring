@@ -9,7 +9,6 @@ import { useDiscoveryApi } from '../../../hooks/useDiscoveryApi'
 import { Layout } from '../Layout'
 import { NetworkData } from '../NetworkData'
 import { NetworkSelector } from '../NetworkSelector'
-import { ProtocolComponentCard } from '../ProtocolComponentCard'
 import { Warning } from '../Warning'
 import { EndpointContract } from './EndpointContract'
 import { LayerZeroMultisig } from './LayerZeroMultisig'
@@ -85,20 +84,11 @@ export function ProtocolInformation({
               isLoading={isDiscoveryLoading}
             />
 
-            {shouldDisplayMultisigTransactions ? (
+            {shouldDisplayMultisigTransactions && (
               <LayerZeroMultisig
                 {...discoveryResponse.data.contracts.lzMultisig}
                 multisigAddress={multisigAddress}
               />
-            ) : (
-              <ProtocolComponentCard title="LayerZero Multisig">
-                <Warning
-                  title={`Multisig on ${getPrettyChainName(
-                    discoveryResponse.chainId,
-                  )} is not supported`}
-                  subtitle="EOA might be in charge of protocol management on this chain."
-                />
-              </ProtocolComponentCard>
             )}
           </Layout>
         </AddressInfoContext.Provider>
