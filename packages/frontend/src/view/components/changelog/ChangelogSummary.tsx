@@ -262,7 +262,7 @@ function YearWrapper(props: {
           isError={props.isError}
         />
       </div>
-      <div className="my-1 flex justify-between text-3xs italic text-zinc-500 md:px-5">
+      <div className="mb-1 mt-1.5 flex justify-between text-3xs italic text-zinc-500 md:px-5">
         <span>Click the cell to view the changes in a given day</span>
         <div className="mr-12 hidden items-center justify-center gap-2 md:flex">
           <span>Less changes</span>
@@ -393,7 +393,7 @@ function YearSelector(props: YearSelectorProps) {
                 : 'bg-zinc-700 hover:bg-gray-200',
               props.isError && 'cursor-not-allowed opacity-30',
             )}
-            onClick={() => props.setYear(year)}
+            onClick={() => !props.isError && props.setYear(year)}
           >
             {year}
           </button>
