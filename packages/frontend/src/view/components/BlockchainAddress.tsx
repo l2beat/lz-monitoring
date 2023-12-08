@@ -42,7 +42,7 @@ export function BlockchainAddress(props: Props) {
 
       {addressInfo && addressInfo.name === 'EOA' && props.warnOnEoa && (
         <Tooltip text={props.warnOnEoa}>
-          <WarningIcon className="stroke-[#F5C842]" width="13" height="13" />
+          <WarningIcon className="stroke-yellow-100" width="14" height="14" />
         </Tooltip>
       )}
 
