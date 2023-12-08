@@ -42,6 +42,7 @@ export function SafeMultisigTransaction({
   const decodedProperties = getDecodedProperties(transaction)
 
   const method = decodedProperties?.method ?? 'Could not be decoded ⚠️'
+  const signature = decodedProperties?.signature ?? 'Could not be decoded ⚠️'
   const callWithParams =
     decodedProperties?.callWithParams ?? 'Could not be decoded ⚠️'
   const params = decodedProperties?.params ?? []
@@ -100,7 +101,10 @@ export function SafeMultisigTransaction({
             param="Target"
             value={<BlockchainAddress address={EthereumAddress(target)} />}
           />
-          <TransactionProperty param="Method" value={<Code>{method}</Code>} />
+          <TransactionProperty
+            param="Function signature"
+            value={<Code>{signature}</Code>}
+          />
           <TransactionProperty
             param="Call with params"
             value={<Code>{callWithParams}</Code>}
