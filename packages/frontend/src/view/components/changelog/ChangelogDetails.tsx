@@ -2,13 +2,46 @@ import { Change, ChangelogApiEntry, Hash256, ModificationType } from '@lz/libs'
 import { useState } from 'react'
 
 import { ChangeIcon } from '../../icons/ChangeIcon'
+import { CloseIcon } from '../../icons/CloseIcon'
 import { MinusIcon, SolidMinusIcon } from '../../icons/MinusIcon'
 import { PlusIcon, SolidPlusIcon } from '../../icons/PlusIcon'
 import { BlockNumber } from '../BlockNumber'
 import { Code } from '../Code'
 import { TransactionHash } from '../TransactionHash'
 
-export function ChangelogEntry(props: {
+export function ChangesDetails(props: {
+  changes: ChangelogApiEntry[] | null
+  setChangesDetails: (changes: ChangelogApiEntry[] | null) => void
+  groupedEntries?: boolean
+  className?: string
+}) {
+  if (!props.changes) {
+    return null
+  }
+
+  return (
+    <div className={props.className}>
+      <div className="my-6 flex items-center justify-between">
+        <span className="font-medium">
+          {props.changes[0]?.timestamp.toMMDDYYYY()}
+        </span>
+        <button onClick={() => props.setChangesDetails(null)}>
+          <CloseIcon />
+        </button>
+      </div>
+
+      {props.changes.map((change, i) => (
+        <ChangelogEntry
+          key={i}
+          change={change}
+          grouped={props.groupedEntries}
+        />
+      ))}
+    </div>
+  )
+}
+
+function ChangelogEntry(props: {
   change: ChangelogApiEntry
   grouped?: boolean
 }) {
@@ -19,12 +52,13 @@ export function ChangelogEntry(props: {
 
   return (
     <div className="mb-6 flex gap-4">
-      <div className="flex flex-col items-center">
+      <div className="hidden flex-col items-center md:flex">
         <ChangeIcon className="mt-0.5" />
         <div className="grow border-l border-yellow-100" />
       </div>
       <div className="flex grow flex-col gap-3 overflow-hidden">
-        <span className="text-md leading-none text-zinc-500">
+        <span className="text-md leading-normal text-zinc-500">
+          <ChangeIcon className="relative -top-px mr-2 inline-block md:hidden" />
           {titleStart} in tx{' '}
           <PossibleTransactions txs={props.change.possibleTxHashes} /> in block
           <BlockNumber blockNumber={props.change.blockNumber} /> at{' '}
@@ -88,7 +122,10 @@ function Grouped(props: { changes: Change[] }) {
       {Object.entries(groupedChanges).map(
         ([group, changes], i) =>
           changes && (
-            <div key={i} className="rounded border border-zinc-700 p-4">
+            <div
+              key={i}
+              className="border-zinc-700 md:rounded md:border md:p-4"
+            >
               <GroupText group={group} changes={changes} />
               {changes.map((change, j) => (
                 <SingleChange key={j} change={change} />
@@ -115,7 +152,7 @@ function GroupText(props: { group: string; changes: Change[] }) {
     <span className="mb-2 inline-block text-sm">
       <>
         {text} chain{' '}
-        <span className="inline-block rounded-sm bg-green-800 px-1 py-0.5 text-green-500">
+        <span className="bg-green-800 text-green-500 inline-block rounded-sm px-1 py-0.5">
           {props.group}
         </span>{' '}
         configuration
@@ -131,12 +168,12 @@ function SingleChange(props: { change: Change }) {
   //TODO: maybe we can get the description for this key
 
   return (
-    <div className="mt-2 rounded-lg bg-neutral-700">
+    <div className="bg-neutral-700 mt-2 rounded-lg">
       <div
         className="flex cursor-pointer items-center justify-between px-4 py-3"
         onClick={() => setIsExpanded(!isExpanded)}
       >
-        <span className="text-xs">
+        <span className="text-xs leading-normal">
           <span className="text-zinc-500">
             {getModificationTypeText(props.change.modificationType)}
           </span>{' '}
