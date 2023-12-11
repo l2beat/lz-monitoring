@@ -59,7 +59,8 @@ module.exports = {
     shadow: '0px 4px 8px 0px rgba(0, 0, 0, 0.25)',
     zIndex: {
       dropdown: 100,
-      'network-selector': 101,
+      'loading-cover': 101,
+      'network-selector': 102,
       tooltip: 200,
     },
   },

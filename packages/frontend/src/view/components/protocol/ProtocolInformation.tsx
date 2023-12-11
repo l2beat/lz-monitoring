@@ -24,7 +24,7 @@ export function ProtocolInformation({
     paramName: 'chain',
   })
 
-  const [discoveryResponse, , isError] = useDiscoveryApi({
+  const [discoveryResponse, isDiscoveryLoading, isError] = useDiscoveryApi({
     apiUrl: config.apiUrl,
     chainId: paramChain,
   })
@@ -70,11 +70,18 @@ export function ProtocolInformation({
       />
       <ChainInfoContext.Provider value={discoveryResponse.chainId}>
         <AddressInfoContext.Provider value={discoveryResponse.data.addressInfo}>
-          <NetworkData latestBlock={discoveryResponse.data.blockNumber} />
+          <NetworkData
+            latestBlock={discoveryResponse.data.blockNumber}
+            isLoading={isDiscoveryLoading}
+          />
           <Layout>
-            <EndpointContract {...discoveryResponse.data.contracts.endpoint} />
+            <EndpointContract
+              {...discoveryResponse.data.contracts.endpoint}
+              isLoading={isDiscoveryLoading}
+            />
             <UltraLightNodeContract
               {...discoveryResponse.data.contracts.ulnV2}
+              isLoading={isDiscoveryLoading}
             />
 
             {shouldDisplayMultisigTransactions && (

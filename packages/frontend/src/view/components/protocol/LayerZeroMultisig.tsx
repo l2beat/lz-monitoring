@@ -5,27 +5,27 @@ import Skeleton from 'react-loading-skeleton'
 import { useChainId } from '../../../hooks/chainIdContext'
 import { useSafeApi } from '../../../hooks/useSafeApi'
 import { BlockchainAddress } from '../BlockchainAddress'
+import { Info } from '../Info'
 import { PaginatedContainer, PaginationControls } from '../PaginatedContainer'
 import { ProtocolComponentCard } from '../ProtocolComponentCard'
 import { Row } from '../Row'
 import { SafeMultisigTransaction } from '../safe/SafeMultisigTransaction'
 import { Subsection } from '../Subsection'
+import { Warning } from '../Warning'
 
 interface Props {
-  address?: EthereumAddress
+  multisigAddress: EthereumAddress
   threshold?: number
   owners?: EthereumAddress[]
-  multisigAddress: EthereumAddress
 }
 
 export function LayerZeroMultisig({
   owners,
-  address,
   threshold,
   multisigAddress,
 }: Props) {
   const chainId = useChainId()
-  const [isLoading, isError, allTransactions] = useSafeApi({
+  const [isSafeLoading, isSafeError, allTransactions] = useSafeApi({
     chainId,
     multisigAddress,
   })
@@ -47,15 +47,9 @@ export function LayerZeroMultisig({
   }, [allTransactions])
 
   // Currently lack of multisig data is dictated either lack of support for multisig for given chain or we lack some data (this must be addressed in the future)
-  const hasData = address && threshold && owners
+  const hasData = threshold && owners
 
-  const subtitle = address ? (
-    <BlockchainAddress address={address} full />
-  ) : (
-    'Protocol on this chain is not owned by Safe Multisig'
-  )
-
-  if (isLoading) {
+  if (isSafeLoading) {
     return (
       <ProtocolComponentCard
         title="LayerZero Multisig"
@@ -85,28 +79,33 @@ export function LayerZeroMultisig({
     )
   }
 
-  if (isError) {
+  if (isSafeError) {
     return (
-      <ProtocolComponentCard
-        title="LayerZero Multisig"
-        subtitle="Data could not be loaded ⚠️"
-      />
+      <ProtocolComponentCard title="LayerZero Multisig">
+        <Warning
+          title="Error while reaching out to Safe Transaction Service"
+          subtitle="Please try again later"
+          slim
+        />
+      </ProtocolComponentCard>
     )
   }
 
   if (!allTransactions || allTransactions.length === 0) {
     return (
-      <ProtocolComponentCard
-        title="LayerZero Multisig"
-        subtitle="No transactions executed"
-      />
+      <ProtocolComponentCard title="LayerZero Multisig">
+        <Info
+          title="No transactions have been executed"
+          subtitle="The multisig contract has no transactions"
+        />
+      </ProtocolComponentCard>
     )
   }
 
   return (
     <ProtocolComponentCard
       title="LayerZero Multisig"
-      subtitle={subtitle}
+      subtitle={<BlockchainAddress address={multisigAddress} full />}
       description="Safe multi-signature contract managed by LayerZero. Owner of the Endpoint and the UltraLightNodeV2 contracts. Any configuration change must be made through the LayerZero multisig wallet. Transaction information is being fetched from the safe transaction service."
     >
       {hasData && (

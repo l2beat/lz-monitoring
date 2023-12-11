@@ -7,12 +7,14 @@ import {
 import { useAddressInfo } from '../../hooks/addressInfoContext'
 import { useChainId } from '../../hooks/chainIdContext'
 import { UnverifiedIcon } from '../icons/UnverifiedIcon'
+import { WarningIcon } from '../icons/WarningIcon'
 import { Copyable } from './Copyable'
 import { Tooltip } from './Tooltip'
 
 interface Props {
   address: EthereumAddress
   full?: boolean
+  warnOnEoa?: string
 }
 
 export function BlockchainAddress(props: Props) {
@@ -38,6 +40,12 @@ export function BlockchainAddress(props: Props) {
         </Tooltip>
       )}
 
+      {addressInfo && addressInfo.name === 'EOA' && props.warnOnEoa && (
+        <Tooltip text={props.warnOnEoa}>
+          <WarningIcon className="stroke-yellow-100" width="14" height="14" />
+        </Tooltip>
+      )}
+
       {addressInfo && !props.full ? (
         <>
           <Tooltip text={props.address.toString()} className="md:hidden">
@@ -50,9 +58,11 @@ export function BlockchainAddress(props: Props) {
               {props.address.toString()}
             </a>{' '}
           </Tooltip>{' '}
-          <span className="whitespace-nowrap text-xs text-zinc-500">
-            {addressInfo.name.length > 0 && `(${addressInfo.name})`}
-          </span>
+          {addressInfo.name.length > 0 && (
+            <span className="whitespace-nowrap text-xs text-zinc-500">
+              ({addressInfo.name})
+            </span>
+          )}
         </>
       ) : (
         <Tooltip text={'Show on ' + explorerName}>
