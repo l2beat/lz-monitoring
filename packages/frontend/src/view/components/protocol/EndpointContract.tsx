@@ -3,6 +3,7 @@ import { EthereumAddress } from '@lz/libs'
 import { BlockchainAddress } from '../BlockchainAddress'
 import { ChangelogSummary } from '../changelog/ChangelogSummary'
 import { ExpandableContainer } from '../ExpandableContainer'
+import { InfoTooltip } from '../InfoTooltip'
 import { ProtocolComponentCard } from '../ProtocolComponentCard'
 import { Row } from '../Row'
 import { Subsection } from '../Subsection'
@@ -31,7 +32,11 @@ export function EndpointContract(props: Props): JSX.Element {
       >
         <Subsection>
           <Row
-            label="Owner"
+            label={
+              <InfoTooltip text="Owner of the Endpoint Contract">
+                Owner
+              </InfoTooltip>
+            }
             value={
               <BlockchainAddress
                 warnOnEoa="Protocol on this chain is owned by an EOA"
@@ -40,11 +45,23 @@ export function EndpointContract(props: Props): JSX.Element {
             }
           />
           <Row
-            label="Default send library"
+            label={
+              <InfoTooltip
+                text={
+                  'The default messaging library.\n The contract handles the message payload packing on the source chain. The owner of the Endpoint contract can set a new default send library version. The version is a number, corresponding to an index in the libraryLookup array.'
+                }
+              >
+                Default send library
+              </InfoTooltip>
+            }
             value={<BlockchainAddress address={props.defaultSendLibrary} />}
           />
           <Row
-            label="Default receive library"
+            label={
+              <InfoTooltip text="The default messaging library. The contract handles the message payload verification on the destination chain. The owner of the Endpoint contract can set a new default received library version. The version is a number, corresponding to an index in the libraryLookup array.">
+                Default receive library
+              </InfoTooltip>
+            }
             value={<BlockchainAddress address={props.defaultSendLibrary} />}
           />
         </Subsection>

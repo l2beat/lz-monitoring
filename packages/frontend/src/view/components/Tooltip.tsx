@@ -1,8 +1,12 @@
+import cx from 'classnames'
 import { useRef } from 'react'
+
+type Variant = 'value' | 'text'
 
 interface TooltipProps {
   text: string
   children: React.ReactNode
+  variant?: Variant
   disabled?: boolean
   className?: string
 }
@@ -11,6 +15,11 @@ export function Tooltip(props: TooltipProps) {
   const activeRef = useRef(null)
   const tooltipRef = useRef(null)
   const tooltipTriangleRef = useRef(null)
+
+  const variantStyles =
+    props.variant === 'text'
+      ? 'leading-5 max-w-[300px]'
+      : 'leading-none whitespace-nowrap'
 
   if (props.disabled) {
     return <>{props.children}</>
@@ -34,7 +43,10 @@ export function Tooltip(props: TooltipProps) {
       </div>
 
       <div
-        className="fixed z-tooltip hidden whitespace-nowrap rounded bg-zinc-600 px-2.5 py-1.5 font-sans text-sm leading-none text-white shadow"
+        className={cx(
+          'fixed z-tooltip hidden rounded bg-zinc-600 px-2.5 py-1.5 font-sans text-sm text-white shadow',
+          variantStyles,
+        )}
         ref={tooltipRef}
       >
         <svg
