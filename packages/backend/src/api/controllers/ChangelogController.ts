@@ -46,7 +46,9 @@ export class ChangelogController {
     for (const entry of fullChangelog) {
       const milestone = milestonesMap.get(entry.blockNumber)
       const category = getCategory(entry, milestone)
+      const group = getGroupName(entry, category)
       const change = {
+        group,
         category,
         modificationType: entry.modificationType,
         parameterPath: entry.parameterPath,
@@ -125,6 +127,18 @@ function getCategory(
   }
 
   return 'REMOTE_CHANGED'
+}
+
+function getGroupName(
+  entry: FullChangelogRecord,
+  category: ChangelogCategory,
+): 'other' | number {
+  if (category !== 'REMOTE_ADDED' && category !== 'REMOTE_CHANGED') {
+    return 'other'
+  }
+  const endpointId = entry.parameterPath[1]
+  assert(endpointId, 'Remote endpoint id not found')
+  return +endpointId
 }
 
 function getChangesPerDay(

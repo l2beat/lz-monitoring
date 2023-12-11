@@ -1,27 +1,29 @@
 import { Change, ChangelogApiEntry, Hash256, ModificationType } from '@lz/libs'
 import { useState } from 'react'
 
-import { DotIcon } from '../../icons/DotIcon'
-import { SolidMinusIcon } from '../../icons/MinusIcon'
-import { SolidPlusIcon } from '../../icons/PlusIcon'
+import { ChangeIcon } from '../../icons/ChangeIcon'
+import { MinusIcon, SolidMinusIcon } from '../../icons/MinusIcon'
+import { PlusIcon, SolidPlusIcon } from '../../icons/PlusIcon'
 import { BlockNumber } from '../BlockNumber'
 import { Code } from '../Code'
 import { TransactionHash } from '../TransactionHash'
 
-export function ChangelogEntry(props: { change: ChangelogApiEntry }) {
+export function ChangelogEntry(props: {
+  change: ChangelogApiEntry
+  grouped?: boolean
+}) {
   const isPlural = props.change.changes.length > 1
   const titleStart = isPlural
     ? props.change.changes.length.toString() + ' changes'
     : 'Change'
+
   return (
     <div className="mb-6 flex gap-4">
       <div className="flex flex-col items-center">
-        <div className="mt-0.5 h-4 w-4 rounded bg-yellow-100 p-1">
-          <DotIcon className="fill-black" />
-        </div>
+        <ChangeIcon className="mt-0.5" />
         <div className="grow border-l border-yellow-100" />
       </div>
-      <div className="flex grow flex-col overflow-hidden">
+      <div className="flex grow flex-col gap-3 overflow-hidden">
         <span className="text-md leading-none text-zinc-500">
           {titleStart} in tx{' '}
           <PossibleTransactions txs={props.change.possibleTxHashes} /> in block
@@ -31,9 +33,15 @@ export function ChangelogEntry(props: { change: ChangelogApiEntry }) {
           </span>{' '}
           UTC
         </span>
-        {props.change.changes.map((change, i) => (
-          <SingleChange key={i} change={change} />
-        ))}
+        {!props.grouped ? (
+          <div>
+            {props.change.changes.map((change, i) => (
+              <SingleChange key={i} change={change} />
+            ))}
+          </div>
+        ) : (
+          <Grouped changes={props.change.changes} />
+        )}
       </div>
     </div>
   )
@@ -62,6 +70,60 @@ function PossibleTransactions(props: { txs: Hash256[] }) {
   )
 }
 
+function Grouped(props: { changes: Change[] }) {
+  const groupedChanges = props.changes.reduce<
+    Partial<Record<Change['group'], Change[]>>
+  >((acc, change) => {
+    const group = acc[change.group]
+    if (group) {
+      group.push(change)
+    } else {
+      acc[change.group] = [change]
+    }
+    return acc
+  }, {})
+
+  return (
+    <>
+      {Object.entries(groupedChanges).map(
+        ([group, changes], i) =>
+          changes && (
+            <div key={i} className="rounded border border-zinc-700 p-4">
+              <GroupText group={group} changes={changes} />
+              {changes.map((change, j) => (
+                <SingleChange key={j} change={change} />
+              ))}
+            </div>
+          ),
+      )}
+    </>
+  )
+}
+
+function GroupText(props: { group: string; changes: Change[] }) {
+  if (props.group === 'other') {
+    return <span className="text-sm">Other changes</span>
+  }
+
+  const text = props.changes.every(
+    (change) => change.category === 'REMOTE_ADDED',
+  )
+    ? 'Added'
+    : 'Changes in'
+
+  return (
+    <span className="mb-2 inline-block text-sm">
+      <>
+        {text} chain{' '}
+        <span className="inline-block rounded-sm bg-green-800 px-1 py-0.5 text-green-500">
+          {props.group}
+        </span>{' '}
+        configuration
+      </>
+    </span>
+  )
+}
+
 function SingleChange(props: { change: Change }) {
   const path = [...props.change.parameterPath]
   const [isExpanded, setIsExpanded] = useState(false)
@@ -69,9 +131,9 @@ function SingleChange(props: { change: Change }) {
   //TODO: maybe we can get the description for this key
 
   return (
-    <div className="mt-4 rounded-lg border border-zinc-700 p-2">
+    <div className="mt-2 rounded-lg bg-neutral-700">
       <div
-        className="flex cursor-pointer items-center justify-between p-4"
+        className="flex cursor-pointer items-center justify-between px-4 py-3"
         onClick={() => setIsExpanded(!isExpanded)}
       >
         <span className="text-xs">
@@ -87,11 +149,11 @@ function SingleChange(props: { change: Change }) {
         </button>
       </div>
       {isExpanded && (
-        <div className="flex flex-col gap-3 px-4 pb-4">
+        <div className="flex flex-col gap-3 pb-4 pl-4 pr-12">
           {props.change.previousValue && (
-            <div>
-              <div className="mb-2 text-xs text-zinc-500">Previous value</div>
-              <Code>
+            <div className="flex items-center gap-2">
+              <MinusIcon className="fill-zinc-500" />
+              <Code className="bg-zinc-650 px-3 py-2">
                 <span className="bg-red leading-tight">
                   {prettyJsonString(props.change.previousValue)}
                 </span>
@@ -99,10 +161,10 @@ function SingleChange(props: { change: Change }) {
             </div>
           )}
           {props.change.currentValue && (
-            <div>
-              <div className="mb-2 text-xs text-zinc-500">Current value</div>
-              <Code>
-                <span className="bg-green leading-tight">
+            <div className="flex items-center gap-2">
+              <PlusIcon className="fill-zinc-500" />
+              <Code className="bg-zinc-650 px-3 py-2">
+                <span className="bg-green-700 leading-tight">
                   {prettyJsonString(props.change.currentValue)}
                 </span>
               </Code>

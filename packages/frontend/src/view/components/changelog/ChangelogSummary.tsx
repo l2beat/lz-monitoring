@@ -19,6 +19,7 @@ import { ChangelogEntry } from './ChangelogEntry'
 interface ChangelogSummaryProps {
   address: EthereumAddress
   showFilters?: boolean
+  groupedEntries?: boolean
 }
 
 export function ChangelogSummary(props: ChangelogSummaryProps) {
@@ -86,7 +87,11 @@ export function ChangelogSummary(props: ChangelogSummaryProps) {
             </div>
 
             {changesDetails.map((change, i) => (
-              <ChangelogEntry key={i} change={change} />
+              <ChangelogEntry
+                key={i}
+                change={change}
+                grouped={props.groupedEntries}
+              />
             ))}
           </>
         )}
