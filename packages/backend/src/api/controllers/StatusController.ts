@@ -109,13 +109,21 @@ export class StatusController {
     const lastIndexedBlock = (await this.blockRepo.findLast(chainId)) ?? null
 
     const lastDiscoveredBlock = discovery?.discoveryOutput.blockNumber ?? null
+    const lastDiscoveredBlockRecord = lastDiscoveredBlock
+      ? await this.blockRepo.findByNumber(lastDiscoveredBlock, chainId)
+      : null
 
     return {
       chainName: ChainId.getName(chainId),
       chainId: chainId,
       visible: chainVisibility,
       lastIndexedBlock,
-      lastDiscoveredBlock,
+      lastDiscoveredBlock: lastDiscoveredBlockRecord
+        ? {
+            timestamp: lastDiscoveredBlockRecord.timestamp,
+            blockNumber: lastDiscoveredBlockRecord.blockNumber,
+          }
+        : null,
       indexerStates,
     }
   }
