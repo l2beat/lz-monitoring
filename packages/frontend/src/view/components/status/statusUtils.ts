@@ -1,4 +1,4 @@
-import { DiscoveryStatus } from '@lz/libs'
+import { DiscoveryStatus, UnixTime } from '@lz/libs'
 
 export function capitalizeFirstLetter(str: string): string {
   return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase()
@@ -26,11 +26,11 @@ export function getOverallHealth(status: DiscoveryStatus): ModuleHealthStatus {
     status.state === 'enabled' &&
     status.lastDiscoveredBlock &&
     status.node &&
-    status.node.blockNumber - status.lastDiscoveredBlock > 50
+    status.node.blockNumber - status.lastDiscoveredBlock.blockNumber > 50
   ) {
     warnings.push(
       `Discovery is lagging behind the tip for more than 50 blocks (${prettyDigitsGroups(
-        status.node.blockNumber - status.lastDiscoveredBlock,
+        status.node.blockNumber - status.lastDiscoveredBlock.blockNumber,
       )} blocks)`,
     )
   }
@@ -58,4 +58,14 @@ export function healthToBorder(health: ModuleHealthStatus) {
 
 export function prettyDigitsGroups(num: number, separator = ','): string {
   return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, separator)
+}
+
+export function prettyTimestamp(timestamp: UnixTime) {
+  return `${timestamp.toNumber()} / ${timestamp.toDate().toUTCString()}`
+}
+
+export function prettyTimestampDiff(timestamp: UnixTime) {
+  const timestampDiff = Date.now() / 1000 - timestamp.toNumber()
+
+  return `${timestampDiff.toFixed(0)} seconds ago`
 }
