@@ -1,4 +1,11 @@
-import { Change, ChangelogApiEntry, Hash256, ModificationType } from '@lz/libs'
+import {
+  Change,
+  ChangelogApiEntry,
+  getChainIdFromEndpointId,
+  getPrettyChainName,
+  Hash256,
+  ModificationType,
+} from '@lz/libs'
 import { useState } from 'react'
 
 import { ChangeIcon } from '../../icons/ChangeIcon'
@@ -142,18 +149,24 @@ function GroupText(props: { group: string; changes: Change[] }) {
     return <span className="text-sm">Other changes</span>
   }
 
+  const endpointId = props.group
+  const chainId = getChainIdFromEndpointId(+endpointId)
+
   const text = props.changes.every(
     (change) => change.category === 'REMOTE_ADDED',
   )
     ? 'Added'
-    : 'Changes in'
+    : props.changes.length > 1
+    ? 'Changes in'
+    : 'Change in'
 
   return (
     <span className="mb-2 inline-block text-sm">
       <>
         {text} chain{' '}
         <span className="bg-green-800 text-green-500 inline-block rounded-sm px-1 py-0.5">
-          {props.group}
+          {endpointId}
+          {chainId && ` (${getPrettyChainName(chainId)})`}
         </span>{' '}
         configuration
       </>
