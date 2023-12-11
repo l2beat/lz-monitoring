@@ -14,7 +14,10 @@ const DefaultAdapterParams = z.array(
 export type DefaultAdapterParams = z.infer<typeof DefaultAdapterParams>
 
 const DefaultAppConfig = z.object({
-  inboundProofLib: z.number(),
+  inboundProofLib: z.object({
+    version: z.number(),
+    address: branded(z.string(), EthereumAddress),
+  }),
   inboundProofConfirm: z.number(),
   outboundProofType: z.number(),
   outboundBlockConfirm: z.number(),
@@ -32,7 +35,6 @@ export const RemoteChain = z.object({
   defaultAppConfig: DefaultAppConfig,
   defaultAdapterParams: DefaultAdapterParams,
   supportedOutboundProof: z.array(z.number()),
-  inboundProofLibrary: z.array(branded(z.string(), EthereumAddress)),
 })
 export type RemoteChain = z.infer<typeof RemoteChain>
 

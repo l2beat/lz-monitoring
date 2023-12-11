@@ -13,7 +13,7 @@ interface Props {
   owner: EthereumAddress
   treasuryContract: EthereumAddress
   layerZeroToken: EthereumAddress
-  remoteChains?: RemoteChain[]
+  remoteChains: RemoteChain[]
   isLoading?: boolean
 }
 
