@@ -39,6 +39,7 @@ import { IndexerStateRepository } from '../peripherals/database/IndexerStateRepo
 import { MilestoneRepository } from '../peripherals/database/MilestoneRepository'
 import { ProviderCacheRepository } from '../peripherals/database/ProviderCacheRepository'
 import { Database } from '../peripherals/database/shared/Database'
+import { RoutescanClient } from '../tools/RoutescanClient'
 import { ApplicationModule } from './ApplicationModule'
 
 interface DiscoverySubmoduleDependencies {
@@ -125,7 +126,10 @@ export function createDiscoveryModule({
     currentDiscoveryRepository,
     changelogRepository,
   )
-  const changelogController = new ChangelogController(changelogRepository)
+  const changelogController = new ChangelogController(
+    changelogRepository,
+    milestoneRepository,
+  )
   const discoveryRouter = createDiscoveryRouter(discoveryController)
   const changelogRouter = createChangelogRouter(changelogController)
 
@@ -260,7 +264,10 @@ function createDiscoveryEngine(
 ): { discoveryEngine: DiscoveryEngine; providerWithCache: ProviderWithCache } {
   const httpClient = new HttpClient()
 
-  const discoveryClient = new EtherscanLikeClient(
+  // FIXME: Monkey patch for Routescan, remove once resolved
+  const ExplorerClient = getExplorerClient(chainId)
+
+  const discoveryClient = new ExplorerClient(
     httpClient,
     config.blockExplorerApiUrl,
     config.blockExplorerApiKey,
@@ -302,4 +309,13 @@ function createDiscoveryEngine(
   )
   const discoveryEngine = new DiscoveryEngine(addressAnalyzer, discoveryLogger)
   return { discoveryEngine, providerWithCache }
+}
+
+function getExplorerClient(chainId: ChainId): typeof EtherscanLikeClient {
+  switch (chainId) {
+    case ChainId.AVALANCHE:
+      return RoutescanClient
+    default:
+      return EtherscanLikeClient
+  }
 }

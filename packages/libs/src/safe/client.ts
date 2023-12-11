@@ -16,6 +16,7 @@ type SafeTransaction = ArrayItem<AllTransactionsListResponse['results']>
 function createSafeApiClient(chainId: ChainId): {
   getMultisigTransactions: (
     multisigAddress: string,
+    signal?: AbortSignal,
   ) => Promise<SafeMultisigTransaction[]>
 } {
   const chainIdNumber = chainId.valueOf()
@@ -29,10 +30,10 @@ function createSafeApiClient(chainId: ChainId): {
   const safeServiceEndpoint = endpoints.list[chainIdNumber]
 
   return {
-    getMultisigTransactions: async (multisigAddress: string) => {
+    getMultisigTransactions: async (multisigAddress, signal) => {
       const transactions: SafeTransaction[] = []
 
-      const callEndpoint = `${safeServiceEndpoint}/api/v1/safes/${multisigAddress}/all-transactions`
+      const callEndpoint = `${safeServiceEndpoint}/api/v1/safes/${multisigAddress}/all-transactions/`
 
       // Batch of 10s since the API will force-paginate despite params
       const initialParams = new URLSearchParams({
@@ -41,13 +42,14 @@ function createSafeApiClient(chainId: ChainId): {
 
       const response = await fetch(
         `${callEndpoint}?${initialParams.toString()}`,
+        { signal },
       )
       let json = (await response.json()) as AllTransactionsListResponse
 
       transactions.push(...json.results)
 
       while (json.next) {
-        const raw = await fetch(json.next)
+        const raw = await fetch(json.next, { signal })
 
         json = (await raw.json()) as AllTransactionsListResponse
 

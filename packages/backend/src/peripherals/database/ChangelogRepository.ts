@@ -1,5 +1,11 @@
 import { Logger } from '@l2beat/backend-tools'
-import { ChainId, EthereumAddress, Hash256, UnixTime } from '@lz/libs'
+import {
+  ChainId,
+  EthereumAddress,
+  Hash256,
+  ModificationType,
+  UnixTime,
+} from '@lz/libs'
 import type { ChangelogRow } from 'knex/types/tables'
 
 import { ChangelogEntry } from '../../tools/changelog/types'
@@ -137,10 +143,10 @@ function toRecord(row: ChangelogRow): ChangelogEntry {
     targetAddress: EthereumAddress(row.target_address),
     chainId: ChainId(row.chain_id),
     blockNumber: row.block_number,
-    modificationType: row.modification_type,
+    modificationType: row.modification_type as ModificationType,
     parameterName: row.parameter_name,
     parameterPath: row.parameter_path,
     previousValue: row.previous_value,
     currentValue: row.current_value,
-  } as ChangelogEntry
+  }
 }

@@ -1,11 +1,14 @@
 import cx from 'classnames'
 
+import { LoadingCover } from './status/LoadingCover'
+
 interface Props {
   title: React.ReactNode
   description?: React.ReactNode
   subtitle?: React.ReactNode
   children?: React.ReactNode
   className?: string
+  isLoading?: boolean
 }
 
 export function ProtocolComponentCard({
@@ -14,18 +17,21 @@ export function ProtocolComponentCard({
   subtitle,
   description,
   className,
+  isLoading,
 }: Props) {
   return (
     <section
       className={cx(
-        'm-4 rounded-lg bg-gray-900 px-5 py-6 md:m-0 md:mb-10 md:p-8',
+        'relative m-4 rounded-lg bg-gray-900 px-5 py-6 md:m-0 md:mb-10 md:p-8',
         className,
       )}
     >
+      {isLoading && <LoadingCover />}
+
       <div className="flex flex-col justify-between md:mb-4 md:flex-row">
         <h2 className="mb-4 w-full text-xl md:mb-0">{title}</h2>
         {subtitle && (
-          <span className="mb-4 text-ellipsis text-2xs text-gray-30 md:mb-0 md:overflow-visible md:text-md">
+          <span className="mb-4 text-ellipsis text-2xs text-zinc-500 md:mb-0 md:overflow-visible md:text-md">
             {subtitle}
           </span>
         )}

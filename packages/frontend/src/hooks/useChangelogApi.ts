@@ -7,6 +7,8 @@ import {
 } from '@lz/libs'
 import { useEffect, useState } from 'react'
 
+import { hasBeenAborted } from './utils'
+
 interface UseChangelogApiHookOptions {
   shouldFetch: boolean
   chainId: ChainId
@@ -40,6 +42,7 @@ export function useChangelogApi({
     if (!shouldFetch) {
       return
     }
+    const abortController = new AbortController()
     setIsLoading(true)
     async function fetchData() {
       try {
@@ -49,6 +52,9 @@ export function useChangelogApi({
             ChainId.getName(chainId) +
             '/' +
             address.toString(),
+          {
+            signal: abortController.signal,
+          },
         )
 
         if (!result.ok) {
@@ -67,6 +73,9 @@ export function useChangelogApi({
         })
         setIsError(false)
       } catch (e) {
+        if (hasBeenAborted(e)) {
+          return
+        }
         console.error(e)
         setIsError(true)
       } finally {
@@ -75,6 +84,10 @@ export function useChangelogApi({
     }
 
     void fetchData()
+
+    return () => {
+      abortController.abort()
+    }
   }, [shouldFetch, chainId, apiUrl, address])
 
   return [data, isLoading, isError] as const

@@ -6,12 +6,19 @@ import Skeleton from 'react-loading-skeleton'
 import { config } from '../../../config'
 import { useChainId } from '../../../hooks/chainIdContext'
 import { useChangelogApi } from '../../../hooks/useChangelogApi'
+import {
+  categories,
+  Category,
+  useChangelogCategories,
+} from '../../../hooks/useChangelogCategories'
 import { CloseIcon } from '../../icons/CloseIcon'
+import { WarningIcon } from '../../icons/WarningIcon'
 import { Tooltip } from '../Tooltip'
 import { ChangelogEntry } from './ChangelogEntry'
 
 interface ChangelogSummaryProps {
   address: EthereumAddress
+  showFilters?: boolean
 }
 
 export function ChangelogSummary(props: ChangelogSummaryProps) {
@@ -22,6 +29,10 @@ export function ChangelogSummary(props: ChangelogSummaryProps) {
     address: props.address,
     apiUrl: config.apiUrl,
   })
+
+  const [filteredData, category, setCategory] = useChangelogCategories(
+    data.perDay,
+  )
   const [changesDetails, setChangesDetails] = useState<
     null | ChangelogApiEntry[]
   >(null)
@@ -29,22 +40,39 @@ export function ChangelogSummary(props: ChangelogSummaryProps) {
   // reset changes details when chainId changes
   useEffect(() => {
     setChangesDetails(null)
-  }, [chainId])
-
-  if (isError) {
-    return <div>Failed to load changelog</div>
-  }
+  }, [chainId, category])
 
   return (
     <>
-      <div className="mb-4 rounded-lg bg-gray-500 px-6 py-4">
-        <h3 className="mb-2 font-medium">Changelog</h3>
+      <div className="mb-4 rounded-lg bg-gray-800 px-6 py-4">
+        <h3 className="mb-4 font-medium md:mb-3">Changelog</h3>
+        {props.showFilters && (
+          <div className="relative mb-2 flex items-center gap-1 overflow-x-auto pb-2 scrollbar scrollbar-track-gray-400 scrollbar-thumb-yellow-100">
+            {Object.entries(categories).map(([id, name], i) => (
+              <button
+                key={i}
+                className={cx(
+                  'whitespace-nowrap rounded-full px-3 py-1.5 text-2xs font-medium',
+                  id === category
+                    ? 'bg-yellow-100 text-black'
+                    : 'bg-zinc-700 hover:bg-gray-200',
+                  isError && 'cursor-not-allowed opacity-30',
+                )}
+                onClick={() => !isError && setCategory(id as Category)}
+              >
+                {name}
+              </button>
+            ))}
+          </div>
+        )}
+
         <Year
           startTimestamp={data.startTimestamp}
-          changelogPerDay={data.perDay}
+          changelogPerDay={filteredData}
           availableYears={data.availableYears}
           setChangesDetails={setChangesDetails}
           isLoading={isLoading}
+          isError={isError}
         />
         {changesDetails && (
           <>
@@ -73,6 +101,7 @@ interface YearProps {
   changelogPerDay: Map<number, ChangelogApiEntry[]> | null
   setChangesDetails: (changes: ChangelogApiEntry[]) => void
   isLoading: boolean
+  isError: boolean
 }
 
 function Year(props: YearProps) {
@@ -82,6 +111,53 @@ function Year(props: YearProps) {
   const allWeeks = getAllWeeks(year)
   const firstDay = new Date(Date.UTC(year, 0, 1))
   let currDay = UnixTime.fromDate(firstDay).add(-1, 'days')
+
+  if (props.isError) {
+    return (
+      <YearWrapper
+        year={year}
+        setYear={setYear}
+        availableYears={props.availableYears ?? [currentYear]}
+        isError
+      >
+        <div className="relative">
+          <div className="flex opacity-30">
+            {allWeeks.map((week, i) => (
+              <div className="flex flex-col" key={i}>
+                {week.map((day, j) => {
+                  if (day === '0') {
+                    currDay = currDay.add(1, 'days')
+                  }
+
+                  return (
+                    <Square
+                      key={`${i}-${j}`}
+                      active={day === '0'}
+                      date={currDay.toDate()}
+                      startDate={props.startTimestamp?.toDate() ?? null}
+                      changes={[]}
+                      disableTooltip
+                    />
+                  )
+                })}
+              </div>
+            ))}
+          </div>
+          <div className="absolute bottom-0 left-0 right-0 top-0 flex items-center justify-center gap-3">
+            <WarningIcon className="w-6 stroke-yellow-100 md:w-[45px]" />
+            <span className="flex flex-col gap-1 whitespace-nowrap">
+              <span className="text-sm md:text-lg">
+                Could not get the changelog
+              </span>
+              <span className="text-2xs text-gray-100 md:text-sm">
+                Please try again soon
+              </span>
+            </span>
+          </div>
+        </div>
+      </YearWrapper>
+    )
+  }
 
   if (props.isLoading) {
     return (
@@ -138,45 +214,66 @@ function YearWrapper(props: {
   availableYears: number[]
   year: number
   setYear: (year: number) => void
+  isError?: boolean
 }) {
   return (
-    <div className="flex gap-1.5">
-      <div className="mt-6 flex flex-col items-center gap-2 pb-1">
-        {['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((day, i) => (
-          <div key={i} className="h-3 text-xs font-semibold text-gray-100">
-            {day}
+    <div>
+      <div className="flex flex-col-reverse gap-1.5 md:flex-row">
+        <div className="flex gap-1.5 overflow-hidden">
+          <div className="mt-6 flex flex-col items-center gap-2 pb-1">
+            {['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((day, i) => (
+              <div key={i} className="h-3 text-xs font-semibold text-gray-200">
+                {day}
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
-      <div className="shrink overflow-x-auto pb-2 scrollbar scrollbar-track-gray-50 scrollbar-thumb-yellow-100">
-        <div className="mb-2 flex w-[847px] justify-around">
-          {[
-            'Jan',
-            'Feb',
-            'Mar',
-            'Apr',
-            'May',
-            'Jun',
-            'Jul',
-            'Aug',
-            'Sep',
-            'Oct',
-            'Nov',
-            'Dec',
-          ].map((month, i) => (
-            <div key={i} className="h-3 text-xs font-semibold text-gray-100">
-              {month}
+          <div className="shrink overflow-x-auto pb-2 scrollbar scrollbar-track-gray-400 scrollbar-thumb-yellow-100">
+            <div className="mb-2 flex w-[847px] justify-around">
+              {[
+                'Jan',
+                'Feb',
+                'Mar',
+                'Apr',
+                'May',
+                'Jun',
+                'Jul',
+                'Aug',
+                'Sep',
+                'Oct',
+                'Nov',
+                'Dec',
+              ].map((month, i) => (
+                <div
+                  key={i}
+                  className="h-3 text-xs font-semibold text-gray-200"
+                >
+                  {month}
+                </div>
+              ))}
             </div>
-          ))}
+            {props.children}
+          </div>
         </div>
-        {props.children}
+        <VerticalDivider className="hidden md:block" />
+        <YearSelector
+          year={props.year}
+          setYear={props.setYear}
+          availableYears={props.availableYears}
+          isError={props.isError}
+        />
       </div>
-      <VerticalDivider />
-      <YearSelector
-        year={props.year}
-        setYear={props.setYear}
-        availableYears={props.availableYears}
-      />
+      <div className="mb-1 mt-1.5 flex justify-between text-3xs italic text-zinc-500 md:px-5">
+        <span>Click the cell to view the changes in a given day</span>
+        <div className="mr-12 hidden items-center justify-center gap-2 md:flex">
+          <span>Less changes</span>
+          <div className="flex items-center justify-center gap-1">
+            <div className={cx('h-3 w-3', getColor(1, false))} />
+            <div className={cx('h-3 w-3', getColor(2, false))} />
+            <div className={cx('h-3 w-3', getColor(10, false))} />
+          </div>
+          <span>More changes</span>
+        </div>
+      </div>
     </div>
   )
 }
@@ -186,7 +283,8 @@ interface SquareProps {
   date: Date
   active: boolean
   changes: ChangelogApiEntry[]
-  setChangesDetails: (changes: ChangelogApiEntry[]) => void
+  setChangesDetails?: (changes: ChangelogApiEntry[]) => void
+  disableTooltip?: boolean
 }
 function Square(props: SquareProps) {
   const hasChanges = props.changes.length > 0
@@ -197,7 +295,10 @@ function Square(props: SquareProps) {
   const color = getColor(props.changes.length, isExcluded)
 
   return (
-    <Tooltip text={text} disabled={isExcluded || !props.active}>
+    <Tooltip
+      text={text}
+      disabled={isExcluded || !props.active || props.disableTooltip}
+    >
       <div className="px-0.5 py-1">
         <div
           className={cx(
@@ -207,7 +308,7 @@ function Square(props: SquareProps) {
           )}
           onClick={() => {
             if (hasChanges) {
-              props.setChangesDetails(props.changes)
+              props.setChangesDetails?.(props.changes)
             }
           }}
         />
@@ -231,7 +332,7 @@ function getText(changesNumber: number, date: Date) {
 
 function getColor(changesNumber: number, isExcluded: boolean) {
   if (isExcluded) {
-    return 'bg-gray-400'
+    return 'bg-gray-700'
   }
 
   const steps = {
@@ -255,6 +356,7 @@ interface YearSelectorProps {
   availableYears: number[]
   year: number
   setYear: (year: number) => void
+  isError?: boolean
 }
 
 function YearSelector(props: YearSelectorProps) {
@@ -264,25 +366,49 @@ function YearSelector(props: YearSelectorProps) {
   }
 
   return (
-    <div className="mt-6 flex flex-col gap-1">
-      {props.availableYears.map((year, i) => (
-        <button
-          key={i}
-          className={cx(
-            'px-2 py-1 text-2xs',
-            props.year === year && 'rounded bg-gray-300',
-          )}
-          onClick={() => props.setYear(year)}
-        >
-          {year}
-        </button>
-      ))}
-    </div>
+    <>
+      <div className="mb-4 inline-flex w-min gap-1 rounded-md bg-zinc-700 p-1 md:hidden">
+        {props.availableYears.map((year, i) => (
+          <button
+            key={i}
+            className={cx(
+              'rounded px-2 py-1.5 text-2xs',
+              props.year === year && 'bg-yellow-100 text-black',
+              props.isError && 'cursor-not-allowed opacity-30',
+            )}
+            onClick={() => props.setYear(year)}
+          >
+            {year}
+          </button>
+        ))}
+      </div>
+      <div className="mt-6 hidden flex-col gap-1.5 md:flex">
+        {props.availableYears.map((year, i) => (
+          <button
+            key={i}
+            className={cx(
+              'rounded-full px-2 py-1.5 text-2xs',
+              props.year === year
+                ? 'bg-yellow-100 text-black'
+                : 'bg-zinc-700 hover:bg-gray-200',
+              props.isError && 'cursor-not-allowed opacity-30',
+            )}
+            onClick={() => !props.isError && props.setYear(year)}
+          >
+            {year}
+          </button>
+        ))}
+      </div>
+    </>
   )
 }
 
-function VerticalDivider() {
-  return <div className="mb-3 mt-6 w-0 border-l border-zinc-500" />
+function VerticalDivider(props: { className?: string }) {
+  return (
+    <div
+      className={cx('mb-3 mt-6 w-0 border-l border-zinc-500', props.className)}
+    />
+  )
 }
 
 function getAllWeeks(year: number) {

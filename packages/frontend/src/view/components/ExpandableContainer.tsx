@@ -22,10 +22,10 @@ export function ExpandableContainer(props: Props) {
       >
         {props.children}
       </div>
-      <button
+      <div
         onClick={() => setIsExpanded(!isExpanded)}
         className={cx(
-          'flex w-full flex-row items-center justify-center gap-2 rounded-lg border border-yellow-100 p-3 text-xs text-yellow-100 transition-colors duration-300 hover:bg-yellow-100/10',
+          'flex w-full cursor-pointer flex-row items-center justify-center gap-2 rounded-lg border border-yellow-100 p-3 text-xs text-yellow-100 transition-colors duration-300 hover:bg-yellow-100/10',
           isExpanded && 'mt-4',
         )}
       >
@@ -35,7 +35,7 @@ export function ExpandableContainer(props: Props) {
           onClick={() => setIsExpanded(!isExpanded)}
           isExpanded={isExpanded}
         />
-      </button>
+      </div>
     </div>
   )
 }

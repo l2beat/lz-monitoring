@@ -26,7 +26,12 @@ const CommonDiscoveryStatus = z.object({
       chainId: branded(z.number(), ChainId),
     }),
   ),
-  lastDiscoveredBlock: z.number().nullable(),
+  lastDiscoveredBlock: z
+    .object({
+      timestamp: branded(z.number(), (t) => new UnixTime(t)),
+      blockNumber: z.number(),
+    })
+    .nullable(),
   indexerStates: z.array(
     z.object({
       id: z.string(),

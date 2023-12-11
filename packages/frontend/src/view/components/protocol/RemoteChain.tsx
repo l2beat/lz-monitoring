@@ -46,7 +46,7 @@ export function RemoteChainComponent({
       : {}
 
   return (
-    <div className="rounded-lg bg-[#35353A]">
+    <div className="rounded-lg bg-zinc-300">
       <Row
         className="px-6"
         label="Remote Chain"
@@ -58,7 +58,7 @@ export function RemoteChainComponent({
               {...nullableDefault}
             />
           ) : (
-            <div className="text-right text-gray-15">
+            <div className="text-right text-gray-100">
               There are no remote configurations for this chain
             </div>
           )
@@ -122,7 +122,7 @@ export function RemoteChainComponent({
 
           <Block title="Default adapter params">
             <div className="grid grid-cols-adapter-params overflow-x-auto">
-              <div className="col-span-4 grid min-w-[800px] grid-cols-adapter-params rounded bg-gray-300 py-3 text-center text-[13px] font-semibold text-[#AEAEAE]">
+              <div className="col-span-4 grid min-w-[800px] grid-cols-adapter-params rounded bg-gray-600 py-3 text-center text-[13px] font-semibold text-gray-50">
                 <span className="px-6">Proof Type</span>
                 <span>Version</span>
                 <span>Value (Gas)</span>
@@ -134,7 +134,7 @@ export function RemoteChainComponent({
                 )
 
                 return (
-                  <div className="col-span-4 my-2 grid grid-cols-adapter-params items-center justify-center border-b border-gray-200 text-center text-xs last:border-none">
+                  <div className="col-span-4 my-2 grid grid-cols-adapter-params items-center justify-center border-b border-gray-500 text-center text-xs last:border-none">
                     <span>{adapterParams.proofType}</span>
                     <span>{unpacked[0]}</span>
                     <span>{unpacked[1]}</span>
@@ -187,15 +187,15 @@ function Block({
   children: React.ReactNode
 }) {
   return (
-    <div className="flex flex-col border-t border-[#4B4E51] px-6 py-3">
-      <span className="pb-3 text-sm font-medium text-gray-15">{title}</span>
+    <div className="flex flex-col border-t border-zinc-400 px-6 py-3">
+      <span className="pb-3 text-sm font-medium text-gray-100">{title}</span>
       <div className="flex flex-col md:gap-2">{children}</div>
     </div>
   )
 }
 
 function Section({ children }: { children: React.ReactNode }) {
-  return <div className=" border-t border-[#4B4E51]">{children}</div>
+  return <div className=" border-t border-zinc-400">{children}</div>
 }
 
 /**

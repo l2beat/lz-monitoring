@@ -42,6 +42,7 @@ export function SafeMultisigTransaction({
   const decodedProperties = getDecodedProperties(transaction)
 
   const method = decodedProperties?.method ?? 'Could not be decoded ⚠️'
+  const signature = decodedProperties?.signature ?? 'Could not be decoded ⚠️'
   const callWithParams =
     decodedProperties?.callWithParams ?? 'Could not be decoded ⚠️'
   const params = decodedProperties?.params ?? []
@@ -51,8 +52,8 @@ export function SafeMultisigTransaction({
   return (
     <div
       className={cx(
-        'col-span-5 grid min-w-[800px] grid-cols-multisig border-b border-[#36393D] py-3 text-xs',
-        isExpanded ? 'rounded border-none bg-gray-75' : 'bg-gray-500',
+        'col-span-5 grid min-w-[800px] grid-cols-multisig border-b border-gray-700 py-3 text-xs',
+        isExpanded ? 'rounded border-none bg-gray-750' : 'bg-gray-800',
       )}
     >
       <div
@@ -100,7 +101,10 @@ export function SafeMultisigTransaction({
             param="Target"
             value={<BlockchainAddress address={EthereumAddress(target)} />}
           />
-          <TransactionProperty param="Method" value={<Code>{method}</Code>} />
+          <TransactionProperty
+            param="Function signature"
+            value={<Code>{signature}</Code>}
+          />
           <TransactionProperty
             param="Call with params"
             value={<Code>{callWithParams}</Code>}
@@ -115,7 +119,9 @@ export function SafeMultisigTransaction({
               value={
                 <Code>
                   {params.map((inlineSummary) => (
-                    <span className="leading-5">{inlineSummary}</span>
+                    <span className="leading-5">
+                      {paramToSummary(inlineSummary).concat('\n')}
+                    </span>
                   ))}
                 </Code>
               }
@@ -141,7 +147,7 @@ function getDecodedProperties(tx: SafeMultisigTransaction) {
       method: decodedCall.method,
       signature: decodedCall.signature,
       callWithParams: decodedCall.functionCall,
-      params: decodedCall.params.map(paramToSummary),
+      params: decodedCall.params,
     }
   }
 
@@ -156,8 +162,8 @@ function TransactionProperty({
   value: React.ReactNode
 }) {
   return (
-    <div className="flex w-full flex-row border-t border-[#4B4E51] py-4 pl-12 pr-8">
-      <div className="w-1/5 text-sm font-medium text-gray-15">{param}</div>
+    <div className="flex w-full flex-row border-t border-zinc-400 py-4 pl-12 pr-8">
+      <div className="w-1/5 text-sm font-medium text-gray-100">{param}</div>
       <div className="w-4/5 text-xs">{value}</div>
     </div>
   )
