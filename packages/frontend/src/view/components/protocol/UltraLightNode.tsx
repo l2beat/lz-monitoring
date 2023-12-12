@@ -34,7 +34,7 @@ export function UltraLightNodeContract(props: Props): JSX.Element {
         <Subsection>
           <Row
             label={
-              <InfoTooltip text="The owner of the contract. Allowed to change the following values: the destination UltraLightNodeV2 library, the enabled outbound proof types, the available proof libraries, the default adapter parameters, and the default app config.">
+              <InfoTooltip text="The owner of the contract. Allowed to change the following values: the destination UltraLightNodeV2 library, the enabled outbound proof types, the available proof libraries, the default adapter parameters, the default app config, the Treasury contract address, and the LayerZero token. Allowed to withdraw fees from the Treasury contract.">
                 Owner
               </InfoTooltip>
             }

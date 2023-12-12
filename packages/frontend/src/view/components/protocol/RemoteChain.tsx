@@ -47,7 +47,7 @@ export function RemoteChainComponent(props: Props): JSX.Element | null {
       <Row
         className="px-6"
         label={
-          <InfoTooltip text="List of destination chains decoding is supported for by this site.">
+          <InfoTooltip text="List of destination chains supported by this site.">
             Remote Chain
           </InfoTooltip>
         }
@@ -70,7 +70,7 @@ export function RemoteChainComponent(props: Props): JSX.Element | null {
         <>
           <Block
             title={
-              <InfoTooltip text="The  default config parameters. The owner of UltraLightNodeV2 can set a new default application configuration. Default parameters are used if the User Application did not set its own configuration for a specific chain pathway.">
+              <InfoTooltip text="The default config parameters. Default parameters are used if the User Application did not set its configuration for a specific chain pathway. This value can be changed by the owner of ULNv2.">
                 Default app config
               </InfoTooltip>
             }
@@ -134,7 +134,7 @@ export function RemoteChainComponent(props: Props): JSX.Element | null {
               dense
               className="md:pl-7"
               label={
-                <InfoTooltip text="A contract address that can be notified to move a block header. It writes a commitment for the messages on the destination chain.">
+                <InfoTooltip text="An address allowed to advance a block header. The oracle moves a requested block header from a source chain to a destination chain. It writes a commitment for the messages on the destination chain.">
                   Oracle
                 </InfoTooltip>
               }
@@ -149,7 +149,7 @@ export function RemoteChainComponent(props: Props): JSX.Element | null {
               dense
               className="md:pl-7"
               label={
-                <InfoTooltip text="Works with tandem with an Oracle to transmit messages between chains. By default, User Applications will use LayerZero Relayer which can be changed within the User Application's configuration.">
+                <InfoTooltip text="Works in tandem with an Oracle to transmit messages between chains. Relayer proves the message inclusion in the source chain to the destination chain.">
                   Relayer
                 </InfoTooltip>
               }
@@ -163,7 +163,7 @@ export function RemoteChainComponent(props: Props): JSX.Element | null {
 
           <Block
             title={
-              <InfoTooltip text="Adapter Parameters are a bytes-array used for specifying the amount of gas on the destination chain to send for an application to use. If this parameter is left blank or passed as 0x0, then defaults are inherited and used. The owner of UltraLightNodeV2 can set new default parameters.">
+              <InfoTooltip text="Adapter Parameters are a bytes-array used for specifying the amount of gas on the destination chain to send for an application to use.">
                 Default adapter params
               </InfoTooltip>
             }

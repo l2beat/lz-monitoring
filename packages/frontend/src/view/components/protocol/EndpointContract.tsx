@@ -48,7 +48,7 @@ export function EndpointContract(props: Props): JSX.Element {
             label={
               <InfoTooltip
                 text={
-                  'The default messaging library.\n The contract handles the message payload packing on the source chain. The owner of the Endpoint contract can set a new default send library version. The version is a number, corresponding to an index in the libraryLookup array.'
+                  'The default messaging library. The contract handles the message payload packing on the source chain. The owner of the Endpoint contract can change this value.'
                 }
               >
                 Default send library
@@ -58,7 +58,7 @@ export function EndpointContract(props: Props): JSX.Element {
           />
           <Row
             label={
-              <InfoTooltip text="The default messaging library. The contract handles the message payload verification on the destination chain. The owner of the Endpoint contract can set a new default received library version. The version is a number, corresponding to an index in the libraryLookup array.">
+              <InfoTooltip text="The default messaging library. The contract handles the message payload verification on the destination chain. The owner of the Endpoint contract can change this value.">
                 Default receive library
               </InfoTooltip>
             }
