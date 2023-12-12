@@ -193,9 +193,18 @@ function getRemoteChains(ulnV2: ContractParameters): RemoteChain[] {
     assert(appConfig.oracle, 'Oracle not found for chain ' + lzChainId)
     assert(appConfig.relayer, 'Relayer not found for chain ' + lzChainId)
 
-    const inboundProofLibrary = inboundProofLibraries[lzChainIdNumber]
+    const inboundProofLibraryValue = inboundProofLibraries[lzChainIdNumber]
     assert(
-      inboundProofLibrary !== undefined,
+      inboundProofLibraryValue !== undefined,
+      'Inbound proof library not found for chain ' + lzChainId,
+    )
+    const inboundProofLibraryMap = Array.isArray(inboundProofLibraryValue)
+      ? inboundProofLibraryValue.map(EthereumAddress)
+      : [EthereumAddress(inboundProofLibraryValue)]
+    const inboundProofLibraryAddress =
+      inboundProofLibraryMap[+appConfig.inboundProofLib - 1]
+    assert(
+      inboundProofLibraryAddress !== undefined,
       'Inbound proof library not found for chain ' + lzChainId,
     )
 
@@ -214,7 +223,10 @@ function getRemoteChains(ulnV2: ContractParameters): RemoteChain[] {
       lzChainId: lzChainIdNumber,
       uln: bytes32ToAddress(Bytes.fromHex(uln)),
       defaultAppConfig: {
-        inboundProofLib: +appConfig.inboundProofLib,
+        inboundProofLib: {
+          version: +appConfig.inboundProofLib,
+          address: inboundProofLibraryAddress,
+        },
         inboundProofConfirm: +appConfig.inboundBlockConfirm,
         outboundProofType: +appConfig.outboundProofType,
         outboundBlockConfirm: +appConfig.outboundBlockConfirm,
@@ -225,9 +237,6 @@ function getRemoteChains(ulnV2: ContractParameters): RemoteChain[] {
       supportedOutboundProof: Array.isArray(supportedOutboundProof)
         ? supportedOutboundProof.map(Number)
         : [Number(supportedOutboundProof)],
-      inboundProofLibrary: Array.isArray(inboundProofLibrary)
-        ? inboundProofLibrary.map(EthereumAddress)
-        : [EthereumAddress(inboundProofLibrary)],
     })
   }
 

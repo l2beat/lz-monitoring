@@ -10,35 +10,31 @@ import { Row } from '../Row'
 import { toDropdownOption } from './utils'
 
 interface Props {
-  remoteChains?: RemoteChain[]
+  remoteChains: RemoteChain[]
 }
 
-export function RemoteChainComponent({
-  remoteChains,
-}: Props): JSX.Element | null {
+export function RemoteChainComponent(props: Props): JSX.Element | null {
   const [selectedRemoteChain, setSelectedRemoteChain] = useChainQueryParam({
     paramName: 'remote-chain',
   })
 
-  if (!remoteChains) {
-    return null
-  }
-
   function onDropdownSelect(option: DropdownOption): void {
-    const chain = remoteChains?.find((chain) => chain.name === option.value)
+    const chain = props.remoteChains.find(
+      (chain) => chain.name === option.value,
+    )
 
     setSelectedRemoteChain(chain ? ChainId.fromName(chain.name) : null)
   }
 
-  const dropdownOptions = remoteChains.map(toDropdownOption)
+  const dropdownOptions = props.remoteChains.map(toDropdownOption)
 
   const remoteChain = selectedRemoteChain
-    ? remoteChains.find(
+    ? props.remoteChains.find(
         (chain) => chain.name === ChainId.getName(selectedRemoteChain),
       )
     : null
 
-  const hasAnyRemoteConfigurations = remoteChains.length > 0
+  const hasAnyRemoteConfigurations = props.remoteChains.length > 0
 
   const nullableDefault =
     selectedRemoteChain && hasAnyRemoteConfigurations
@@ -73,20 +69,30 @@ export function RemoteChainComponent({
               dense
               className="md:pl-7"
               label="Inbound proof library"
-              value={remoteChain.defaultAppConfig.inboundProofLib}
+              value={
+                <span>
+                  {remoteChain.defaultAppConfig.inboundProofLib.version}{' '}
+                  <BlockchainAddress
+                    className="text-gray-100"
+                    address={
+                      remoteChain.defaultAppConfig.inboundProofLib.address
+                    }
+                  />
+                </span>
+              }
             />
             <Row
               hideBorder
               dense
               className="md:pl-7"
-              label="Inbound proof confirm"
+              label="Inbound proof confirmations"
               value={remoteChain.defaultAppConfig.inboundProofConfirm}
             />
             <Row
               hideBorder
               dense
               className="md:pl-7"
-              label="Outbound block confirm"
+              label="Outbound block confirmations"
               value={remoteChain.defaultAppConfig.outboundBlockConfirm}
             />
             <Row

@@ -12,6 +12,8 @@ interface TemplateVariables {
   addresses: {
     ultraLightNodeV2: string
     endpoint: string
+    stargateToken?: string
+    stargateBridge?: string
     layerZeroMultisig?: string
   }
 }
@@ -31,12 +33,28 @@ function createConfigFromTemplate(
       unsafeAddresses.layerZeroMultisig !== undefined
         ? EthereumAddress(unsafeAddresses.layerZeroMultisig).toString()
         : undefined,
+    stargateToken: unsafeAddresses.stargateToken
+      ? EthereumAddress(unsafeAddresses.stargateToken).toString()
+      : undefined,
+    stargateBridge: unsafeAddresses.stargateBridge
+      ? EthereumAddress(unsafeAddresses.stargateBridge).toString()
+      : undefined,
   }
 
   // Since some on-chain LZs does not support multisig
   const multisigNameEntry = addresses.layerZeroMultisig
     ? {
         [addresses.layerZeroMultisig]: 'LayerZero Multisig',
+      }
+    : {}
+  const stargateBridgeNameEntry = addresses.stargateBridge
+    ? {
+        [addresses.stargateBridge]: 'Stargate Bridge',
+      }
+    : {}
+  const stargateTokenNameEntry = addresses.stargateToken
+    ? {
+        [addresses.stargateToken]: 'Stargate Token',
       }
     : {}
 
@@ -47,9 +65,17 @@ function createConfigFromTemplate(
     names: {
       [addresses.ultraLightNodeV2]: 'UltraLightNodeV2',
       [addresses.endpoint]: 'Endpoint',
+      ...stargateBridgeNameEntry,
+      ...stargateTokenNameEntry,
       ...multisigNameEntry,
     },
     overrides: {
+      'Stargate Token': {
+        ignoreDiscovery: true,
+      },
+      'Stargate Bridge': {
+        ignoreDiscovery: true,
+      },
       Endpoint: {
         ignoreInWatchMode: ['isReceivingPayload', 'isSendingPayload'],
         fields: {
@@ -106,7 +132,6 @@ function createConfigFromTemplate(
             groupBy: 'chainId',
             onlyValue: true,
             multipleInGroup: true,
-            ignoreRelative: true,
           },
           supportedOutboundProof: {
             type: 'stateFromEvent',

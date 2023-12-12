@@ -3,6 +3,7 @@ import {
   getBlockExplorerName,
   getExplorerAddressUrl,
 } from '@lz/libs'
+import cx from 'classnames'
 
 import { useAddressInfo } from '../../hooks/addressInfoContext'
 import { useChainId } from '../../hooks/chainIdContext'
@@ -13,6 +14,7 @@ import { Tooltip } from './Tooltip'
 
 interface Props {
   address: EthereumAddress
+  className?: string
   full?: boolean
   warnOnEoa?: string
 }
@@ -35,7 +37,7 @@ export function BlockchainAddress(props: Props) {
   return (
     <Copyable label="address" value={props.address.toString()}>
       {addressInfo && !addressInfo.verified && (
-        <Tooltip text="Address is not verified">
+        <Tooltip text="Source code is not verified">
           <UnverifiedIcon />
         </Tooltip>
       )}
@@ -48,20 +50,28 @@ export function BlockchainAddress(props: Props) {
 
       {addressInfo && !props.full ? (
         <>
-          <Tooltip text={props.address.toString()} className="md:hidden">
-            <a href={explorerUrl} target="_blank" className="underline">
-              {addressEllipsis(props.address)}
-            </a>{' '}
-          </Tooltip>
-          <Tooltip text={'Show on ' + explorerName} className="hidden md:block">
-            <a href={explorerUrl} target="_blank" className="underline">
-              {props.address.toString()}
-            </a>{' '}
-          </Tooltip>{' '}
+          <span className={props.className}>
+            <Tooltip text={props.address.toString()} className="md:hidden">
+              <a href={explorerUrl} target="_blank" className="underline">
+                {addressEllipsis(props.address)}
+              </a>
+            </Tooltip>
+            <Tooltip
+              text={'Show on ' + explorerName}
+              className="hidden md:block"
+            >
+              <a href={explorerUrl} target="_blank" className="underline">
+                {props.address.toString()}
+              </a>
+            </Tooltip>
+          </span>
           {addressInfo.name.length > 0 && (
-            <span className="whitespace-nowrap text-xs text-zinc-500">
-              ({addressInfo.name})
-            </span>
+            <>
+              {' '}
+              <span className="whitespace-nowrap text-xs text-zinc-500">
+                ({addressInfo.name})
+              </span>
+            </>
           )}
         </>
       ) : (
@@ -69,7 +79,10 @@ export function BlockchainAddress(props: Props) {
           <a
             href={explorerUrl}
             target="_blank"
-            className="block whitespace-nowrap font-mono underline"
+            className={cx(
+              'block whitespace-nowrap font-mono underline',
+              props.className,
+            )}
           >
             <span className="sm:hidden">{addressEllipsis(props.address)}</span>
             <span className="hidden sm:inline"> {props.address}</span>
