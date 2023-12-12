@@ -3,16 +3,14 @@ import cx from 'classnames'
 export function MinusIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg
-      strokeLinejoin="round"
-      width="18"
-      height="18"
-      viewBox="0 0 24 23"
+      width="10"
+      height="2"
+      viewBox="0 0 10 2"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
       {...props}
     >
-      <path
-        d="m21 11.75c0-.414-.336-.75-.75-.75h-16.5c-.414 0-.75.336-.75.75s.336.75.75.75h16.5c.414 0 .75-.336.75-.75z"
-        fillRule="nonzero"
-      />
+      <path d="M9.80469 0.158203V1.64258H0.0195312V0.158203H9.80469Z" />
     </svg>
   )
 }

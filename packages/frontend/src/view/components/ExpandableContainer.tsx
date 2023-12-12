@@ -31,7 +31,6 @@ export function ExpandableContainer(props: Props) {
       >
         <span>{expandText}</span>
         <ExpandButton
-          small
           onClick={() => setIsExpanded(!isExpanded)}
           isExpanded={isExpanded}
         />

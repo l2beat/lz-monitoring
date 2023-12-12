@@ -126,9 +126,9 @@ export class UnixTime {
   toMMDDYYYY(): string {
     // ex: November 1st, 2020
     const date = this.toDate()
-    const month = date.toLocaleString('default', { month: 'long' })
-    const day = date.getDate()
-    const year = date.getFullYear()
+    const month = getMonthName(date.getUTCMonth())
+    const day = date.getUTCDay()
+    const year = date.getUTCFullYear()
     return `${month} ${day}, ${year}`
   }
 
@@ -152,4 +152,27 @@ export class UnixTime {
       return false
     }
   }
+}
+
+function getMonthName(number: number): string {
+  if (number < 0 || number > 11) throw new Error('Invalid month number')
+  const months = [
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December',
+  ]
+
+  const month = months[number]
+  if (!month) throw new Error('Invalid month number')
+
+  return month
 }

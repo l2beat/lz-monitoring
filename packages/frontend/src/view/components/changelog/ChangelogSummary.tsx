@@ -11,14 +11,14 @@ import {
   Category,
   useChangelogCategories,
 } from '../../../hooks/useChangelogCategories'
-import { CloseIcon } from '../../icons/CloseIcon'
 import { WarningIcon } from '../../icons/WarningIcon'
 import { Tooltip } from '../Tooltip'
-import { ChangelogEntry } from './ChangelogEntry'
+import { ChangesDetails } from './ChangelogDetails'
 
 interface ChangelogSummaryProps {
   address: EthereumAddress
   showFilters?: boolean
+  groupedEntries?: boolean
 }
 
 export function ChangelogSummary(props: ChangelogSummaryProps) {
@@ -74,23 +74,19 @@ export function ChangelogSummary(props: ChangelogSummaryProps) {
           isLoading={isLoading}
           isError={isError}
         />
-        {changesDetails && (
-          <>
-            <div className="my-6 flex items-center justify-between">
-              <span className="font-medium">
-                {changesDetails[0]?.timestamp.toMMDDYYYY()}
-              </span>
-              <button onClick={() => setChangesDetails(null)}>
-                <CloseIcon />
-              </button>
-            </div>
-
-            {changesDetails.map((change, i) => (
-              <ChangelogEntry key={i} change={change} />
-            ))}
-          </>
-        )}
+        <ChangesDetails
+          className="hidden md:block"
+          changes={changesDetails}
+          setChangesDetails={setChangesDetails}
+          groupedEntries={props.groupedEntries}
+        />
       </div>
+      <ChangesDetails
+        className="block md:hidden"
+        changes={changesDetails}
+        setChangesDetails={setChangesDetails}
+        groupedEntries={props.groupedEntries}
+      />
     </>
   )
 }

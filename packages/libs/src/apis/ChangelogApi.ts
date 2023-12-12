@@ -32,6 +32,7 @@ export const ChangelogSummary = z.object({
 export type ChangelogSummary = z.infer<typeof ChangelogSummary>
 
 export const Change = z.object({
+  group: z.union([z.number(), z.literal('other')]),
   modificationType: ModificationType,
   parameterPath: z.array(z.string()),
   previousValue: z.nullable(z.string()),
