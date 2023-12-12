@@ -18,7 +18,7 @@ export function TransactionHash(props: Props) {
 
   return (
     <Copyable label="transaction hash" value={props.transactionHash}>
-      <span className="inline-block rounded-sm bg-blue-800 px-1 py-0.5 text-blue-500">
+      <span className="inline-block rounded-sm bg-blue-800 px-1 py-0.5 leading-none text-blue-500">
         <Tooltip text={props.transactionHash.toString()} className="md:hidden">
           <a href={explorerUrl} target="_blank" className="underline">
             {shortHash}

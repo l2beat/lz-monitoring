@@ -6,8 +6,8 @@ import {
 import cx from 'classnames'
 import React from 'react'
 
-import { MinusIcon } from '../../icons/MinusIcon'
-import { PlusIcon } from '../../icons/PlusIcon'
+import { SolidMinusIcon } from '../../icons/MinusIcon'
+import { SolidPlusIcon } from '../../icons/PlusIcon'
 import { BlockchainAddress } from '../BlockchainAddress'
 import { Code } from '../Code'
 import { ExecutionTimeline } from '../ExecutionTimeline'
@@ -69,8 +69,8 @@ export function SafeMultisigTransaction({
         </div>
         <StatusBadge status={txStatus} />
         <div>
-          <button className="flex h-[22px] w-[22px] items-center justify-center rounded bg-yellow-100 brightness-100 filter transition-all duration-300 hover:brightness-[120%]">
-            {isExpanded ? <MinusIcon /> : <PlusIcon />}
+          <button className="brightness-100 filter transition-all duration-300 hover:brightness-[120%]">
+            {isExpanded ? <SolidMinusIcon /> : <SolidPlusIcon />}
           </button>
         </div>
       </div>
