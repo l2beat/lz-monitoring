@@ -6,6 +6,7 @@ import { useChainId } from '../../../hooks/chainIdContext'
 import { useSafeApi } from '../../../hooks/useSafeApi'
 import { BlockchainAddress } from '../BlockchainAddress'
 import { Info } from '../Info'
+import { InfoTooltip } from '../InfoTooltip'
 import { PaginatedContainer, PaginationControls } from '../PaginatedContainer'
 import { ProtocolComponentCard } from '../ProtocolComponentCard'
 import { Row } from '../Row'
@@ -111,9 +112,20 @@ export function LayerZeroMultisig({
       {hasData && (
         <>
           <Subsection>
-            <Row label="Threshold" value={`${threshold}/${owners.length}`} />
             <Row
-              label="Owners"
+              label={
+                <InfoTooltip text="A required threshold of signatures for a transaction to be executed.">
+                  Threshold
+                </InfoTooltip>
+              }
+              value={`${threshold}/${owners.length}`}
+            />
+            <Row
+              label={
+                <InfoTooltip text="The addresses allowed to sign the messages from the MultiSig contract.">
+                  Owners
+                </InfoTooltip>
+              }
               value={
                 <div className="flex flex-col items-center gap-1 text-3xs md:items-start md:gap-2 md:text-left md:text-xs">
                   {owners.map((owner, i) => (
