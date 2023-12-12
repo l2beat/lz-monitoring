@@ -164,7 +164,7 @@ function GroupText(props: { group: string; changes: Change[] }) {
     <span className="mb-2 inline-block text-sm">
       <>
         {text} chain{' '}
-        <span className="bg-green-800 text-green-500 inline-block rounded-sm px-1 py-0.5">
+        <span className="inline-block rounded-sm bg-green-800 px-1 py-0.5 text-green-500">
           {endpointId}
           {chainId && ` (${getPrettyChainName(chainId)})`}
         </span>{' '}
@@ -181,7 +181,7 @@ function SingleChange(props: { change: Change }) {
   //TODO: maybe we can get the description for this key
 
   return (
-    <div className="bg-neutral-700 mt-2 rounded-lg">
+    <div className="mt-2 rounded-lg bg-neutral-700">
       <div
         className="flex cursor-pointer items-center justify-between px-4 py-3"
         onClick={() => setIsExpanded(!isExpanded)}
