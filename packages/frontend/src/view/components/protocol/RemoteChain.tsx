@@ -6,39 +6,36 @@ import { useChainQueryParam } from '../../../hooks/useChainQueryParam'
 import { BlockchainAddress } from '../BlockchainAddress'
 import { Code } from '../Code'
 import { Dropdown, DropdownOption } from '../Dropdown'
+import { InfoTooltip } from '../InfoTooltip'
 import { Row } from '../Row'
 import { toDropdownOption } from './utils'
 
 interface Props {
-  remoteChains?: RemoteChain[]
+  remoteChains: RemoteChain[]
 }
 
-export function RemoteChainComponent({
-  remoteChains,
-}: Props): JSX.Element | null {
+export function RemoteChainComponent(props: Props): JSX.Element | null {
   const [selectedRemoteChain, setSelectedRemoteChain] = useChainQueryParam({
     paramName: 'remote-chain',
   })
 
-  if (!remoteChains) {
-    return null
-  }
-
   function onDropdownSelect(option: DropdownOption): void {
-    const chain = remoteChains?.find((chain) => chain.name === option.value)
+    const chain = props.remoteChains.find(
+      (chain) => chain.name === option.value,
+    )
 
     setSelectedRemoteChain(chain ? ChainId.fromName(chain.name) : null)
   }
 
-  const dropdownOptions = remoteChains.map(toDropdownOption)
+  const dropdownOptions = props.remoteChains.map(toDropdownOption)
 
   const remoteChain = selectedRemoteChain
-    ? remoteChains.find(
+    ? props.remoteChains.find(
         (chain) => chain.name === ChainId.getName(selectedRemoteChain),
       )
     : null
 
-  const hasAnyRemoteConfigurations = remoteChains.length > 0
+  const hasAnyRemoteConfigurations = props.remoteChains.length > 0
 
   const nullableDefault =
     selectedRemoteChain && hasAnyRemoteConfigurations
@@ -49,7 +46,11 @@ export function RemoteChainComponent({
     <div className="rounded-lg bg-zinc-300">
       <Row
         className="px-6"
-        label="Remote Chain"
+        label={
+          <InfoTooltip text="List of destination chains supported by this site.">
+            Remote Chain
+          </InfoTooltip>
+        }
         value={
           hasAnyRemoteConfigurations ? (
             <Dropdown
@@ -67,40 +68,76 @@ export function RemoteChainComponent({
 
       {remoteChain && selectedRemoteChain && (
         <>
-          <Block title="Default app config">
+          <Block
+            title={
+              <InfoTooltip text="The default config parameters. Default parameters are used if the User Application did not set its configuration for a specific chain pathway. This value can be changed by the owner of ULNv2.">
+                Default app config
+              </InfoTooltip>
+            }
+          >
             <Row
               hideBorder
               dense
               className="md:pl-7"
-              label="Inbound proof library"
-              value={remoteChain.defaultAppConfig.inboundProofLib}
+              label={
+                <InfoTooltip text="The proof library used to decode and verify the received proofs.">
+                  Inbound proof library
+                </InfoTooltip>
+              }
+              value={
+                <span>
+                  {remoteChain.defaultAppConfig.inboundProofLib.version}{' '}
+                  <BlockchainAddress
+                    className="text-gray-100"
+                    address={
+                      remoteChain.defaultAppConfig.inboundProofLib.address
+                    }
+                  />
+                </span>
+              }
             />
             <Row
               hideBorder
               dense
               className="md:pl-7"
-              label="Inbound proof confirm"
+              label={
+                <InfoTooltip text="The number of block confirmations on the source chain for inbound messages. Serves the purpose of a reorg protection.">
+                  Inbound proof confirmations
+                </InfoTooltip>
+              }
               value={remoteChain.defaultAppConfig.inboundProofConfirm}
             />
             <Row
               hideBorder
               dense
               className="md:pl-7"
-              label="Outbound block confirm"
+              label={
+                <InfoTooltip text="The number of block confirmations for outbound messages. Serves the purpose of a reorg protection.">
+                  Outbound block confirmations
+                </InfoTooltip>
+              }
               value={remoteChain.defaultAppConfig.outboundBlockConfirm}
             />
             <Row
               hideBorder
               dense
               className="md:pl-7"
-              label="Outbound proof type"
+              label={
+                <InfoTooltip text="The proof library used to encode outbound messages and create proofs.">
+                  Outbound proof type
+                </InfoTooltip>
+              }
               value={remoteChain.defaultAppConfig.outboundProofType}
             />
             <Row
               hideBorder
               dense
               className="md:pl-7"
-              label="Oracle"
+              label={
+                <InfoTooltip text="An address allowed to advance a block header. The oracle moves a requested block header from a source chain to a destination chain. It writes a commitment for the messages on the destination chain.">
+                  Oracle
+                </InfoTooltip>
+              }
               value={
                 <BlockchainAddress
                   address={remoteChain.defaultAppConfig.oracle}
@@ -111,7 +148,11 @@ export function RemoteChainComponent({
               hideBorder
               dense
               className="md:pl-7"
-              label="Relayer"
+              label={
+                <InfoTooltip text="Works in tandem with an Oracle to transmit messages between chains. Relayer proves the message inclusion in the source chain to the destination chain.">
+                  Relayer
+                </InfoTooltip>
+              }
               value={
                 <BlockchainAddress
                   address={remoteChain.defaultAppConfig.relayer}
@@ -120,7 +161,13 @@ export function RemoteChainComponent({
             />
           </Block>
 
-          <Block title="Default adapter params">
+          <Block
+            title={
+              <InfoTooltip text="Adapter Parameters are a bytes-array used for specifying the amount of gas on the destination chain to send for an application to use.">
+                Default adapter params
+              </InfoTooltip>
+            }
+          >
             <div className="grid grid-cols-adapter-params overflow-x-auto">
               <div className="col-span-4 grid min-w-[800px] grid-cols-adapter-params rounded bg-gray-600 py-3 text-center text-[13px] font-semibold text-gray-50">
                 <span className="px-6">Proof Type</span>
@@ -149,7 +196,11 @@ export function RemoteChainComponent({
               dense
               hideBorder
               className="md:pl-7"
-              label="Supported outbound proof"
+              label={
+                <InfoTooltip text="The proof library for outbound messages. It is used to encode the Packets (messages sent between the chains). The owner of UltraLightNodeV2 can enable an already added proof type for a specific chain pathway.">
+                  Supported outbound proof
+                </InfoTooltip>
+              }
               value={
                 <div className="flex flex-col gap-3">
                   {remoteChain.supportedOutboundProof.map((proof) => (
@@ -165,7 +216,11 @@ export function RemoteChainComponent({
               dense
               hideBorder
               className="md:pl-7"
-              label="Ultra Light Node"
+              label={
+                <InfoTooltip text="Address of the UltraLightNode on the remote chain. Used during the proof validation - it handles message handling post authentication, and how to proceed with the transaction once the Oracles/Relayer delivers the packet. The owner of UltraLightNodeV2 can set a destination UltraLightNode library to use for a specific chain pathway.">
+                  Ultra Light Node
+                </InfoTooltip>
+              }
               value={
                 <ChainInfoContext.Provider value={selectedRemoteChain}>
                   <BlockchainAddress address={remoteChain.uln} />
@@ -183,7 +238,7 @@ function Block({
   title,
   children,
 }: {
-  title: string
+  title: React.ReactNode
   children: React.ReactNode
 }) {
   return (
