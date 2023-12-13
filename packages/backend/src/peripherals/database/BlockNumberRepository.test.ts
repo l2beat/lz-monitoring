@@ -81,6 +81,21 @@ describe(BlockNumberRepository.name, () => {
     expect(actual).toEqual(records.filter((r) => r.blockNumber <= deleteAfter))
   })
 
+  it('finds block number before', async () => {
+    const records = new Array(10).fill(null).map((_, i) => mockRecord(i))
+    await repository.addMany(records)
+
+    expect(await repository.findBlockNumberBefore(5, ChainId.ETHEREUM)).toEqual(
+      records[4],
+    )
+    expect(await repository.findBlockNumberBefore(0, ChainId.ETHEREUM)).toEqual(
+      undefined,
+    )
+    expect(
+      await repository.findBlockNumberBefore(110, ChainId.ETHEREUM),
+    ).toEqual(records.at(-1))
+  })
+
   it('gets by number', async () => {
     const record = mockRecord(1)
 
