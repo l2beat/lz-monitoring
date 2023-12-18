@@ -69,13 +69,12 @@ export class ChangelogController {
         (x) => x.blockNumber === blockNumber,
       )
       assert(fullChanges.length > 0, 'Timestamp and txHash not found')
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const firstChange = fullChanges[0]!
       changelog.push({
         blockNumber,
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        timestamp: fullChanges[0]!.timestamp,
-        possibleTxHashes: fullChanges
-          .map((x) => x.txHash)
-          .filter((x, i, a) => a.indexOf(x) === i),
+        timestamp: firstChange.timestamp,
+        possibleTxHashes: firstChange.txHashes,
         changes,
       })
     }
