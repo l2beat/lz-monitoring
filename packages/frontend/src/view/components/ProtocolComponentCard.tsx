@@ -37,7 +37,7 @@ export function ProtocolComponentCard({
         )}
       </div>
       {description && (
-        <div className="text-gray-25 mb-4 text-justify text-xs leading-5 md:mb-6 md:p-0 md:text-md">
+        <div className="mb-4 text-justify text-xs leading-5 text-gray-25 md:mb-6 md:p-0 md:text-md">
           {description}
         </div>
       )}

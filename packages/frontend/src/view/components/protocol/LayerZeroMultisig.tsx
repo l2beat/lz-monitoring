@@ -152,7 +152,7 @@ export function LayerZeroMultisig({
             </div>
 
             <div className="overflow-x-auto">
-              <div className="grid-cols-multisig-small col-span-5 grid rounded bg-gray-600 py-3 text-left text-[13px] font-semibold text-gray-50 md:min-w-[800px] md:grid-cols-multisig">
+              <div className="col-span-5 grid grid-cols-multisig-small rounded bg-gray-600 py-3 text-left text-[13px] font-semibold text-gray-50 md:min-w-[800px] md:grid-cols-multisig">
                 <div className="px-4 md:px-6">TIME</div>
                 <div className="hidden md:block">METHOD</div>
                 <div>

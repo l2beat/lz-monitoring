@@ -168,8 +168,8 @@ export function RemoteChainComponent(props: Props): JSX.Element | null {
               </InfoTooltip>
             }
           >
-            <div className="grid-cols-adapter-params-small mt-2 grid w-full overflow-x-auto rounded border border-zinc-650 md:grid-cols-adapter-params">
-              <div className="grid-cols-adapter-params-small col-span-full grid bg-zinc-650 py-3 text-center text-3xs font-semibold text-zinc-200 md:min-w-[800px] md:grid-cols-adapter-params md:text-2xs">
+            <div className="mt-2 grid w-full grid-cols-adapter-params-small overflow-x-auto rounded border border-zinc-650 md:grid-cols-adapter-params">
+              <div className="col-span-full grid grid-cols-adapter-params-small bg-zinc-650 py-3 text-center text-3xs font-semibold text-zinc-200 md:min-w-[800px] md:grid-cols-adapter-params md:text-2xs">
                 <span className="md:px-6">Proof Type</span>
                 <span>Version</span>
                 <span>Value (Gas)</span>
@@ -181,7 +181,7 @@ export function RemoteChainComponent(props: Props): JSX.Element | null {
                 )
 
                 return (
-                  <div className="grid-cols-adapter-params-small col-span-full grid items-center justify-center border-b border-zinc-650 py-2 text-center text-xs last:border-none md:grid-cols-adapter-params">
+                  <div className="col-span-full grid grid-cols-adapter-params-small items-center justify-center border-b border-zinc-650 py-2 text-center text-xs last:border-none md:grid-cols-adapter-params">
                     <span>{adapterParams.proofType}</span>
                     <span>{unpacked[0]}</span>
                     <span>{unpacked[1]}</span>
