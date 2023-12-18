@@ -220,7 +220,7 @@ export function getOwnershipForTransaction(
     .find((update) => update.fromTimestamp < new Date(submissionDate).valueOf())
 
   if (!ownershipForTime) {
-    throw new Error('Ownership for time not found')
+    throw new Error('Ownership for given time range not found')
   }
 
   return ownershipForTime.owners
