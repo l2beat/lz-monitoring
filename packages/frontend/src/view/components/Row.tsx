@@ -35,13 +35,13 @@ export function RowLabel({
   children: React.ReactNode
   dense?: boolean
 }) {
-  const widthRation = dense ? 'md:w-[30%]' : 'md:w-1/5'
+  const widthRatio = dense ? 'md:w-[30%]' : 'md:w-1/5'
 
   return (
     <div
       className={cx(
         'py-2 pr-2 text-sm font-medium leading-5 text-zinc-200 md:w-1/5 md:py-0',
-        widthRation,
+        widthRatio,
       )}
     >
       {children}
@@ -56,14 +56,14 @@ export function RowValue({
   children: React.ReactNode
   dense?: boolean
 }) {
-  const widthRation = dense ? 'md:w-[70%]' : 'md:w-4/5'
+  const widthRatio = dense ? 'md:w-[70%]' : 'md:w-4/5'
   const padding = dense ? 'md:py-1.5' : 'md:py-4 md:px-0'
 
   return (
     <div
       className={cx(
         'w-full text-ellipsis pb-2 font-mono text-sm md:text-left',
-        widthRation,
+        widthRatio,
         padding,
       )}
     >
