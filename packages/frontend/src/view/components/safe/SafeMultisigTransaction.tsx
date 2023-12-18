@@ -53,12 +53,12 @@ export function SafeMultisigTransaction({
   return (
     <div
       className={cx(
-        'grid-cols-multisig-small col-span-full border-b border-gray-700 py-3 text-xs last:rounded-b last:border-none md:min-w-[800px] md:grid-cols-multisig  ',
+        'col-span-full grid-cols-multisig-small border-b border-gray-700 py-3 text-xs last:rounded-b last:border-none md:min-w-[800px] md:grid-cols-multisig  ',
         isExpanded ? 'rounded border-none bg-gray-750' : 'bg-gray-800',
       )}
     >
       <div
-        className="grid-cols-multisig-small grid cursor-pointer md:min-w-[800px] md:grid-cols-multisig"
+        className="grid cursor-pointer grid-cols-multisig-small md:min-w-[800px] md:grid-cols-multisig"
         onClick={() => setIsExpanded(!isExpanded)}
       >
         <div className="flex items-center px-4 md:px-6">
