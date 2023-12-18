@@ -4,6 +4,7 @@ import { LoadingCover } from './status/LoadingCover'
 
 interface Props {
   title: React.ReactNode
+  badge: React.ReactNode
   description?: React.ReactNode
   subtitle?: React.ReactNode
   children?: React.ReactNode
@@ -13,6 +14,7 @@ interface Props {
 
 export function ProtocolComponentCard({
   title,
+  badge,
   children,
   subtitle,
   description,
@@ -29,7 +31,10 @@ export function ProtocolComponentCard({
       {isLoading && <LoadingCover />}
 
       <div className="flex flex-col justify-between md:mb-4 md:flex-row">
-        <h2 className="mb-4 w-full text-xl md:mb-0">{title}</h2>
+        <div className="mb-4 flex items-center gap-4 md:mb-0">
+          <h2 className="text-xl">{title}</h2>
+          <div>{badge}</div>
+        </div>
         {subtitle && (
           <span className="mb-4 text-ellipsis text-md text-zinc-500 md:mb-0 md:overflow-visible">
             {subtitle}
