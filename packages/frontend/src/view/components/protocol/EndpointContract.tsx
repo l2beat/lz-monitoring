@@ -7,6 +7,7 @@ import { InfoTooltip } from '../InfoTooltip'
 import { ProtocolComponentCard } from '../ProtocolComponentCard'
 import { Row } from '../Row'
 import { Subsection } from '../Subsection'
+import { UpdatableBadge } from './Badges'
 
 interface Props {
   address: EthereumAddress
@@ -21,6 +22,7 @@ export function EndpointContract(props: Props): JSX.Element {
   return (
     <ProtocolComponentCard
       title="Endpoint"
+      badge={<UpdatableBadge />}
       description="The Endpoint contract handles the cross-chain messages transmission, verification, and receipt. It routes messages to the correct messaging library and keeps all message payloads across versions. Ownership of the contract can be renounced by the owner."
       subtitle={<BlockchainAddress address={props.address} full />}
       isLoading={props.isLoading}
