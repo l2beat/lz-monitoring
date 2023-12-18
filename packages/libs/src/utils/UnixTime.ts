@@ -127,7 +127,7 @@ export class UnixTime {
     // ex: November 1st, 2020
     const date = this.toDate()
     const month = getMonthName(date.getUTCMonth())
-    const day = date.getUTCDay()
+    const day = date.getUTCDate()
     const year = date.getUTCFullYear()
     return `${month} ${day}, ${year}`
   }
