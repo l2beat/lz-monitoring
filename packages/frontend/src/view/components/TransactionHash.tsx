@@ -6,7 +6,7 @@ import { Tooltip } from './Tooltip'
 
 interface Props {
   transactionHash: string
-  full?: boolean
+  noStyle?: boolean
 }
 
 export function TransactionHash(props: Props) {
@@ -16,9 +16,13 @@ export function TransactionHash(props: Props) {
 
   const shortHash = transactionHashEllipsis(props.transactionHash)
 
+  const className = props.noStyle
+    ? ''
+    : 'inline-block rounded-sm bg-blue-800 px-1 py-0.5 leading-none text-blue-500'
+
   return (
     <Copyable label="transaction hash" value={props.transactionHash}>
-      <span className="inline-block rounded-sm bg-blue-800 px-1 py-0.5 leading-none text-blue-500">
+      <span className={className}>
         <Tooltip text={props.transactionHash.toString()} className="md:hidden">
           <a href={explorerUrl} target="_blank" className="underline">
             {shortHash}

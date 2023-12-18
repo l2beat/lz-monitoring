@@ -43,9 +43,9 @@ export function RemoteChainComponent(props: Props): JSX.Element | null {
       : {}
 
   return (
-    <div className="rounded-lg bg-zinc-300">
+    <div className="mx-2 rounded-lg bg-zinc-300">
       <Row
-        className="px-6"
+        className="!px-3 md:!px-6"
         label={
           <InfoTooltip text="List of destination chains supported by this site.">
             Remote Chain
@@ -78,7 +78,7 @@ export function RemoteChainComponent(props: Props): JSX.Element | null {
             <Row
               hideBorder
               dense
-              className="md:pl-7"
+              className="!p-0 md:!pl-7 md:!pr-4"
               label={
                 <InfoTooltip text="The proof library used to decode and verify the received proofs.">
                   Inbound proof library
@@ -99,7 +99,7 @@ export function RemoteChainComponent(props: Props): JSX.Element | null {
             <Row
               hideBorder
               dense
-              className="md:pl-7"
+              className="!p-0 md:!pl-7 md:!pr-4"
               label={
                 <InfoTooltip text="The number of block confirmations on the source chain for inbound messages. Serves the purpose of a reorg protection.">
                   Inbound proof confirmations
@@ -110,7 +110,7 @@ export function RemoteChainComponent(props: Props): JSX.Element | null {
             <Row
               hideBorder
               dense
-              className="md:pl-7"
+              className="!p-0 md:!pl-7 md:!pr-4"
               label={
                 <InfoTooltip text="The number of block confirmations for outbound messages. Serves the purpose of a reorg protection.">
                   Outbound block confirmations
@@ -121,7 +121,7 @@ export function RemoteChainComponent(props: Props): JSX.Element | null {
             <Row
               hideBorder
               dense
-              className="md:pl-7"
+              className="!p-0 md:!pl-7 md:!pr-4"
               label={
                 <InfoTooltip text="The proof library used to encode outbound messages and create proofs.">
                   Outbound proof type
@@ -132,7 +132,7 @@ export function RemoteChainComponent(props: Props): JSX.Element | null {
             <Row
               hideBorder
               dense
-              className="md:pl-7"
+              className="!p-0 md:!pl-7 md:!pr-4"
               label={
                 <InfoTooltip text="An address allowed to advance a block header. The oracle moves a requested block header from a source chain to a destination chain. It writes a commitment for the messages on the destination chain.">
                   Oracle
@@ -147,7 +147,7 @@ export function RemoteChainComponent(props: Props): JSX.Element | null {
             <Row
               hideBorder
               dense
-              className="md:pl-7"
+              className="!p-0 md:!pl-7 md:!pr-4"
               label={
                 <InfoTooltip text="Works in tandem with an Oracle to transmit messages between chains. Relayer proves the message inclusion in the source chain to the destination chain.">
                   Relayer
@@ -168,12 +168,12 @@ export function RemoteChainComponent(props: Props): JSX.Element | null {
               </InfoTooltip>
             }
           >
-            <div className="grid grid-cols-adapter-params overflow-x-auto">
-              <div className="col-span-4 grid min-w-[800px] grid-cols-adapter-params rounded bg-gray-600 py-3 text-center text-[13px] font-semibold text-gray-50">
-                <span className="px-6">Proof Type</span>
+            <div className="grid-cols-adapter-params-small mt-2 grid w-full overflow-x-auto rounded border border-zinc-650 md:grid-cols-adapter-params">
+              <div className="grid-cols-adapter-params-small col-span-full grid bg-zinc-650 py-3 text-center text-3xs font-semibold text-zinc-200 md:min-w-[800px] md:grid-cols-adapter-params md:text-2xs">
+                <span className="md:px-6">Proof Type</span>
                 <span>Version</span>
                 <span>Value (Gas)</span>
-                <span>Raw</span>
+                <span className="hidden md:inline">Raw</span>
               </div>
               {remoteChain.defaultAdapterParams.map((adapterParams) => {
                 const unpacked = unpackAdapterParams(
@@ -181,11 +181,13 @@ export function RemoteChainComponent(props: Props): JSX.Element | null {
                 )
 
                 return (
-                  <div className="col-span-4 my-2 grid grid-cols-adapter-params items-center justify-center border-b border-gray-500 text-center text-xs last:border-none">
+                  <div className="grid-cols-adapter-params-small col-span-full grid items-center justify-center border-b border-zinc-650 py-2 text-center text-xs last:border-none md:grid-cols-adapter-params">
                     <span>{adapterParams.proofType}</span>
                     <span>{unpacked[0]}</span>
                     <span>{unpacked[1]}</span>
-                    <Code>{adapterParams.adapterParams}</Code>
+                    <Code className="hidden md:block">
+                      {adapterParams.adapterParams}
+                    </Code>
                   </div>
                 )
               })}
@@ -195,7 +197,7 @@ export function RemoteChainComponent(props: Props): JSX.Element | null {
             <Row
               dense
               hideBorder
-              className="md:pl-7"
+              className="!px-3 !py-4 md:!pl-7 md:!pr-4"
               label={
                 <InfoTooltip text="The proof library for outbound messages. It is used to encode the Packets (messages sent between the chains). The owner of UltraLightNodeV2 can enable an already added proof type for a specific chain pathway.">
                   Supported outbound proof
@@ -215,7 +217,7 @@ export function RemoteChainComponent(props: Props): JSX.Element | null {
             <Row
               dense
               hideBorder
-              className="md:pl-7"
+              className="!px-3 !py-4 md:!pl-7 md:!pr-4"
               label={
                 <InfoTooltip text="Address of the UltraLightNode on the remote chain. Used during the proof validation - it handles message handling post authentication, and how to proceed with the transaction once the Oracles/Relayer delivers the packet. The owner of UltraLightNodeV2 can set a destination UltraLightNode library to use for a specific chain pathway.">
                   Ultra Light Node
@@ -242,15 +244,15 @@ function Block({
   children: React.ReactNode
 }) {
   return (
-    <div className="flex flex-col border-t border-zinc-400 px-6 py-3">
-      <span className="pb-3 text-sm font-medium text-gray-100">{title}</span>
+    <div className="flex flex-col border-t border-zinc-400 px-3 py-4 md:px-6 md:py-3">
+      <span className="mb-1 text-sm font-medium md:mb-3">{title}</span>
       <div className="flex flex-col md:gap-2">{children}</div>
     </div>
   )
 }
 
 function Section({ children }: { children: React.ReactNode }) {
-  return <div className=" border-t border-zinc-400">{children}</div>
+  return <div className="border-t border-zinc-400">{children}</div>
 }
 
 /**

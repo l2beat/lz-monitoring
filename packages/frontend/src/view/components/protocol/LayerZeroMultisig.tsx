@@ -127,7 +127,7 @@ export function LayerZeroMultisig({
                 </InfoTooltip>
               }
               value={
-                <div className="flex flex-col items-center gap-1 text-3xs md:items-start md:gap-2 md:text-left md:text-xs">
+                <div className="flex flex-col items-start gap-2 text-sm">
                   {owners.map((owner, i) => (
                     <BlockchainAddress key={i} address={owner} />
                   ))}
@@ -151,11 +151,13 @@ export function LayerZeroMultisig({
               </span>
             </div>
 
-            <div className="mb-3 overflow-x-auto">
-              <div className="col-span-5 grid min-w-[800px] grid-cols-multisig rounded bg-gray-600 py-3 text-left text-[13px] font-semibold text-gray-50">
-                <div className="px-6">SUBMITTED</div>
-                <div>METHOD</div>
-                <div>CONFIRMATIONS</div>
+            <div className="overflow-x-auto">
+              <div className="grid-cols-multisig-small col-span-5 grid rounded bg-gray-600 py-3 text-left text-[13px] font-semibold text-gray-50 md:min-w-[800px] md:grid-cols-multisig">
+                <div className="px-4 md:px-6">TIME</div>
+                <div className="hidden md:block">METHOD</div>
+                <div>
+                  <span className="hidden md:inline">CONFIRMATIONS</span>
+                </div>
                 <div>STATUS</div>
                 <div />
               </div>

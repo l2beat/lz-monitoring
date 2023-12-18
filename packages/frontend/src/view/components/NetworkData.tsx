@@ -36,9 +36,9 @@ function DataBlock({
   value: React.ReactNode
 }) {
   return (
-    <div className="flex flex-1 flex-col items-center gap-1 rounded-lg bg-gray-800 px-2 py-4 md:pb-8 md:pt-6">
-      <label className="mb-3 text-xs text-gray-100">{label}</label>
-      <span className="text-md font-semibold md:text-xxl">{value}</span>
+    <div className="flex flex-1 flex-col items-center gap-2 rounded-lg bg-gray-800 px-2 py-4 md:gap-4 md:pb-8 md:pt-6">
+      <label className="text-xs text-gray-100">{label}</label>
+      <span className="text-lg font-semibold md:text-xxl">{value}</span>
     </div>
   )
 }

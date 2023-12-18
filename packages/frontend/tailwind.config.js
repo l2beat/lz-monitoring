@@ -5,7 +5,9 @@ module.exports = {
   theme: {
     extend: {
       gridTemplateColumns: {
-        multisig: '3fr 6fr 4fr 3fr 1fr',
+        multisig: '3fr 7fr 4fr 3fr 1fr',
+        'multisig-small': '3fr 1fr 3fr 1fr',
+        'adapter-params-small': '2fr 1fr 2fr',
         'adapter-params': '2fr 1fr 2fr 7fr',
       },
     },
@@ -25,6 +27,7 @@ module.exports = {
     },
     colors: {
       gray: {
+        25: '#CACACE',
         50: '#AEAEAE',
         100: '#868686',
         200: '#626262',
