@@ -107,11 +107,7 @@ export function LayerZeroMultisig({
 
   return (
     <ProtocolComponentCard
-      title={
-        <>
-          <span className="hidden md:inline">LayerZero </span>Multisig
-        </>
-      }
+      title={<Title />}
       badge={<GnosisSafeBadge />}
       subtitle={<BlockchainAddress address={multisigAddress} full />}
       description="Safe multi-signature contract managed by LayerZero. Owner of the Endpoint and the UltraLightNodeV2 contracts. Any configuration change must be made through the LayerZero multisig wallet. Transaction information is being fetched from the safe transaction service."
