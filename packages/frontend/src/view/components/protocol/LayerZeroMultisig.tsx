@@ -13,6 +13,7 @@ import { Row } from '../Row'
 import { SafeMultisigTransaction } from '../safe/SafeMultisigTransaction'
 import { Subsection } from '../Subsection'
 import { Warning } from '../Warning'
+import { GnosisSafeBadge } from './Badges'
 
 interface Props {
   multisigAddress: EthereumAddress
@@ -53,7 +54,8 @@ export function LayerZeroMultisig({
   if (isSafeLoading) {
     return (
       <ProtocolComponentCard
-        title="LayerZero Multisig"
+        title={<Title />}
+        badge={<GnosisSafeBadge />}
         subtitle={<Skeleton width={320} />}
         description={<Skeleton count={2} />}
       >
@@ -82,7 +84,7 @@ export function LayerZeroMultisig({
 
   if (isSafeError) {
     return (
-      <ProtocolComponentCard title="LayerZero Multisig">
+      <ProtocolComponentCard title={<Title />} badge={<GnosisSafeBadge />}>
         <Warning
           title="Error while reaching out to Safe Transaction Service"
           subtitle="Please try again later"
@@ -94,7 +96,7 @@ export function LayerZeroMultisig({
 
   if (!allTransactions || allTransactions.length === 0) {
     return (
-      <ProtocolComponentCard title="LayerZero Multisig">
+      <ProtocolComponentCard title={<Title />} badge={<GnosisSafeBadge />}>
         <Info
           title="No transactions have been executed"
           subtitle="The multisig contract has no transactions"
@@ -105,7 +107,12 @@ export function LayerZeroMultisig({
 
   return (
     <ProtocolComponentCard
-      title="LayerZero Multisig"
+      title={
+        <>
+          <span className="hidden md:inline">LayerZero </span>Multisig
+        </>
+      }
+      badge={<GnosisSafeBadge />}
       subtitle={<BlockchainAddress address={multisigAddress} full />}
       description="Safe multi-signature contract managed by LayerZero. Owner of the Endpoint and the UltraLightNodeV2 contracts. Any configuration change must be made through the LayerZero multisig wallet. Transaction information is being fetched from the safe transaction service."
     >
@@ -174,5 +181,13 @@ export function LayerZeroMultisig({
         </>
       )}
     </ProtocolComponentCard>
+  )
+}
+
+function Title() {
+  return (
+    <>
+      <span className="hidden md:inline">LayerZero </span>Multisig
+    </>
   )
 }
