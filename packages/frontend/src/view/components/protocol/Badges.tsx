@@ -6,8 +6,8 @@ export function UpdatableBadge(props: { className?: string }) {
   return (
     <Badge
       className={props.className}
-      color={'green'}
-      label={'Updatable'}
+      color="green"
+      label="Updatable"
       tooltipText="This contract's code is immutable. However, important parameters can be changed by updating the storage that acts as a configuration."
     />
   )
@@ -17,8 +17,8 @@ export function GnosisSafeBadge(props: { className?: string }) {
   return (
     <Badge
       className={props.className}
-      color={'blue'}
-      label={'GnosisSafe proxy'}
+      color="blue"
+      label="GnosisSafe proxy"
       tooltipText="The contract is a proxy to a GnosisSafe multisig."
     />
   )
