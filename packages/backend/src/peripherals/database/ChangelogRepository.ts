@@ -14,23 +14,13 @@ import { Database } from './shared/Database'
 
 export type ChangelogRecord = ChangelogEntry
 
-interface ChangelogSummaryRow {
-  target_address: string
-  unix_timestamp: Date
-  count: string
-}
-export interface ChangelogSummaryRecord {
-  address: EthereumAddress
-  count: number
-  lastChangeTimestamp: UnixTime
-}
 interface FullChangelogRow extends ChangelogRow {
   unix_timestamp: Date
-  tx_hash: string
+  tx_hashes: string[]
 }
 export interface FullChangelogRecord extends ChangelogRecord {
   timestamp: UnixTime
-  txHash: Hash256
+  txHashes: Hash256[]
 }
 
 export class ChangelogRepository extends BaseRepository {
@@ -53,43 +43,12 @@ export class ChangelogRepository extends BaseRepository {
     return rows.map(toRecord)
   }
 
-  async getChangesSummary(chainId: ChainId): Promise<ChangelogSummaryRecord[]> {
-    const knex = await this.knex()
-
-    const summaryRows = await knex
-      .with('changes', async (qb) => {
-        await qb
-          .select(
-            'target_address',
-            knex.raw('max(block_number) as max_block'),
-            // todo: we should count distinct transactions, not blocks
-            knex.raw('count(distinct block_number) as count'),
-          )
-          .from('changelog_entries')
-          .where('chain_id', chainId)
-          .groupBy('target_address')
-      })
-      .select<ChangelogSummaryRow[]>(
-        'target_address',
-        'unix_timestamp',
-        'count',
-      )
-      .from('changes')
-      .join('block_numbers', 'block_numbers.block_number', 'changes.max_block')
-
-    return summaryRows.map((row) => ({
-      address: EthereumAddress(row.target_address),
-      count: Number(row.count),
-      lastChangeTimestamp: UnixTime.fromDate(row.unix_timestamp),
-    }))
-  }
-
   async getFullChangelog(
     chainId: ChainId,
     address: EthereumAddress,
   ): Promise<FullChangelogRecord[]> {
     const knex = await this.knex()
-    const rows = await knex
+    const rows: FullChangelogRow[] = await knex
       .with('changes', async (qb) => {
         await qb
           .select('c.*', 'b.unix_timestamp')
@@ -98,14 +57,29 @@ export class ChangelogRepository extends BaseRepository {
           .andWhere('target_address', address.toString())
           .join('block_numbers as b', 'b.block_number', 'c.block_number')
       })
-      .select<FullChangelogRow[]>('e.tx_hash', 'changes.*')
+      .select<FullChangelogRow[]>(
+        knex.raw('ARRAY_AGG(e.tx_hash) AS tx_hashes'),
+        'changes.*',
+      )
       .from('changes')
       .leftJoin('events as e', 'e.block_number', 'changes.block_number')
+      .groupBy(
+        'changes.chain_id',
+        'changes.block_number',
+        'changes.target_address',
+        'changes.target_name',
+        'changes.parameter_name',
+        'changes.parameter_path',
+        'changes.modification_type',
+        'changes.previous_value',
+        'changes.current_value',
+        'changes.unix_timestamp',
+      )
 
     return rows.map((r) => ({
       ...toRecord(r),
       timestamp: UnixTime.fromDate(r.unix_timestamp),
-      txHash: Hash256(r.tx_hash),
+      txHashes: r.tx_hashes.map(Hash256),
     }))
   }
 

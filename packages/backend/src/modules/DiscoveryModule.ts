@@ -124,7 +124,6 @@ export function createDiscoveryModule({
 
   const discoveryController = new DiscoveryController(
     currentDiscoveryRepository,
-    changelogRepository,
   )
   const changelogController = new ChangelogController(
     changelogRepository,
