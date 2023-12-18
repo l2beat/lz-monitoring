@@ -36,13 +36,13 @@ export function ProtocolComponentCard({
           <div>{badge}</div>
         </div>
         {subtitle && (
-          <span className="mb-4 text-ellipsis text-2xs text-zinc-500 md:mb-0 md:overflow-visible md:text-md">
+          <span className="mb-4 text-ellipsis text-md text-zinc-500 md:mb-0 md:overflow-visible">
             {subtitle}
           </span>
         )}
       </div>
       {description && (
-        <div className="mb-4 text-justify text-sm leading-5 md:mb-6 md:p-0">
+        <div className="mb-4 text-justify text-xs leading-5 text-gray-25 md:mb-6 md:p-0 md:text-md">
           {description}
         </div>
       )}

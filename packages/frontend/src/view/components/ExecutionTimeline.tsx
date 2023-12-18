@@ -32,22 +32,18 @@ export function ExecutionTimeline({
       {outcomeToDescription(outcome)}
     </TimelineNode>
   )
-  const outcomeTimeline = <Timeline variant={outcomeVariant} />
 
   const approvalNodes = approvals.map((approval, i) => (
-    <>
-      <TimelineNode key={i} variant="orange" size="small">
-        <span className={cx('font-medium', variantToTextColor('orange'))}>
-          Approved
-        </span>
-        <BlockchainAddress address={approval.signer} />
-        <span className="text-gray-50">
-          {approval.date.toLocaleString()}{' '}
-          {approval.method && `via ${approval.method}`}
-        </span>
-      </TimelineNode>
-      <Timeline variant="orange" />
-    </>
+    <TimelineNode key={i} variant="orange" size="small">
+      <span className={cx('font-medium', variantToTextColor('orange'))}>
+        Approved
+      </span>
+      <BlockchainAddress address={approval.signer} />
+      <span className="text-gray-50">
+        {approval.date.toLocaleString()}{' '}
+        {approval.method && `via ${approval.method}`}
+      </span>
+    </TimelineNode>
   ))
 
   const submissionNode = (
@@ -60,9 +56,8 @@ export function ExecutionTimeline({
   )
 
   return (
-    <div className="mb-5 flex max-w-fit flex-col items-center">
+    <div className="flex max-w-fit flex-col pl-2">
       {outcomeNode}
-      {outcomeTimeline}
       {approvalNodes}
       {submissionNode}
     </div>
@@ -73,8 +68,16 @@ type Variant = 'green' | 'orange' | 'gray' | 'red'
 type Size = 'small' | 'large'
 
 function Timeline({ variant }: { variant: Variant }) {
+  if (variant === 'gray') {
+    return <div className="w-px" />
+  }
   return (
-    <div className={cx('h-[52px] w-px', variantToBackgroundColor(variant))} />
+    <div
+      className={cx(
+        'relative top-0.5 min-h-full w-px',
+        variantToBackgroundColor(variant),
+      )}
+    />
   )
 }
 
@@ -88,23 +91,23 @@ function TimelineNode({
   size: Size
 }) {
   const sizeClass = size === 'small' ? 'h-2.5 w-2.5' : 'h-[13px] w-[13px]'
-  const sizeOffset = size === 'small' ? '-top-0.5 left-5' : 'top-0 left-6'
+  const sizeOffset = size === 'small' ? '-left-[5.5px]' : '-left-[7px]'
 
   return (
-    <div
-      className={cx(
-        'rounded-full',
-        variantToBackgroundColor(variant),
-        sizeClass,
-      )}
-    >
-      <div
-        className={cx(
-          'relative left-5 flex w-[390px] flex-col gap-1.5',
-          sizeOffset,
-        )}
-      >
-        {children}
+    <div className="flex">
+      <Timeline variant={variant} />
+      <div className={cx('relative flex gap-1 md:gap-2', sizeOffset)}>
+        <span className="flex h-3.5 items-center">
+          <div
+            className={cx(
+              'rounded-full',
+              variantToBackgroundColor(variant),
+              sizeClass,
+            )}
+          />
+        </span>
+
+        <div className="flex flex-col gap-1.5 pb-2 md:pb-4">{children}</div>
       </div>
     </div>
   )

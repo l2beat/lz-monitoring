@@ -18,7 +18,7 @@ export function PaginatedContainer({ children, itemsPerPage, page }: Props) {
   return (
     <React.Fragment>
       {paginatedItems.map((item, i) => (
-        <div key={i}>{item}</div>
+        <React.Fragment key={i}>{item}</React.Fragment>
       ))}
     </React.Fragment>
   )

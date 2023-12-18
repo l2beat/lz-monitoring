@@ -9,8 +9,10 @@ import React from 'react'
 import { SolidMinusIcon } from '../../icons/MinusIcon'
 import { SolidPlusIcon } from '../../icons/PlusIcon'
 import { BlockchainAddress } from '../BlockchainAddress'
+import { BlockNumber } from '../BlockNumber'
 import { Code } from '../Code'
 import { ExecutionTimeline } from '../ExecutionTimeline'
+import { TransactionHash } from '../TransactionHash'
 import { decodeCall, paramToSummary, toUTC } from './utils'
 
 export function SafeMultisigTransaction({
@@ -34,7 +36,6 @@ export function SafeMultisigTransaction({
   const acquiredConfirmations = transaction.confirmations?.length ?? 0
   const stringConfirmations = `${acquiredConfirmations}/${amountOfOwners}`
   const nonce = transaction.nonce
-  const blockNumber = transaction.blockNumber ?? 'Not executed'
   const target = transaction.to
   const rawData = transaction.data ?? 'No Data'
 
@@ -52,33 +53,50 @@ export function SafeMultisigTransaction({
   return (
     <div
       className={cx(
-        'col-span-5 grid min-w-[800px] grid-cols-multisig border-b border-gray-700 py-3 text-xs',
+        'col-span-full grid-cols-multisig-small border-b border-gray-700 py-3 text-xs last:rounded-b last:border-none md:min-w-[800px] md:grid-cols-multisig  ',
         isExpanded ? 'rounded border-none bg-gray-750' : 'bg-gray-800',
       )}
     >
       <div
-        className="col-span-5 grid min-w-[800px] cursor-pointer grid-cols-multisig"
+        className="grid cursor-pointer grid-cols-multisig-small md:min-w-[800px] md:grid-cols-multisig"
         onClick={() => setIsExpanded(!isExpanded)}
       >
-        <div className="flex items-center px-6">
+        <div className="flex items-center px-4 md:px-6">
           {getTimeDifference(new Date(transaction.submissionDate))}
         </div>
-        <div className="flex items-center font-bold">{method}</div>
+        <div className="hidden items-center font-bold md:flex">{method}</div>
         <div className={cx('flex items-center', statusToTextColor(txStatus))}>
           {stringConfirmations}
         </div>
         <StatusBadge status={txStatus} />
-        <div>
-          <button className="brightness-100 filter transition-all duration-300 hover:brightness-[120%]">
-            {isExpanded ? <SolidMinusIcon /> : <SolidPlusIcon />}
-          </button>
-        </div>
+        <button className="brightness-100 filter transition-all duration-300 hover:brightness-[120%]">
+          {isExpanded ? <SolidMinusIcon /> : <SolidPlusIcon />}
+        </button>
       </div>
 
       {isExpanded && (
-        <div className="col-span-5 mt-3 cursor-auto">
+        <div className="col-span-full mt-3 cursor-auto">
           <TransactionProperty param="Submission date" value={submissionDate} />
           <TransactionProperty param="Execution date" value={executionDate} />
+          {transaction.blockNumber && (
+            <TransactionProperty
+              param="Block number"
+              value={
+                <BlockNumber blockNumber={transaction.blockNumber} noStyle />
+              }
+            />
+          )}
+          {transaction.transactionHash && (
+            <TransactionProperty
+              param="Transaction hash"
+              value={
+                <TransactionHash
+                  transactionHash={transaction.transactionHash}
+                  noStyle
+                />
+              }
+            />
+          )}
           <TransactionProperty
             param="Confirmations"
             value={
@@ -96,11 +114,11 @@ export function SafeMultisigTransaction({
             }
           />
           <TransactionProperty param="Nonce" value={nonce} />
-          <TransactionProperty param="Block number" value={blockNumber} />
           <TransactionProperty
             param="Target"
             value={<BlockchainAddress address={EthereumAddress(target)} />}
           />
+          <TransactionProperty param="Method" value={method} />
           <TransactionProperty
             param="Function signature"
             value={<Code>{signature}</Code>}
@@ -162,9 +180,11 @@ function TransactionProperty({
   value: React.ReactNode
 }) {
   return (
-    <div className="flex w-full flex-row border-t border-zinc-400 py-4 pl-12 pr-8">
-      <div className="w-1/5 text-sm font-medium text-gray-100">{param}</div>
-      <div className="w-4/5 text-xs">{value}</div>
+    <div className="flex w-full flex-col gap-2 border-t border-zinc-650 p-4 md:flex-row md:pl-12 md:pr-8">
+      <div className="whitespace-nowrap text-sm font-medium text-zinc-200 md:w-1/5">
+        {param}
+      </div>
+      <div className="text-xs md:w-4/5">{value}</div>
     </div>
   )
 }

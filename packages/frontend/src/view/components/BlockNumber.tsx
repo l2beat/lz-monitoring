@@ -6,7 +6,7 @@ import { Tooltip } from './Tooltip'
 
 interface Props {
   blockNumber: number
-  full?: boolean
+  noStyle?: boolean
 }
 
 export function BlockNumber(props: Props) {
@@ -14,15 +14,14 @@ export function BlockNumber(props: Props) {
   const explorerUrl = getExplorerBlockUrl(props.blockNumber, chainId)
   const explorerName = getBlockExplorerName(chainId)
 
+  const className = props.noStyle
+    ? ''
+    : 'inline-block rounded-sm bg-blue-800 px-1 py-0.5 leading-none text-blue-500'
+
   return (
     <Copyable label="block number" value={props.blockNumber.toString()}>
-      <span className="inline-block rounded-sm bg-blue-800 px-1 py-0.5 leading-none text-blue-500">
-        <Tooltip text={props.blockNumber.toString()} className="md:hidden">
-          <a href={explorerUrl} target="_blank" className="underline">
-            {props.blockNumber}
-          </a>{' '}
-        </Tooltip>
-        <Tooltip text={'Show on ' + explorerName} className="hidden md:block">
+      <span className={className}>
+        <Tooltip text={'Show on ' + explorerName}>
           <a href={explorerUrl} target="_blank" className="underline">
             {props.blockNumber}
           </a>{' '}
