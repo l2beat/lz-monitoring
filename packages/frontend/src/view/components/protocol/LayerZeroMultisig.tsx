@@ -11,6 +11,7 @@ import { PaginatedContainer, PaginationControls } from '../PaginatedContainer'
 import { ProtocolComponentCard } from '../ProtocolComponentCard'
 import { Row } from '../Row'
 import { SafeMultisigTransaction } from '../safe/SafeMultisigTransaction'
+import { deriveMultisigOwnership } from '../safe/utils'
 import { Subsection } from '../Subsection'
 import { Warning } from '../Warning'
 import { GnosisSafeBadge } from './Badges'
@@ -94,16 +95,21 @@ export function LayerZeroMultisig({
     )
   }
 
-  if (!allTransactions || allTransactions.length === 0) {
+  if (!allTransactions || allTransactions.length === 0 || !hasData) {
     return (
       <ProtocolComponentCard title={<Title />} badge={<GnosisSafeBadge />}>
         <Info
           title="No transactions have been executed"
-          subtitle="The multisig contract has no transactions"
+          subtitle="The multisig contract has no transactions or the data is insufficient"
         />
       </ProtocolComponentCard>
     )
   }
+
+  const derivedOwnershipHistory = deriveMultisigOwnership(
+    allTransactions,
+    owners.length,
+  )
 
   return (
     <ProtocolComponentCard
@@ -112,72 +118,68 @@ export function LayerZeroMultisig({
       subtitle={<BlockchainAddress address={multisigAddress} full />}
       description="Safe multi-signature contract managed by LayerZero. Owner of the Endpoint and the UltraLightNodeV2 contracts. Any configuration change must be made through the LayerZero multisig wallet. Transaction information is being fetched from the safe transaction service."
     >
-      {hasData && (
-        <>
-          <Subsection>
-            <Row
-              label={
-                <InfoTooltip text="A required threshold of signatures for a transaction to be executed.">
-                  Threshold
-                </InfoTooltip>
-              }
-              value={`${threshold}/${owners.length}`}
-            />
-            <Row
-              label={
-                <InfoTooltip text="The addresses allowed to sign the messages from the MultiSig contract.">
-                  Owners
-                </InfoTooltip>
-              }
-              value={
-                <div className="flex flex-col items-start gap-2 text-sm">
-                  {owners.map((owner, i) => (
-                    <BlockchainAddress key={i} address={owner} />
-                  ))}
-                </div>
-              }
-            />
-          </Subsection>
-          <Subsection>
-            <div className="flex flex-col py-3 text-md font-medium">
-              <div className="flex flex-col items-center justify-between gap-3 md:flex-row md:gap-0">
-                <h1>Multisig transactions</h1>
-                <PaginationControls
-                  amountOfPages={TOTAL_PAGES_AMOUNT}
-                  currentPage={page}
-                  setPage={setPage}
-                />
-              </div>
-              <span className="w-full pt-3 text-center text-xs text-gray-100 md:text-right">
-                {LOWER_PAGE_BOUND} - {UPPER_PAGE_BOUND} out of{' '}
-                {allTransactions.length} transactions
-              </span>
-            </div>
-
-            <div className="overflow-x-auto">
-              <div className="col-span-5 grid grid-cols-multisig-small rounded bg-gray-600 py-3 text-left text-[13px] font-semibold text-gray-50 md:min-w-[800px] md:grid-cols-multisig">
-                <div className="px-4 md:px-6">TIME</div>
-                <div className="hidden md:block">METHOD</div>
-                <div>
-                  <span className="hidden md:inline">CONFIRMATIONS</span>
-                </div>
-                <div>STATUS</div>
-                <div />
-              </div>
-              <PaginatedContainer itemsPerPage={TXS_PER_PAGE} page={page}>
-                {allTransactions.map((transaction, i) => (
-                  <SafeMultisigTransaction
-                    amountOfOwners={owners.length}
-                    transaction={transaction}
-                    allTransactions={allTransactions}
-                    key={i}
-                  />
+      <>
+        <Subsection>
+          <Row
+            label={
+              <InfoTooltip text="A required threshold of signatures for a transaction to be executed.">
+                Threshold
+              </InfoTooltip>
+            }
+            value={`${threshold}/${owners.length}`}
+          />
+          <Row
+            label={
+              <InfoTooltip text="The addresses allowed to sign the messages from the MultiSig contract.">
+                Owners
+              </InfoTooltip>
+            }
+            value={
+              <div className="flex flex-col items-center gap-1 text-3xs md:items-start md:gap-2 md:text-left md:text-xs">
+                {owners.map((owner, i) => (
+                  <BlockchainAddress key={i} address={owner} />
                 ))}
-              </PaginatedContainer>
+              </div>
+            }
+          />
+        </Subsection>
+        <Subsection>
+          <div className="flex flex-col py-3 text-md font-medium">
+            <div className="flex flex-col items-center justify-between gap-3 md:flex-row md:gap-0">
+              <h1>Multisig transactions</h1>
+              <PaginationControls
+                amountOfPages={TOTAL_PAGES_AMOUNT}
+                currentPage={page}
+                setPage={setPage}
+              />
             </div>
-          </Subsection>
-        </>
-      )}
+            <span className="w-full pt-3 text-center text-xs text-gray-100 md:text-right">
+              {LOWER_PAGE_BOUND} - {UPPER_PAGE_BOUND} out of{' '}
+              {allTransactions.length} transactions
+            </span>
+          </div>
+
+          <div className="mb-3 overflow-x-auto">
+            <div className="col-span-5 grid min-w-[800px] grid-cols-multisig rounded bg-gray-600 py-3 text-left text-[13px] font-semibold text-gray-50">
+              <div className="px-6">SUBMITTED</div>
+              <div>METHOD</div>
+              <div>CONFIRMATIONS</div>
+              <div>STATUS</div>
+              <div />
+            </div>
+            <PaginatedContainer itemsPerPage={TXS_PER_PAGE} page={page}>
+              {allTransactions.map((transaction, i) => (
+                <SafeMultisigTransaction
+                  transaction={transaction}
+                  allTransactions={allTransactions}
+                  derivedOwnershipHistory={derivedOwnershipHistory}
+                  key={i}
+                />
+              ))}
+            </PaginatedContainer>
+          </div>
+        </Subsection>
+      </>
     </ProtocolComponentCard>
   )
 }

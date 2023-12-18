@@ -1,8 +1,4 @@
-import {
-  EthereumAddress,
-  SafeMultisigTransaction,
-  SafeTransactionDecodedData,
-} from '@lz/libs'
+import { EthereumAddress, SafeMultisigTransaction } from '@lz/libs'
 import cx from 'classnames'
 import React from 'react'
 
@@ -13,16 +9,22 @@ import { BlockNumber } from '../BlockNumber'
 import { Code } from '../Code'
 import { ExecutionTimeline } from '../ExecutionTimeline'
 import { TransactionHash } from '../TransactionHash'
-import { decodeCall, paramToSummary, toUTC } from './utils'
+import {
+  getDecodedProperties,
+  getOwnershipForTransaction,
+  MultisigOwnershipHistory,
+  paramToSummary,
+  toUTC,
+} from './utils'
 
 export function SafeMultisigTransaction({
   transaction,
   allTransactions,
-  amountOfOwners,
+  derivedOwnershipHistory,
 }: {
   transaction: SafeMultisigTransaction
   allTransactions: SafeMultisigTransaction[]
-  amountOfOwners: number
+  derivedOwnershipHistory: MultisigOwnershipHistory
 }) {
   const [isExpanded, setIsExpanded] = React.useState(false)
   // Data obtained from transaction payload itself
@@ -34,7 +36,6 @@ export function SafeMultisigTransaction({
     ? toUTC(transaction.executionDate)
     : 'Not executed'
   const acquiredConfirmations = transaction.confirmations?.length ?? 0
-  const stringConfirmations = `${acquiredConfirmations}/${amountOfOwners}`
   const nonce = transaction.nonce
   const target = transaction.to
   const rawData = transaction.data ?? 'No Data'
@@ -49,6 +50,11 @@ export function SafeMultisigTransaction({
   const params = decodedProperties?.params ?? []
 
   const txStatus = getTransactionStatus(transaction, allTransactions)
+
+  const ownersAtSubmissionTime = getOwnershipForTransaction(
+    derivedOwnershipHistory,
+    submissionDate,
+  )
 
   return (
     <div
@@ -66,7 +72,7 @@ export function SafeMultisigTransaction({
         </div>
         <div className="hidden items-center font-bold md:flex">{method}</div>
         <div className={cx('flex items-center', statusToTextColor(txStatus))}>
-          {stringConfirmations}
+          {`${acquiredConfirmations} / ${ownersAtSubmissionTime}`}
         </div>
         <StatusBadge status={txStatus} />
         <button className="brightness-100 filter transition-all duration-300 hover:brightness-[120%]">
@@ -149,27 +155,6 @@ export function SafeMultisigTransaction({
       )}
     </div>
   )
-}
-
-function getDecodedProperties(tx: SafeMultisigTransaction) {
-  const parsingResult = SafeTransactionDecodedData.safeParse(tx.dataDecoded)
-
-  if (parsingResult.success && tx.dataDecoded) {
-    // SafeApi kit typings are wrong, string type applies only for transport layer
-    // string is later parsed into json object
-    const decodedCall = decodeCall(
-      tx.dataDecoded as unknown as NonNullable<SafeTransactionDecodedData>,
-    )
-
-    return {
-      method: decodedCall.method,
-      signature: decodedCall.signature,
-      callWithParams: decodedCall.functionCall,
-      params: decodedCall.params,
-    }
-  }
-
-  return null
 }
 
 function TransactionProperty({
