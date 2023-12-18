@@ -66,7 +66,7 @@ function ChangelogEntry(props: {
       <div className="flex grow flex-col gap-3 overflow-hidden">
         <span className="text-md leading-normal text-zinc-500">
           <ChangeIcon className="relative -top-px mr-2 inline-block md:hidden" />
-          {titleStart} in tx{' '}
+          {titleStart}
           <PossibleTransactions txs={props.change.possibleTxHashes} /> in block
           <BlockNumber blockNumber={props.change.blockNumber} /> at{' '}
           <span className="text-white">
@@ -89,22 +89,31 @@ function ChangelogEntry(props: {
 }
 
 function PossibleTransactions(props: { txs: Hash256[] }) {
-  if (props.txs.length === 0) {
-    return <>unknown</>
+  if (props.txs.length === 0 || props.txs.length > 2) {
+    return null
   }
 
   if (props.txs.length > 1) {
-    return props.txs
-      .map<React.ReactNode>((tx, i) => (
-        <TransactionHash key={i} transactionHash={tx.toString()} />
-      ))
-      .reduce<React.ReactNode[]>(
-        (acc, elem) => (acc.length === 0 ? [elem] : [...acc, ' or ', elem]),
-        [],
-      )
+    return (
+      <>
+        {' '}
+        in tx{' '}
+        {props.txs
+          .map<React.ReactNode>((tx, i) => (
+            <TransactionHash key={i} transactionHash={tx.toString()} />
+          ))
+          .reduce<React.ReactNode[]>(
+            (acc, elem) => (acc.length === 0 ? [elem] : [...acc, ' or ', elem]),
+            [],
+          )}
+      </>
+    )
   }
+
   return (
     <>
+      {' '}
+      in tx{' '}
       {/* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */}
       <TransactionHash transactionHash={props.txs[0]!.toString()} />
     </>
