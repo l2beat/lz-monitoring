@@ -2,13 +2,17 @@
 
 LayerZero Monitoring Backend - responsible for data indexing, transforming and aggregation. Exposes a REST API for frontend consumption.
 
+## Core concepts
+
+To explore core concepts and rationales please navigate to the [INFRA.md](INFRA.md)
+
 ## Setup
 
 ### Dependencies
 
 To run or develop the backend you need to install and build its dependencies. You can do it by running the following commands in the repository root:
 
-```
+```bash
 yarn
 yarn build
 ```
@@ -17,7 +21,7 @@ yarn build
 
 After the nodejs dependencies have been installed you should also install a Postgres database (v14). The recommended way is through docker using the commands below.
 
-```
+```bash
 docker run -d --name=lzmonitoring_postgres -p 5432:5432 -e POSTGRES_PASSWORD=password postgres:14
 docker exec -it lzmonitoring_postgres psql -U postgres -c 'CREATE DATABASE local'
 docker exec -it lzmonitoring_postgres psql -U postgres -c 'CREATE DATABASE test'
@@ -66,7 +70,3 @@ and then
 ```bash
 yarn start
 ```
-
-## Concepts
-
-To explore core concepts and rationales please navigate to the [INFRA.md](INFRA.md)
