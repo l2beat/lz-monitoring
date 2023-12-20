@@ -79,6 +79,8 @@ Here is the compiled list of indexers and its responsibilities each chain submod
 |            ⬇️            |
 |     ChangelogIndexer     |
 
+> To inspect how the indexers are connected, please check [**discovery module bootstrap**](src/modules/DiscoveryModule.ts)
+
 ## Discovery config description
 
 Each file in [**discovery configs folder**](src/config/discovery/) corresponds to one chain.
