@@ -56,7 +56,7 @@ Here is the compiled list of indexers and its responsibilities each chain submod
   - Saves full discovery output to the database
   - Each run utilize per-chain discovery configuration that can be found in [**discovery configs folder**](src/config/discovery/)
 - [`CurrentDiscoveryIndexer`](src/indexers//CurrentDiscoveryIndexer.ts)
-  - Combines latest discovery output and combines it with metadata ready to be utilized by frontend
+  - Combines latest discovery output with metadata to make it ready to be utilized by frontend
 - [`ChangelogIndexer`](src/indexers/ChangelogIndexer.ts)
   - Responsible for comparing previous outputs in form of pairs and deriving changes made to the protocol between paired outputs
   - Filters-out changes that are not whitelisted
