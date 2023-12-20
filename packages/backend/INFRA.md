@@ -81,6 +81,19 @@ Here is the compiled list of indexers and its responsibilities each chain submod
 
 ## Discovery config description
 
-Each chain must have its own configuration in `src/config/discovery/`
+Each file in [**discovery configs folder**](src/config/discovery/) corresponds to one chain.
+Each file defines runtime behavior of the discovery submodule.
+There, you have to define:
 
-See [**discovery configs folder**](src/config/discovery/) for more details.
+- `discovery config` - configuration for discovery indexer
+- `events` - configuration for event indexer
+- `whitelist` - addresses whitelist for changelog indexer
+
+Fortunately, most of those are handled by the template functions to easily generate config objects.
+
+If you have discovery config defined, now you can glue together all the pieces and create final discovery submodule configuration.
+
+It takes place in [common configuration file](packages/backend/src/config/config.common.ts)
+Each submodule config is enumerated in `modules` property, where you supply discovery descriptors, `.env`-based chain-metadata such as chain name, chain meta and explorer url.
+
+Chain name and explorer name will template configuration to require `.env variables` prefixed by provided values.
