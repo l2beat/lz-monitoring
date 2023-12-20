@@ -1,4 +1,4 @@
-# @lz/backend Infrastructure and Concepts
+# Infrastructure and Concepts
 
 Before you start working on the backend it is great to familiarize yourself with core concepts.
 
