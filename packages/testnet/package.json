@@ -22,7 +22,7 @@
     "lz-testnet": "./bin.js"
   },
   "dependencies": {
-    "@l2beat/backend-tools": "0.3.0",
+    "@l2beat/backend-tools": "0.5.0",
     "ethers": "5.7.2",
     "ganache": "7.9.1"
   },

@@ -17,6 +17,7 @@ function getTestnet(logger: Logger) {
           balance: 10_000n * 10n ** 18n,
           secretKey,
         })),
+        unlockedAccounts: options.unlockedAccounts,
       },
       logging: {
         quiet: true,
