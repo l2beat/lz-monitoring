@@ -39,24 +39,32 @@ Here is the compiled list of indexers and its responsibilities each chain submod
   - The only one with **no state persistence**
 
 - [`BlockNumberIndexer`](src/indexers/BlockNumberIndexer.ts)
+
   - Responsible for fetching block every tick.
   - Storing blocks servers as reference/foundation for later data transformations
   - Responsible for issuing invalidation in case of block reorg
+
 - [`CacheInvalidationIndexer`](src/indexers/CacheInvalidationIndexer.ts)
 
   - Does not contain update logic
   - Solely responsible for invalidating cache in case of reorg
 
 - [`EventIndexer`](src/indexers/EventIndexer.ts)
+
   - Responsible for fetching events for range from previous tick to current tick
   - Serves optimization purpose, by doing so called `event quick-swipe` we saves ourselves trouble of running discovery on each consecutive block since if given event occurred, we are certain that it is crucial for us to index it
   - Stores events as a block numbers discovery later must be run on
+
 - [`DiscoveryIndexer`](src/indexers/DiscoveryIndexer.ts)
+
   - Runs discovery on each block marked by `EventIndexer`
   - Saves full discovery output to the database
   - Each run utilize per-chain discovery configuration that can be found in [**discovery configs folder**](src/config/discovery/)
+
 - [`CurrentDiscoveryIndexer`](src/indexers//CurrentDiscoveryIndexer.ts)
+
   - Combines latest discovery output with metadata to make it ready to be utilized by frontend
+
 - [`ChangelogIndexer`](src/indexers/ChangelogIndexer.ts)
   - Responsible for comparing previous outputs in form of pairs and deriving changes made to the protocol between paired outputs
   - Filters-out changes that are not whitelisted
