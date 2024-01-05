@@ -93,3 +93,40 @@ const testnet = getTestnet(Logger.SILENT)({
   },
 })
 ```
+
+## Account impersonation
+
+To impersonate any account, you first have to **unlock it**.
+It indicates ganache not to validate transaction signatures before-hand.
+
+```ts
+const addressYouWantToImpersonate = '0x0000000000000000000000000000000000000000'
+
+const testnet = getTestnet(Logger.INFO)({
+  port: 8545,
+  fork: {
+    url: 'https://eth.llamarpc.com',
+  },
+  unlockedAccounts: [addressYouWantToImpersonate],
+})
+
+await testnet.server.boot()
+
+const impersonatedSigner = testnet.providers.ethers.getSigner(
+  addressYouWantToImpersonate,
+)
+const { alice } = testnet.wallets.ethers
+
+console.dir(await impersonatedSigner.getBalance())
+console.dir(await alice.getBalance())
+
+await impersonatedSigner.sendTransaction({
+  to: alice.address,
+  value: parseEther('1'),
+})
+
+console.dir(await impersonatedSigner.getBalance())
+console.dir(await alice.getBalance())
+
+await testnet.server.destroy()
+```
