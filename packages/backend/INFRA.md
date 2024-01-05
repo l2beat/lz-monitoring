@@ -14,7 +14,7 @@ Every submodule is responsible for indexing data from a single chain.
 Each submodule is equipped with set of `indexers` that are responsible for indexing specific data.
 
 Each module is configurable through environment variables.
-Variables are discriminated by chain name as a suffix in case of chain-related configuration and by explorer-name as a suffix in case of explorer-related configuration.
+Variables are discriminated by chain name as a prefix in case of chain-related configuration and by explorer-name as a prefix in case of explorer-related configuration.
 
 Given you want to index data on **Ethereum** and you are using **Etherscan** as an explorer, you need to set following variables:
 
