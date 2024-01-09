@@ -37,6 +37,7 @@ export interface Config {
       readonly avalanche: DiscoverySubmoduleConfig
       readonly celo: DiscoverySubmoduleConfig
       readonly linea: DiscoverySubmoduleConfig
+      readonly goerli: DiscoverySubmoduleConfig
     }
   }
 }
@@ -77,7 +78,7 @@ export interface EthereumLikeDiscoveryConfig {
   blockExplorerApiKey: string
   blockExplorerMinTimestamp: UnixTime
   discovery: DiscoveryConfig
-  eventsToWatch: EventsToWatchConfig
+  events: EventsToWatchConfig
   changelogWhitelist: EthereumAddress[]
   multicall: MulticallConfig
   tickIntervalMs: number

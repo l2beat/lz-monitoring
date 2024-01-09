@@ -30,6 +30,7 @@ import { EventIndexer } from '../indexers/EventIndexer'
 import { LatestBlockNumberIndexer } from '../indexers/LatestBlockNumberIndexer'
 import { BlockchainClient } from '../peripherals/clients/BlockchainClient'
 import { ProviderCache } from '../peripherals/clients/ProviderCache'
+import { SpoofedEtherscanLikeClient } from '../peripherals/clients/SpoofedEtherscanlikeClient'
 import { BlockNumberRepository } from '../peripherals/database/BlockNumberRepository'
 import { ChangelogRepository } from '../peripherals/database/ChangelogRepository'
 import { CurrentDiscoveryRepository } from '../peripherals/database/CurrentDiscoveryRepository'
@@ -196,7 +197,7 @@ export function createDiscoverySubmodule(
     repositories.events,
     repositories.indexerState,
     chainId,
-    config.eventsToWatch,
+    config.events,
     {
       startBlock: config.startBlock,
       maxBlockBatchSize: config.rpcLogsMaxRange,
@@ -314,6 +315,8 @@ function getExplorerClient(chainId: ChainId): typeof EtherscanLikeClient {
   switch (chainId) {
     case ChainId.AVALANCHE:
       return RoutescanClient
+    case ChainId.GOERLI:
+      return SpoofedEtherscanLikeClient
     default:
       return EtherscanLikeClient
   }

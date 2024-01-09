@@ -61,6 +61,11 @@ import {
   polygonZkEvmDiscoveryConfig,
   polygonZkEvmEventsToWatch,
 } from './discovery/polygon-zkevm'
+import {
+  eventsToWatch,
+  goerliChangelogWhitelist,
+  goerliDiscoveryConfig,
+} from './discovery/v2/goerli'
 import { EventsToWatchConfig } from './discoveryConfig'
 
 export function getCommonDiscoveryConfig(env: Env): Config['discovery'] {
@@ -92,6 +97,21 @@ export function getCommonDiscoveryConfig(env: Env): Config['discovery'] {
         discoveryConfig: ethereumDiscoveryConfig,
         eventsToWatchConfig: ethereumEventsToWatch,
         changelogWhitelist: ethereumChangelogWhitelist,
+        multicallConfig: multicallConfig.ethereum,
+      }),
+      goerli: createConfig({
+        chainNamePrefix: 'GOERLI',
+        /**
+         * Endpoint deploy
+         * @see https://etherscan.io/address/0x66a71dcef29a0ffbdbe3c6a460a3b5bc225cd675
+         */
+        startBlock: 10206900,
+        blockExplorerPrefix: 'GOERLI_ETHERSCAN',
+        blockExplorerApiUrl: 'https://api-goerli.etherscan.io/api',
+        blockExplorerMinTimestamp: new Date(0),
+        discoveryConfig: goerliDiscoveryConfig,
+        eventsToWatchConfig: eventsToWatch,
+        changelogWhitelist: goerliChangelogWhitelist,
         multicallConfig: multicallConfig.ethereum,
       }),
       arbitrum: createConfig({
@@ -233,6 +253,7 @@ export function getCommonDiscoveryConfig(env: Env): Config['discovery'] {
         eventsToWatchConfig: celoEventsToWatch,
         changelogWhitelist: celoChangelogWhitelist,
         multicallConfig: multicallConfig.celo,
+
         unsupportedEtherscanMethods: {
           getContractCreation: true,
         },
@@ -284,7 +305,6 @@ function configFromTemplate(env: Env) {
      * The list of addresses that are whitelisted for the changelog to process
      */
     changelogWhitelist: EthereumAddress[]
-
     /**
      * The minimum timestamp block explorer client can query
      */
@@ -347,8 +367,8 @@ function configFromTemplate(env: Env) {
           ),
         ),
         discovery: discoveryConfig,
-        eventsToWatch: eventsToWatchConfig,
-        changelogWhitelist,
+        changelogWhitelist: changelogWhitelist,
+        events: eventsToWatchConfig,
         multicall: multicallConfig,
         unsupportedEtherscanMethods,
       },

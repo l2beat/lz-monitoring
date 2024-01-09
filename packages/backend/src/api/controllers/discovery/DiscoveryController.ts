@@ -65,9 +65,16 @@ function toDiscoveryApi(discoveryOutput: DiscoveryOutput): DiscoveryApi {
   return {
     blockNumber,
     contracts: {
+      // V1
       endpoint: getEndpointContract(discoveryOutput),
       ulnV2: getUlnV2Contract(discoveryOutput),
       lzMultisig: getLzMultisig(discoveryOutput),
+      // V2
+      endpointV2: getEndpointV2Contract(discoveryOutput),
+      sendUln302: getSendUln302(discoveryOutput),
+      receiveUln302: getReceiveUln302(discoveryOutput),
+      sendUln301: getSendUln301(discoveryOutput),
+      receiveUln301: getReceiveUln301(discoveryOutput),
     },
     addressInfo,
   }
@@ -95,6 +102,159 @@ function getEndpointContract(
       'defaultReceiveLibraryAddress',
     ),
     libraryLookup,
+  }
+}
+
+function getEndpointV2Contract(
+  discoveryOutput: DiscoveryOutput,
+): DiscoveryApi['contracts']['endpointV2'] {
+  const endpointV2 = getContractByName('EndpointV2', discoveryOutput)
+
+  const blockedLibrary = getAddressFromValue(endpointV2, 'blockedLibrary')
+  const defaultReceiveLibraries = getContractValue<Record<string, string>>(
+    endpointV2,
+    'defaultReceiveLibraries',
+  )
+  const defaultSendLibraries = getContractValue<Record<string, string>>(
+    endpointV2,
+    'defaultSendLibraries',
+  )
+  const eid = getContractValue<number>(endpointV2, 'eid')
+
+  const registeredLibraries = getContractValue<string[]>(
+    endpointV2,
+    'getRegisteredLibraries',
+  )
+
+  const lzToken = getAddressFromValue(endpointV2, 'lzToken')
+
+  const nativeToken = getAddressFromValue(endpointV2, 'nativeToken')
+
+  const owner = getAddressFromValue(endpointV2, 'owner')
+
+  return {
+    name: 'EndpointV2',
+    address: endpointV2.address,
+    blockedLibrary,
+    defaultReceiveLibraries,
+    defaultSendLibraries,
+    lzToken,
+    nativeToken,
+    eid,
+    registeredLibraries: registeredLibraries.map(EthereumAddress),
+    owner,
+  }
+}
+
+interface DefaultExecutorConfig {
+  params: [number, [number, string]]
+}
+
+interface UlnConfig {
+  params: [number, [number, number, number, number, string[], string[]]]
+}
+
+function getSendUln302(
+  discoveryOutput: DiscoveryOutput,
+): DiscoveryApi['contracts']['sendUln302'] {
+  const sendUln302 = getContractByName('SendUln302', discoveryOutput)
+
+  const dec = getContractValue(
+    sendUln302,
+    'defaultExecutorConfigs',
+  ) as unknown as DefaultExecutorConfig[]
+
+  const duc = getContractValue(
+    sendUln302,
+    'defaultUlnConfigs',
+  ) as unknown as UlnConfig[]
+
+  return {
+    name: 'SendUln302',
+    defaultExecutorConfigs: dec,
+    defaultUlnConfigs: duc,
+    address: sendUln302.address,
+
+    messageLibType: getContractValue<number>(sendUln302, 'messageLibType'),
+    owner: getAddressFromValue(sendUln302, 'owner'),
+    treasury: getAddressFromValue(sendUln302, 'treasury'),
+    version: getContractValue<[number, number, number]>(sendUln302, 'version'),
+  }
+}
+
+function getSendUln301(
+  discoveryOutput: DiscoveryOutput,
+): DiscoveryApi['contracts']['sendUln301'] {
+  const sendUln302 = getContractByName('SendUln301', discoveryOutput)
+
+  const dec = getContractValue(
+    sendUln302,
+    'defaultExecutorConfigs',
+  ) as unknown as DefaultExecutorConfig[]
+
+  const duc = getContractValue(
+    sendUln302,
+    'defaultUlnConfigs',
+  ) as unknown as UlnConfig[]
+
+  return {
+    name: 'SendUln301',
+    defaultExecutorConfigs: dec,
+    defaultUlnConfigs: duc,
+    address: sendUln302.address,
+
+    owner: getAddressFromValue(sendUln302, 'owner'),
+    treasury: getAddressFromValue(sendUln302, 'treasury'),
+    version: getContractValue<[number, number, number]>(sendUln302, 'version'),
+  }
+}
+
+function getReceiveUln302(
+  discoveryOutput: DiscoveryOutput,
+): DiscoveryApi['contracts']['receiveUln302'] {
+  const sendUln302 = getContractByName('ReceiveUln302', discoveryOutput)
+
+  const duc = getContractValue(
+    sendUln302,
+    'defaultUlnConfigs',
+  ) as unknown as UlnConfig[]
+
+  return {
+    name: 'ReceiveUln302',
+    defaultUlnConfigs: duc,
+    address: sendUln302.address,
+    messageLibType: getContractValue<number>(sendUln302, 'messageLibType'),
+    owner: getAddressFromValue(sendUln302, 'owner'),
+    version: getContractValue<[number, number, number]>(sendUln302, 'version'),
+  }
+}
+
+function getReceiveUln301(
+  discoveryOutput: DiscoveryOutput,
+): DiscoveryApi['contracts']['receiveUln301'] {
+  const sendUln302 = getContractByName('ReceiveUln301', discoveryOutput)
+
+  interface DefaultExecutor {
+    params: [[number, string]]
+  }
+
+  const de = getContractValue(
+    sendUln302,
+    'defaultExecutors',
+  ) as unknown as DefaultExecutor[]
+
+  const duc = getContractValue(
+    sendUln302,
+    'defaultUlnConfigs',
+  ) as unknown as UlnConfig[]
+
+  return {
+    name: 'ReceiveUln301',
+    defaultUlnConfigs: duc,
+    defaultExecutors: de,
+    address: sendUln302.address,
+    owner: getAddressFromValue(sendUln302, 'owner'),
+    version: getContractValue<[number, number, number]>(sendUln302, 'version'),
   }
 }
 

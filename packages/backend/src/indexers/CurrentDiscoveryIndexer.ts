@@ -1,6 +1,6 @@
 import { assert, Logger } from '@l2beat/backend-tools'
-import { ChainId } from '@l2beat/discovery'
 import { ChildIndexer } from '@l2beat/uif'
+import { ChainId } from '@lz/libs'
 
 import { CurrentDiscoveryRepository } from '../peripherals/database/CurrentDiscoveryRepository'
 import { DiscoveryRepository } from '../peripherals/database/DiscoveryRepository'

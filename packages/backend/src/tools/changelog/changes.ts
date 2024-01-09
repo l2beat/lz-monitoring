@@ -1,6 +1,5 @@
-import { ChainId } from '@l2beat/discovery'
 import { DiscoveryOutput } from '@l2beat/discovery-types'
-import { Hash256 } from '@lz/libs'
+import { ChainId, Hash256 } from '@lz/libs'
 
 import { groupContracts } from './grouping'
 import { getMilestones } from './milestones'

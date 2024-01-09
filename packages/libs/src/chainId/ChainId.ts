@@ -52,6 +52,7 @@ function chainIdFromName(name: SupportedChainName): ChainId {
 
 const CHAIN_IDS = {
   1: 'ethereum',
+  5: 'goerli',
   42161: 'arbitrum',
   10: 'optimism',
   137: 'polygon-pos',
@@ -78,3 +79,4 @@ ChainId.LINEA = chainIdFromName('linea')
 ChainId.BASE = chainIdFromName('base')
 ChainId.POLYGON_ZKEVM = chainIdFromName('polygon-zkevm')
 ChainId.GNOSIS = chainIdFromName('gnosis')
+ChainId.GOERLI = chainIdFromName('goerli')

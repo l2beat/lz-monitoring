@@ -32,6 +32,7 @@ export function getExplorerBlockUrl(
 
 export const BLOCK_EXPLORER_URLS: Record<SupportedChainName, string> = {
   ethereum: 'https://etherscan.io/',
+  goerli: 'https://goerli.etherscan.io/',
   arbitrum: 'https://arbiscan.io/',
   optimism: 'https://optimistic.etherscan.io/',
   'polygon-pos': 'https://polygonscan.com/',
@@ -50,6 +51,7 @@ export function getBlockExplorerName(chainId: ChainId): string {
 
 const BLOCK_EXPLORER_NAMES: Record<SupportedChainName, string> = {
   ethereum: 'Etherscan',
+  goerli: 'Goerli Etherscan',
   arbitrum: 'Arbiscan',
   optimism: 'Optimistic Etherscan',
   'polygon-pos': 'PolygonScan',
