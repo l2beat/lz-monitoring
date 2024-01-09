@@ -80,8 +80,12 @@ export class ChangelogIndexer extends ChildIndexer {
 
     const flatChanges = flattenChanges(changes)
 
-    await this.changelogRepository.addMany(flatChanges.properties)
-    await this.milestoneRepository.addMany(flatChanges.milestones)
+    await this.changelogRepository.addMany(
+      flatChanges.properties.map((p) => ({ ...p, chainId: this.chainId })),
+    )
+    await this.milestoneRepository.addMany(
+      flatChanges.milestones.map((m) => ({ ...m, chainId: this.chainId })),
+    )
 
     return toBlockNumber
   }
