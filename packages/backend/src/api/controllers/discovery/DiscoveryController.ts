@@ -147,11 +147,11 @@ function getEndpointV2Contract(
 }
 
 interface DefaultExecutorConfig {
-  params: [number, [number, string]]
+  params: [[number, [number, string]]]
 }
 
 interface UlnConfig {
-  params: [number, [number, number, number, number, string[], string[]]]
+  params: [[number, [number, number, number, number, string[], string[]]]]
 }
 
 function getSendUln302(

@@ -48,6 +48,7 @@ export function useDiscoveryApi({
         setIsError(false)
         setIsLoading(false)
       } catch (e) {
+        console.error(e)
         if (hasBeenAborted(e)) {
           return
         }

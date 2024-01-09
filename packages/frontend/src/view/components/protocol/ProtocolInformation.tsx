@@ -11,6 +11,7 @@ import { NetworkData } from '../NetworkData'
 import { NetworkSelector } from '../NetworkSelector'
 import { Warning } from '../Warning'
 import { EndpointContract } from './EndpointContract'
+import { EndpointV2Contract } from './EndpointV2Contract'
 import { LayerZeroMultisig } from './LayerZeroMultisig'
 import { UltraLightNodeContract } from './UltraLightNode'
 
@@ -75,6 +76,10 @@ export function ProtocolInformation({
             isLoading={isDiscoveryLoading}
           />
           <Layout>
+            <EndpointV2Contract
+              {...discoveryResponse.data.contracts.endpointV2}
+              isLoading={isDiscoveryLoading}
+            />
             <EndpointContract
               {...discoveryResponse.data.contracts.endpoint}
               isLoading={isDiscoveryLoading}

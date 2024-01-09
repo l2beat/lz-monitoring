@@ -84,23 +84,27 @@ export const DiscoveryApi = z.object({
       defaultExecutorConfigs: z.array(
         z.object({
           params: z.tuple([
-            z.number(), // EID
-            // gas, executor address
-            z.tuple([z.number(), z.string()]),
+            z.tuple([
+              z.number(), // EID
+              // gas, executor address
+              z.tuple([z.number(), z.string()]),
+            ]),
           ]),
         }),
       ),
       defaultUlnConfigs: z.array(
         z.object({
           params: z.tuple([
-            z.number(), // EID
             z.tuple([
-              z.number(), // confirmations
-              z.number(), // requiredDVNCount
-              z.number(), // optionalDVNCount
-              z.number(), // optionalDVNCountThreshold
-              z.array(z.string()), // requiredDVNs
-              z.array(z.string()), // optionalDVNs
+              z.number(), // EID
+              z.tuple([
+                z.number(), // confirmations
+                z.number(), // requiredDVNCount
+                z.number(), // optionalDVNCount
+                z.number(), // optionalDVNCountThreshold
+                z.array(z.string()), // requiredDVNs
+                z.array(z.string()), // optionalDVNs
+              ]),
             ]),
           ]),
         }),
@@ -116,14 +120,16 @@ export const DiscoveryApi = z.object({
       defaultUlnConfigs: z.array(
         z.object({
           params: z.tuple([
-            z.number(), // EID
             z.tuple([
-              z.number(), // confirmations
-              z.number(), // requiredDVNCount
-              z.number(), // optionalDVNCount
-              z.number(), // optionalDVNCountThreshold
-              z.array(z.string()), // requiredDVNs
-              z.array(z.string()), // optionalDVNs
+              z.number(), // EID
+              z.tuple([
+                z.number(), // confirmations
+                z.number(), // requiredDVNCount
+                z.number(), // optionalDVNCount
+                z.number(), // optionalDVNCountThreshold
+                z.array(z.string()), // requiredDVNs
+                z.array(z.string()), // optionalDVNs
+              ]),
             ]),
           ]),
         }),
@@ -138,23 +144,27 @@ export const DiscoveryApi = z.object({
       defaultExecutorConfigs: z.array(
         z.object({
           params: z.tuple([
-            z.number(), // EID
-            // gas, executor address
-            z.tuple([z.number(), z.string()]),
+            z.tuple([
+              z.number(), // EID
+              // gas, executor address
+              z.tuple([z.number(), z.string()]),
+            ]),
           ]),
         }),
       ),
       defaultUlnConfigs: z.array(
         z.object({
           params: z.tuple([
-            z.number(), // EID
             z.tuple([
-              z.number(), // confirmations
-              z.number(), // requiredDVNCount
-              z.number(), // optionalDVNCount
-              z.number(), // optionalDVNCountThreshold
-              z.array(z.string()), // requiredDVNs
-              z.array(z.string()), // optionalDVNs
+              z.number(), // EID
+              z.tuple([
+                z.number(), // confirmations
+                z.number(), // requiredDVNCount
+                z.number(), // optionalDVNCount
+                z.number(), // optionalDVNCountThreshold
+                z.array(z.string()), // requiredDVNs
+                z.array(z.string()), // optionalDVNs
+              ]),
             ]),
           ]),
         }),
@@ -175,14 +185,16 @@ export const DiscoveryApi = z.object({
       defaultUlnConfigs: z.array(
         z.object({
           params: z.tuple([
-            z.number(), // EID
             z.tuple([
-              z.number(), // confirmations
-              z.number(), // requiredDVNCount
-              z.number(), // optionalDVNCount
-              z.number(), // optionalDVNCountThreshold
-              z.array(z.string()), // requiredDVNs
-              z.array(z.string()), // optionalDVNs
+              z.number(), // EID
+              z.tuple([
+                z.number(), // confirmations
+                z.number(), // requiredDVNCount
+                z.number(), // optionalDVNCount
+                z.number(), // optionalDVNCountThreshold
+                z.array(z.string()), // requiredDVNs
+                z.array(z.string()), // optionalDVNs
+              ]),
             ]),
           ]),
         }),

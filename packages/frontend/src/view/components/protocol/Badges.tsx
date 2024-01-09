@@ -13,6 +13,17 @@ export function UpdatableBadge(props: { className?: string }) {
   )
 }
 
+export function V2Badge(props: { className?: string }) {
+  return (
+    <Badge
+      className={props.className}
+      color="green"
+      label="V2"
+      tooltipText="This contract is part of LayerZero V2"
+    />
+  )
+}
+
 export function GnosisSafeBadge(props: { className?: string }) {
   return (
     <Badge
