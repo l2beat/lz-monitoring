@@ -69,7 +69,7 @@ export function decodeDefaultUlnConfigs(defaultUlnConfigs: DefaultUlnConfigs) {
 
 type DecodedDefaultExecutorConfigs = Record<
   number,
-  { gas: number; executor: string }
+  { maxMessageSize: number; executor: string }
 >
 
 export function decodeDefaultExecutorConfigs(
@@ -77,9 +77,9 @@ export function decodeDefaultExecutorConfigs(
 ) {
   return defaultExecutorConfigs.reduce<DecodedDefaultExecutorConfigs>(
     (acc, { params }) => {
-      const [[eid, [gas, executor]]] = params
+      const [[eid, [maxMessageSize, executor]]] = params
       acc[eid] = {
-        gas,
+        maxMessageSize,
         executor,
       }
       return acc

@@ -12,7 +12,7 @@ export function DefaultExecutorConfigsTable(props: {
   ).map(([eid, config]) => (
     <>
       <span>{eid}</span>
-      <span>{config.gas}</span>
+      <span>{config.maxMessageSize}</span>
       <span>
         <BlockchainAddress address={EthereumAddress(config.executor)} />
       </span>
@@ -22,7 +22,7 @@ export function DefaultExecutorConfigsTable(props: {
   return (
     <ValueTable
       title="Default Executor Configurations"
-      headers={['Endpoint ID', 'Gas', 'Executor']}
+      headers={['Endpoint ID', 'Max Message Size', 'Executor']}
       colsClass="grid-cols-default-executor-configs"
       rows={rows}
     />
