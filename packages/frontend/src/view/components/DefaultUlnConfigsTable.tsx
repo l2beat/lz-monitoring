@@ -10,7 +10,7 @@ export function DefaultUlnConfigsTable(props: {
   const rows = Object.entries(
     decodeDefaultUlnConfigs(props.defaultUlnConfigs),
   ).map(([eid, config]) => (
-    <div className="grid-cols-default-uln-configs col-span-full grid items-center justify-center border-b border-zinc-650 py-2 text-center text-xs last:border-none">
+    <div className="col-span-full grid grid-cols-default-uln-configs items-center justify-center border-b border-zinc-650 py-2 text-center text-xs last:border-none">
       <span>{eid}</span>
       <span>{config.confirmations}</span>
       <span>{config.optionalDVNThreshold}</span>
