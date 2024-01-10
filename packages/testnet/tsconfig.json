@@ -2,9 +2,6 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "outDir": "dist",
-    "incremental": true,
-    "declaration": false,
-    "declarationMap": false,
     // Ganache is naughty
     "skipLibCheck": true
   },
