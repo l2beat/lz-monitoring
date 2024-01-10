@@ -70,7 +70,6 @@ export function BlockchainAddress(props: Props) {
           </span>
           {addressInfo.name.length > 0 && (
             <>
-              {' '}
               <span className="whitespace-nowrap text-xs text-zinc-500">
                 ({addressInfo.name})
               </span>

@@ -25,7 +25,7 @@ export class DiscoveryIndexer extends ChildIndexer {
     logger: Logger,
     eventIndexer: EventIndexer,
   ) {
-    super(logger.tag(`${ChainId.getName(chainId)}`), [eventIndexer])
+    super(logger.tag(ChainId.getName(chainId)), [eventIndexer])
   }
 
   override async start(): Promise<void> {

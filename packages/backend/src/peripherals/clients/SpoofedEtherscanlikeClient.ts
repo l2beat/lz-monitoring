@@ -42,6 +42,11 @@ const overrides: Record<string, ContractSource> = {
   },
 }
 
+/**
+ * Whole purpose is to spoof verification on certain addresses
+ * for sake of testing V2 prototype integration
+ * FIXME: Remove once we switch to mainnet V2 deployments
+ */
 export class SpoofedEtherscanLikeClient extends EtherscanLikeClient {
   override async getContractSource(
     address: EthereumAddress,
