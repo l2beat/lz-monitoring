@@ -396,8 +396,6 @@ export type EventsToWatchConfig = EventToWatchConfig[]
 export function getEventsToWatch(
   addresses: TemplateVariables['addresses'],
 ): EventsToWatchConfig {
-  console.log(addresses)
-
   return abis.flatMap(({ contract, abi }) => {
     const int = new utils.Interface(abi)
     const topics = int.fragments.map((fragment) => {
