@@ -15,7 +15,7 @@ type Props = {
   isLoading?: boolean
 } & DiscoveryApi['contracts']['receiveUln301']
 
-export function ReceiveUln301Contract(props: Props): JSX.Element {
+export function ReceiveUln301Contract(props: Props) {
   return (
     <ProtocolComponentCard
       title="Receive ULN 301"
@@ -49,9 +49,7 @@ export function ReceiveUln301Contract(props: Props): JSX.Element {
             }
           />
           <DefaultExecutorsTable defaultExecutors={props.defaultExecutors} />
-
           <DefaultUlnConfigsTable defaultUlnConfigs={props.defaultUlnConfigs} />
-
           <Row label="Version" value={props.version.join('.')} />
         </Subsection>
       </ExpandableContainer>

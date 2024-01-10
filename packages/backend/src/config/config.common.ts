@@ -62,9 +62,9 @@ import {
   polygonZkEvmEventsToWatch,
 } from './discovery/polygon-zkevm'
 import {
-  eventsToWatch,
   goerliChangelogWhitelist,
   goerliDiscoveryConfig,
+  goerliEventsToWatch,
 } from './discovery/v2/goerli'
 import { EventsToWatchConfig } from './discoveryConfig'
 
@@ -101,16 +101,12 @@ export function getCommonDiscoveryConfig(env: Env): Config['discovery'] {
       }),
       goerli: createConfig({
         chainNamePrefix: 'GOERLI',
-        /**
-         * Endpoint deploy
-         * @see https://etherscan.io/address/0x66a71dcef29a0ffbdbe3c6a460a3b5bc225cd675
-         */
         startBlock: 10206900,
         blockExplorerPrefix: 'GOERLI_ETHERSCAN',
         blockExplorerApiUrl: 'https://api-goerli.etherscan.io/api',
         blockExplorerMinTimestamp: new Date(0),
         discoveryConfig: goerliDiscoveryConfig,
-        eventsToWatchConfig: eventsToWatch,
+        eventsToWatchConfig: goerliEventsToWatch,
         changelogWhitelist: goerliChangelogWhitelist,
         multicallConfig: multicallConfig.ethereum,
       }),

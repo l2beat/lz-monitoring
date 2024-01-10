@@ -15,7 +15,7 @@ type Props = {
   isLoading?: boolean
 } & DiscoveryApi['contracts']['sendUln302']
 
-export function SendUln302Contract(props: Props): JSX.Element {
+export function SendUln302Contract(props: Props) {
   return (
     <ProtocolComponentCard
       title="Send ULN 302"
@@ -48,12 +48,10 @@ export function SendUln302Contract(props: Props): JSX.Element {
               />
             }
           />
-
           <DefaultUlnConfigsTable defaultUlnConfigs={props.defaultUlnConfigs} />
           <DefaultExecutorConfigsTable
             defaultExecutorConfigs={props.defaultExecutorConfigs}
           />
-
           <Row
             label="Treasury"
             value={<BlockchainAddress address={props.treasury} />}

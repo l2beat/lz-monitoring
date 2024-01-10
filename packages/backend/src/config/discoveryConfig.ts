@@ -272,18 +272,6 @@ function createConfigFromTemplate(
           },
         },
       },
-      // '0x6f3a314C1279148E53f51AF154817C3EF2C827B1': {
-      //   // UlnV2
-      //   ignoreDiscovery: true,
-      // },
-      // '0xe931419cE7f9Ad7Bf9ec8e2657eF6C805A92089c': {
-      //   // Nonce
-      //   ignoreDiscovery: true,
-      // },
-      // '0xbfD2135BFfbb0B5378b56643c2Df8a87552Bfa23': {
-      //   // EndpointV1
-      //   ignoreDiscovery: true,
-      // },
       EndpointV2: {
         ignoreMethods: [
           'EMPTY_PAYLOAD_HASH',
@@ -298,7 +286,7 @@ function createConfigFromTemplate(
             event: 'DefaultReceiveLibrarySet',
             groupBy: 'eid',
             onlyValue: true,
-            // skipping old lib ;p
+            // skipping old lib
             returnParams: ['eid', 'newLib'],
           },
           defaultSendLibraries: {

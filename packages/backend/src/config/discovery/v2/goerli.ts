@@ -7,7 +7,7 @@ import {
   toEthereumAddresses,
 } from '../../discoveryConfig'
 
-export { eventsToWatch, goerliChangelogWhitelist, goerliDiscoveryConfig }
+export { goerliChangelogWhitelist, goerliDiscoveryConfig, goerliEventsToWatch }
 
 const addresses = {
   // V1
@@ -22,13 +22,13 @@ const addresses = {
 }
 
 const goerliRawConfig = createConfigFromTemplate({
+  // FIXME: change once discovery support testnet
   chain: ChainId.ETHEREUM,
-  // chain: ChainId.GOERLI, discovery doesnt support ;p
   initialAddresses: Object.values(addresses),
   addresses,
 })
 
-const eventsToWatch = getEventsToWatch(addresses)
+const goerliEventsToWatch = getEventsToWatch(addresses)
 
 const goerliDiscoveryConfig = new DiscoveryConfig(goerliRawConfig)
 

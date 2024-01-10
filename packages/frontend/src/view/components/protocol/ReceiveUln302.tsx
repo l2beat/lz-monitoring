@@ -14,7 +14,7 @@ type Props = {
   isLoading?: boolean
 } & DiscoveryApi['contracts']['receiveUln302']
 
-export function ReceiveUln302Contract(props: Props): JSX.Element {
+export function ReceiveUln302Contract(props: Props) {
   return (
     <ProtocolComponentCard
       title="Receive ULN 302"
@@ -47,9 +47,7 @@ export function ReceiveUln302Contract(props: Props): JSX.Element {
               />
             }
           />
-
           <DefaultUlnConfigsTable defaultUlnConfigs={props.defaultUlnConfigs} />
-
           <Row label="Message Lib Type" value={props.messageLibType} />
           <Row label="Version" value={props.version.join('.')} />
         </Subsection>

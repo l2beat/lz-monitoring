@@ -14,7 +14,7 @@ type Props = {
   isLoading?: boolean
 } & DiscoveryApi['contracts']['endpointV2']
 
-export function EndpointV2Contract(props: Props): JSX.Element {
+export function EndpointV2Contract(props: Props) {
   return (
     <ProtocolComponentCard
       title="Endpoint V2"
@@ -24,7 +24,7 @@ export function EndpointV2Contract(props: Props): JSX.Element {
           <V2Badge />
         </div>
       }
-      description="The Endpoint V2 contract handles V2 things please can it work somehow"
+      description="The Endpoint V2 description"
       subtitle={<BlockchainAddress address={props.address} full />}
       isLoading={props.isLoading}
     >
