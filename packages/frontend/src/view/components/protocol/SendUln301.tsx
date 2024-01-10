@@ -2,7 +2,8 @@ import { DiscoveryApi } from '@lz/libs'
 
 import { BlockchainAddress } from '../BlockchainAddress'
 import { ChangelogSummary } from '../changelog/ChangelogSummary'
-import { Code } from '../Code'
+import { DefaultExecutorConfigsTable } from '../DefaultExecutorConfigsTable'
+import { DefaultUlnConfigsTable } from '../DefaultUlnConfigsTable'
 import { ExpandableContainer } from '../ExpandableContainer'
 import { InfoTooltip } from '../InfoTooltip'
 import { ProtocolComponentCard } from '../ProtocolComponentCard'
@@ -47,23 +48,11 @@ export function SendUln301Contract(props: Props): JSX.Element {
               />
             }
           />
-          <Row
-            label="Default Executor Configurations"
-            value={
-              <Code className="max-h-[200px]">
-                {JSON.stringify(props.defaultExecutorConfigs, null, 2)}
-              </Code>
-            }
+          <DefaultExecutorConfigsTable
+            defaultExecutorConfigs={props.defaultExecutorConfigs}
           />
 
-          <Row
-            label="Default ULN Configurations"
-            value={
-              <Code className="max-h-[200px]">
-                {JSON.stringify(props.defaultUlnConfigs, null, 2)}
-              </Code>
-            }
-          />
+          <DefaultUlnConfigsTable defaultUlnConfigs={props.defaultUlnConfigs} />
 
           <Row
             label="Treasury"

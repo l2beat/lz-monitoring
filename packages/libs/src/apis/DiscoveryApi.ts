@@ -12,6 +12,47 @@ const DefaultAdapterParams = z.array(
 )
 export type DefaultAdapterParams = z.infer<typeof DefaultAdapterParams>
 
+const DefaultExecutorConfigs = z.array(
+  z.object({
+    params: z.tuple([
+      z.tuple([
+        z.number(), // EID
+        // gas, executor address
+        z.tuple([z.number(), z.string()]),
+      ]),
+    ]),
+  }),
+)
+export type DefaultExecutorConfigs = z.infer<typeof DefaultExecutorConfigs>
+
+const DefaultExecutors = z.array(
+  z.object({
+    // EID, Executor
+    params: z.tuple([z.tuple([z.number(), z.string()])]),
+  }),
+)
+export type DefaultExecutors = z.infer<typeof DefaultExecutors>
+
+const DefaultUlnConfigs = z.array(
+  z.object({
+    params: z.tuple([
+      z.tuple([
+        z.number(), // EID
+        z.tuple([
+          z.number(), // confirmations
+          z.number(), // requiredDVNCount
+          z.number(), // optionalDVNCount
+          z.number(), // optionalDVNCountThreshold
+          z.array(z.string()), // requiredDVNs
+          z.array(z.string()), // optionalDVNs
+        ]),
+      ]),
+    ]),
+  }),
+)
+
+export type DefaultUlnConfigs = z.infer<typeof DefaultUlnConfigs>
+
 const DefaultAppConfig = z.object({
   inboundProofLib: z.object({
     version: z.number(),
@@ -68,139 +109,50 @@ export const DiscoveryApi = z.object({
     // V2
     endpointV2: z.object({
       name: z.literal('EndpointV2'),
-      address: branded(z.string(), EthereumAddress),
-      blockedLibrary: branded(z.string(), EthereumAddress),
-      defaultReceiveLibraries: z.record(z.string()),
-      defaultSendLibraries: z.record(z.string()),
       eid: z.number(),
-      registeredLibraries: z.array(branded(z.string(), EthereumAddress)),
+      defaultSendLibraries: z.record(z.string()),
+      defaultReceiveLibraries: z.record(z.string()),
+      owner: branded(z.string(), EthereumAddress),
+      address: branded(z.string(), EthereumAddress),
       lzToken: branded(z.string(), EthereumAddress),
       nativeToken: branded(z.string(), EthereumAddress),
-      owner: branded(z.string(), EthereumAddress),
+      blockedLibrary: branded(z.string(), EthereumAddress),
+      registeredLibraries: z.array(branded(z.string(), EthereumAddress)),
     }),
     sendUln302: z.object({
       name: z.literal('SendUln302'),
-      address: branded(z.string(), EthereumAddress),
-      defaultExecutorConfigs: z.array(
-        z.object({
-          params: z.tuple([
-            z.tuple([
-              z.number(), // EID
-              // gas, executor address
-              z.tuple([z.number(), z.string()]),
-            ]),
-          ]),
-        }),
-      ),
-      defaultUlnConfigs: z.array(
-        z.object({
-          params: z.tuple([
-            z.tuple([
-              z.number(), // EID
-              z.tuple([
-                z.number(), // confirmations
-                z.number(), // requiredDVNCount
-                z.number(), // optionalDVNCount
-                z.number(), // optionalDVNCountThreshold
-                z.array(z.string()), // requiredDVNs
-                z.array(z.string()), // optionalDVNs
-              ]),
-            ]),
-          ]),
-        }),
-      ),
       messageLibType: z.number(),
       owner: branded(z.string(), EthereumAddress),
+      address: branded(z.string(), EthereumAddress),
       treasury: branded(z.string(), EthereumAddress),
       version: z.tuple([z.number(), z.number(), z.number()]),
+      defaultExecutorConfigs: DefaultExecutorConfigs,
+      defaultUlnConfigs: DefaultUlnConfigs,
     }),
     receiveUln302: z.object({
       name: z.literal('ReceiveUln302'),
-      address: branded(z.string(), EthereumAddress),
-      defaultUlnConfigs: z.array(
-        z.object({
-          params: z.tuple([
-            z.tuple([
-              z.number(), // EID
-              z.tuple([
-                z.number(), // confirmations
-                z.number(), // requiredDVNCount
-                z.number(), // optionalDVNCount
-                z.number(), // optionalDVNCountThreshold
-                z.array(z.string()), // requiredDVNs
-                z.array(z.string()), // optionalDVNs
-              ]),
-            ]),
-          ]),
-        }),
-      ),
       messageLibType: z.number(),
       owner: branded(z.string(), EthereumAddress),
+      address: branded(z.string(), EthereumAddress),
       version: z.tuple([z.number(), z.number(), z.number()]),
+      defaultUlnConfigs: DefaultUlnConfigs,
     }),
     sendUln301: z.object({
       name: z.literal('SendUln301'),
-      address: branded(z.string(), EthereumAddress),
-      defaultExecutorConfigs: z.array(
-        z.object({
-          params: z.tuple([
-            z.tuple([
-              z.number(), // EID
-              // gas, executor address
-              z.tuple([z.number(), z.string()]),
-            ]),
-          ]),
-        }),
-      ),
-      defaultUlnConfigs: z.array(
-        z.object({
-          params: z.tuple([
-            z.tuple([
-              z.number(), // EID
-              z.tuple([
-                z.number(), // confirmations
-                z.number(), // requiredDVNCount
-                z.number(), // optionalDVNCount
-                z.number(), // optionalDVNCountThreshold
-                z.array(z.string()), // requiredDVNs
-                z.array(z.string()), // optionalDVNs
-              ]),
-            ]),
-          ]),
-        }),
-      ),
       owner: branded(z.string(), EthereumAddress),
+      address: branded(z.string(), EthereumAddress),
       treasury: branded(z.string(), EthereumAddress),
       version: z.tuple([z.number(), z.number(), z.number()]),
+      defaultExecutorConfigs: DefaultExecutorConfigs,
+      defaultUlnConfigs: DefaultUlnConfigs,
     }),
     receiveUln301: z.object({
       name: z.literal('ReceiveUln301'),
-      address: branded(z.string(), EthereumAddress),
-      defaultExecutors: z.array(
-        z.object({
-          // EID, Executor
-          params: z.tuple([z.tuple([z.number(), z.string()])]),
-        }),
-      ),
-      defaultUlnConfigs: z.array(
-        z.object({
-          params: z.tuple([
-            z.tuple([
-              z.number(), // EID
-              z.tuple([
-                z.number(), // confirmations
-                z.number(), // requiredDVNCount
-                z.number(), // optionalDVNCount
-                z.number(), // optionalDVNCountThreshold
-                z.array(z.string()), // requiredDVNs
-                z.array(z.string()), // optionalDVNs
-              ]),
-            ]),
-          ]),
-        }),
-      ),
       owner: branded(z.string(), EthereumAddress),
+      address: branded(z.string(), EthereumAddress),
       version: z.tuple([z.number(), z.number(), z.number()]),
+      defaultExecutors: DefaultExecutors,
+      defaultUlnConfigs: DefaultUlnConfigs,
     }),
   }),
   addressInfo: z.array(

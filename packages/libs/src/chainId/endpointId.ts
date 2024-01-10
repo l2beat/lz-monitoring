@@ -3,6 +3,7 @@
 import { ChainId } from './ChainId'
 
 const CHAIN_IDS = [
+  // Mainnet
   { endpointId: 101, chainId: ChainId.ETHEREUM },
   { endpointId: 102, chainId: ChainId.BSC },
   { endpointId: 106, chainId: ChainId.AVALANCHE },
@@ -13,6 +14,9 @@ const CHAIN_IDS = [
   { endpointId: 158, chainId: ChainId.POLYGON_ZKEVM },
   { endpointId: 183, chainId: ChainId.LINEA },
   { endpointId: 184, chainId: ChainId.BASE },
+
+  // Testnet
+  { endpointId: 40121, chainId: ChainId.GOERLI },
 ]
 
 export function getChainIdFromEndpointId(

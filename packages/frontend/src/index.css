@@ -2,8 +2,20 @@
 @tailwind components;
 @tailwind utilities;
 
+::-webkit-scrollbar:vertical {
+  width: 5px;
+}
+
 ::-webkit-scrollbar:horizontal {
   height: 5px;
+}
+
+::-webkit-scrollbar-track:vertical {
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:vertical {
+  border-radius: 4px;
 }
 
 ::-webkit-scrollbar-track:horizontal {

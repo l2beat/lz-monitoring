@@ -25,7 +25,7 @@ export function ProtocolInformation({
 }: {
   chainsToDisplay: [ChainId, ...ChainId[]]
 }): JSX.Element {
-  const [version, setVersion] = useState<'v1' | 'v2'>('v1')
+  const [version, setVersion] = useState<'v1' | 'v2'>('v2')
   const [paramChain, setParamChain] = useChainQueryParam({
     fallback: chainsToDisplay[0],
     paramName: 'chain',
