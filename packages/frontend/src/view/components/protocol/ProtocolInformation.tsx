@@ -3,6 +3,10 @@ import { useState } from 'react'
 import { SkeletonTheme } from 'react-loading-skeleton'
 
 import { config } from '../../../config'
+import {
+  PROTOCOL_VERSION,
+  ProtocolVersion,
+} from '../../../constants/protocol-version'
 import { AddressInfoContext } from '../../../hooks/addressInfoContext'
 import { ChainInfoContext } from '../../../hooks/chainIdContext'
 import { useChainQueryParam } from '../../../hooks/useChainQueryParam'
@@ -10,6 +14,7 @@ import { useDiscoveryApi } from '../../../hooks/useDiscoveryApi'
 import { Layout } from '../Layout'
 import { NetworkData } from '../NetworkData'
 import { NetworkSelector } from '../NetworkSelector'
+import { VersionButton, VersionSwitch } from '../VersionSwitch'
 import { Warning } from '../Warning'
 import { EndpointContract } from './EndpointContract'
 import { EndpointV2Contract } from './EndpointV2Contract'
@@ -25,7 +30,11 @@ export function ProtocolInformation({
 }: {
   chainsToDisplay: [ChainId, ...ChainId[]]
 }): JSX.Element {
-  const [version, setVersion] = useState<'v1' | 'v2'>('v2')
+  const defaultVersion = config.features.v2visible
+    ? PROTOCOL_VERSION.V2
+    : PROTOCOL_VERSION.V1
+
+  const [version, setVersion] = useState<ProtocolVersion>(defaultVersion)
   const [paramChain, setParamChain] = useChainQueryParam({
     fallback: chainsToDisplay[0],
     paramName: 'chain',
@@ -81,26 +90,28 @@ export function ProtocolInformation({
             latestBlock={discoveryResponse.data.blockNumber}
             isLoading={isDiscoveryLoading}
           />
-          <div className="flex items-center justify-center gap-5 p-4">
-            <VersionButton
-              onClick={() => {
-                setVersion('v1')
-                console.log(`set version to v1 from ${version}`)
-              }}
-            >
-              v1
-            </VersionButton>
-            <VersionButton
-              onClick={() => {
-                setVersion('v2')
-                console.log(`set version to v2 from ${version}`)
-              }}
-            >
-              v2
-            </VersionButton>
-          </div>
+          {config.features.v2visible && (
+            <VersionSwitch>
+              <VersionButton
+                isActive={version === PROTOCOL_VERSION.V1}
+                onClick={() => {
+                  setVersion(PROTOCOL_VERSION.V1)
+                }}
+              >
+                LayerZero V1
+              </VersionButton>
+              <VersionButton
+                isActive={version === PROTOCOL_VERSION.V2}
+                onClick={() => {
+                  setVersion(PROTOCOL_VERSION.V2)
+                }}
+              >
+                LayerZero V2
+              </VersionButton>
+            </VersionSwitch>
+          )}
           <Layout>
-            {version === 'v1' && (
+            {version === PROTOCOL_VERSION.V1 && (
               <>
                 <EndpointContract
                   {...discoveryResponse.data.contracts.endpoint}
@@ -120,7 +131,7 @@ export function ProtocolInformation({
               </>
             )}
 
-            {version === 'v2' && (
+            {version === PROTOCOL_VERSION.V2 && (
               <>
                 <EndpointV2Contract
                   {...discoveryResponse.data.contracts.endpointV2}
@@ -148,19 +159,5 @@ export function ProtocolInformation({
         </AddressInfoContext.Provider>
       </ChainInfoContext.Provider>
     </SkeletonTheme>
-  )
-}
-
-function VersionButton(props: {
-  children: React.ReactNode
-  onClick: () => void
-}) {
-  return (
-    <button
-      onClick={props.onClick}
-      className="rounded-lg bg-yellow-100 p-4 text-xl font-medium text-black"
-    >
-      {props.children}
-    </button>
   )
 }
