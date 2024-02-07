@@ -24,7 +24,6 @@ const addresses = {
 const goerliRawConfig = createConfigFromTemplate({
   // FIXME: change once discovery support testnet
   chain: ChainId.ETHEREUM,
-  initialAddresses: Object.values(addresses),
   addresses,
 })
 

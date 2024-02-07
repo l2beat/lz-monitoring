@@ -6,30 +6,41 @@ import { utils } from 'ethers'
 
 export { createConfigFromTemplate, toEthereumAddresses }
 
+export interface CoreAddressesV1<T extends string | EthereumAddress = string> {
+  ultraLightNodeV2: T
+  endpoint: T
+  layerZeroMultisig?: T
+}
+
+export interface CoreAddressesV2<T extends string | EthereumAddress = string> {
+  endpointV2: T
+  send301: T
+  receive301: T
+  send302: T
+  receive302: T
+}
+
+export interface AdditionalAddresses<
+  T extends string | EthereumAddress = string,
+> {
+  stargateBridge?: T
+  stargateToken?: T
+}
+
+export type LayerZeroAddresses<T extends string | EthereumAddress = string> =
+  CoreAddressesV1<T> & CoreAddressesV2<T> & AdditionalAddresses<T>
+
 interface TemplateVariables {
   chain: ChainId
-  initialAddresses: string[]
-  addresses: {
-    // V1
-    ultraLightNodeV2: string
-    endpoint: string
-    stargateToken?: string
-    stargateBridge?: string
-    layerZeroMultisig?: string
-    // V2
-    endpointV2?: string
-    send301?: string
-    receive301?: string
-    send302?: string
-    receive302?: string
-  }
+  addresses: LayerZeroAddresses // unsafe
 }
 
 function createConfigFromTemplate(
   templateConfig: TemplateVariables,
 ): RawDiscoveryConfig {
-  const { chain, initialAddresses, addresses: unsafeAddresses } = templateConfig
+  const { chain, addresses: unsafeAddresses } = templateConfig
 
+  // TODO: Phase this out or refactor
   // addresses with proper checksums
   const addresses = {
     // V1
@@ -113,10 +124,17 @@ function createConfigFromTemplate(
       }
     : {}
 
+  // TODO: Phase this out or refactor
+  const { stargateBridge: _, stargateToken: __, ...initials } = addresses
+
+  const initialAddresses = Object.values(initials)
+    .filter((a): a is string => a !== undefined)
+    .map(EthereumAddress)
+
   return {
     name: 'layerzero',
     chain,
-    initialAddresses: initialAddresses.map(EthereumAddress),
+    initialAddresses,
     names: {
       // V1
       [addresses.ultraLightNodeV2]: 'UltraLightNodeV2',
