@@ -14,8 +14,6 @@ export function getPrettyChainName(chain: ChainId): string {
       return 'Celo'
     case ChainId.ETHEREUM:
       return 'Ethereum'
-    case ChainId.GOERLI:
-      return 'Goerli'
     case ChainId.LINEA:
       return 'Linea'
     case ChainId.OPTIMISM:
