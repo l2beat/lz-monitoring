@@ -14,9 +14,6 @@ const CHAIN_IDS = [
   { endpointId: 158, chainId: ChainId.POLYGON_ZKEVM },
   { endpointId: 183, chainId: ChainId.LINEA },
   { endpointId: 184, chainId: ChainId.BASE },
-
-  // Testnet
-  { endpointId: 40121, chainId: ChainId.GOERLI },
 ]
 
 export function getChainIdFromEndpointId(
