@@ -37,7 +37,6 @@ export interface Config {
       readonly avalanche: DiscoverySubmoduleConfig
       readonly celo: DiscoverySubmoduleConfig
       readonly linea: DiscoverySubmoduleConfig
-      readonly goerli: DiscoverySubmoduleConfig
     }
   }
 }
