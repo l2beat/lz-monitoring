@@ -2,14 +2,16 @@ import { DiscoveryConfig } from '@l2beat/discovery'
 import { ChainId } from '@lz/libs'
 
 import {
+  createConfigFromTemplate,
+  getEventsToWatch,
+  toEthereumAddresses,
+} from '../discoveryConfig'
+import {
   AdditionalAddresses,
   CoreAddressesV1,
   CoreAddressesV2,
-  createConfigFromTemplate,
-  getEventsToWatch,
   LayerZeroAddresses,
-  toEthereumAddresses,
-} from '../discoveryConfig'
+} from '../types'
 
 export {
   arbitrumChangelogWhitelist,
@@ -50,7 +52,6 @@ const arbitrumRawConfig = createConfigFromTemplate({
 const arbitrumDiscoveryConfig = new DiscoveryConfig(arbitrumRawConfig)
 const arbitrumEventsToWatch = getEventsToWatch(addresses)
 const arbitrumChangelogWhitelist = toEthereumAddresses([
-  addresses.ultraLightNodeV2,
-  addresses.endpoint,
-  addresses.layerZeroMultisig,
+  ...Object.values(coreAddressesV1),
+  ...Object.values(coreAddressesV2),
 ])

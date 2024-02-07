@@ -2,14 +2,16 @@ import { DiscoveryConfig } from '@l2beat/discovery'
 import { ChainId } from '@lz/libs'
 
 import {
+  createConfigFromTemplate,
+  getEventsToWatch,
+  toEthereumAddresses,
+} from '../discoveryConfig'
+import {
   AdditionalAddresses,
   CoreAddressesV1,
   CoreAddressesV2,
-  createConfigFromTemplate,
-  getEventsToWatch,
   LayerZeroAddresses,
-  toEthereumAddresses,
-} from '../discoveryConfig'
+} from '../types'
 
 export {
   avalancheChangelogWhitelist,

@@ -2,13 +2,11 @@ import { DiscoveryConfig } from '@l2beat/discovery'
 import { ChainId } from '@lz/libs'
 
 import {
-  CoreAddressesV1,
-  CoreAddressesV2,
   createConfigFromTemplate,
   getEventsToWatch,
-  LayerZeroAddresses,
   toEthereumAddresses,
 } from '../discoveryConfig'
+import { CoreAddressesV1, CoreAddressesV2, LayerZeroAddresses } from '../types'
 
 export {
   polygonZkEvmChangelogWhitelist,
@@ -41,8 +39,10 @@ const polygonZkEvmRawConfig = createConfigFromTemplate({
 })
 
 const polygonZkEvmDiscoveryConfig = new DiscoveryConfig(polygonZkEvmRawConfig)
+
 const polygonZkEvmEventsToWatch = getEventsToWatch(addresses)
+
 const polygonZkEvmChangelogWhitelist = toEthereumAddresses([
-  addresses.ultraLightNodeV2,
-  addresses.endpoint,
+  ...Object.values(coreAddressesV1),
+  ...Object.values(coreAddressesV2),
 ])

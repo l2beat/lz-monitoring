@@ -2,13 +2,11 @@ import { DiscoveryConfig } from '@l2beat/discovery'
 import { ChainId } from '@lz/libs'
 
 import {
-  CoreAddressesV1,
-  CoreAddressesV2,
   createConfigFromTemplate,
   getEventsToWatch,
-  LayerZeroAddresses,
   toEthereumAddresses,
 } from '../discoveryConfig'
+import { CoreAddressesV1, CoreAddressesV2, LayerZeroAddresses } from '../types'
 
 export { celoChangelogWhitelist, celoDiscoveryConfig, celoEventsToWatch }
 
@@ -39,6 +37,6 @@ const celoRawConfig = createConfigFromTemplate({
 const celoDiscoveryConfig = new DiscoveryConfig(celoRawConfig)
 const celoEventsToWatch = getEventsToWatch(addresses)
 const celoChangelogWhitelist = toEthereumAddresses([
-  addresses.ultraLightNodeV2,
-  addresses.endpoint,
+  ...Object.values(coreAddressesV1),
+  ...Object.values(coreAddressesV2),
 ])

@@ -4,35 +4,14 @@ import { RawDiscoveryConfig } from '@l2beat/discovery/dist/discovery/config/RawD
 import { ChainId, EthereumAddress } from '@lz/libs'
 import { utils } from 'ethers'
 
+import { LZ_CONTRACTS_NAMES } from './constants'
+import { LayerZeroAddresses } from './types'
+
 export { createConfigFromTemplate, toEthereumAddresses }
-
-export interface CoreAddressesV1<T extends string | EthereumAddress = string> {
-  ultraLightNodeV2: T
-  endpoint: T
-  layerZeroMultisig?: T
-}
-
-export interface CoreAddressesV2<T extends string | EthereumAddress = string> {
-  endpointV2: T
-  send301: T
-  receive301: T
-  send302: T
-  receive302: T
-}
-
-export interface AdditionalAddresses<
-  T extends string | EthereumAddress = string,
-> {
-  stargateBridge?: T
-  stargateToken?: T
-}
-
-export type LayerZeroAddresses<T extends string | EthereumAddress = string> =
-  CoreAddressesV1<T> & CoreAddressesV2<T> & AdditionalAddresses<T>
 
 interface TemplateVariables {
   chain: ChainId
-  addresses: LayerZeroAddresses // unsafe
+  addresses: LayerZeroAddresses
 }
 
 function createConfigFromTemplate(
@@ -40,115 +19,19 @@ function createConfigFromTemplate(
 ): RawDiscoveryConfig {
   const { chain, addresses: unsafeAddresses } = templateConfig
 
-  // TODO: Phase this out or refactor
-  // addresses with proper checksums
-  const addresses = {
-    // V1
-    ultraLightNodeV2: EthereumAddress(
-      unsafeAddresses.ultraLightNodeV2,
-    ).toString(),
-    endpoint: EthereumAddress(unsafeAddresses.endpoint).toString(),
-    layerZeroMultisig:
-      unsafeAddresses.layerZeroMultisig !== undefined
-        ? EthereumAddress(unsafeAddresses.layerZeroMultisig).toString()
-        : undefined,
-    stargateToken: unsafeAddresses.stargateToken
-      ? EthereumAddress(unsafeAddresses.stargateToken).toString()
-      : undefined,
-    stargateBridge: unsafeAddresses.stargateBridge
-      ? EthereumAddress(unsafeAddresses.stargateBridge).toString()
-      : undefined,
-    // V2
+  const addresses = toSafeAddresses(unsafeAddresses)
 
-    endpointV2: unsafeAddresses.endpointV2
-      ? EthereumAddress(unsafeAddresses.endpointV2).toString()
-      : undefined,
-    send301: unsafeAddresses.send301
-      ? EthereumAddress(unsafeAddresses.send301).toString()
-      : undefined,
-    receive301: unsafeAddresses.receive301
-      ? EthereumAddress(unsafeAddresses.receive301).toString()
-      : undefined,
-    send302: unsafeAddresses.send302
-      ? EthereumAddress(unsafeAddresses.send302).toString()
-      : undefined,
-    receive302: unsafeAddresses.receive302
-      ? EthereumAddress(unsafeAddresses.receive302).toString()
-      : undefined,
-  }
+  const names = getDiscoveryNames(addresses)
 
-  // Since some on-chain LZs does not support multisig
-  const multisigNameEntry = addresses.layerZeroMultisig
-    ? {
-        [addresses.layerZeroMultisig]: 'LayerZero Multisig',
-      }
-    : {}
-  const stargateBridgeNameEntry = addresses.stargateBridge
-    ? {
-        [addresses.stargateBridge]: 'Stargate Bridge',
-      }
-    : {}
-  const stargateTokenNameEntry = addresses.stargateToken
-    ? {
-        [addresses.stargateToken]: 'Stargate Token',
-      }
-    : {}
-
-  const endpointV2 = addresses.endpointV2
-    ? {
-        [addresses.endpointV2]: 'EndpointV2',
-      }
-    : {}
-
-  const send301 = addresses.send301
-    ? {
-        [addresses.send301]: 'SendUln301',
-      }
-    : {}
-
-  const receive301 = addresses.receive301
-    ? {
-        [addresses.receive301]: 'ReceiveUln301',
-      }
-    : {}
-
-  const send302 = addresses.send302
-    ? {
-        [addresses.send302]: 'SendUln302',
-      }
-    : {}
-
-  const receive302 = addresses.receive302
-    ? {
-        [addresses.receive302]: 'ReceiveUln302',
-      }
-    : {}
-
-  // TODO: Phase this out or refactor
   const { stargateBridge: _, stargateToken: __, ...initials } = addresses
 
-  const initialAddresses = Object.values(initials)
-    .filter((a): a is string => a !== undefined)
-    .map(EthereumAddress)
+  const initialAddresses = toEthereumAddresses(Object.values(initials))
 
   return {
     name: 'layerzero',
     chain,
     initialAddresses,
-    names: {
-      // V1
-      [addresses.ultraLightNodeV2]: 'UltraLightNodeV2',
-      [addresses.endpoint]: 'Endpoint',
-      ...stargateBridgeNameEntry,
-      ...stargateTokenNameEntry,
-      ...multisigNameEntry,
-      // V2
-      ...endpointV2,
-      ...send301,
-      ...receive301,
-      ...send302,
-      ...receive302,
-    },
+    names,
     overrides: {
       'Stargate Token': {
         ignoreDiscovery: true,
@@ -435,4 +318,58 @@ export function getEventsToWatch(
 
 function toEthereumAddresses(addresses: string[]): EthereumAddress[] {
   return addresses.map((address) => EthereumAddress(address))
+}
+
+function toSafeAddresses(
+  unsafeAddresses: LayerZeroAddresses,
+): LayerZeroAddresses {
+  const mapped = Object.entries(unsafeAddresses).map(([key, value]) => {
+    return [key, EthereumAddress(value).toString()] as const
+  })
+
+  return Object.fromEntries(mapped) as LayerZeroAddresses
+}
+
+function getDiscoveryNames(
+  addresses: LayerZeroAddresses,
+): Record<string, string> {
+  const { V1, V2, STARGATE } = LZ_CONTRACTS_NAMES
+
+  // Since some on-chain LZs does not support multisig
+  const multisigNameEntry = addresses.layerZeroMultisig
+    ? {
+        [addresses.layerZeroMultisig]: V1.MULTISIG,
+      }
+    : {}
+
+  const stargateBridgeNameEntry = addresses.stargateBridge
+    ? {
+        [addresses.stargateBridge]: STARGATE.BRIDGE,
+      }
+    : {}
+
+  const stargateTokenNameEntry = addresses.stargateToken
+    ? {
+        [addresses.stargateToken]: STARGATE.TOKEN,
+      }
+    : {}
+
+  const names = {
+    // V1
+    [addresses.ultraLightNodeV2]: V1.ULTRA_LIGHT_NODE_V2,
+    [addresses.endpoint]: V1.ENDPOINT,
+    ...multisigNameEntry,
+
+    // V2
+    [addresses.endpointV2]: V2.ENDPOINT_V2,
+    [addresses.send301]: V2.SEND301,
+    [addresses.receive301]: V2.RECEIVE301,
+    [addresses.send302]: V2.SEND302,
+    [addresses.receive302]: V2.RECEIVE302,
+
+    // Additional
+    ...stargateBridgeNameEntry,
+    ...stargateTokenNameEntry,
+  }
+  return names
 }

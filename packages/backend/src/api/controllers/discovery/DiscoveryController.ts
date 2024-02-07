@@ -13,6 +13,7 @@ import {
   RemoteChain,
 } from '@lz/libs'
 
+import { LZ_CONTRACTS_NAMES } from '../../../config/constants'
 import { CurrentDiscoveryRepository } from '../../../peripherals/database/CurrentDiscoveryRepository'
 import {
   getAddressFromValue,
@@ -51,7 +52,9 @@ export class DiscoveryController {
 function toDiscoveryApi(discoveryOutput: DiscoveryOutput): DiscoveryApi {
   const { contracts, blockNumber, eoas } = discoveryOutput
 
-  const endpoint = contracts.find((c) => c.name === 'Endpoint')
+  const endpoint = contracts.find(
+    (c) => c.name === LZ_CONTRACTS_NAMES.V1.ENDPOINT,
+  )
   assert(endpoint, 'Endpoint not found')
 
   const addressInfo: DiscoveryApi['addressInfo'] = contracts
@@ -83,7 +86,10 @@ function toDiscoveryApi(discoveryOutput: DiscoveryOutput): DiscoveryApi {
 function getEndpointContract(
   discoveryOutput: DiscoveryOutput,
 ): DiscoveryApi['contracts']['endpoint'] {
-  const endpoint = getContractByName('Endpoint', discoveryOutput)
+  const endpoint = getContractByName(
+    LZ_CONTRACTS_NAMES.V1.ENDPOINT,
+    discoveryOutput,
+  )
 
   const libraryLookupRaw = getContractValue(endpoint, 'libraryLookup')
   assert(Array.isArray(libraryLookupRaw), 'Library lookup is not an array')
@@ -108,7 +114,10 @@ function getEndpointContract(
 function getEndpointV2Contract(
   discoveryOutput: DiscoveryOutput,
 ): DiscoveryApi['contracts']['endpointV2'] {
-  const endpointV2 = getContractByName('EndpointV2', discoveryOutput)
+  const endpointV2 = getContractByName(
+    LZ_CONTRACTS_NAMES.V2.ENDPOINT_V2,
+    discoveryOutput,
+  )
 
   const blockedLibrary = getAddressFromValue(endpointV2, 'blockedLibrary')
   const defaultReceiveLibraries = getContractValue<Record<string, string>>(
@@ -157,7 +166,10 @@ interface UlnConfig {
 function getSendUln302(
   discoveryOutput: DiscoveryOutput,
 ): DiscoveryApi['contracts']['sendUln302'] {
-  const sendUln302 = getContractByName('SendUln302', discoveryOutput)
+  const sendUln302 = getContractByName(
+    LZ_CONTRACTS_NAMES.V2.SEND302,
+    discoveryOutput,
+  )
 
   const dec = getContractValue(
     sendUln302,
@@ -185,15 +197,18 @@ function getSendUln302(
 function getSendUln301(
   discoveryOutput: DiscoveryOutput,
 ): DiscoveryApi['contracts']['sendUln301'] {
-  const sendUln302 = getContractByName('SendUln301', discoveryOutput)
+  const sendUln301 = getContractByName(
+    LZ_CONTRACTS_NAMES.V2.SEND301,
+    discoveryOutput,
+  )
 
   const dec = getContractValue(
-    sendUln302,
+    sendUln301,
     'defaultExecutorConfigs',
   ) as unknown as DefaultExecutorConfig[]
 
   const duc = getContractValue(
-    sendUln302,
+    sendUln301,
     'defaultUlnConfigs',
   ) as unknown as UlnConfig[]
 
@@ -201,50 +216,59 @@ function getSendUln301(
     name: 'SendUln301',
     defaultExecutorConfigs: dec,
     defaultUlnConfigs: duc,
-    address: sendUln302.address,
+    address: sendUln301.address,
 
-    owner: getAddressFromValue(sendUln302, 'owner'),
-    treasury: getAddressFromValue(sendUln302, 'treasury'),
-    version: getContractValue<[number, number, number]>(sendUln302, 'version'),
+    owner: getAddressFromValue(sendUln301, 'owner'),
+    treasury: getAddressFromValue(sendUln301, 'treasury'),
+    version: getContractValue<[number, number, number]>(sendUln301, 'version'),
   }
 }
 
 function getReceiveUln302(
   discoveryOutput: DiscoveryOutput,
 ): DiscoveryApi['contracts']['receiveUln302'] {
-  const sendUln302 = getContractByName('ReceiveUln302', discoveryOutput)
+  const receiveUln302 = getContractByName(
+    LZ_CONTRACTS_NAMES.V2.RECEIVE302,
+    discoveryOutput,
+  )
 
   const duc = getContractValue(
-    sendUln302,
+    receiveUln302,
     'defaultUlnConfigs',
   ) as unknown as UlnConfig[]
 
   return {
     name: 'ReceiveUln302',
     defaultUlnConfigs: duc,
-    address: sendUln302.address,
-    messageLibType: getContractValue<number>(sendUln302, 'messageLibType'),
-    owner: getAddressFromValue(sendUln302, 'owner'),
-    version: getContractValue<[number, number, number]>(sendUln302, 'version'),
+    address: receiveUln302.address,
+    messageLibType: getContractValue<number>(receiveUln302, 'messageLibType'),
+    owner: getAddressFromValue(receiveUln302, 'owner'),
+    version: getContractValue<[number, number, number]>(
+      receiveUln302,
+      'version',
+    ),
   }
 }
 
 function getReceiveUln301(
   discoveryOutput: DiscoveryOutput,
 ): DiscoveryApi['contracts']['receiveUln301'] {
-  const sendUln302 = getContractByName('ReceiveUln301', discoveryOutput)
+  const receiveUln301 = getContractByName(
+    LZ_CONTRACTS_NAMES.V2.RECEIVE301,
+    discoveryOutput,
+  )
 
   interface DefaultExecutor {
     params: [[number, string]]
   }
 
   const de = getContractValue(
-    sendUln302,
+    receiveUln301,
     'defaultExecutors',
   ) as unknown as DefaultExecutor[]
 
   const duc = getContractValue(
-    sendUln302,
+    receiveUln301,
     'defaultUlnConfigs',
   ) as unknown as UlnConfig[]
 
@@ -252,16 +276,22 @@ function getReceiveUln301(
     name: 'ReceiveUln301',
     defaultUlnConfigs: duc,
     defaultExecutors: de,
-    address: sendUln302.address,
-    owner: getAddressFromValue(sendUln302, 'owner'),
-    version: getContractValue<[number, number, number]>(sendUln302, 'version'),
+    address: receiveUln301.address,
+    owner: getAddressFromValue(receiveUln301, 'owner'),
+    version: getContractValue<[number, number, number]>(
+      receiveUln301,
+      'version',
+    ),
   }
 }
 
 function getUlnV2Contract(
   discoveryOutput: DiscoveryOutput,
 ): DiscoveryApi['contracts']['ulnV2'] {
-  const ulnV2 = getContractByName('UltraLightNodeV2', discoveryOutput)
+  const ulnV2 = getContractByName(
+    LZ_CONTRACTS_NAMES.V1.ULTRA_LIGHT_NODE_V2,
+    discoveryOutput,
+  )
 
   return {
     name: 'UltraLightNodeV2',
@@ -389,7 +419,10 @@ function getLzMultisig(
   discoveryOutput: DiscoveryOutput,
 ): DiscoveryApi['contracts']['lzMultisig'] | null {
   try {
-    const lzMultisig = getContractByName('LayerZero Multisig', discoveryOutput)
+    const lzMultisig = getContractByName(
+      LZ_CONTRACTS_NAMES.V1.MULTISIG,
+      discoveryOutput,
+    )
 
     const ownersRaw = getContractValue(lzMultisig, 'getOwners')
     assert(Array.isArray(ownersRaw), 'Owners is not an array')

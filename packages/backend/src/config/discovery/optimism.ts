@@ -2,14 +2,16 @@ import { DiscoveryConfig } from '@l2beat/discovery'
 import { ChainId } from '@lz/libs'
 
 import {
+  createConfigFromTemplate,
+  getEventsToWatch,
+  toEthereumAddresses,
+} from '../discoveryConfig'
+import {
   AdditionalAddresses,
   CoreAddressesV1,
   CoreAddressesV2,
-  createConfigFromTemplate,
-  getEventsToWatch,
   LayerZeroAddresses,
-  toEthereumAddresses,
-} from '../discoveryConfig'
+} from '../types'
 
 export {
   optimismChangelogWhitelist,
@@ -50,7 +52,6 @@ const optimismRawConfig = createConfigFromTemplate({
 const optimismDiscoveryConfig = new DiscoveryConfig(optimismRawConfig)
 const optimismEventsToWatch = getEventsToWatch(addresses)
 const optimismChangelogWhitelist = toEthereumAddresses([
-  addresses.ultraLightNodeV2,
-  addresses.endpoint,
-  addresses.layerZeroMultisig,
+  ...Object.values(coreAddressesV1),
+  ...Object.values(coreAddressesV2),
 ])
