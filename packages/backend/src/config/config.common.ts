@@ -94,7 +94,6 @@ export function getCommonDiscoveryConfig(env: Env): Config['discovery'] {
         changelogWhitelist: ethereumChangelogWhitelist,
         multicallConfig: multicallConfig.ethereum,
       }),
-
       arbitrum: createConfig({
         chainNamePrefix: 'ARBITRUM',
         /**
@@ -234,7 +233,6 @@ export function getCommonDiscoveryConfig(env: Env): Config['discovery'] {
         eventsToWatchConfig: celoEventsToWatch,
         changelogWhitelist: celoChangelogWhitelist,
         multicallConfig: multicallConfig.celo,
-
         unsupportedEtherscanMethods: {
           getContractCreation: true,
         },
