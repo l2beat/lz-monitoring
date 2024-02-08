@@ -25,8 +25,6 @@ export function BlockchainIcon({ chainId }: { chainId: ChainId }) {
       return <CeloIcon />
     case ChainId.ETHEREUM:
       return <EthereumIcon />
-    case ChainId.GOERLI:
-      return <EthereumIcon />
     case ChainId.LINEA:
       return <LineaIcon />
     case ChainId.OPTIMISM:
