@@ -1,4 +1,4 @@
-import { DiscoveryConfig } from '@l2beat/discovery'
+import { DiscoveryConfig, getMulticall3Config } from '@l2beat/discovery'
 import { ChainId } from '@lz/libs'
 
 import {
@@ -8,7 +8,12 @@ import {
 } from '../discoveryConfig'
 import { CoreAddressesV1, CoreAddressesV2, LayerZeroAddresses } from '../types'
 
-export { celoChangelogWhitelist, celoDiscoveryConfig, celoEventsToWatch }
+export {
+  celoChangelogWhitelist,
+  celoDiscoveryConfig,
+  celoEventsToWatch,
+  celoMulticallConfig,
+}
 
 const coreAddressesV1 = {
   ultraLightNodeV2: '0x377530cdA84DFb2673bF4d145DCF0C4D7fdcB5b6',
@@ -40,3 +45,4 @@ const celoChangelogWhitelist = toEthereumAddresses([
   ...Object.values(coreAddressesV1),
   ...Object.values(coreAddressesV2),
 ])
+const celoMulticallConfig = getMulticall3Config(13112599)

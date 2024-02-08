@@ -1,9 +1,5 @@
 import { Env } from '@l2beat/backend-tools'
-import {
-  DiscoveryConfig,
-  MulticallConfig,
-  multicallConfig,
-} from '@l2beat/discovery'
+import { DiscoveryConfig, MulticallConfig } from '@l2beat/discovery'
 // eslint-disable-next-line import/no-internal-modules
 import { EtherscanUnsupportedMethods } from '@l2beat/discovery/dist/utils/EtherscanLikeClient'
 // eslint-disable-next-line import/no-internal-modules
@@ -15,36 +11,43 @@ import {
   arbitrumChangelogWhitelist,
   arbitrumDiscoveryConfig,
   arbitrumEventsToWatch,
+  arbitrumMulticallConfig,
 } from './discovery/arbitrum'
 import {
   avalancheChangelogWhitelist,
   avalancheDiscoveryConfig,
   avalancheEventsToWatch,
+  avalancheMulticallConfig,
 } from './discovery/avalanche'
 import {
   baseChangelogWhitelist,
   baseDiscoveryConfig,
   baseEventsToWatch,
+  baseMulticallConfig,
 } from './discovery/base'
 import {
   bscChangelogWhitelist,
   bscDiscoveryConfig,
   bscEventsToWatch,
+  bscMulticallConfig,
 } from './discovery/bsc'
 import {
   celoChangelogWhitelist,
   celoDiscoveryConfig,
   celoEventsToWatch,
+  celoMulticallConfig,
 } from './discovery/celo'
 import {
   ethereumChangelogWhitelist,
   ethereumDiscoveryConfig,
   ethereumEventsToWatch,
+  ethereumMulticallConfig,
 } from './discovery/ethereum'
 import {
   lineaChangelogWhitelist,
   lineaDiscoveryConfig,
   lineaEventsToWatch,
+  lineaMulticallConfig,
 } from './discovery/linea'
 import {
   optimismChangelogWhitelist,
@@ -55,11 +58,13 @@ import {
   polygonPosChangelogWhitelist,
   polygonPosDiscoveryConfig,
   polygonPosEventsToWatch,
+  polygonPosMulticallConfig,
 } from './discovery/polygon-pos'
 import {
   polygonZkEvmChangelogWhitelist,
   polygonZkEvmDiscoveryConfig,
   polygonZkEvmEventsToWatch,
+  polygonZkEvmMulticallConfig,
 } from './discovery/polygon-zkevm'
 import { EventsToWatchConfig } from './discoveryConfig'
 
@@ -92,7 +97,7 @@ export function getCommonDiscoveryConfig(env: Env): Config['discovery'] {
         discoveryConfig: ethereumDiscoveryConfig,
         eventsToWatchConfig: ethereumEventsToWatch,
         changelogWhitelist: ethereumChangelogWhitelist,
-        multicallConfig: multicallConfig.ethereum,
+        multicallConfig: ethereumMulticallConfig,
       }),
       arbitrum: createConfig({
         chainNamePrefix: 'ARBITRUM',
@@ -107,7 +112,7 @@ export function getCommonDiscoveryConfig(env: Env): Config['discovery'] {
         discoveryConfig: arbitrumDiscoveryConfig,
         eventsToWatchConfig: arbitrumEventsToWatch,
         changelogWhitelist: arbitrumChangelogWhitelist,
-        multicallConfig: multicallConfig.arbitrum,
+        multicallConfig: arbitrumMulticallConfig,
       }),
       optimism: createConfig({
         chainNamePrefix: 'OPTIMISM',
@@ -122,7 +127,7 @@ export function getCommonDiscoveryConfig(env: Env): Config['discovery'] {
         discoveryConfig: optimismDiscoveryConfig,
         eventsToWatchConfig: optimismEventsToWatch,
         changelogWhitelist: optimismChangelogWhitelist,
-        multicallConfig: multicallConfig.optimism,
+        multicallConfig: ethereumMulticallConfig,
       }),
       'polygon-pos': createConfig({
         /**
@@ -137,7 +142,7 @@ export function getCommonDiscoveryConfig(env: Env): Config['discovery'] {
         discoveryConfig: polygonPosDiscoveryConfig,
         eventsToWatchConfig: polygonPosEventsToWatch,
         changelogWhitelist: polygonPosChangelogWhitelist,
-        multicallConfig: multicallConfig.polygon_pos,
+        multicallConfig: polygonPosMulticallConfig,
       }),
       'polygon-zkevm': createConfig({
         /**
@@ -152,7 +157,7 @@ export function getCommonDiscoveryConfig(env: Env): Config['discovery'] {
         discoveryConfig: polygonZkEvmDiscoveryConfig,
         eventsToWatchConfig: polygonZkEvmEventsToWatch,
         changelogWhitelist: polygonZkEvmChangelogWhitelist,
-        multicallConfig: multicallConfig.polygon_zkevm,
+        multicallConfig: polygonZkEvmMulticallConfig,
       }),
       base: createConfig({
         /**
@@ -167,7 +172,7 @@ export function getCommonDiscoveryConfig(env: Env): Config['discovery'] {
         discoveryConfig: baseDiscoveryConfig,
         eventsToWatchConfig: baseEventsToWatch,
         changelogWhitelist: baseChangelogWhitelist,
-        multicallConfig: multicallConfig.base,
+        multicallConfig: baseMulticallConfig,
       }),
       avalanche: createConfig({
         /**
@@ -183,7 +188,7 @@ export function getCommonDiscoveryConfig(env: Env): Config['discovery'] {
         discoveryConfig: avalancheDiscoveryConfig,
         eventsToWatchConfig: avalancheEventsToWatch,
         changelogWhitelist: avalancheChangelogWhitelist,
-        multicallConfig: multicallConfig.avalanche,
+        multicallConfig: avalancheMulticallConfig,
         unsupportedEtherscanMethods: {
           getContractCreation: true,
         },
@@ -202,7 +207,7 @@ export function getCommonDiscoveryConfig(env: Env): Config['discovery'] {
         discoveryConfig: lineaDiscoveryConfig,
         eventsToWatchConfig: lineaEventsToWatch,
         changelogWhitelist: lineaChangelogWhitelist,
-        multicallConfig: multicallConfig.linea,
+        multicallConfig: lineaMulticallConfig,
       }),
       bsc: createConfig({
         chainNamePrefix: 'BSC',
@@ -217,7 +222,7 @@ export function getCommonDiscoveryConfig(env: Env): Config['discovery'] {
         discoveryConfig: bscDiscoveryConfig,
         eventsToWatchConfig: bscEventsToWatch,
         changelogWhitelist: bscChangelogWhitelist,
-        multicallConfig: multicallConfig.bsc,
+        multicallConfig: bscMulticallConfig,
       }),
       celo: createConfig({
         chainNamePrefix: 'CELO',
@@ -232,7 +237,7 @@ export function getCommonDiscoveryConfig(env: Env): Config['discovery'] {
         discoveryConfig: celoDiscoveryConfig,
         eventsToWatchConfig: celoEventsToWatch,
         changelogWhitelist: celoChangelogWhitelist,
-        multicallConfig: multicallConfig.celo,
+        multicallConfig: celoMulticallConfig,
         unsupportedEtherscanMethods: {
           getContractCreation: true,
         },

@@ -67,7 +67,7 @@ export class DiscoveryIndexer extends ChildIndexer {
 
     const discoveryOutput = toDiscoveryOutput(
       this.config.name,
-      this.config.chainId,
+      ChainId.getName(this.chainId),
       this.config.hash,
       blockNumber,
       analysis,

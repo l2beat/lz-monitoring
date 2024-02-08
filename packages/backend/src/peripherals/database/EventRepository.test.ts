@@ -1,6 +1,5 @@
 import { Logger } from '@l2beat/backend-tools'
-import { ChainId } from '@l2beat/discovery'
-import { Hash256 } from '@lz/libs'
+import { ChainId, Hash256 } from '@lz/libs'
 import { expect } from 'earl'
 
 import { setupDatabaseTestSuite } from '../../test/database'

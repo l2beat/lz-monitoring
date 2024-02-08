@@ -1,4 +1,4 @@
-import { DiscoveryConfig } from '@l2beat/discovery'
+import { DiscoveryConfig, getMulticall3Config } from '@l2beat/discovery'
 import { ChainId } from '@lz/libs'
 
 import {
@@ -17,6 +17,7 @@ export {
   optimismChangelogWhitelist,
   optimismDiscoveryConfig,
   optimismEventsToWatch,
+  optimismMulticallConfig,
 }
 
 const coreAddressesV1 = {
@@ -55,3 +56,4 @@ const optimismChangelogWhitelist = toEthereumAddresses([
   ...Object.values(coreAddressesV1),
   ...Object.values(coreAddressesV2),
 ])
+const optimismMulticallConfig = getMulticall3Config(4286263)

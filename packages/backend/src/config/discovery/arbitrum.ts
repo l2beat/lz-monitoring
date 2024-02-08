@@ -1,4 +1,4 @@
-import { DiscoveryConfig } from '@l2beat/discovery'
+import { DiscoveryConfig, getMulticall3Config } from '@l2beat/discovery'
 import { ChainId } from '@lz/libs'
 
 import {
@@ -17,6 +17,7 @@ export {
   arbitrumChangelogWhitelist,
   arbitrumDiscoveryConfig,
   arbitrumEventsToWatch,
+  arbitrumMulticallConfig,
 }
 
 const coreAddressesV1 = {
@@ -55,3 +56,5 @@ const arbitrumChangelogWhitelist = toEthereumAddresses([
   ...Object.values(coreAddressesV1),
   ...Object.values(coreAddressesV2),
 ])
+
+const arbitrumMulticallConfig = getMulticall3Config(7654707)

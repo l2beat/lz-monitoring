@@ -7,6 +7,9 @@ import {
   Bytes,
   bytes32ToAddress,
   ChainId,
+  DefaultExecutorConfigs,
+  DefaultExecutors,
+  DefaultUlnConfigs,
   DiscoveryApi,
   EthereumAddress,
   getChainIdFromEndpointId,
@@ -155,14 +158,6 @@ function getEndpointV2Contract(
   }
 }
 
-interface DefaultExecutorConfig {
-  params: [[number, [number, string]]]
-}
-
-interface UlnConfig {
-  params: [[number, [number, number, number, number, string[], string[]]]]
-}
-
 function getSendUln302(
   discoveryOutput: DiscoveryOutput,
 ): DiscoveryApi['contracts']['sendUln302'] {
@@ -174,12 +169,12 @@ function getSendUln302(
   const dec = getContractValue(
     sendUln302,
     'defaultExecutorConfigs',
-  ) as unknown as DefaultExecutorConfig[]
+  ) as unknown as DefaultExecutorConfigs
 
   const duc = getContractValue(
     sendUln302,
     'defaultUlnConfigs',
-  ) as unknown as UlnConfig[]
+  ) as unknown as DefaultUlnConfigs
 
   return {
     name: 'SendUln302',
@@ -202,15 +197,15 @@ function getSendUln301(
     discoveryOutput,
   )
 
-  const dec = getContractValue(
+  const dec = getContractValue<DefaultExecutorConfigs>(
     sendUln301,
     'defaultExecutorConfigs',
-  ) as unknown as DefaultExecutorConfig[]
+  )
 
-  const duc = getContractValue(
+  const duc = getContractValue<DefaultUlnConfigs>(
     sendUln301,
     'defaultUlnConfigs',
-  ) as unknown as UlnConfig[]
+  )
 
   return {
     name: 'SendUln301',
@@ -232,10 +227,10 @@ function getReceiveUln302(
     discoveryOutput,
   )
 
-  const duc = getContractValue(
+  const duc = getContractValue<DefaultUlnConfigs>(
     receiveUln302,
     'defaultUlnConfigs',
-  ) as unknown as UlnConfig[]
+  )
 
   return {
     name: 'ReceiveUln302',
@@ -258,19 +253,15 @@ function getReceiveUln301(
     discoveryOutput,
   )
 
-  interface DefaultExecutor {
-    params: [[number, string]]
-  }
-
-  const de = getContractValue(
+  const de = getContractValue<DefaultExecutors>(
     receiveUln301,
     'defaultExecutors',
-  ) as unknown as DefaultExecutor[]
+  )
 
-  const duc = getContractValue(
+  const duc = getContractValue<DefaultUlnConfigs>(
     receiveUln301,
     'defaultUlnConfigs',
-  ) as unknown as UlnConfig[]
+  )
 
   return {
     name: 'ReceiveUln301',

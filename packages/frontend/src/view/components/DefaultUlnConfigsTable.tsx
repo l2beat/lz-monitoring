@@ -1,15 +1,12 @@
 import { DefaultUlnConfigs, EthereumAddress } from '@lz/libs'
 
 import { BlockchainAddress } from './BlockchainAddress'
-import { decodeDefaultUlnConfigs } from './protocol/utils'
 import { ValueTable } from './ValueTable'
 
 export function DefaultUlnConfigsTable(props: {
   defaultUlnConfigs: DefaultUlnConfigs
 }) {
-  const rows = Object.entries(
-    decodeDefaultUlnConfigs(props.defaultUlnConfigs),
-  ).map(([eid, config]) => (
+  const rows = Object.entries(props.defaultUlnConfigs).map(([eid, config]) => (
     <div className="col-span-full grid grid-cols-default-uln-configs items-center justify-center border-b border-zinc-650 py-2 text-center text-xs last:border-none">
       <span>{eid}</span>
       <span>{config.confirmations}</span>

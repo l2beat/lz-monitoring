@@ -257,7 +257,7 @@ function mockConfig() {
 
   return mockObject<DiscoveryConfig>({
     name: 'test',
-    chainId: ChainId.ETHEREUM,
+    chain: 'ethereum',
     hash: configHash,
   })
 }

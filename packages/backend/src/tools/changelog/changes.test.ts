@@ -82,7 +82,16 @@ describe(getDiscoveryChanges.name, () => {
       contracts: [currentEndpoint, currentUlnV2],
     } as unknown as DiscoveryOutput
 
-    const changelogEntries = getDiscoveryChanges(previousOutput, currentOutput)
+    const changeContext = {
+      blockNumber: currentOutput.blockNumber,
+      chainId: ChainId.ETHEREUM,
+    }
+
+    const changelogEntries = getDiscoveryChanges(
+      previousOutput,
+      currentOutput,
+      changeContext,
+    )
 
     expect(changelogEntries.properties.added).toEqual([])
     expect(changelogEntries.properties.removed).toEqual([])
@@ -90,8 +99,8 @@ describe(getDiscoveryChanges.name, () => {
       {
         targetName: endpoint.name,
         targetAddress: endpoint.address,
-        chainId: ChainId.ETHEREUM,
-        blockNumber: currentOutput.blockNumber,
+        chainId: changeContext.chainId,
+        blockNumber: changeContext.blockNumber,
         modificationType: 'OBJECT_EDITED_PROPERTY',
         parameterName: 'BLOCK_VERSION',
         parameterPath: ['BLOCK_VERSION'],
@@ -101,8 +110,8 @@ describe(getDiscoveryChanges.name, () => {
       {
         targetName: endpoint.name,
         targetAddress: endpoint.address,
-        chainId: ChainId.ETHEREUM,
-        blockNumber: currentOutput.blockNumber,
+        chainId: changeContext.chainId,
+        blockNumber: changeContext.blockNumber,
         modificationType: 'OBJECT_EDITED_PROPERTY',
         parameterName: 'defaultSendVersion',
         parameterPath: ['defaultSendVersion'],
@@ -112,8 +121,8 @@ describe(getDiscoveryChanges.name, () => {
       {
         targetName: endpoint.name,
         targetAddress: endpoint.address,
-        chainId: ChainId.ETHEREUM,
-        blockNumber: currentOutput.blockNumber,
+        chainId: changeContext.chainId,
+        blockNumber: changeContext.blockNumber,
         modificationType: 'OBJECT_NEW_PROPERTY',
         parameterName: 'isReceivingPayload',
         parameterPath: ['isReceivingPayload'],
@@ -123,8 +132,8 @@ describe(getDiscoveryChanges.name, () => {
       {
         targetName: ulnV2.name,
         targetAddress: ulnV2.address,
-        chainId: ChainId.ETHEREUM,
-        blockNumber: currentOutput.blockNumber,
+        chainId: changeContext.chainId,
+        blockNumber: changeContext.blockNumber,
         modificationType: 'OBJECT_EDITED_PROPERTY',
         parameterName: 'CONFIG_TYPE_INBOUND_BLOCK_CONFIRMATIONS',
         parameterPath: ['CONFIG_TYPE_INBOUND_BLOCK_CONFIRMATIONS'],
@@ -134,8 +143,8 @@ describe(getDiscoveryChanges.name, () => {
       {
         targetName: ulnV2.name,
         targetAddress: ulnV2.address,
-        chainId: ChainId.ETHEREUM,
-        blockNumber: currentOutput.blockNumber,
+        chainId: changeContext.chainId,
+        blockNumber: changeContext.blockNumber,
         modificationType: 'ARRAY_NEW_ELEMENT',
         parameterName: 'defaultAdapterParams',
         parameterPath: ['defaultAdapterParams', '101', '1'],
@@ -172,7 +181,16 @@ describe(getDiscoveryChanges.name, () => {
       contracts: [currentEndpoint],
     } as unknown as DiscoveryOutput
 
-    const changelogEntries = getDiscoveryChanges(previousOutput, currentOutput)
+    const changeContext = {
+      blockNumber: currentOutput.blockNumber,
+      chainId: ChainId.ETHEREUM,
+    }
+
+    const changelogEntries = getDiscoveryChanges(
+      previousOutput,
+      currentOutput,
+      changeContext,
+    )
 
     expect(changelogEntries.properties.modified).toEqual([])
     expect(changelogEntries.properties.removed).toEqual([])
@@ -180,8 +198,8 @@ describe(getDiscoveryChanges.name, () => {
       {
         targetName: currentEndpoint.name,
         targetAddress: currentEndpoint.address,
-        chainId: ChainId.ETHEREUM,
-        blockNumber: currentOutput.blockNumber,
+        chainId: changeContext.chainId,
+        blockNumber: changeContext.blockNumber,
         modificationType: 'OBJECT_NEW_PROPERTY',
         parameterName: 'BLOCK_VERSION',
         parameterPath: ['BLOCK_VERSION'],
@@ -191,8 +209,8 @@ describe(getDiscoveryChanges.name, () => {
       {
         targetName: currentEndpoint.name,
         targetAddress: currentEndpoint.address,
-        chainId: ChainId.ETHEREUM,
-        blockNumber: currentOutput.blockNumber,
+        chainId: changeContext.chainId,
+        blockNumber: changeContext.blockNumber,
         modificationType: 'OBJECT_NEW_PROPERTY',
         parameterName: 'defaultSendVersion',
         parameterPath: ['defaultSendVersion'],
@@ -202,8 +220,8 @@ describe(getDiscoveryChanges.name, () => {
       {
         targetName: currentEndpoint.name,
         targetAddress: currentEndpoint.address,
-        chainId: ChainId.ETHEREUM,
-        blockNumber: currentOutput.blockNumber,
+        chainId: changeContext.chainId,
+        blockNumber: changeContext.blockNumber,
         modificationType: 'OBJECT_NEW_PROPERTY',
         parameterName: 'isReceivingPayload',
         parameterPath: ['isReceivingPayload'],
@@ -217,9 +235,9 @@ describe(getDiscoveryChanges.name, () => {
       {
         targetName: currentEndpoint.name,
         targetAddress: currentEndpoint.address,
-        blockNumber: currentOutput.blockNumber,
+        blockNumber: changeContext.blockNumber,
         operation: 'CONTRACT_ADDED',
-        chainId: ChainId.ETHEREUM,
+        chainId: changeContext.chainId,
       },
     ])
   })
@@ -247,7 +265,16 @@ describe(getDiscoveryChanges.name, () => {
       contracts: [],
     } as unknown as DiscoveryOutput
 
-    const changelogEntries = getDiscoveryChanges(previousOutput, currentOutput)
+    const changeContext = {
+      blockNumber: currentOutput.blockNumber,
+      chainId: ChainId.ETHEREUM,
+    }
+
+    const changelogEntries = getDiscoveryChanges(
+      previousOutput,
+      currentOutput,
+      changeContext,
+    )
 
     expect(changelogEntries.properties.added).toEqual([])
     expect(changelogEntries.properties.modified).toEqual([])
@@ -255,8 +282,8 @@ describe(getDiscoveryChanges.name, () => {
       {
         targetName: previousEndpoint.name,
         targetAddress: previousEndpoint.address,
-        chainId: ChainId.ETHEREUM,
-        blockNumber: currentOutput.blockNumber,
+        chainId: changeContext.chainId,
+        blockNumber: changeContext.blockNumber,
         modificationType: 'OBJECT_DELETED_PROPERTY',
         parameterName: 'BLOCK_VERSION',
         parameterPath: ['BLOCK_VERSION'],
@@ -266,8 +293,8 @@ describe(getDiscoveryChanges.name, () => {
       {
         targetName: previousEndpoint.name,
         targetAddress: previousEndpoint.address,
-        chainId: ChainId.ETHEREUM,
-        blockNumber: currentOutput.blockNumber,
+        chainId: changeContext.chainId,
+        blockNumber: changeContext.blockNumber,
         modificationType: 'OBJECT_DELETED_PROPERTY',
         parameterName: 'defaultSendVersion',
         parameterPath: ['defaultSendVersion'],
@@ -277,8 +304,8 @@ describe(getDiscoveryChanges.name, () => {
       {
         targetName: previousEndpoint.name,
         targetAddress: previousEndpoint.address,
-        chainId: ChainId.ETHEREUM,
-        blockNumber: currentOutput.blockNumber,
+        chainId: changeContext.chainId,
+        blockNumber: changeContext.blockNumber,
         modificationType: 'OBJECT_DELETED_PROPERTY',
         parameterName: 'isReceivingPayload',
         parameterPath: ['isReceivingPayload'],
@@ -292,9 +319,9 @@ describe(getDiscoveryChanges.name, () => {
       {
         targetName: previousEndpoint.name,
         targetAddress: previousEndpoint.address,
-        blockNumber: currentOutput.blockNumber,
+        blockNumber: changeContext.blockNumber,
         operation: 'CONTRACT_REMOVED',
-        chainId: ChainId.ETHEREUM,
+        chainId: changeContext.chainId,
       },
     ])
   })
@@ -350,14 +377,23 @@ describe(getDiscoveryChanges.name, () => {
       contracts: [currentEndpoint, contractToBeAdded],
     } as unknown as DiscoveryOutput
 
-    const changelogEntries = getDiscoveryChanges(previousOutput, currentOutput)
+    const changeContext = {
+      blockNumber: currentOutput.blockNumber,
+      chainId: ChainId.ETHEREUM,
+    }
+
+    const changelogEntries = getDiscoveryChanges(
+      previousOutput,
+      currentOutput,
+      changeContext,
+    )
 
     expect(changelogEntries.properties.modified).toEqual([
       {
         targetName: currentEndpoint.name,
         targetAddress: currentEndpoint.address,
-        chainId: ChainId.ETHEREUM,
-        blockNumber: currentOutput.blockNumber,
+        chainId: changeContext.chainId,
+        blockNumber: changeContext.blockNumber,
         modificationType: 'OBJECT_EDITED_PROPERTY',
         parameterName: 'toBeChanged',
         parameterPath: ['toBeChanged'],
@@ -370,8 +406,8 @@ describe(getDiscoveryChanges.name, () => {
       {
         targetName: contractToBeRemoved.name,
         targetAddress: contractToBeRemoved.address,
-        chainId: ChainId.ETHEREUM,
-        blockNumber: currentOutput.blockNumber,
+        chainId: changeContext.chainId,
+        blockNumber: changeContext.blockNumber,
         modificationType: 'OBJECT_DELETED_PROPERTY',
         parameterName: 'toBeRemovedA',
         parameterPath: ['toBeRemovedA'],
@@ -381,8 +417,8 @@ describe(getDiscoveryChanges.name, () => {
       {
         targetName: contractToBeRemoved.name,
         targetAddress: contractToBeRemoved.address,
-        chainId: ChainId.ETHEREUM,
-        blockNumber: currentOutput.blockNumber,
+        chainId: changeContext.chainId,
+        blockNumber: changeContext.blockNumber,
         modificationType: 'OBJECT_DELETED_PROPERTY',
         parameterName: 'toBeRemovedB',
         parameterPath: ['toBeRemovedB'],
@@ -395,8 +431,8 @@ describe(getDiscoveryChanges.name, () => {
       {
         targetName: contractToBeAdded.name,
         targetAddress: contractToBeAdded.address,
-        chainId: ChainId.ETHEREUM,
-        blockNumber: currentOutput.blockNumber,
+        chainId: changeContext.chainId,
+        blockNumber: changeContext.blockNumber,
         modificationType: 'OBJECT_NEW_PROPERTY',
         parameterName: 'toBeAddedA',
         parameterPath: ['toBeAddedA'],
@@ -406,8 +442,8 @@ describe(getDiscoveryChanges.name, () => {
       {
         targetName: contractToBeAdded.name,
         targetAddress: contractToBeAdded.address,
-        chainId: ChainId.ETHEREUM,
-        blockNumber: currentOutput.blockNumber,
+        chainId: changeContext.chainId,
+        blockNumber: changeContext.blockNumber,
         modificationType: 'OBJECT_NEW_PROPERTY',
         parameterName: 'toBeAddedB',
         parameterPath: ['toBeAddedB'],
@@ -420,9 +456,9 @@ describe(getDiscoveryChanges.name, () => {
       {
         targetName: contractToBeAdded.name,
         targetAddress: contractToBeAdded.address,
-        blockNumber: currentOutput.blockNumber,
+        blockNumber: changeContext.blockNumber,
         operation: 'CONTRACT_ADDED',
-        chainId: ChainId.ETHEREUM,
+        chainId: changeContext.chainId,
       },
     ])
 
@@ -430,9 +466,9 @@ describe(getDiscoveryChanges.name, () => {
       {
         targetName: contractToBeRemoved.name,
         targetAddress: contractToBeRemoved.address,
-        blockNumber: currentOutput.blockNumber,
+        blockNumber: changeContext.blockNumber,
         operation: 'CONTRACT_REMOVED',
-        chainId: ChainId.ETHEREUM,
+        chainId: changeContext.chainId,
       },
     ])
   })

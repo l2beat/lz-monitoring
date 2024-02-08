@@ -12,42 +12,34 @@ const DefaultAdapterParams = z.array(
 )
 export type DefaultAdapterParams = z.infer<typeof DefaultAdapterParams>
 
-const DefaultExecutorConfigs = z.array(
+const DefaultExecutorConfigs = z.record(
+  // EID
+  z.string(),
   z.object({
-    params: z.tuple([
-      z.tuple([
-        z.number(), // EID
-        // gas, executor address
-        z.tuple([z.number(), z.string()]),
-      ]),
-    ]),
+    maxMessageSize: z.number(),
+    executor: z.string(),
   }),
 )
+
 export type DefaultExecutorConfigs = z.infer<typeof DefaultExecutorConfigs>
 
-const DefaultExecutors = z.array(
-  z.object({
-    // EID, Executor
-    params: z.tuple([z.tuple([z.number(), z.string()])]),
-  }),
+const DefaultExecutors = z.record(
+  // EID
+  z.string(),
+  // Executor
+  z.string(),
 )
 export type DefaultExecutors = z.infer<typeof DefaultExecutors>
 
-const DefaultUlnConfigs = z.array(
+const DefaultUlnConfigs = z.record(
+  z.string(),
   z.object({
-    params: z.tuple([
-      z.tuple([
-        z.number(), // EID
-        z.tuple([
-          z.number(), // confirmations
-          z.number(), // requiredDVNCount
-          z.number(), // optionalDVNCount
-          z.number(), // optionalDVNCountThreshold
-          z.array(z.string()), // requiredDVNs
-          z.array(z.string()), // optionalDVNs
-        ]),
-      ]),
-    ]),
+    confirmations: z.number(),
+    requiredDVNCount: z.number(),
+    optionalDVNCount: z.number(),
+    optionalDVNThreshold: z.number(),
+    requiredDVNs: z.array(z.string()),
+    optionalDVNs: z.array(z.string()),
   }),
 )
 

@@ -11,6 +11,10 @@ export { getComparableGenesisReference, getDiscoveryChanges }
 function getDiscoveryChanges(
   previousOutput: DiscoveryOutput,
   currentOutput: DiscoveryOutput,
+  changeContext: {
+    blockNumber: number
+    chainId: ChainId
+  },
 ): {
   properties: {
     modified: ChangelogEntry[]
@@ -26,11 +30,6 @@ function getDiscoveryChanges(
     previousOutput,
     currentOutput,
   )
-
-  const changeContext = {
-    blockNumber: currentOutput.blockNumber,
-    chainId: ChainId.fromName(currentOutput.chain),
-  }
 
   const milestones = getMilestones(
     {

@@ -1,4 +1,4 @@
-import { DiscoveryConfig } from '@l2beat/discovery'
+import { DiscoveryConfig, getMulticall3Config } from '@l2beat/discovery'
 import { ChainId } from '@lz/libs'
 
 import {
@@ -12,6 +12,7 @@ export {
   polygonZkEvmChangelogWhitelist,
   polygonZkEvmDiscoveryConfig,
   polygonZkEvmEventsToWatch,
+  polygonZkEvmMulticallConfig,
 }
 
 const coreAddressesV1 = {
@@ -46,3 +47,4 @@ const polygonZkEvmChangelogWhitelist = toEthereumAddresses([
   ...Object.values(coreAddressesV1),
   ...Object.values(coreAddressesV2),
 ])
+const polygonZkEvmMulticallConfig = getMulticall3Config(57746)

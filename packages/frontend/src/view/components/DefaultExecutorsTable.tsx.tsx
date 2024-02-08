@@ -1,15 +1,12 @@
 import { DefaultExecutors, EthereumAddress } from '@lz/libs'
 
 import { BlockchainAddress } from './BlockchainAddress'
-import { decodeDefaultExecutors } from './protocol/utils'
 import { ValueTable } from './ValueTable'
 
 export function DefaultExecutorsTable(props: {
   defaultExecutors: DefaultExecutors
 }) {
-  const rows = Object.entries(
-    decodeDefaultExecutors(props.defaultExecutors),
-  ).map(([eid, executor]) => (
+  const rows = Object.entries(props.defaultExecutors).map(([eid, executor]) => (
     <>
       <span>{eid}</span>
       <span>

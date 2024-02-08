@@ -29,7 +29,7 @@ function createConfigFromTemplate(
 
   return {
     name: 'layerzero',
-    chain,
+    chain: chain.toString(),
     initialAddresses,
     names,
     overrides: {
@@ -52,7 +52,6 @@ function createConfigFromTemplate(
           },
         },
       },
-      // Maybe we should remove that if there is no multisig support?
       'LayerZero Multisig': {
         ignoreInWatchMode: ['nonce'],
       },
@@ -108,68 +107,60 @@ function createConfigFromTemplate(
       },
 
       /// V2
-
       SendUln301: {
         fields: {
           defaultExecutorConfigs: {
-            ignoreRelative: true,
-            onlyValue: true,
-            type: 'stateFromEvent',
+            type: 'stateFromEventTuple',
             event: 'DefaultExecutorConfigsSet',
-            returnParams: ['params'],
+            returnParam: 'params',
+            expandParam: 'config',
           },
           defaultUlnConfigs: {
-            ignoreRelative: true,
-            onlyValue: true,
-            type: 'stateFromEvent',
+            type: 'stateFromEventTuple',
             event: 'DefaultUlnConfigsSet',
-            returnParams: ['params'],
+            returnParam: 'params',
+            expandParam: 'config',
           },
         },
       },
       ReceiveUln301: {
         fields: {
           defaultUlnConfigs: {
-            ignoreRelative: true,
-            onlyValue: true,
-            type: 'stateFromEvent',
+            type: 'stateFromEventTuple',
             event: 'DefaultUlnConfigsSet',
-            returnParams: ['params'],
+            returnParam: 'params',
+            expandParam: 'config',
           },
           defaultExecutors: {
-            ignoreRelative: true,
-            type: 'stateFromEvent',
+            type: 'stateFromEventTuple',
             event: 'DefaultExecutorsSet',
-            returnParams: ['params'],
+            returnParam: 'params',
           },
         },
       },
       SendUln302: {
         fields: {
           defaultExecutorConfigs: {
-            ignoreRelative: true,
-            onlyValue: true,
-            type: 'stateFromEvent',
+            type: 'stateFromEventTuple',
             event: 'DefaultExecutorConfigsSet',
-            returnParams: ['params'],
+            returnParam: 'params',
+            expandParam: 'config',
           },
           defaultUlnConfigs: {
-            ignoreRelative: true,
-            onlyValue: true,
-            type: 'stateFromEvent',
+            type: 'stateFromEventTuple',
             event: 'DefaultUlnConfigsSet',
-            returnParams: ['params'],
+            returnParam: 'params',
+            expandParam: 'config',
           },
         },
       },
       ReceiveUln302: {
         fields: {
           defaultUlnConfigs: {
-            ignoreRelative: true,
-            onlyValue: true,
-            type: 'stateFromEvent',
+            type: 'stateFromEventTuple',
             event: 'DefaultUlnConfigsSet',
-            returnParams: ['params'],
+            returnParam: 'params',
+            expandParam: 'config',
           },
         },
       },
@@ -182,7 +173,6 @@ function createConfigFromTemplate(
         ],
         fields: {
           defaultReceiveLibraries: {
-            ignoreRelative: true,
             type: 'stateFromEvent',
             event: 'DefaultReceiveLibrarySet',
             groupBy: 'eid',
@@ -191,7 +181,6 @@ function createConfigFromTemplate(
             returnParams: ['eid', 'newLib'],
           },
           defaultSendLibraries: {
-            ignoreRelative: true,
             type: 'stateFromEvent',
             event: 'DefaultSendLibrarySet',
             groupBy: 'eid',

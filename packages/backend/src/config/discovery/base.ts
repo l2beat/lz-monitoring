@@ -1,4 +1,4 @@
-import { DiscoveryConfig } from '@l2beat/discovery'
+import { DiscoveryConfig, getMulticall3Config } from '@l2beat/discovery'
 import { ChainId } from '@lz/libs'
 
 import {
@@ -8,7 +8,12 @@ import {
 } from '../discoveryConfig'
 import { CoreAddressesV1, CoreAddressesV2, LayerZeroAddresses } from '../types'
 
-export { baseChangelogWhitelist, baseDiscoveryConfig, baseEventsToWatch }
+export {
+  baseChangelogWhitelist,
+  baseDiscoveryConfig,
+  baseEventsToWatch,
+  baseMulticallConfig,
+}
 
 const coreAddressesV1 = {
   ultraLightNodeV2: '0x38dE71124f7a447a01D67945a51eDcE9FF491251',
@@ -40,3 +45,4 @@ const baseChangelogWhitelist = toEthereumAddresses([
   ...Object.values(coreAddressesV1),
   ...Object.values(coreAddressesV2),
 ])
+const baseMulticallConfig = getMulticall3Config(5022)

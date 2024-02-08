@@ -74,9 +74,13 @@ export class ChangelogIndexer extends ChildIndexer {
 
     const outputPairs = createComparablePairs(whitelistedOutputs)
 
-    const changes = outputPairs.map(([previousOutput, currentOutput]) =>
-      getDiscoveryChanges(previousOutput, currentOutput),
-    )
+    const changes = outputPairs.map(([previousOutput, currentOutput]) => {
+      const changeContext = {
+        blockNumber: currentOutput.blockNumber,
+        chainId: this.chainId,
+      }
+      return getDiscoveryChanges(previousOutput, currentOutput, changeContext)
+    })
 
     const flatChanges = flattenChanges(changes)
 
