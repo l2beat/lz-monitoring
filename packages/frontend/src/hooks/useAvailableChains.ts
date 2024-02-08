@@ -1,9 +1,5 @@
-import { ChainId, ChainModuleConfigsResponse } from '@lz/libs'
+import { ChainModuleConfigsResponse } from '@lz/libs'
 import { useEffect, useState } from 'react'
-
-import { config } from '../config'
-
-const hiddenChains = config.features.v2visible ? [] : [ChainId.GOERLI]
 
 interface UseStatusApiHookOptions {
   apiUrl: string
@@ -22,9 +18,7 @@ export function useAvailableChains({ apiUrl }: UseStatusApiHookOptions) {
         const data = await result.text()
         const parsed = ChainModuleConfigsResponse.parse(JSON.parse(data))
 
-        setResponse(
-          parsed.filter((chain) => !hiddenChains.includes(chain.chainId)),
-        )
+        setResponse(parsed)
 
         setIsError(false)
       } catch (e) {
