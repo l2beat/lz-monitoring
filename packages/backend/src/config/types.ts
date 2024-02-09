@@ -10,38 +10,25 @@ type Prettify<T> = {
   // eslint-disable-next-line @typescript-eslint/ban-types
 } & {}
 
-type AddressRecord<
-  Required extends string | never,
-  Optional extends string | never = never,
-> = Prettify<
-  {
-    [K in Required]: string
-  } & {
-    [K in Optional]?: string
-  }
+interface CoreAddressesV1 {
+  ultraLightNodeV2: string
+  endpoint: string
+  layerZeroMultisig?: string
+}
+
+interface CoreAddressesV2 {
+  endpointV2: string
+  send301: string
+  receive301: string
+  send302: string
+  receive302: string
+}
+
+interface AdditionalAddresses {
+  stargateBridge?: string
+  stargateToken?: string
+}
+
+type LayerZeroAddresses = Prettify<
+  CoreAddressesV1 & CoreAddressesV2 & AdditionalAddresses
 >
-
-type CoreV1Contracts = 'ultraLightNodeV2' | 'endpoint'
-
-type OptionalV1Contracts = 'layerZeroMultisig'
-
-type CoreV2Contracts =
-  | 'endpointV2'
-  | 'send301'
-  | 'receive301'
-  | 'send302'
-  | 'receive302'
-
-type AdditionalContracts = 'stargateBridge' | 'stargateToken'
-
-type NoContracts = never
-
-type CoreAddressesV1 = AddressRecord<CoreV1Contracts, OptionalV1Contracts>
-
-type CoreAddressesV2 = AddressRecord<CoreV2Contracts>
-
-type AdditionalAddresses = AddressRecord<NoContracts, AdditionalContracts>
-
-type LayerZeroAddresses = CoreAddressesV1 &
-  CoreAddressesV2 &
-  AdditionalAddresses
