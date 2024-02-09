@@ -283,7 +283,8 @@ function createDiscoveryEngine(
     provider,
     discoveryClient,
     discoveryLogger,
-    chainId,
+    // PWC expects a string-name, yet we are using number-id extensively
+    chainId.toString(),
     providerCache,
     config.rpcLogsMaxRange,
   )
