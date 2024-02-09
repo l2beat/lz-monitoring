@@ -1,7 +1,4 @@
-import {
-  ChainId,
-  RemoteChain,
-} from '@lz/libs'
+import { ChainId, RemoteChain } from '@lz/libs'
 
 import { DropdownOption } from '../Dropdown'
 
@@ -19,7 +16,3 @@ export function toDropdownOption(chain: RemoteChain | ChainId): DropdownOption {
     value: chain.name,
   }
 }
-
-
-
-
