@@ -39,11 +39,11 @@ export class BlockNumberIndexer extends ChildIndexer {
   }
 
   override async start(): Promise<void> {
-    await super.start()
-
     this.lastKnownNumber =
       (await this.blockRepository.findLast(this.chainId))?.blockNumber ??
       this.startBlock
+
+    await super.start()
   }
 
   async update(_fromBlock: number, toBlock: number): Promise<number> {
