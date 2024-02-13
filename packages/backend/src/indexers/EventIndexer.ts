@@ -19,9 +19,10 @@ import { CacheInvalidationIndexer } from './CacheInvalidationIndexer'
 /**
  * Changing this version will invalidate all existing data.
  * Bump this version when changing the logic of the indexer.
- * Last change: add txHash to EventRecord
+ * #1 change: add txHash to EventRecord
+ * #2 V2 events support
  */
-const EVENT_INDEXER_LOGIC_VERSION = 1
+const EVENT_INDEXER_LOGIC_VERSION = 2
 
 export class EventIndexer extends ChildIndexer {
   private readonly id = 'EventIndexer'
