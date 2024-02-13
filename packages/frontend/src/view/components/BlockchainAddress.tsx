@@ -88,7 +88,6 @@ export function BlockchainAddress(props: Props) {
           >
             <span className="sm:hidden">{addressEllipsis(props.address)}</span>
             <span className="hidden sm:inline">
-              {' '}
               {props.alwaysShort
                 ? addressEllipsis(props.address)
                 : props.address}
