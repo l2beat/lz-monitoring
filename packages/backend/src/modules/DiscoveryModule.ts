@@ -196,7 +196,7 @@ export function createDiscoverySubmodule(
     repositories.events,
     repositories.indexerState,
     chainId,
-    config.eventsToWatch,
+    config.events,
     {
       startBlock: config.startBlock,
       maxBlockBatchSize: config.rpcLogsMaxRange,
@@ -283,7 +283,8 @@ function createDiscoveryEngine(
     provider,
     discoveryClient,
     discoveryLogger,
-    chainId,
+    // PWC expects a string-name, yet we are using number-id extensively
+    chainId.toString(),
     providerCache,
     config.rpcLogsMaxRange,
   )

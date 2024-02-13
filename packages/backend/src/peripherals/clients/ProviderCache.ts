@@ -14,14 +14,14 @@ export class ProviderCache implements DiscoveryCache {
   async set(
     key: string,
     value: string,
-    chainId: number,
+    chainId: string,
     blockNumber: number,
   ): Promise<void> {
     await this.repository.addOrUpdate({
       key,
       value,
-      chainId: ChainId(chainId),
-      blockNumber: blockNumber,
+      chainId: ChainId(Number(chainId)),
+      blockNumber,
     })
   }
 }

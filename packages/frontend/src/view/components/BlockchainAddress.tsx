@@ -17,6 +17,7 @@ interface Props {
   className?: string
   full?: boolean
   warnOnEoa?: string
+  alwaysShort?: boolean
 }
 
 export function BlockchainAddress(props: Props) {
@@ -61,13 +62,14 @@ export function BlockchainAddress(props: Props) {
               className="hidden md:block"
             >
               <a href={explorerUrl} target="_blank" className="underline">
-                {props.address.toString()}
+                {props.alwaysShort
+                  ? addressEllipsis(props.address)
+                  : props.address.toString()}
               </a>
             </Tooltip>
           </span>
           {addressInfo.name.length > 0 && (
             <>
-              {' '}
               <span className="whitespace-nowrap text-xs text-zinc-500">
                 ({addressInfo.name})
               </span>
@@ -85,7 +87,11 @@ export function BlockchainAddress(props: Props) {
             )}
           >
             <span className="sm:hidden">{addressEllipsis(props.address)}</span>
-            <span className="hidden sm:inline"> {props.address}</span>
+            <span className="hidden sm:inline">
+              {props.alwaysShort
+                ? addressEllipsis(props.address)
+                : props.address}
+            </span>
           </a>
         </Tooltip>
       )}

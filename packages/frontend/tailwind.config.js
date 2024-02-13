@@ -9,6 +9,9 @@ module.exports = {
         'multisig-small': '3fr 1fr 3fr 1fr',
         'adapter-params-small': '2fr 1fr 2fr',
         'adapter-params': '2fr 1fr 2fr 7fr',
+        'default-uln-configs': '2fr 2fr 3fr 4fr 4fr',
+        'default-executor-configs': '2fr 2fr 4fr',
+        'default-executors': '1fr 4fr',
       },
     },
     fontFamily: {

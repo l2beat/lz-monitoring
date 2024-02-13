@@ -3,6 +3,7 @@
 import { ChainId } from './ChainId'
 
 const CHAIN_IDS = [
+  // Mainnet
   { endpointId: 101, chainId: ChainId.ETHEREUM },
   { endpointId: 102, chainId: ChainId.BSC },
   { endpointId: 106, chainId: ChainId.AVALANCHE },

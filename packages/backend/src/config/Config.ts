@@ -77,7 +77,7 @@ export interface EthereumLikeDiscoveryConfig {
   blockExplorerApiKey: string
   blockExplorerMinTimestamp: UnixTime
   discovery: DiscoveryConfig
-  eventsToWatch: EventsToWatchConfig
+  events: EventsToWatchConfig
   changelogWhitelist: EthereumAddress[]
   multicall: MulticallConfig
   tickIntervalMs: number

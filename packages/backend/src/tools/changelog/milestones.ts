@@ -1,5 +1,5 @@
-import { ChainId } from '@l2beat/discovery'
 import { ContractParameters } from '@l2beat/discovery-types'
+import { ChainId } from '@lz/libs'
 
 import { MilestoneEntry, SmartContractOperation } from './types'
 

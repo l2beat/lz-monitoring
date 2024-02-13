@@ -95,7 +95,7 @@ export function Status(): JSX.Element {
             {focusedChain ? (
               <InlineLabel onClick={() => setFocusedChain(null)}>
                 <FocusLockIcon fill="#FFFFFF" />
-                Focused is locked on {getPrettyChainName(focusedChain)}
+                Focus is locked on {getPrettyChainName(focusedChain)}
               </InlineLabel>
             ) : (
               <>

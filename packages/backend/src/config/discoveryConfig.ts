@@ -4,71 +4,34 @@ import { RawDiscoveryConfig } from '@l2beat/discovery/dist/discovery/config/RawD
 import { ChainId, EthereumAddress } from '@lz/libs'
 import { utils } from 'ethers'
 
+import { LZ_CONTRACTS_NAMES } from './constants'
+import { LayerZeroAddresses } from './types'
+
 export { createConfigFromTemplate, toEthereumAddresses }
 
 interface TemplateVariables {
   chain: ChainId
-  initialAddresses: string[]
-  addresses: {
-    ultraLightNodeV2: string
-    endpoint: string
-    stargateToken?: string
-    stargateBridge?: string
-    layerZeroMultisig?: string
-  }
+  addresses: LayerZeroAddresses
 }
 
 function createConfigFromTemplate(
   templateConfig: TemplateVariables,
 ): RawDiscoveryConfig {
-  const { chain, initialAddresses, addresses: unsafeAddresses } = templateConfig
+  const { chain, addresses: unsafeAddresses } = templateConfig
 
-  // addresses with proper checksums
-  const addresses = {
-    ultraLightNodeV2: EthereumAddress(
-      unsafeAddresses.ultraLightNodeV2,
-    ).toString(),
-    endpoint: EthereumAddress(unsafeAddresses.endpoint).toString(),
-    layerZeroMultisig:
-      unsafeAddresses.layerZeroMultisig !== undefined
-        ? EthereumAddress(unsafeAddresses.layerZeroMultisig).toString()
-        : undefined,
-    stargateToken: unsafeAddresses.stargateToken
-      ? EthereumAddress(unsafeAddresses.stargateToken).toString()
-      : undefined,
-    stargateBridge: unsafeAddresses.stargateBridge
-      ? EthereumAddress(unsafeAddresses.stargateBridge).toString()
-      : undefined,
-  }
+  const addresses = toSafeAddresses(unsafeAddresses)
 
-  // Since some on-chain LZs does not support multisig
-  const multisigNameEntry = addresses.layerZeroMultisig
-    ? {
-        [addresses.layerZeroMultisig]: 'LayerZero Multisig',
-      }
-    : {}
-  const stargateBridgeNameEntry = addresses.stargateBridge
-    ? {
-        [addresses.stargateBridge]: 'Stargate Bridge',
-      }
-    : {}
-  const stargateTokenNameEntry = addresses.stargateToken
-    ? {
-        [addresses.stargateToken]: 'Stargate Token',
-      }
-    : {}
+  const names = getDiscoveryNames(addresses)
+
+  const { stargateBridge: _, stargateToken: __, ...initials } = addresses
+
+  const initialAddresses = toEthereumAddresses(Object.values(initials))
 
   return {
     name: 'layerzero',
-    chain,
-    initialAddresses: initialAddresses.map(EthereumAddress),
-    names: {
-      [addresses.ultraLightNodeV2]: 'UltraLightNodeV2',
-      [addresses.endpoint]: 'Endpoint',
-      ...stargateBridgeNameEntry,
-      ...stargateTokenNameEntry,
-      ...multisigNameEntry,
-    },
+    chain: chain.toString(),
+    initialAddresses,
+    names,
     overrides: {
       'Stargate Token': {
         ignoreDiscovery: true,
@@ -89,7 +52,6 @@ function createConfigFromTemplate(
           },
         },
       },
-      // Maybe we should remove that if there is no multisig support?
       'LayerZero Multisig': {
         ignoreInWatchMode: ['nonce'],
       },
@@ -143,9 +105,101 @@ function createConfigFromTemplate(
           },
         },
       },
+
+      /// V2
+      SendUln301: {
+        fields: {
+          defaultExecutorConfigs: {
+            type: 'stateFromEventTuple',
+            event: 'DefaultExecutorConfigsSet',
+            returnParam: 'params',
+            expandParam: 'config',
+          },
+          defaultUlnConfigs: {
+            type: 'stateFromEventTuple',
+            event: 'DefaultUlnConfigsSet',
+            returnParam: 'params',
+            expandParam: 'config',
+          },
+        },
+      },
+      ReceiveUln301: {
+        fields: {
+          defaultUlnConfigs: {
+            type: 'stateFromEventTuple',
+            event: 'DefaultUlnConfigsSet',
+            returnParam: 'params',
+            expandParam: 'config',
+          },
+          defaultExecutors: {
+            type: 'stateFromEventTuple',
+            event: 'DefaultExecutorsSet',
+            returnParam: 'params',
+          },
+        },
+      },
+      SendUln302: {
+        fields: {
+          defaultExecutorConfigs: {
+            type: 'stateFromEventTuple',
+            event: 'DefaultExecutorConfigsSet',
+            returnParam: 'params',
+            expandParam: 'config',
+          },
+          defaultUlnConfigs: {
+            type: 'stateFromEventTuple',
+            event: 'DefaultUlnConfigsSet',
+            returnParam: 'params',
+            expandParam: 'config',
+          },
+        },
+      },
+      ReceiveUln302: {
+        fields: {
+          defaultUlnConfigs: {
+            type: 'stateFromEventTuple',
+            event: 'DefaultUlnConfigsSet',
+            returnParam: 'params',
+            expandParam: 'config',
+          },
+        },
+      },
+      EndpointV2: {
+        ignoreMethods: [
+          'EMPTY_PAYLOAD_HASH',
+          'NIL_PAYLOAD_HASH',
+          'getSendContext',
+          'isSendingMessage',
+        ],
+        fields: {
+          defaultReceiveLibraries: {
+            type: 'stateFromEvent',
+            event: 'DefaultReceiveLibrarySet',
+            groupBy: 'eid',
+            onlyValue: true,
+            // skipping old lib
+            returnParams: ['eid', 'newLib'],
+          },
+          defaultSendLibraries: {
+            type: 'stateFromEvent',
+            event: 'DefaultSendLibrarySet',
+            groupBy: 'eid',
+            onlyValue: true,
+            returnParams: ['eid', 'newLib'],
+          },
+        },
+      },
     },
   }
 }
+
+// Tuples
+const ExecutorConfig = '(uint32 maxMessageSize, address executor)'
+const SetDefaultExecutorParam = `(uint32 eid, ${ExecutorConfig} config)`
+const UlnConfig =
+  '(uint64 confirmations, uint8 requiredDVNCount, uint8 optionalDVNCount, uint8 optionalDVNThreshold, address[] requiredDVNs, address[] optionalDVNs)'
+
+const SetUlnConfigParam = `(uint32 eid, ${UlnConfig} config)`
 
 const abis = [
   {
@@ -171,6 +225,55 @@ const abis = [
       'event OwnershipTransferred(address indexed previousOwner, address indexed newOwner)',
     ],
   },
+  {
+    contract: 'endpointV2',
+    abi: [
+      'event DefaultReceiveLibrarySet(uint32 eid, address oldLib, address newLib)',
+      'event DefaultSendLibrarySet(uint32 eid, address newLib)',
+      'event LibraryRegistered(address newLib)',
+      'event LzTokenSet(address token)',
+      'event OwnershipTransferred(address previousOwner, address newOwner)',
+    ],
+  },
+  {
+    contract: 'send301',
+    abi: [
+      'event AddressSizeSet(uint16 eid, uint256 size)',
+      `event DefaultExecutorConfigsSet(${SetDefaultExecutorParam}[] params)`,
+      `event DefaultUlnConfigsSet(${SetUlnConfigParam}[] params)`,
+      'event LzTokenSet(address token)',
+      'event OwnershipTransferred(address previousOwner, address newOwner)',
+      'event TreasurySet(address treasury)',
+    ],
+  },
+  {
+    contract: 'send302',
+    abi: [
+      `event DefaultExecutorConfigsSet(${SetDefaultExecutorParam}[])`,
+      `event DefaultUlnConfigsSet(${SetUlnConfigParam}[])`,
+      'event LzTokenSet(address token)',
+      'event OwnershipTransferred(address previousOwner, address newOwner)',
+      'event TreasurySet(address treasury)',
+    ],
+  },
+  {
+    contract: 'receive301',
+    abi: [
+      'event AddressSizeSet(uint16, uint256)',
+      `event DefaultUlnConfigsSet(${SetUlnConfigParam}[] params)`,
+      `event DefaultExecutorsSet(${SetDefaultExecutorParam}[] params)`,
+      'event LzTokenSet(address token)',
+      'event OwnershipTransferred(address previousOwner, address newOwner)',
+      'event TreasurySet(address treasury)',
+    ],
+  },
+  {
+    contract: 'receive302',
+    abi: [
+      `event DefaultUlnConfigsSet(${SetUlnConfigParam}[])`,
+      'event OwnershipTransferred(address,address)',
+    ],
+  },
 ] as const
 
 interface EventToWatchConfig {
@@ -183,7 +286,7 @@ export type EventsToWatchConfig = EventToWatchConfig[]
 export function getEventsToWatch(
   addresses: TemplateVariables['addresses'],
 ): EventsToWatchConfig {
-  return abis.map(({ contract, abi }) => {
+  return abis.flatMap(({ contract, abi }) => {
     const int = new utils.Interface(abi)
     const topics = int.fragments.map((fragment) => {
       assert(fragment.type === 'event', 'Fragment is not an event')
@@ -193,13 +296,69 @@ export function getEventsToWatch(
 
     const address = addresses[contract]
 
-    return {
-      address: EthereumAddress(address),
-      topics: [topics],
-    }
+    return address
+      ? {
+          address: EthereumAddress(address),
+          topics: [topics],
+        }
+      : []
   })
 }
 
 function toEthereumAddresses(addresses: string[]): EthereumAddress[] {
   return addresses.map((address) => EthereumAddress(address))
+}
+
+function toSafeAddresses(
+  unsafeAddresses: LayerZeroAddresses,
+): LayerZeroAddresses {
+  const mapped = Object.entries(unsafeAddresses).map(([key, value]) => {
+    return [key, EthereumAddress(value).toString()] as const
+  })
+
+  return Object.fromEntries(mapped) as LayerZeroAddresses
+}
+
+function getDiscoveryNames(
+  addresses: LayerZeroAddresses,
+): Record<string, string> {
+  const { V1, V2, STARGATE } = LZ_CONTRACTS_NAMES
+
+  // Since some on-chain LZs does not support multisig
+  const multisigNameEntry = addresses.layerZeroMultisig
+    ? {
+        [addresses.layerZeroMultisig]: V1.MULTISIG,
+      }
+    : {}
+
+  const stargateBridgeNameEntry = addresses.stargateBridge
+    ? {
+        [addresses.stargateBridge]: STARGATE.BRIDGE,
+      }
+    : {}
+
+  const stargateTokenNameEntry = addresses.stargateToken
+    ? {
+        [addresses.stargateToken]: STARGATE.TOKEN,
+      }
+    : {}
+
+  const names = {
+    // V1
+    [addresses.ultraLightNodeV2]: V1.ULTRA_LIGHT_NODE_V2,
+    [addresses.endpoint]: V1.ENDPOINT,
+    ...multisigNameEntry,
+
+    // V2
+    [addresses.endpointV2]: V2.ENDPOINT_V2,
+    [addresses.send301]: V2.SEND301,
+    [addresses.receive301]: V2.RECEIVE301,
+    [addresses.send302]: V2.SEND302,
+    [addresses.receive302]: V2.RECEIVE302,
+
+    // Additional
+    ...stargateBridgeNameEntry,
+    ...stargateTokenNameEntry,
+  }
+  return names
 }
