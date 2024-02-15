@@ -92,6 +92,7 @@ export function ProtocolInformation({
       <ChainInfoContext.Provider value={discoveryResponse.chainId}>
         <AddressInfoContext.Provider value={discoveryResponse.data.addressInfo}>
           <NetworkData
+            version={version}
             latestBlock={discoveryResponse.data.blockNumber}
             isLoading={isDiscoveryLoading}
           />

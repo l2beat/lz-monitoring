@@ -8,7 +8,7 @@ import { ProtocolComponentCard } from '../ProtocolComponentCard'
 import { Row } from '../Row'
 import { Subsection } from '../Subsection'
 import { UpdatableBadge } from './Badges'
-import { RemoteChainComponent } from './RemoteChain'
+import { RemoteChainComponent } from './remote/RemoteChain'
 
 interface Props {
   address: EthereumAddress
@@ -42,7 +42,7 @@ export function UltraLightNodeContract(props: Props): JSX.Element {
             }
             value={
               <BlockchainAddress
-                warnOnEoa="Protocol on this chain is owned by an EOA"
+                warnOnEoa="Protocol component on this chain is owned by an EOA"
                 address={props.owner}
               />
             }

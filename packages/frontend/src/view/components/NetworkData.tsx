@@ -1,17 +1,29 @@
 import { EndpointID } from '@lz/libs'
 
+import {
+  PROTOCOL_VERSION,
+  ProtocolVersion,
+} from '../../constants/protocol-version'
 import { useChainId } from '../../hooks/chainIdContext'
 import { MaxWidthLayout } from './Layout'
 import { LoadingCover } from './status/LoadingCover'
 
 interface Props {
   latestBlock: number
+  version: ProtocolVersion
   isLoading?: boolean
 }
 
-export function NetworkData({ latestBlock, isLoading }: Props): JSX.Element {
+export function NetworkData({
+  latestBlock,
+  version,
+  isLoading,
+}: Props): JSX.Element {
+  const encode =
+    version === PROTOCOL_VERSION.V1 ? EndpointID.encodeV1 : EndpointID.encodeV2
   const chainId = useChainId()
-  const endpointId = EndpointID.encodeV1(chainId)
+  const endpointId = encode(chainId)
+
   return (
     <section className="mb-4 bg-gray-900 p-4 md:mb-10 md:p-8">
       <MaxWidthLayout>

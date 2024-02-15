@@ -16,3 +16,7 @@ export function toDropdownOption(chain: RemoteChain | ChainId): DropdownOption {
     value: chain.name,
   }
 }
+
+export function intersect<T, K>(a: Record<string, T>, b: Record<string, K>) {
+  return Object.entries(a).filter(([k, _]) => k in b)
+}

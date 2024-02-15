@@ -1,14 +1,16 @@
 import { ChainId, RemoteChain } from '@lz/libs'
 import { ethers } from 'ethers'
 
-import { ChainInfoContext } from '../../../hooks/chainIdContext'
-import { useChainQueryParam } from '../../../hooks/useChainQueryParam'
-import { BlockchainAddress } from '../BlockchainAddress'
-import { Code } from '../Code'
-import { Dropdown, DropdownOption } from '../Dropdown'
-import { InfoTooltip } from '../InfoTooltip'
-import { Row } from '../Row'
-import { toDropdownOption } from './utils'
+import { ChainInfoContext } from '../../../../hooks/chainIdContext'
+import { useChainQueryParam } from '../../../../hooks/useChainQueryParam'
+import { BlockchainAddress } from '../../BlockchainAddress'
+import { Code } from '../../Code'
+import { Dropdown, DropdownOption } from '../../Dropdown'
+import { InfoTooltip } from '../../InfoTooltip'
+import { Row } from '../../Row'
+import { toDropdownOption } from '../utils'
+import { Block } from './Block'
+import { RemoteSection } from './RemoteSection'
 
 interface Props {
   remoteChains: RemoteChain[]
@@ -196,7 +198,7 @@ export function RemoteChainComponent(props: Props): JSX.Element | null {
               })}
             </div>
           </Block>
-          <Section>
+          <RemoteSection>
             <Row
               dense
               hideBorder
@@ -214,9 +216,9 @@ export function RemoteChainComponent(props: Props): JSX.Element | null {
                 </div>
               }
             />
-          </Section>
+          </RemoteSection>
 
-          <Section>
+          <RemoteSection>
             <Row
               dense
               hideBorder
@@ -232,30 +234,11 @@ export function RemoteChainComponent(props: Props): JSX.Element | null {
                 </ChainInfoContext.Provider>
               }
             />
-          </Section>
+          </RemoteSection>
         </>
       )}
     </div>
   )
-}
-
-function Block({
-  title,
-  children,
-}: {
-  title: React.ReactNode
-  children: React.ReactNode
-}) {
-  return (
-    <div className="flex flex-col border-t border-zinc-400 px-3 py-4 md:px-6 md:py-3">
-      <span className="mb-1 text-sm font-medium md:mb-3">{title}</span>
-      <div className="flex flex-col md:gap-2">{children}</div>
-    </div>
-  )
-}
-
-function Section({ children }: { children: React.ReactNode }) {
-  return <div className="border-t border-zinc-400">{children}</div>
 }
 
 /**
