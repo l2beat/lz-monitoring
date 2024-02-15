@@ -10,8 +10,7 @@ import { useDiscoveryApi } from '../../../hooks/useDiscoveryApi'
 import { useVersionQueryParam } from '../../../hooks/useVersionQueryParam'
 import { Layout } from '../Layout'
 import { NetworkData } from '../NetworkData'
-import { NetworkSelector } from '../NetworkSelector'
-import { VersionSelector } from '../VersionSelector'
+import { Selectors } from '../selectors/Selectors'
 import { Warning } from '../Warning'
 import { EndpointContract } from './EndpointContract'
 import { EndpointV2Contract } from './EndpointV2Contract'
@@ -60,14 +59,14 @@ export function ProtocolInformation({
   if (!discoveryResponse || isError) {
     return (
       <>
-        {config.features.v2visible && (
-          <VersionSelector version={version} setVersion={setVersion} />
-        )}
-        <NetworkSelector
+        <Selectors
           chainId={paramChain}
-          chainsToDisplay={chainsToDisplay}
           setChain={setChain}
+          chainsToDisplay={chainsToDisplay}
+          version={version}
+          setVersion={setVersion}
         />
+
         {isError && (
           <Warning
             title={`Failed to load data for ${getPrettyChainName(paramChain)}`}
@@ -80,13 +79,12 @@ export function ProtocolInformation({
 
   return (
     <SkeletonTheme baseColor="#27272A" highlightColor="#525252">
-      {config.features.v2visible && (
-        <VersionSelector version={version} setVersion={setVersion} />
-      )}
-      <NetworkSelector
+      <Selectors
         chainId={discoveryResponse.chainId}
-        chainsToDisplay={chainsToDisplay}
         setChain={setChain}
+        chainsToDisplay={chainsToDisplay}
+        version={version}
+        setVersion={setVersion}
       />
       <ChainInfoContext.Provider value={discoveryResponse.chainId}>
         <AddressInfoContext.Provider value={discoveryResponse.data.addressInfo}>
@@ -139,6 +137,12 @@ export function ProtocolInformation({
                   {...discoveryResponse.data.contracts.receiveUln301}
                   isLoading={isDiscoveryLoading}
                 />
+                {shouldDisplayMultisigTransactions && (
+                  <LayerZeroMultisig
+                    {...discoveryResponse.data.contracts.lzMultisig}
+                    multisigAddress={multisigAddress}
+                  />
+                )}
               </>
             )}
           </Layout>

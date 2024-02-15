@@ -35,7 +35,7 @@ export function LayerZeroMultisig({
 
   const [page, setPage] = useState(1)
 
-  const TXS_PER_PAGE = 12
+  const TXS_PER_PAGE = 14
   const TOTAL_PAGES_AMOUNT = Math.ceil(
     (allTransactions?.length ?? 0) / TXS_PER_PAGE,
   )
