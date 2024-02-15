@@ -67,11 +67,11 @@ function PillSelector({
     <div
       ref={focusRef}
       className={cx(
-        'flex cursor-pointer items-center justify-center gap-2 rounded px-4 text-center transition-all',
+        'flex cursor-pointer items-center justify-center gap-2 rounded px-5 text-center transition-all',
         isActive
           ? 'bg-yellow-100 text-black'
           : 'bg-gray-600 text-white brightness-100 filter transition-all duration-300 hover:brightness-[120%]',
-        'py-1 md:py-2',
+        'py-1 md:py-3',
       )}
       onClick={onClick}
     >
