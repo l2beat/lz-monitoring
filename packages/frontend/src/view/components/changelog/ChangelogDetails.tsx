@@ -1,7 +1,7 @@
 import {
   Change,
   ChangelogApiEntry,
-  getChainIdFromEndpointId,
+  EndpointID,
   getPrettyChainName,
   Hash256,
   ModificationType,
@@ -159,7 +159,7 @@ function GroupText(props: { group: string; changes: Change[] }) {
   }
 
   const endpointId = props.group
-  const chainId = getChainIdFromEndpointId(+endpointId)
+  const chainId = EndpointID.decodeV1(endpointId)
 
   const text = props.changes.every(
     (change) => change.category === 'REMOTE_ADDED',

@@ -1,7 +1,6 @@
 import { ChainId } from '@lz/libs'
-import { useEffect, useState } from 'react'
 
-import { useQueryParam } from './useQueryParam'
+import { useSerializableQueryParam } from './useSerializableQueryParam'
 
 function serialize(chainId: ChainId): string | null {
   try {
@@ -19,46 +18,20 @@ function deserialize(value: string): ChainId | null {
   }
 }
 
-interface UseChainQueryParamOptions {
-  /**
-   * Chain ID to use if the query param is not set
-   * If not set, value will be nullable
-   */
-  fallback?: ChainId
-
-  /**
-   * Key used to store the query param
-   */
-  paramName: string
+export function useSafeChainQueryParam(paramName: string, fallback: ChainId) {
+  return useSerializableQueryParam({
+    paramName,
+    fallback,
+    serialize,
+    deserialize,
+  })
 }
 
-// We can do that in the generic way such as `useSerializableQueryParam<T>` but it's not needed for now
-export function useChainQueryParam<Params extends UseChainQueryParamOptions>({
-  fallback,
-  paramName,
-}: Params) {
-  const [currentParam, setCurrentParam] = useQueryParam(paramName)
-
-  const actualFallback = fallback ?? null
-
-  // Deserialize string into ChainId if present
-  // Otherwise persist null/fallback
-  const param = currentParam
-    ? deserialize(currentParam) ?? actualFallback
-    : actualFallback
-
-  const [deserializedParam, setDeserializedParam] = useState<ChainId | null>(
-    param,
-  )
-
-  useEffect(() => {
-    setCurrentParam(deserializedParam ? serialize(deserializedParam) : null)
-  }, [deserializedParam, setCurrentParam])
-
-  return [
-    deserializedParam,
-    setDeserializedParam,
-  ] as Params['fallback'] extends ChainId
-    ? [ChainId, React.Dispatch<React.SetStateAction<ChainId>>]
-    : [ChainId | null, React.Dispatch<React.SetStateAction<ChainId | null>>]
+export function useChainQueryParam(paramName: string) {
+  return useSerializableQueryParam({
+    paramName,
+    serialize,
+    deserialize,
+    fallback: undefined,
+  })
 }

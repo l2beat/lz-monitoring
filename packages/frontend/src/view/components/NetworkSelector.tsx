@@ -27,6 +27,10 @@ export function NetworkSelector(props: Props) {
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
+  useEffect(() => {
+    setOptimisticSelect(props.chainId)
+  }, [props.chainId])
+
   function onScroll() {
     setSmall(window.scrollY > 0)
   }

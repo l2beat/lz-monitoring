@@ -15,16 +15,19 @@ interface Props {
 }
 
 export function RemoteChainComponent(props: Props): JSX.Element | null {
-  const [selectedRemoteChain, setSelectedRemoteChain] = useChainQueryParam({
-    paramName: 'remote-chain',
-  })
+  const [selectedRemoteChain, setSelectedRemoteChain] =
+    useChainQueryParam('remote-chain')
 
   function onDropdownSelect(option: DropdownOption): void {
     const chain = props.remoteChains.find(
       (chain) => chain.name === option.value,
     )
 
-    setSelectedRemoteChain(chain ? ChainId.fromName(chain.name) : null)
+    if (!chain) {
+      return
+    }
+
+    setSelectedRemoteChain(ChainId.fromName(chain.name))
   }
 
   const dropdownOptions = props.remoteChains.map(toDropdownOption)

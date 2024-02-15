@@ -1,20 +1,17 @@
 import { ChainId, endpoints, getPrettyChainName } from '@lz/libs'
-import { useState } from 'react'
 import { SkeletonTheme } from 'react-loading-skeleton'
 
 import { config } from '../../../config'
-import {
-  PROTOCOL_VERSION,
-  ProtocolVersion,
-} from '../../../constants/protocol-version'
+import { PROTOCOL_VERSION } from '../../../constants/protocol-version'
 import { AddressInfoContext } from '../../../hooks/addressInfoContext'
 import { ChainInfoContext } from '../../../hooks/chainIdContext'
-import { useChainQueryParam } from '../../../hooks/useChainQueryParam'
+import { useSafeChainQueryParam } from '../../../hooks/useChainQueryParam'
 import { useDiscoveryApi } from '../../../hooks/useDiscoveryApi'
+import { useVersionQueryParam } from '../../../hooks/useVersionQueryParam'
 import { Layout } from '../Layout'
 import { NetworkData } from '../NetworkData'
 import { NetworkSelector } from '../NetworkSelector'
-import { VersionButton, VersionSwitch } from '../VersionSwitch'
+import { VersionSelector } from '../VersionSelector'
 import { Warning } from '../Warning'
 import { EndpointContract } from './EndpointContract'
 import { EndpointV2Contract } from './EndpointV2Contract'
@@ -34,11 +31,12 @@ export function ProtocolInformation({
     ? PROTOCOL_VERSION.V2
     : PROTOCOL_VERSION.V1
 
-  const [version, setVersion] = useState<ProtocolVersion>(defaultVersion)
-  const [paramChain, setParamChain] = useChainQueryParam({
-    fallback: chainsToDisplay[0],
-    paramName: 'chain',
-  })
+  const [version, setVersion] = useVersionQueryParam('version', defaultVersion)
+
+  const [paramChain, setParamChain] = useSafeChainQueryParam(
+    'chain',
+    chainsToDisplay[0],
+  )
 
   const [discoveryResponse, isDiscoveryLoading, isError] = useDiscoveryApi({
     apiUrl: config.apiUrl,
@@ -62,6 +60,10 @@ export function ProtocolInformation({
   if (!discoveryResponse || isError) {
     return (
       <>
+        <VersionSelector
+          version={version}
+          setVersion={(version) => setVersion(version)}
+        />
         <NetworkSelector
           chainId={paramChain}
           chainsToDisplay={chainsToDisplay}
@@ -79,6 +81,9 @@ export function ProtocolInformation({
 
   return (
     <SkeletonTheme baseColor="#27272A" highlightColor="#525252">
+      {config.features.v2visible && (
+        <VersionSelector version={version} setVersion={setVersion} />
+      )}
       <NetworkSelector
         chainId={discoveryResponse.chainId}
         chainsToDisplay={chainsToDisplay}
@@ -90,26 +95,7 @@ export function ProtocolInformation({
             latestBlock={discoveryResponse.data.blockNumber}
             isLoading={isDiscoveryLoading}
           />
-          {config.features.v2visible && (
-            <VersionSwitch>
-              <VersionButton
-                isActive={version === PROTOCOL_VERSION.V1}
-                onClick={() => {
-                  setVersion(PROTOCOL_VERSION.V1)
-                }}
-              >
-                LayerZero V1
-              </VersionButton>
-              <VersionButton
-                isActive={version === PROTOCOL_VERSION.V2}
-                onClick={() => {
-                  setVersion(PROTOCOL_VERSION.V2)
-                }}
-              >
-                LayerZero V2
-              </VersionButton>
-            </VersionSwitch>
-          )}
+
           <Layout>
             {version === PROTOCOL_VERSION.V1 && (
               <>
