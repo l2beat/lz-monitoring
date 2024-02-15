@@ -21,13 +21,13 @@ export function ReceiveUln302Contract(props: Props) {
   return (
     <ProtocolComponentCard
       title="Receive ULN 302"
+      description="Contract responsible for inbound message verification for V2-based OApps. Stores default security stack configuration for each configured chain path-way."
       badge={
         <div className="flex gap-2">
           <UpdatableBadge />
           <V2Badge />
         </div>
       }
-      description="ULN 302 Receive for fresh apps"
       subtitle={<BlockchainAddress address={props.address} full />}
       isLoading={props.isLoading}
     >
@@ -40,9 +40,7 @@ export function ReceiveUln302Contract(props: Props) {
           <Row
             hideBorder
             label={
-              <InfoTooltip text="Owner of the Endpoint Contract">
-                Owner
-              </InfoTooltip>
+              <InfoTooltip text="Owner of this contract">Owner</InfoTooltip>
             }
             value={
               <BlockchainAddress
@@ -84,8 +82,8 @@ function ReceiveUln302RemoteChains(props: {
         hideBorder
         className="!px-3 md:!px-6"
         label={
-          <InfoTooltip text="List of send/receive chain pathways configured">
-            Remote chains
+          <InfoTooltip text="List of destination chains supported by this site.">
+            Remote Chain
           </InfoTooltip>
         }
         value={

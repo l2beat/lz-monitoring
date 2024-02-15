@@ -1,6 +1,7 @@
 import { DefaultUlnConfigs, EthereumAddress } from '@lz/libs'
 
 import { BlockchainAddress } from '../../BlockchainAddress'
+import { InfoTooltip } from '../../InfoTooltip'
 import { Row } from '../../Row'
 import { Block } from './Block'
 
@@ -10,11 +11,24 @@ interface Props {
 
 export function DefaultUln({ config }: Props) {
   return (
-    <Block title="Default UltraLightNode configuration">
-      <Row label="Required confirmations" value={config.confirmations} />
-      <Row label="Required DVNs count" value={config.requiredDVNCount} />
+    <Block title="Default Security Stack configuration">
       <Row
-        label="Required DVNs"
+        label={
+          <InfoTooltip text="Amount of confirmations required before dispatching a message">
+            Required confirmations
+          </InfoTooltip>
+        }
+        className="!p-0 md:!pl-7 md:!pr-4"
+        value={config.confirmations}
+      />
+
+      <Row
+        label={
+          <InfoTooltip text="List of DVN addresses required to sign-off before dispatching a message.">
+            Required DVNs
+          </InfoTooltip>
+        }
+        className="!p-0 md:!pl-7 md:!pr-4"
         value={
           config.requiredDVNs.length > 0 ? (
             <div className="flex flex-col gap-2">
@@ -27,13 +41,18 @@ export function DefaultUln({ config }: Props) {
           )
         }
       />
-      <Row label="Optional DVNs count" value={config.optionalDVNCount} />
       <Row
         label="Optional DVNs threshold"
+        className="!p-0 md:!pl-7 md:!pr-4"
         value={config.optionalDVNThreshold}
       />
       <Row
-        label="Optional DVNs"
+        label={
+          <InfoTooltip text="List of DVN addresses that can sign-off before dispatching a message.">
+            Optional DVNs
+          </InfoTooltip>
+        }
+        className="!p-0 md:!pl-7 md:!pr-4"
         value={
           config.optionalDVNs.length > 0 ? (
             <div className="flex flex-col gap-2">

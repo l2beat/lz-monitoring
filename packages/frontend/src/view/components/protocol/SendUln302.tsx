@@ -29,7 +29,7 @@ export function SendUln302Contract(props: Props) {
           <V2Badge />
         </div>
       }
-      description="ULN 302 for fresh apps"
+      description="Contract responsible for outbound message verification for V2-based OApps. Stores default security stack configuration and default executor configuration for each configured chain path-way."
       subtitle={<BlockchainAddress address={props.address} full />}
       isLoading={props.isLoading}
     >
@@ -42,9 +42,7 @@ export function SendUln302Contract(props: Props) {
           <Row
             hideBorder
             label={
-              <InfoTooltip text="Owner of the Endpoint Contract">
-                Owner
-              </InfoTooltip>
+              <InfoTooltip text="Owner of this contract">Owner</InfoTooltip>
             }
             value={
               <BlockchainAddress
@@ -58,7 +56,7 @@ export function SendUln302Contract(props: Props) {
             defaultUlnConfigs={props.defaultUlnConfigs}
           />
           <Row
-            label="Treasury"
+            label="Treasury Contract"
             value={<BlockchainAddress address={props.treasury} />}
           />
           <Row label="Message Lib Type" value={props.messageLibType} />
@@ -99,8 +97,8 @@ function SendUln302RemoteChains(props: {
         hideBorder
         className="!px-3 md:!px-6"
         label={
-          <InfoTooltip text="List of send/receive chain pathways configured">
-            Remote chains
+          <InfoTooltip text="List of destination chains supported by this site.">
+            Remote Chain
           </InfoTooltip>
         }
         value={

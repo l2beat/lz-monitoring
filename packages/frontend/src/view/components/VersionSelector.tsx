@@ -1,5 +1,5 @@
 import cx from 'classnames'
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 import {
   PROTOCOL_VERSION,
@@ -14,6 +14,18 @@ interface Props {
 export function VersionSelector(props: Props) {
   const versions = Object.values(PROTOCOL_VERSION)
 
+  const [isSmall, setSmall] = useState(false)
+
+  function onScroll() {
+    setSmall(window.scrollY > 0)
+  }
+
+  useEffect(() => {
+    window.addEventListener('scroll', onScroll)
+
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
+
   return (
     <section
       className={cx(
@@ -21,16 +33,22 @@ export function VersionSelector(props: Props) {
         'py-2 md:pb-3 md:pt-2',
       )}
     >
-      <div className="md max-w-fit md:mx-auto">
-        <span className={cx('text-xs text-gray-100 transition-all')}>
+      <div className="max-w-fit md:mx-auto">
+        <span
+          className={cx(
+            'block overflow-hidden text-xs text-gray-100 transition-all',
+            isSmall ? 'max-h-0' : 'max-h-3.5',
+          )}
+        >
           Select version
         </span>
-        <div className="flex gap-3 py-1">
+        <div className="flex gap-3 py-2">
           {versions.map((version) => {
             return (
               <PillSelector
                 key={version}
                 label={version}
+                isSmall={isSmall}
                 isActive={version === props.version}
                 onClick={() => props.setVersion(version)}
               />
@@ -45,10 +63,12 @@ export function VersionSelector(props: Props) {
 function PillSelector({
   label,
   isActive,
+  isSmall,
   onClick,
 }: {
   label: string
   isActive: boolean
+  isSmall: boolean
   onClick: () => void
 }) {
   const focusRef = useRef<HTMLDivElement>(null)
@@ -71,7 +91,7 @@ function PillSelector({
         isActive
           ? 'bg-yellow-100 text-black'
           : 'bg-gray-600 text-white brightness-100 filter transition-all duration-300 hover:brightness-[120%]',
-        'py-1 md:py-3',
+        isSmall ? 'md:py-3' : 'md:py-3',
       )}
       onClick={onClick}
     >

@@ -23,13 +23,13 @@ export function ReceiveUln301Contract(props: Props) {
   return (
     <ProtocolComponentCard
       title="Receive ULN 301"
+      description="Contract responsible for inbound message verification for V1-based application. Stores default security stack configuration and list of default executors for each configured chain path-way."
       badge={
         <div className="flex gap-2">
           <UpdatableBadge />
           <V2Badge />
         </div>
       }
-      description="ULN 301 Receive for apps"
       subtitle={<BlockchainAddress address={props.address} full />}
       isLoading={props.isLoading}
     >
@@ -41,9 +41,7 @@ export function ReceiveUln301Contract(props: Props) {
         <Subsection>
           <Row
             label={
-              <InfoTooltip text="Owner of the Endpoint Contract">
-                Owner
-              </InfoTooltip>
+              <InfoTooltip text="Owner of this contract">Owner</InfoTooltip>
             }
             value={
               <BlockchainAddress
@@ -87,8 +85,8 @@ function ReceiveUln301RemoteChains(props: {
         hideBorder
         className="!px-3 md:!px-6"
         label={
-          <InfoTooltip text="List of send/receive chain pathways configured">
-            Remote chains
+          <InfoTooltip text="List of destination chains supported by this site.">
+            Remote Chain
           </InfoTooltip>
         }
         value={
@@ -110,6 +108,7 @@ function ReceiveUln301RemoteChains(props: {
           <Block title="Default executor">
             <Row
               label="Executor"
+              className="!p-0 md:!pl-7 md:!pr-4"
               value={
                 <BlockchainAddress
                   address={EthereumAddress(selectedConfiguration.executor)}

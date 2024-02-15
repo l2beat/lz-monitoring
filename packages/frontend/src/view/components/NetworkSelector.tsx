@@ -55,7 +55,7 @@ export function NetworkSelector(props: Props) {
       <div className="mx-auto max-w-fit">
         <span
           className={cx(
-            'block  overflow-hidden text-xs text-gray-100 transition-all',
+            'block overflow-hidden text-xs text-gray-100 transition-all',
             isSmall ? 'max-h-0' : 'max-h-3.5',
           )}
         >

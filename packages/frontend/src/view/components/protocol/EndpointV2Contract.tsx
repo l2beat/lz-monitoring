@@ -27,7 +27,7 @@ export function EndpointV2Contract(props: Props) {
           <V2Badge />
         </div>
       }
-      description="The Endpoint V2 description"
+      description="V2 variant of the Endpoint Contract backward compatible with V1. Contract handles the cross-chain messages transmission, verification, and receipt. It routes messages to the correct messaging library and keeps all message payloads across versions. Ownership of the contract can be renounced by the owner. Contract implements a standardized interface for Omnichain Applications (OApps) to manage security configurations and seamlessly send and receive messages."
       subtitle={<BlockchainAddress address={props.address} full />}
       isLoading={props.isLoading}
     >
@@ -74,7 +74,7 @@ export function EndpointV2Contract(props: Props) {
           />
 
           <Row
-            label="LzToken"
+            label="LayerZero token"
             value={<BlockchainAddress address={props.lzToken} />}
           />
           <Row
@@ -117,8 +117,8 @@ function EndpointV2RemoteChains(props: {
         hideBorder
         className="!px-3 md:!px-6"
         label={
-          <InfoTooltip text="List of send/receive chain pathways configured">
-            Remote chains
+          <InfoTooltip text="List of destination chains supported by this site.">
+            Remote Chain
           </InfoTooltip>
         }
         value={
