@@ -60,10 +60,9 @@ export function ProtocolInformation({
   if (!discoveryResponse || isError) {
     return (
       <>
-        <VersionSelector
-          version={version}
-          setVersion={(version) => setVersion(version)}
-        />
+        {config.features.v2visible && (
+          <VersionSelector version={version} setVersion={setVersion} />
+        )}
         <NetworkSelector
           chainId={paramChain}
           chainsToDisplay={chainsToDisplay}
