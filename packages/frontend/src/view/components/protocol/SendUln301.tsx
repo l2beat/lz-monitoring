@@ -56,7 +56,11 @@ export function SendUln301Contract(props: Props) {
             defaultExecutorConfigs={props.defaultExecutorConfigs}
           />
           <Row
-            label="Treasury Contract"
+            label={
+              <InfoTooltip text="The contract where all the fees are received. The owner can set a new treasury address.">
+                Treasury Contract
+              </InfoTooltip>
+            }
             value={<BlockchainAddress address={props.treasury} />}
           />
           <Row label="Version" value={props.version.join('.')} />

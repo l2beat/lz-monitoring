@@ -12,6 +12,7 @@ import { Subsection } from '../Subsection'
 import { UpdatableBadge, V2Badge } from './Badges'
 import { DefaultUln } from './remote/DefaultUln'
 import { RemoteSection } from './remote/RemoteSection'
+import { toV2LibType } from './utils'
 
 type Props = {
   isLoading?: boolean
@@ -52,7 +53,14 @@ export function ReceiveUln302Contract(props: Props) {
           <ReceiveUln302RemoteChains
             defaultUlnConfigs={props.defaultUlnConfigs}
           />
-          <Row label="Message Lib Type" value={props.messageLibType} />
+          <Row
+            label={
+              <InfoTooltip text="Indicates for which direction library is used for. Can be send, receive or both">
+                Message lib type
+              </InfoTooltip>
+            }
+            value={toV2LibType(props.messageLibType)}
+          />
           <Row label="Version" value={props.version.join('.')} />
         </Subsection>
       </ExpandableContainer>
@@ -83,7 +91,7 @@ function ReceiveUln302RemoteChains(props: {
         className="!px-3 md:!px-6"
         label={
           <InfoTooltip text="List of destination chains supported by this site.">
-            Remote Chain
+            Remote chain
           </InfoTooltip>
         }
         value={

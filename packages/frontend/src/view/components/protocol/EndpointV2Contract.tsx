@@ -53,7 +53,11 @@ export function EndpointV2Contract(props: Props) {
 
           <Row
             hideBorder
-            label="Blocked Library"
+            label={
+              <InfoTooltip text="Library that reverts both on send and quote. Can be assigned as a default one actively stopping the message flow. It is configured upon contract construction and cannot be changed afterwards.">
+                Blocked library
+              </InfoTooltip>
+            }
             value={<BlockchainAddress address={props.blockedLibrary} />}
           />
           <EndpointV2RemoteChains
@@ -63,7 +67,11 @@ export function EndpointV2Contract(props: Props) {
 
           <Row label="EID" value={props.eid} />
           <Row
-            label="Registered Libraries"
+            label={
+              <InfoTooltip text="List of all registered message libraries. Message library must be appended to this registry before it can be used.">
+                Registered libraries
+              </InfoTooltip>
+            }
             value={
               <div className="flex flex-col gap-2">
                 {props.registeredLibraries.map((rl) => (
@@ -78,7 +86,7 @@ export function EndpointV2Contract(props: Props) {
             value={<BlockchainAddress address={props.lzToken} />}
           />
           <Row
-            label="Native Token"
+            label="Native token"
             value={<BlockchainAddress address={props.nativeToken} />}
           />
         </Subsection>
@@ -138,7 +146,15 @@ function EndpointV2RemoteChains(props: {
       {selectedChain && selectedLibraries && (
         <RemoteSection>
           <Row
-            label="Default send library"
+            label={
+              <InfoTooltip
+                text={
+                  'The default messaging library. The contract handles the message payload packing on the source chain. The owner of the Endpoint contract can change this value.'
+                }
+              >
+                Default send library
+              </InfoTooltip>
+            }
             value={
               <BlockchainAddress
                 address={EthereumAddress(selectedLibraries.send)}
@@ -146,7 +162,11 @@ function EndpointV2RemoteChains(props: {
             }
           />
           <Row
-            label="Default receive library"
+            label={
+              <InfoTooltip text="The default messaging library. The contract handles the message payload verification on the destination chain. The owner of the Endpoint contract can change this value.">
+                Default receive library
+              </InfoTooltip>
+            }
             value={
               <BlockchainAddress
                 address={EthereumAddress(selectedLibraries.receive)}

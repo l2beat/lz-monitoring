@@ -13,7 +13,7 @@ import { UpdatableBadge, V2Badge } from './Badges'
 import { DefaultExecutorConfig } from './remote/DefaultExecutorConfig'
 import { DefaultUln } from './remote/DefaultUln'
 import { RemoteSection } from './remote/RemoteSection'
-import { intersect } from './utils'
+import { intersect, toV2LibType } from './utils'
 
 type Props = {
   isLoading?: boolean
@@ -56,10 +56,21 @@ export function SendUln302Contract(props: Props) {
             defaultUlnConfigs={props.defaultUlnConfigs}
           />
           <Row
-            label="Treasury Contract"
+            label={
+              <InfoTooltip text="The contract where all the fees are received. The owner can set a new treasury address.">
+                Treasury Contract
+              </InfoTooltip>
+            }
             value={<BlockchainAddress address={props.treasury} />}
           />
-          <Row label="Message Lib Type" value={props.messageLibType} />
+          <Row
+            label={
+              <InfoTooltip text="Indicates for which direction library is used for. Can be send, receive or both">
+                Message lib type
+              </InfoTooltip>
+            }
+            value={toV2LibType(props.messageLibType)}
+          />
           <Row label="Version" value={props.version.join('.')} />
         </Subsection>
       </ExpandableContainer>

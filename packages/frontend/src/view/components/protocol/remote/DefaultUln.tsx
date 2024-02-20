@@ -14,7 +14,7 @@ export function DefaultUln({ config }: Props) {
     <Block title="Default Security Stack configuration">
       <Row
         label={
-          <InfoTooltip text="Amount of confirmations required before dispatching a message">
+          <InfoTooltip text="Amount of confirmations required before dispatching a message.">
             Required confirmations
           </InfoTooltip>
         }
@@ -42,7 +42,11 @@ export function DefaultUln({ config }: Props) {
         }
       />
       <Row
-        label="Optional DVNs threshold"
+        label={
+          <InfoTooltip text="Amount of optional DVN confirmations required before dispatching a message.">
+            Optional DVNs threshold
+          </InfoTooltip>
+        }
         className="!p-0 md:!pl-7 md:!pr-4"
         value={config.optionalDVNThreshold}
       />
