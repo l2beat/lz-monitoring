@@ -45,7 +45,7 @@ export function EndpointV2Contract(props: Props) {
             }
             value={
               <BlockchainAddress
-                warnOnEoa="Protocol component on this chain is owned by an EOA"
+                warnOnEoa="This contract is owned by an EOA"
                 address={props.owner}
               />
             }

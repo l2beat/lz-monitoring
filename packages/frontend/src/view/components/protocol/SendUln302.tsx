@@ -46,7 +46,7 @@ export function SendUln302Contract(props: Props) {
             }
             value={
               <BlockchainAddress
-                warnOnEoa="Protocol component on this chain is owned by an EOA"
+                warnOnEoa="This contract is owned by an EOA"
                 address={props.owner}
               />
             }
@@ -65,7 +65,7 @@ export function SendUln302Contract(props: Props) {
           />
           <Row
             label={
-              <InfoTooltip text="Indicates for which direction library is used for. Can be send, receive or both">
+              <InfoTooltip text="Indicates for which direction library is used. Can be send, receive or both">
                 Message lib type
               </InfoTooltip>
             }
