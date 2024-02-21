@@ -2,8 +2,9 @@
 
 import { ChainId } from './ChainId'
 
-const CHAIN_IDS = [
-  // Mainnet
+export { EndpointID }
+
+const V1_ENDPOINTS = [
   { endpointId: 101, chainId: ChainId.ETHEREUM },
   { endpointId: 102, chainId: ChainId.BSC },
   { endpointId: 106, chainId: ChainId.AVALANCHE },
@@ -16,12 +17,26 @@ const CHAIN_IDS = [
   { endpointId: 184, chainId: ChainId.BASE },
 ]
 
-export function getChainIdFromEndpointId(
-  endpointId: number,
-): ChainId | undefined {
-  return CHAIN_IDS.find((c) => c.endpointId === endpointId)?.chainId
-}
+const V2_ENDPOINTS = [
+  { endpointId: 30101, chainId: ChainId.ETHEREUM },
+  { endpointId: 30102, chainId: ChainId.BSC },
+  { endpointId: 30106, chainId: ChainId.AVALANCHE },
+  { endpointId: 30109, chainId: ChainId.POLYGON_POS },
+  { endpointId: 30110, chainId: ChainId.ARBITRUM },
+  { endpointId: 30111, chainId: ChainId.OPTIMISM },
+  { endpointId: 30125, chainId: ChainId.CELO },
+  { endpointId: 30158, chainId: ChainId.POLYGON_ZKEVM },
+  { endpointId: 30183, chainId: ChainId.LINEA },
+  { endpointId: 30184, chainId: ChainId.BASE },
+]
 
-export function getEndpointIdFromChainId(chainId: ChainId): number | undefined {
-  return CHAIN_IDS.find((c) => c.chainId === chainId)?.endpointId
+const EndpointID = {
+  decodeV1: (endpointId: string | number) =>
+    V1_ENDPOINTS.find((e) => e.endpointId === +endpointId)?.chainId,
+  encodeV1: (chainId: ChainId) =>
+    V1_ENDPOINTS.find((e) => e.chainId === chainId)?.endpointId,
+  decodeV2: (endpointId: string | number) =>
+    V2_ENDPOINTS.find((e) => e.endpointId === +endpointId)?.chainId,
+  encodeV2: (chainId: ChainId) =>
+    V2_ENDPOINTS.find((e) => e.chainId === chainId)?.endpointId,
 }

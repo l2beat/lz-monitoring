@@ -11,8 +11,8 @@ import {
   DefaultExecutors,
   DefaultUlnConfigs,
   DiscoveryApi,
+  EndpointID,
   EthereumAddress,
-  getChainIdFromEndpointId,
   RemoteChain,
 } from '@lz/libs'
 
@@ -318,14 +318,14 @@ function getRemoteChains(ulnV2: ContractParameters): RemoteChain[] {
     'ulnLookup',
   )
 
-  for (const [lzChainId] of Object.entries(defaultAdapterParams)) {
-    const lzChainIdNumber = Number(lzChainId)
-    const chainId = getChainIdFromEndpointId(lzChainIdNumber)
+  for (const [endpointId] of Object.entries(defaultAdapterParams)) {
+    const numericEndpointId = Number(endpointId)
+    const chainId = EndpointID.decodeV1(numericEndpointId)
     if (!chainId) continue
-    let adapterParams = defaultAdapterParams[lzChainIdNumber]
+    let adapterParams = defaultAdapterParams[numericEndpointId]
     assert(
       adapterParams !== undefined,
-      'Adapter params not found for chain ' + lzChainId,
+      'Adapter params not found for chain ' + endpointId,
     )
 
     // Some chains have multiple proof types
@@ -335,31 +335,31 @@ function getRemoteChains(ulnV2: ContractParameters): RemoteChain[] {
       adapterParams = [adapterParams]
     }
 
-    const appConfig = defaultAppConfig[lzChainIdNumber]
-    assert(appConfig, 'App config not found for chain ' + lzChainId)
+    const appConfig = defaultAppConfig[numericEndpointId]
+    assert(appConfig, 'App config not found for chain ' + endpointId)
     assert(
       appConfig.inboundProofLib !== undefined,
-      'Inbound proof lib not found for chain ' + lzChainId,
+      'Inbound proof lib not found for chain ' + endpointId,
     )
     assert(
       appConfig.inboundBlockConfirm !== undefined,
-      'Inbound proof confirm not found for chain ' + lzChainId,
+      'Inbound proof confirm not found for chain ' + endpointId,
     )
     assert(
       appConfig.outboundProofType !== undefined,
-      'Outbound proof type not found for chain ' + lzChainId,
+      'Outbound proof type not found for chain ' + endpointId,
     )
     assert(
       appConfig.outboundBlockConfirm !== undefined,
-      'Outbound block confirm not found for chain ' + lzChainId,
+      'Outbound block confirm not found for chain ' + endpointId,
     )
-    assert(appConfig.oracle, 'Oracle not found for chain ' + lzChainId)
-    assert(appConfig.relayer, 'Relayer not found for chain ' + lzChainId)
+    assert(appConfig.oracle, 'Oracle not found for chain ' + endpointId)
+    assert(appConfig.relayer, 'Relayer not found for chain ' + endpointId)
 
-    const inboundProofLibraryValue = inboundProofLibraries[lzChainIdNumber]
+    const inboundProofLibraryValue = inboundProofLibraries[numericEndpointId]
     assert(
       inboundProofLibraryValue !== undefined,
-      'Inbound proof library not found for chain ' + lzChainId,
+      'Inbound proof library not found for chain ' + endpointId,
     )
     const inboundProofLibraryMap = Array.isArray(inboundProofLibraryValue)
       ? inboundProofLibraryValue.map(EthereumAddress)
@@ -368,22 +368,22 @@ function getRemoteChains(ulnV2: ContractParameters): RemoteChain[] {
       inboundProofLibraryMap[+appConfig.inboundProofLib - 1]
     assert(
       inboundProofLibraryAddress !== undefined,
-      'Inbound proof library not found for chain ' + lzChainId,
+      'Inbound proof library not found for chain ' + endpointId,
     )
 
-    const supportedOutboundProof = supportedOutboundProofs[lzChainIdNumber]
+    const supportedOutboundProof = supportedOutboundProofs[numericEndpointId]
     assert(
       supportedOutboundProof !== undefined,
-      'Outbound proof library not found for chain ' + lzChainId,
+      'Outbound proof library not found for chain ' + endpointId,
     )
 
-    const uln = ulnLookup[lzChainId]
-    assert(uln, 'ULN not found for chain ' + lzChainId)
+    const uln = ulnLookup[endpointId]
+    assert(uln, 'ULN not found for chain ' + endpointId)
 
     remoteChainsMap.push({
       name: ChainId.getName(chainId),
       chainId,
-      lzChainId: lzChainIdNumber,
+      lzChainId: numericEndpointId,
       uln: bytes32ToAddress(Bytes.fromHex(uln)),
       defaultAppConfig: {
         inboundProofLib: {
