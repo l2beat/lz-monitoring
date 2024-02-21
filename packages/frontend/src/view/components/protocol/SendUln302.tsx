@@ -33,7 +33,7 @@ export function SendUln302Contract(props: Props) {
       subtitle={<BlockchainAddress address={props.address} full />}
       isLoading={props.isLoading}
     >
-      <ChangelogSummary address={props.address} />
+      <ChangelogSummary address={props.address} showFilters groupedEntries />
       <ExpandableContainer
         showText="View contract parameters"
         hideText="Hide contract parameters"

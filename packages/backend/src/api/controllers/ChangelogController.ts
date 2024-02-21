@@ -109,13 +109,23 @@ function getCategory(
     return milestone.operation
   }
 
-  const remotePaths = [
-    'ulnLookup',
-    'defaultAppConfig',
-    'defaultAdapterParams',
-    'inboundProofLibrary',
-    'supportedOutboundProof',
-  ]
+  // We could do some more comprehensive detection here but this works just fine
+  const V1Contracts = ['UltraLightNodeV2', 'Endpoint', 'LayerZero Multisig']
+
+  const remotePaths = V1Contracts.includes(entry.targetName)
+    ? [
+        'ulnLookup',
+        'defaultAppConfig',
+        'defaultAdapterParams',
+        'inboundProofLibrary',
+        'supportedOutboundProof',
+      ] // V2 Fallback
+    : [
+        'defaultReceiveLibraries',
+        'defaultSendLibraries',
+        'defaultUlnConfigs',
+        'defaultExecutorConfigs',
+      ]
 
   if (!entry.parameterPath.some((x) => remotePaths.includes(x))) {
     return 'OTHER'
