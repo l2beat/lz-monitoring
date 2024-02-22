@@ -8,7 +8,7 @@ interface Props {
 
 export function InfoTooltip(props: Props) {
   return (
-    <span className="flex items-center gap-1 ">
+    <span className="flex items-center gap-1">
       {props.children}
       <Tooltip text={props.text} variant="text">
         <InfoSquareIcon

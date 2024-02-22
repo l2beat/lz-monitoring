@@ -42,11 +42,11 @@ export function ReceiveUln301Contract(props: Props) {
           <Row
             hideBorder
             label={
-              <InfoTooltip text="Owner of this contract">Owner</InfoTooltip>
+              <InfoTooltip text="Owner of this contract.">Owner</InfoTooltip>
             }
             value={
               <BlockchainAddress
-                warnOnEoa="This contract is owned by an EOA"
+                warnOnEoa="This contract is owned by an EOA."
                 address={props.owner}
               />
             }
@@ -108,6 +108,7 @@ function ReceiveUln301RemoteChains(props: {
         <RemoteSection>
           <Block title="Default executor">
             <Row
+              dense
               label={
                 <InfoTooltip text="Party responsible for dispatching the message to the target chain after it has been signed-off by the security stack.">
                   Executor

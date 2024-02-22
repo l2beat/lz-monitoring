@@ -27,7 +27,7 @@ export function EndpointV2Contract(props: Props) {
           <V2Badge />
         </div>
       }
-      description="V2 variant of the Endpoint Contract backward compatible with V1. Contract handles the cross-chain messages transmission, verification, and receipt. It routes messages to the correct messaging library and keeps all message payloads across versions. Ownership of the contract can be renounced by the owner. Contract implements a standardized interface for Omnichain Applications (OApps) to manage security configurations and seamlessly send and receive messages."
+      description="V2 variant of the Endpoint Contract - backward compatible with V1. Contract handles the cross-chain messages transmission, verification, and receipt. It routes messages to the correct messaging library. Contract implements a standardized interface for Omnichain Applications (OApps) to manage security configurations and seamlessly send and receive messages."
       subtitle={<BlockchainAddress address={props.address} full />}
       isLoading={props.isLoading}
     >
@@ -39,13 +39,13 @@ export function EndpointV2Contract(props: Props) {
         <Subsection>
           <Row
             label={
-              <InfoTooltip text="Owner of the Endpoint Contract">
+              <InfoTooltip text="Owner of the Endpoint Contract.">
                 Owner
               </InfoTooltip>
             }
             value={
               <BlockchainAddress
-                warnOnEoa="This contract is owned by an EOA"
+                warnOnEoa="This contract is owned by an EOA."
                 address={props.owner}
               />
             }
@@ -54,7 +54,7 @@ export function EndpointV2Contract(props: Props) {
           <Row
             hideBorder
             label={
-              <InfoTooltip text="Library that reverts both on send and quote. Can be assigned as a default one actively stopping the message flow. It is configured upon contract construction and cannot be changed afterwards.">
+              <InfoTooltip text="A library that reverts both on send and quote. It can be assigned as a default one actively stopping the message flow. It is configured upon contract construction and cannot be changed afterward.">
                 Blocked library
               </InfoTooltip>
             }
@@ -65,10 +65,17 @@ export function EndpointV2Contract(props: Props) {
             defaultSendLibraries={props.defaultSendLibraries}
           />
 
-          <Row label="EID" value={props.eid} />
           <Row
             label={
-              <InfoTooltip text="List of all registered message libraries. Message library must be appended to this registry before it can be used.">
+              <InfoTooltip text="Endpoint ID - the chain-id-like number used for in-LZ unique identification of endpoints across different chains.">
+                EID
+              </InfoTooltip>
+            }
+            value={props.eid}
+          />
+          <Row
+            label={
+              <InfoTooltip text="Append-only list of all registered message libraries. Message library must be appended to this registry before it can be used.">
                 Registered libraries
               </InfoTooltip>
             }
@@ -82,11 +89,19 @@ export function EndpointV2Contract(props: Props) {
           />
 
           <Row
-            label="LayerZero token"
+            label={
+              <InfoTooltip text="The fee token, if set. Can be used as an alternative payment for protocol fees. The owner of EndpointV2 can set a new token.">
+                LayerZero token
+              </InfoTooltip>
+            }
             value={<BlockchainAddress address={props.lzToken} />}
           />
           <Row
-            label="Native token"
+            label={
+              <InfoTooltip text="The fee token fees can be paid in.">
+                Native token
+              </InfoTooltip>
+            }
             value={<BlockchainAddress address={props.nativeToken} />}
           />
         </Subsection>
