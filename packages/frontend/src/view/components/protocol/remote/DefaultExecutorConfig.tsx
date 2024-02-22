@@ -14,6 +14,7 @@ export function DefaultExecutorConfig({ config }: Props) {
   return (
     <Block title="Default executor configuration">
       <Row
+        dense
         className="!p-0 md:!pl-7 md:!pr-4"
         label={
           <InfoTooltip text="Maximum message size in bytes one can send.">
@@ -23,12 +24,13 @@ export function DefaultExecutorConfig({ config }: Props) {
         value={<Code>{config.maxMessageSize}</Code>}
       />
       <Row
+        dense
+        className="!p-0 md:!pl-7 md:!pr-4"
         label={
           <InfoTooltip text="Party responsible for dispatching the message to the target chain after it has been signed-off by the security stack.">
             Executor
           </InfoTooltip>
         }
-        className="!p-0 md:!pl-7 md:!pr-4"
         value={<BlockchainAddress address={EthereumAddress(config.executor)} />}
       />
     </Block>

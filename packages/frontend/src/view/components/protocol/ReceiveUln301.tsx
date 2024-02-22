@@ -108,6 +108,7 @@ function ReceiveUln301RemoteChains(props: {
         <RemoteSection>
           <Block title="Default executor">
             <Row
+              dense
               label={
                 <InfoTooltip text="Party responsible for dispatching the message to the target chain after it has been signed-off by the security stack.">
                   Executor
