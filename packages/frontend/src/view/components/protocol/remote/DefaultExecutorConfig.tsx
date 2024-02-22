@@ -16,7 +16,7 @@ export function DefaultExecutorConfig({ config }: Props) {
       <Row
         className="!p-0 md:!pl-7 md:!pr-4"
         label={
-          <InfoTooltip text="Maximum size of message that can be passed.">
+          <InfoTooltip text="Maximum message size in bytes one can send.">
             Max message size
           </InfoTooltip>
         }

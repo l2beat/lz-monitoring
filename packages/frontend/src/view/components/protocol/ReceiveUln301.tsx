@@ -42,11 +42,11 @@ export function ReceiveUln301Contract(props: Props) {
           <Row
             hideBorder
             label={
-              <InfoTooltip text="Owner of this contract">Owner</InfoTooltip>
+              <InfoTooltip text="Owner of this contract.">Owner</InfoTooltip>
             }
             value={
               <BlockchainAddress
-                warnOnEoa="This contract is owned by an EOA"
+                warnOnEoa="This contract is owned by an EOA."
                 address={props.owner}
               />
             }

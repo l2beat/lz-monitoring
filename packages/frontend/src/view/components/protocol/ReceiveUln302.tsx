@@ -41,11 +41,11 @@ export function ReceiveUln302Contract(props: Props) {
           <Row
             hideBorder
             label={
-              <InfoTooltip text="Owner of this contract">Owner</InfoTooltip>
+              <InfoTooltip text="Owner of this contract.">Owner</InfoTooltip>
             }
             value={
               <BlockchainAddress
-                warnOnEoa="This contract is owned by an EOA"
+                warnOnEoa="This contract is owned by an EOA."
                 address={props.owner}
               />
             }
@@ -55,7 +55,7 @@ export function ReceiveUln302Contract(props: Props) {
           />
           <Row
             label={
-              <InfoTooltip text="Indicates for which direction library is used. Can be send, receive or both">
+              <InfoTooltip text="Indicates for which direction library is used. Can be send, receive or both.">
                 Message lib type
               </InfoTooltip>
             }

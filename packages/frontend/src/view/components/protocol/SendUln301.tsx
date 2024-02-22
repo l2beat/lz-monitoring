@@ -42,11 +42,11 @@ export function SendUln301Contract(props: Props) {
           <Row
             hideBorder
             label={
-              <InfoTooltip text="Owner of this contract">Owner</InfoTooltip>
+              <InfoTooltip text="Owner of this contract.">Owner</InfoTooltip>
             }
             value={
               <BlockchainAddress
-                warnOnEoa="This contract is owned by an EOA"
+                warnOnEoa="This contract is owned by an EOA."
                 address={props.owner}
               />
             }
@@ -57,7 +57,7 @@ export function SendUln301Contract(props: Props) {
           />
           <Row
             label={
-              <InfoTooltip text="The contract where all the fees are received. The owner can set a new treasury address.">
+              <InfoTooltip text="The contract where all the fees are stored. The owner can set a new treasury address.">
                 Treasury Contract
               </InfoTooltip>
             }
