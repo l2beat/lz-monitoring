@@ -13,6 +13,7 @@ import { Config } from '../config'
 import { TrackingConfig } from '../config/Config'
 import { ApplicationModule } from '../modules/ApplicationModule'
 import { CurrentDiscoveryRepository } from '../peripherals/database/CurrentDiscoveryRepository'
+import { OAppTrackingRepository } from '../peripherals/database/OAppTrackingRepository'
 import { Database } from '../peripherals/database/shared/Database'
 import { ClockIndexer } from './domain/indexers/ClockIndexer'
 import { TrackingIndexer } from './domain/indexers/TrackingIndexer'
@@ -79,16 +80,18 @@ function createTrackingSubmodule(
   { logger, config, database }: SubmoduleDependencies,
   chain: keyof Config['tracking'],
 ): ApplicationModule {
-  const statusLogger = logger.for('TrackingModule').tag(chain)
+  const statusLogger = logger.for('TrackingSubmodule').tag(chain)
   const chainId = ChainId.fromName(chain)
 
   const currDiscoveryRepo = new CurrentDiscoveryRepository(database, logger)
+  const oAppTrackingRepo = new OAppTrackingRepository(database, logger)
 
   const provider = new providers.StaticJsonRpcProvider(config.rpcUrl)
 
   const multicall = getMulticall(provider, config.multicall)
 
   const oAppListProvider = new FileOAppListProvider('./oApps.json')
+
   const defaultConfigurationsProvider =
     new DiscoveryDefaultConfigurationsProvider(
       currDiscoveryRepo,
@@ -112,6 +115,7 @@ function createTrackingSubmodule(
     oAppListProvider,
     defaultConfigurationsProvider,
     oAppConfigProvider,
+    oAppTrackingRepo,
     clockIndexer,
   )
 
@@ -129,13 +133,12 @@ function getMulticall(
   provider: providers.StaticJsonRpcProvider,
   config: MulticallConfig,
 ): MulticallClient {
-  const etherscan = {} as EtherscanLikeClient
+  const dummyExplorer = {} as EtherscanLikeClient
   const discoveryProvider = new DiscoveryProvider(
     provider,
-    etherscan,
+    dummyExplorer,
     DiscoveryLogger.SILENT,
   )
-  const multicall = new MulticallClient(discoveryProvider, config)
 
-  return multicall
+  return new MulticallClient(discoveryProvider, config)
 }

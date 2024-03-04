@@ -74,7 +74,18 @@ class DiscoveryDefaultConfigurationsProvider
         return []
       }
 
-      return [[chainId.valueOf(), config]] as const
+      // FIXME: Refine
+      return [
+        [
+          chainId.valueOf(),
+          {
+            oracle: config.oracle,
+            relayer: config.relayer,
+            inboundProofLibraryVersion: config.inboundProofLib,
+            outboundProofType: config.outboundProofType,
+          },
+        ],
+      ] as const
     })
 
     if (mapped.length !== supportedChainIds.length) {
@@ -84,6 +95,7 @@ class DiscoveryDefaultConfigurationsProvider
       return null
     }
 
+    // FIXME: Refine
     return Object.fromEntries(mapped) as unknown as OAppConfigurations
   }
 }

@@ -2,5 +2,29 @@
   {
     "name": "STONE Token",
     "address": "0x7122985656e38BDC0302Db86685bb972b145bD3C"
+  },
+  {
+    "name": "STG Token",
+    "address": "0xAf5191B0De278C7286d6C7CC6ab6BB8A73bA2Cd6"
+  },
+  {
+    "name": "WAGMI Token",
+    "address": "0x92CC36D66e9d739D50673d1f27929a371FB83a67"
+  },
+  {
+    "name": "Wrapped agEUR Token",
+    "address": "0x4Fa745FCCC04555F2AFA8874cd23961636CdF982"
+  },
+  {
+    "name": "Wrapped LINK Token",
+    "address": "0xEe381e476b4335B8584A2026f3E845edaC2c69de"
+  },
+  {
+    "name": "Wrapped USDC Token",
+    "address": "0x4F52b41a778761bd2EEa5b7b7ed8cBDAA02cEF3E"
+  },
+  {
+    "name": "Wrapped BOBA Token",
+    "address": "0xB0003eB166654f7e57c0463F8D1a438eB238c490"
   }
 ]

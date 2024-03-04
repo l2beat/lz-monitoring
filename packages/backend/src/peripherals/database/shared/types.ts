@@ -59,6 +59,14 @@ declare module 'knex/types/tables' {
     operation: string
   }
 
+  interface OAppTrackingRow {
+    name: string
+    address: string
+    source_chain_id: number
+    target_chain_id: number
+    has_defaults: boolean
+  }
+
   interface Tables {
     block_numbers: BlockNumberRow
     indexer_states: IndexerStateRow
@@ -66,5 +74,8 @@ declare module 'knex/types/tables' {
     current_discovery: CurrentDiscoveryRow
     provider_cache: ProviderCacheRow
     events: EventRow
+    changelog: ChangelogRow
+    milestones: MilestoneRow
+    oapps_tracking: OAppTrackingRow
   }
 }

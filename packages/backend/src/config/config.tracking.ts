@@ -2,8 +2,6 @@ import { Env } from '@l2beat/backend-tools'
 import { MulticallConfig } from '@l2beat/discovery'
 import { EthereumAddress } from '@lz/libs'
 
-// eslint-disable-next-line import/no-internal-modules
-// eslint-disable-next-line import/no-internal-modules
 import { Config, TrackingSubmoduleConfig } from './Config'
 import { coreAddressesV1, ethereumMulticallConfig } from './discovery/ethereum'
 

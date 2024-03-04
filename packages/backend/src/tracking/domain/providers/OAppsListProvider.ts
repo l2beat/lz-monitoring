@@ -20,9 +20,8 @@ interface OAppListProvider {
   getOApps(): Promise<OAppDto[]>
 }
 
+// FIXME: Integrate
 class HttpOAppListProvider implements OAppListProvider {
-  constructor(private readonly url: string) {}
-
   getOApps(): Promise<OAppListDto> {
     return Promise.resolve([])
   }
