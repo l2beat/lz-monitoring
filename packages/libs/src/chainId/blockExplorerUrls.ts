@@ -41,7 +41,6 @@ export const BLOCK_EXPLORER_URLS: Record<SupportedChainName, string> = {
   celo: 'https://celoscan.io/',
   linea: 'https://lineascan.build/',
   base: 'https://basescan.org/',
-  gnosis: 'https://gnosisscan.io/',
 }
 
 export function getBlockExplorerName(chainId: ChainId): string {
@@ -59,5 +58,4 @@ const BLOCK_EXPLORER_NAMES: Record<SupportedChainName, string> = {
   celo: 'CeloScan',
   linea: 'LineaScan',
   base: 'BaseScan',
-  gnosis: 'GnosisScan',
 }

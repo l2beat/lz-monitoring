@@ -61,7 +61,6 @@ const CHAIN_IDS = {
   59144: 'linea',
   8453: 'base',
   1101: 'polygon-zkevm',
-  100: 'gnosis',
 } as const
 
 export type SupportedChainId = keyof typeof CHAIN_IDS
@@ -77,4 +76,3 @@ ChainId.CELO = chainIdFromName('celo')
 ChainId.LINEA = chainIdFromName('linea')
 ChainId.BASE = chainIdFromName('base')
 ChainId.POLYGON_ZKEVM = chainIdFromName('polygon-zkevm')
-ChainId.GNOSIS = chainIdFromName('gnosis')
