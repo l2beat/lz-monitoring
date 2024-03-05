@@ -1,6 +1,6 @@
 import { Logger } from '@l2beat/backend-tools'
 import { ChainId, EthereumAddress } from '@lz/libs'
-import { OAppRow } from 'knex/types/tables'
+import type { OAppRow } from 'knex/types/tables'
 
 import { BaseRepository, CheckConvention } from './shared/BaseRepository'
 import { Database } from './shared/Database'

@@ -1,6 +1,6 @@
 import { Logger } from '@l2beat/backend-tools'
 import { ChainId } from '@lz/libs'
-import { OAppConfigurationRow } from 'knex/types/tables'
+import type { OAppConfigurationRow } from 'knex/types/tables'
 
 import { OAppConfiguration } from '../../tracking/domain/configuration'
 import { BaseRepository, CheckConvention } from './shared/BaseRepository'
@@ -35,7 +35,6 @@ export class OAppConfigurationRepository extends BaseRepository {
 
     return rows.map(toRecord)
   }
-
   public async findByOAppIds(
     oAppIds: number[],
   ): Promise<OAppConfigurationRecord[]> {

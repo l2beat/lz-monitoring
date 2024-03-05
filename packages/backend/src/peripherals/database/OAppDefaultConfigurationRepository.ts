@@ -1,6 +1,6 @@
 import { Logger } from '@l2beat/backend-tools'
 import { ChainId } from '@lz/libs'
-import { OAppDefaultConfigurationRow } from 'knex/types/tables'
+import type { OAppDefaultConfigurationRow } from 'knex/types/tables'
 
 import { OAppConfiguration } from '../../tracking/domain/configuration'
 import { BaseRepository, CheckConvention } from './shared/BaseRepository'
