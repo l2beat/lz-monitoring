@@ -24,7 +24,7 @@ export class OAppConfigurationIndexer extends ChildIndexer {
   }
 
   protected override async update(_from: number, to: number): Promise<number> {
-    const oApps = await this.oAppRepo.findByChain(this.chainId)
+    const oApps = await this.oAppRepo.findBySourceChain(this.chainId)
 
     const configurationRecords = await Promise.all(
       oApps.map(async (oApp) => {

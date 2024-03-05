@@ -40,6 +40,18 @@ export class OAppDefaultConfigurationRepository extends BaseRepository {
 
     return rows.map(toRecord)
   }
+
+  public async findBySourceChain(
+    sourceChainId: ChainId,
+  ): Promise<OAppDefaultConfigurationRecord[]> {
+    const knex = await this.knex()
+
+    const rows = await knex('oapp_default_configuration')
+      .select('*')
+      .where('source_chain_id', sourceChainId)
+
+    return rows.map(toRecord)
+  }
 }
 
 function toRow(

@@ -25,6 +25,8 @@ import { OAppListIndexer } from './domain/indexers/OAppListIndexer'
 import { DiscoveryDefaultConfigurationsProvider } from './domain/providers/DefaultConfigurationsProvider'
 import { BlockchainOAppConfigurationProvider } from './domain/providers/OAppConfigurationProvider'
 import { FileOAppListProvider } from './domain/providers/OAppsListProvider'
+import { TrackingController } from './http/TrackingController'
+import { createTrackingRouter } from './http/TrackingRouter'
 
 export { createTrackingModule }
 
@@ -36,8 +38,13 @@ interface Dependencies {
 
 interface SubmoduleDependencies {
   logger: Logger
-  database: Database
   config: TrackingConfig
+  repositories: {
+    currentDiscovery: CurrentDiscoveryRepository
+    oApp: OAppRepository
+    oAppConfiguration: OAppConfigurationRepository
+    oAppDefaultConfiguration: OAppDefaultConfigurationRepository
+  }
 }
 
 function createTrackingModule(dependencies: Dependencies): ApplicationModule {
@@ -49,6 +56,31 @@ function createTrackingModule(dependencies: Dependencies): ApplicationModule {
   const enabledChainsToTrack = availableChainConfigs.filter(
     (chainName) => dependencies.config.tracking[chainName].enabled,
   )
+
+  const currDiscoveryRepo = new CurrentDiscoveryRepository(
+    dependencies.database,
+    dependencies.logger,
+  )
+  const oAppRepo = new OAppRepository(
+    dependencies.database,
+    dependencies.logger,
+  )
+  const oAppConfigurationRepo = new OAppConfigurationRepository(
+    dependencies.database,
+    dependencies.logger,
+  )
+  const oAppDefaultConfigurationRepo = new OAppDefaultConfigurationRepository(
+    dependencies.database,
+    dependencies.logger,
+  )
+
+  const controller = new TrackingController(
+    oAppRepo,
+    oAppConfigurationRepo,
+    oAppDefaultConfigurationRepo,
+  )
+
+  const router = createTrackingRouter(controller)
 
   const submodules = enabledChainsToTrack.flatMap((chainName) => {
     const submoduleConfig = dependencies.config.tracking[chainName]
@@ -62,7 +94,12 @@ function createTrackingModule(dependencies: Dependencies): ApplicationModule {
       {
         logger: dependencies.logger,
         config: submoduleConfig.config,
-        database: dependencies.database,
+        repositories: {
+          currentDiscovery: currDiscoveryRepo,
+          oApp: oAppRepo,
+          oAppConfiguration: oAppConfigurationRepo,
+          oAppDefaultConfiguration: oAppDefaultConfigurationRepo,
+        },
       },
       chainName,
     )
@@ -78,26 +115,17 @@ function createTrackingModule(dependencies: Dependencies): ApplicationModule {
 
       statusLogger.info('Tracking module started')
     },
+
+    routers: [router],
   }
 }
 
 function createTrackingSubmodule(
-  { logger, config, database }: SubmoduleDependencies,
+  { logger, config, repositories }: SubmoduleDependencies,
   chain: keyof Config['tracking'],
 ): ApplicationModule {
   const statusLogger = logger.for('TrackingSubmodule').tag(chain)
   const chainId = ChainId.fromName(chain)
-
-  const currDiscoveryRepo = new CurrentDiscoveryRepository(database, logger)
-  const oAppRepo = new OAppRepository(database, logger)
-  const oAppConfigurationRepo = new OAppConfigurationRepository(
-    database,
-    logger,
-  )
-  const oAppDefaultConfigurationRepo = new OAppDefaultConfigurationRepository(
-    database,
-    logger,
-  )
 
   const provider = new providers.StaticJsonRpcProvider(config.rpcUrl)
 
@@ -107,7 +135,7 @@ function createTrackingSubmodule(
 
   const defaultConfigurationsProvider =
     new DiscoveryDefaultConfigurationsProvider(
-      currDiscoveryRepo,
+      repositories.currentDiscovery,
       chainId,
       logger,
     )
@@ -125,7 +153,7 @@ function createTrackingSubmodule(
     logger,
     chainId,
     oAppListProvider,
-    oAppRepo,
+    repositories.oApp,
     [clockIndexer],
   )
 
@@ -133,8 +161,8 @@ function createTrackingSubmodule(
     logger,
     chainId,
     oAppConfigProvider,
-    oAppRepo,
-    oAppConfigurationRepo,
+    repositories.oApp,
+    repositories.oAppConfiguration,
     [oAppListIndexer],
   )
 
@@ -143,7 +171,7 @@ function createTrackingSubmodule(
     chainId,
     ProtocolVersion.V1,
     defaultConfigurationsProvider,
-    oAppDefaultConfigurationRepo,
+    repositories.oAppDefaultConfiguration,
     [oAppConfigurationIndexer],
   )
 

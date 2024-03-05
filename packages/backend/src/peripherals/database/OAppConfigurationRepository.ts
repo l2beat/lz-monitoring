@@ -35,6 +35,18 @@ export class OAppConfigurationRepository extends BaseRepository {
 
     return rows.map(toRecord)
   }
+
+  public async findByOAppIds(
+    oAppIds: number[],
+  ): Promise<OAppConfigurationRecord[]> {
+    const knex = await this.knex()
+
+    const rows = await knex('oapp_configuration')
+      .select('*')
+      .whereIn('oapp_id', oAppIds)
+
+    return rows.map(toRecord)
+  }
 }
 
 function toRow(record: OAppConfigurationRecord): OAppConfigurationRow {
