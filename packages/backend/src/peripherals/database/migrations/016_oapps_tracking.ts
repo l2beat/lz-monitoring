@@ -14,17 +14,27 @@ should create a new migration file that fixes the issue.
 import { Knex } from 'knex'
 
 export async function up(knex: Knex): Promise<void> {
-  await knex.schema.createTable('oapps_tracking', (table) => {
+  await knex.schema.createTable('oapp', (table) => {
+    table.increments('id').primary()
+    table.string('protocol_version').notNullable()
     table.string('name').notNullable()
     table.string('address').notNullable()
     table.integer('source_chain_id').notNullable()
-    table.integer('target_chain_id').notNullable()
-    table.boolean('has_defaults').notNullable()
+    table.string('icon_url').notNullable()
 
-    table.primary(['name', 'address', 'source_chain_id', 'target_chain_id'])
+    table.unique(['name', 'protocol_version', 'address', 'source_chain_id'])
+  })
+
+  await knex.schema.createTable('oapp_configuration', (table) => {
+    table.integer('oapp_id').notNullable()
+    table.integer('target_chain_id').notNullable()
+    table.jsonb('configuration').notNullable()
+
+    table.unique(['oapp_id', 'target_chain_id'])
   })
 }
 
 export async function down(knex: Knex): Promise<void> {
-  await knex.schema.dropTable('oapps_tracking')
+  await knex.schema.dropTable('oapp')
+  await knex.schema.dropTable('oapp_configuration')
 }

@@ -2,11 +2,8 @@ import { assert, Logger } from '@l2beat/backend-tools'
 import { ChildIndexer } from '@l2beat/uif'
 import { ChainId } from '@lz/libs'
 
-import {
-  OAppTrackingRecord,
-  OAppTrackingRepository,
-} from '../../../peripherals/database/OAppTrackingRepository'
-import { compareOAppConfigurations } from '../configuration'
+import { OAppConfigurationRepository } from '../../../peripherals/database/OAppConfigurationRepository'
+import { OAppRepository } from '../../../peripherals/database/OAppRepository'
 import { DefaultConfigurationsProvider } from '../providers/DefaultConfigurationsProvider'
 import { OAppConfigurationProvider } from '../providers/OAppConfigurationProvider'
 import { OAppListProvider } from '../providers/OAppsListProvider'
@@ -20,7 +17,8 @@ export class TrackingIndexer extends ChildIndexer {
     private readonly oAppListProvider: OAppListProvider,
     private readonly defaultConfigurationsProvider: DefaultConfigurationsProvider,
     private readonly oAppConfigProvider: OAppConfigurationProvider,
-    private readonly oAppTrackingRepo: OAppTrackingRepository,
+    private readonly oAppRepo: OAppRepository,
+    private readonly oAppConfigurationRepo: OAppConfigurationRepository,
     clockIndexer: ClockIndexer,
   ) {
     super(logger.tag(ChainId.getName(chainId)), [clockIndexer])
@@ -43,34 +41,42 @@ export class TrackingIndexer extends ChildIndexer {
       )}`,
     )
 
-    const configs = await Promise.all(
-      oAppsToBeChecked.map(async (oApp) => ({
-        config: await this.oAppConfigProvider.getConfiguration(oApp.address),
-        oApp,
-      })),
-    )
-
-    const records: OAppTrackingRecord[] = configs.flatMap(
-      ({ config, oApp }) => {
-        if (!config) {
-          return []
-        }
-
-        const match = compareOAppConfigurations(defaultConfigurations, config)
-
-        return match.map((perChainMatch) => ({
-          name: oApp.name,
-          address: oApp.address,
+    await this.oAppRepo.runInTransaction(async (trx) => {
+      const oAppsIds = await this.oAppRepo._replaceMany(
+        oAppsToBeChecked.map((oapp) => ({
+          ...oapp,
+          protocolVersion: '1',
           sourceChainId: this.chainId,
-          targetChainId: perChainMatch.chainId,
-          hasDefaults: perChainMatch.match,
-        }))
-      },
-    )
+        })),
+        trx,
+      )
 
-    this.logger.info(`Replacing V1 oApps tracks`, { amount: records.length })
+      const configurationRecords = await Promise.all(
+        oAppsToBeChecked.map(async (oApp, i) => {
+          const oAppConfigs = await this.oAppConfigProvider.getConfiguration(
+            oApp.address,
+          )
 
-    await this.oAppTrackingRepo.addMany(records)
+          return Object.entries(oAppConfigs).map(([chain, configuration]) => ({
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+            oAppId: oAppsIds[i]!,
+            targetChainId: ChainId(+chain),
+            configuration,
+          }))
+        }),
+      )
+
+      this.logger.info(`Replacing V1 oApps tracks`, {
+        amount: configurationRecords.length,
+      })
+
+      await this.oAppConfigurationRepo._replaceMany(
+        configurationRecords.flat(),
+        trx,
+      )
+
+      await trx.commit()
+    })
 
     return Promise.resolve(to)
   }

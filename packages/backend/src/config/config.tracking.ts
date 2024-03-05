@@ -39,18 +39,15 @@ function configFromTemplate(env: Env) {
     ulnV2Address: EthereumAddress
   }): TrackingSubmoduleConfig {
     const isEnabled = env.boolean(`${chainNamePrefix}_TRACKING_ENABLED`, false)
-    const isVisible = env.boolean(`${chainNamePrefix}_TRACKING_VISIBLE`, false)
 
     if (!isEnabled) {
       return {
-        visible: isVisible,
         enabled: false,
         config: null,
       }
     }
 
     return {
-      visible: isVisible,
       enabled: true,
       config: {
         tickIntervalMs: env.integer('TRACKING_TICK_INTERVAL_MS', 60_000_000),

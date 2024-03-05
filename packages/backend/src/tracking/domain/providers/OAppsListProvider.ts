@@ -9,6 +9,7 @@ export type { OAppListProvider }
 const OAppDto = z.object({
   name: z.string(),
   address: stringAs(EthereumAddress),
+  iconUrl: z.string(),
 })
 
 type OAppDto = z.infer<typeof OAppDto>

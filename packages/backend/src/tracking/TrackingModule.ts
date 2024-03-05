@@ -13,7 +13,8 @@ import { Config } from '../config'
 import { TrackingConfig } from '../config/Config'
 import { ApplicationModule } from '../modules/ApplicationModule'
 import { CurrentDiscoveryRepository } from '../peripherals/database/CurrentDiscoveryRepository'
-import { OAppTrackingRepository } from '../peripherals/database/OAppTrackingRepository'
+import { OAppConfigurationRepository } from '../peripherals/database/OAppConfigurationRepository'
+import { OAppRepository } from '../peripherals/database/OAppRepository'
 import { Database } from '../peripherals/database/shared/Database'
 import { ClockIndexer } from './domain/indexers/ClockIndexer'
 import { TrackingIndexer } from './domain/indexers/TrackingIndexer'
@@ -84,7 +85,11 @@ function createTrackingSubmodule(
   const chainId = ChainId.fromName(chain)
 
   const currDiscoveryRepo = new CurrentDiscoveryRepository(database, logger)
-  const oAppTrackingRepo = new OAppTrackingRepository(database, logger)
+  const oAppRepo = new OAppRepository(database, logger)
+  const oAppConfigurationRepo = new OAppConfigurationRepository(
+    database,
+    logger,
+  )
 
   const provider = new providers.StaticJsonRpcProvider(config.rpcUrl)
 
@@ -115,7 +120,8 @@ function createTrackingSubmodule(
     oAppListProvider,
     defaultConfigurationsProvider,
     oAppConfigProvider,
-    oAppTrackingRepo,
+    oAppRepo,
+    oAppConfigurationRepo,
     clockIndexer,
   )
 

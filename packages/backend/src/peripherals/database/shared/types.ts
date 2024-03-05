@@ -59,12 +59,19 @@ declare module 'knex/types/tables' {
     operation: string
   }
 
-  interface OAppTrackingRow {
+  interface OAppRow {
+    id: number
+    protocol_version: string
     name: string
     address: string
     source_chain_id: number
+    icon_url: string
+  }
+
+  interface OAppConfigurationRow {
+    oapp_id: number
     target_chain_id: number
-    has_defaults: boolean
+    configuration: string
   }
 
   interface Tables {
@@ -76,6 +83,7 @@ declare module 'knex/types/tables' {
     events: EventRow
     changelog: ChangelogRow
     milestones: MilestoneRow
-    oapps_tracking: OAppTrackingRow
+    oapp: OAppRow
+    oapp_configuration: OAppConfigurationRow
   }
 }

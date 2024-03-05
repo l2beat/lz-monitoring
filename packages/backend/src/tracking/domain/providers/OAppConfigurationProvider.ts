@@ -19,7 +19,7 @@ export type { OAppConfigurationProvider }
  * Provides the default configuration on given chain
  */
 interface OAppConfigurationProvider {
-  getConfiguration(address: EthereumAddress): Promise<OAppConfigurations | null>
+  getConfiguration(address: EthereumAddress): Promise<OAppConfigurations>
 }
 
 const iface = new utils.Interface([
@@ -38,7 +38,7 @@ class BlockchainOAppConfigurationProvider implements OAppConfigurationProvider {
   }
   public async getConfiguration(
     address: EthereumAddress,
-  ): Promise<OAppConfigurations | null> {
+  ): Promise<OAppConfigurations> {
     const blockNumber = await this.provider.getBlockNumber()
 
     const supportedChains = ChainId.getAll()

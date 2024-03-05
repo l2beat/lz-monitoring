@@ -90,12 +90,10 @@ export interface EthereumLikeDiscoveryConfig {
 
 export type TrackingSubmoduleConfig =
   | {
-      visible: boolean
       enabled: true
       config: TrackingConfig
     }
   | {
-      visible: boolean
       enabled: false
       config: null
     }
