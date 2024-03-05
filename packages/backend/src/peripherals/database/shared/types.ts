@@ -74,6 +74,13 @@ declare module 'knex/types/tables' {
     configuration: string
   }
 
+  interface OAppDefaultConfigurationRow {
+    protocol_version: string
+    source_chain_id: number
+    target_chain_id: number
+    configuration: string
+  }
+
   interface Tables {
     block_numbers: BlockNumberRow
     indexer_states: IndexerStateRow
@@ -85,5 +92,6 @@ declare module 'knex/types/tables' {
     milestones: MilestoneRow
     oapp: OAppRow
     oapp_configuration: OAppConfigurationRow
+    oapp_default_configuration: OAppDefaultConfigurationRow
   }
 }

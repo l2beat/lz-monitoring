@@ -14,10 +14,14 @@ import { TrackingConfig } from '../config/Config'
 import { ApplicationModule } from '../modules/ApplicationModule'
 import { CurrentDiscoveryRepository } from '../peripherals/database/CurrentDiscoveryRepository'
 import { OAppConfigurationRepository } from '../peripherals/database/OAppConfigurationRepository'
+import { OAppDefaultConfigurationRepository } from '../peripherals/database/OAppDefaultConfigurationRepository'
 import { OAppRepository } from '../peripherals/database/OAppRepository'
 import { Database } from '../peripherals/database/shared/Database'
+import { ProtocolVersion } from './domain/const'
 import { ClockIndexer } from './domain/indexers/ClockIndexer'
-import { TrackingIndexer } from './domain/indexers/TrackingIndexer'
+import { DefaultConfigurationIndexer } from './domain/indexers/DefaultConfigurationIndexer'
+import { OAppConfigurationIndexer } from './domain/indexers/OAppConfigurationIndexer'
+import { OAppListIndexer } from './domain/indexers/OAppListIndexer'
 import { DiscoveryDefaultConfigurationsProvider } from './domain/providers/DefaultConfigurationsProvider'
 import { BlockchainOAppConfigurationProvider } from './domain/providers/OAppConfigurationProvider'
 import { FileOAppListProvider } from './domain/providers/OAppsListProvider'
@@ -90,6 +94,10 @@ function createTrackingSubmodule(
     database,
     logger,
   )
+  const oAppDefaultConfigurationRepo = new OAppDefaultConfigurationRepository(
+    database,
+    logger,
+  )
 
   const provider = new providers.StaticJsonRpcProvider(config.rpcUrl)
 
@@ -113,23 +121,39 @@ function createTrackingSubmodule(
   )
 
   const clockIndexer = new ClockIndexer(logger, config.tickIntervalMs, chainId)
-
-  const trackingIndexer = new TrackingIndexer(
+  const oAppListIndexer = new OAppListIndexer(
     logger,
     chainId,
     oAppListProvider,
-    defaultConfigurationsProvider,
+    oAppRepo,
+    [clockIndexer],
+  )
+
+  const oAppConfigurationIndexer = new OAppConfigurationIndexer(
+    logger,
+    chainId,
     oAppConfigProvider,
     oAppRepo,
     oAppConfigurationRepo,
-    clockIndexer,
+    [oAppListIndexer],
+  )
+
+  const defaultConfigurationIndexer = new DefaultConfigurationIndexer(
+    logger,
+    chainId,
+    ProtocolVersion.V1,
+    defaultConfigurationsProvider,
+    oAppDefaultConfigurationRepo,
+    [oAppConfigurationIndexer],
   )
 
   return {
     start: async () => {
       statusLogger.info('Starting tracking submodule')
       await clockIndexer.start()
-      await trackingIndexer.start()
+      await oAppListIndexer.start()
+      await oAppConfigurationIndexer.start()
+      await defaultConfigurationIndexer.start()
       statusLogger.info('Tracking submodule started')
     },
   }

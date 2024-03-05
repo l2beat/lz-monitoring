@@ -1,6 +1,5 @@
 import { Logger } from '@l2beat/backend-tools'
 import { ChainId, EthereumAddress } from '@lz/libs'
-import { Knex } from 'knex'
 import { OAppRow } from 'knex/types/tables'
 
 import { BaseRepository, CheckConvention } from './shared/BaseRepository'
@@ -21,13 +20,12 @@ export class OAppRepository extends BaseRepository {
     this.autoWrap<CheckConvention<OAppRepository>>(this)
   }
 
-  public async _replaceMany(
-    records: Omit<OAppRecord, 'id'>[],
-    trx: Knex.Transaction,
-  ): Promise<number[]> {
+  public async addMany(records: Omit<OAppRecord, 'id'>[]): Promise<number[]> {
     const rows = records.map(toRow)
 
-    const ids = await trx('oapp')
+    const knex = await this.knex()
+
+    const ids = await knex('oapp')
       .insert(rows)
       .onConflict(['name', 'protocol_version', 'address', 'source_chain_id'])
       .merge()
@@ -41,6 +39,16 @@ export class OAppRepository extends BaseRepository {
     const knex = await this.knex()
 
     const rows = await knex('oapp').select('*')
+
+    return rows.map(toRecord)
+  }
+
+  public async findByChain(chainId: ChainId): Promise<OAppRecord[]> {
+    const knex = await this.knex()
+
+    const rows = await knex('oapp')
+      .select('*')
+      .where('source_chain_id', chainId)
 
     return rows.map(toRecord)
   }

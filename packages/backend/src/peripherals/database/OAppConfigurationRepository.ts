@@ -1,6 +1,5 @@
 import { Logger } from '@l2beat/backend-tools'
 import { ChainId } from '@lz/libs'
-import { Knex } from 'knex'
 import { OAppConfigurationRow } from 'knex/types/tables'
 
 import { OAppConfiguration } from '../../tracking/domain/configuration'
@@ -19,14 +18,12 @@ export class OAppConfigurationRepository extends BaseRepository {
     this.autoWrap<CheckConvention<OAppConfigurationRepository>>(this)
   }
 
-  public async _replaceMany(
-    records: OAppConfigurationRecord[],
-    trx: Knex.Transaction,
-  ): Promise<number> {
+  public async addMany(records: OAppConfigurationRecord[]): Promise<number> {
     const rows = records.map(toRow)
+    const knex = await this.knex()
 
-    await trx('oapp_configuration').delete()
-    await trx('oapp_configuration').insert(rows)
+    await knex('oapp_configuration').delete()
+    await knex('oapp_configuration').insert(rows)
 
     return rows.length
   }

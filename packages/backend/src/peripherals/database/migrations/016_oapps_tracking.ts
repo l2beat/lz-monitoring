@@ -32,9 +32,19 @@ export async function up(knex: Knex): Promise<void> {
 
     table.unique(['oapp_id', 'target_chain_id'])
   })
+
+  await knex.schema.createTable('oapp_default_configuration', (table) => {
+    table.string('protocol_version').notNullable()
+    table.integer('source_chain_id').notNullable()
+    table.integer('target_chain_id').notNullable()
+    table.jsonb('configuration').notNullable()
+
+    table.unique(['protocol_version', 'source_chain_id', 'target_chain_id'])
+  })
 }
 
 export async function down(knex: Knex): Promise<void> {
   await knex.schema.dropTable('oapp')
   await knex.schema.dropTable('oapp_configuration')
+  await knex.schema.dropTable('oapp_default_configuration')
 }
