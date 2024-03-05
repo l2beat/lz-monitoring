@@ -17,9 +17,6 @@ type RawDefaultConfigurations = Record<
   Partial<Record<string, number | string>>
 >
 
-/**
- * Provides the default configuration on given chain
- */
 interface DefaultConfigurationsProvider {
   getConfigurations(): Promise<OAppConfigurations | null>
 }
@@ -74,7 +71,6 @@ class DiscoveryDefaultConfigurationsProvider
         return []
       }
 
-      // FIXME: Refine
       return [
         [
           chainId.valueOf(),
@@ -95,7 +91,6 @@ class DiscoveryDefaultConfigurationsProvider
       return null
     }
 
-    // FIXME: Refine
     return Object.fromEntries(mapped) as unknown as OAppConfigurations
   }
 }
