@@ -62,6 +62,11 @@ export class OAppRepository extends BaseRepository {
 
     return rows.map(toRecord)
   }
+
+  async deleteAll(): Promise<number> {
+    const knex = await this.knex()
+    return knex('oapp').delete()
+  }
 }
 
 function toRecord(row: OAppRow): OAppRecord {

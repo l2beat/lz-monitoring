@@ -52,6 +52,11 @@ export class OAppDefaultConfigurationRepository extends BaseRepository {
 
     return rows.map(toRecord)
   }
+
+  async deleteAll(): Promise<number> {
+    const knex = await this.knex()
+    return knex('oapp_default_configuration').delete()
+  }
 }
 
 function toRow(
