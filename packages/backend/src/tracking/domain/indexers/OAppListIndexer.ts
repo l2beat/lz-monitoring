@@ -28,6 +28,7 @@ export class OAppListIndexer extends ChildIndexer {
     await this.oAppRepo.addMany(
       oApps.map((oApp) => ({
         ...oApp,
+        iconUrl: oApp.iconUrl ?? undefined,
         protocolVersion: ProtocolVersion.V1,
         sourceChainId: this.chainId,
       })),

@@ -10,7 +10,7 @@ const OAppDto = z.object({
   name: z.string(),
   symbol: z.string(),
   address: stringAs(EthereumAddress),
-  iconUrl: z.string(),
+  iconUrl: z.string().nullable(),
 })
 
 type OAppDto = z.infer<typeof OAppDto>
@@ -36,7 +36,7 @@ class HttpOAppListProvider implements OAppListProvider {
 
       return OAppListDto.parse(await result.json())
     } catch (e) {
-      this.logger.error('Failed to fetch OApps', e)
+      this.logger.error('Failed to fetch and parse OApps', e)
       throw e
     }
   }
