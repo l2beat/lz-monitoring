@@ -138,7 +138,6 @@ function createTrackingSubmodule(
     logger,
     httpClient,
     config.listApiUrl,
-    // 'http://localhost:3001/layerzero-oapps',
   )
 
   const defaultConfigurationsProvider =
