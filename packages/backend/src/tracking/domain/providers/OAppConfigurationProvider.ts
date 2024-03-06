@@ -15,9 +15,6 @@ import { OAppConfiguration, OAppConfigurations } from '../configuration'
 export { BlockchainOAppConfigurationProvider }
 export type { OAppConfigurationProvider }
 
-/**
- * Provides the default configuration on given chain
- */
 interface OAppConfigurationProvider {
   getConfiguration(address: EthereumAddress): Promise<OAppConfigurations>
 }
