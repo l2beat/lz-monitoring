@@ -15,7 +15,7 @@ import { OAppConfiguration } from '../domain/configuration'
 import { ProtocolVersion } from '../domain/const'
 import { TrackingController } from './TrackingController'
 
-describe.only(TrackingController.name, () => {
+describe(TrackingController.name, () => {
   describe('getOApps', () => {
     it('returns null when there are no configurations for the chain ID', async () => {
       const chainId = ChainId.ETHEREUM
