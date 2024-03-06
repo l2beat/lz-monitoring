@@ -3,6 +3,7 @@ import {
   DiscoveryLogger,
   DiscoveryProvider,
   EtherscanLikeClient,
+  HttpClient,
   MulticallClient,
   MulticallConfig,
 } from '@l2beat/discovery'
@@ -131,8 +132,11 @@ function createTrackingSubmodule(
 
   const multicall = getMulticall(provider, config.multicall)
 
+  const httpClient = new HttpClient()
+
   const oAppListProvider = new HttpOAppListProvider(
     logger,
+    httpClient,
     config.listApiUrl,
     // 'http://localhost:3001/layerzero-oapps',
   )

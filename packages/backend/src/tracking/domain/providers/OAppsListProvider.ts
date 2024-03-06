@@ -1,11 +1,9 @@
 import { assert, Logger } from '@l2beat/backend-tools'
+import { HttpClient } from '@l2beat/discovery'
 import { EthereumAddress, stringAs } from '@lz/libs'
-import { readFile } from 'fs/promises'
-import fetch from 'node-fetch'
-import { resolve } from 'path'
 import { z } from 'zod'
 
-export { FileOAppListProvider, HttpOAppListProvider, OAppDto, OAppListDto }
+export { HttpOAppListProvider, OAppDto, OAppListDto }
 export type { OAppListProvider }
 
 const OAppDto = z.object({
@@ -27,11 +25,12 @@ interface OAppListProvider {
 class HttpOAppListProvider implements OAppListProvider {
   constructor(
     private readonly logger: Logger,
+    private readonly client: HttpClient,
     private readonly url: string,
   ) {}
   async getOApps(): Promise<OAppListDto> {
     try {
-      const result = await fetch(this.url)
+      const result = await this.client.fetch(this.url)
 
       assert(result.ok, 'Failed to fetch OApps from given url')
 
@@ -40,16 +39,5 @@ class HttpOAppListProvider implements OAppListProvider {
       this.logger.error('Failed to fetch OApps', e)
       throw e
     }
-  }
-}
-
-class FileOAppListProvider implements OAppListProvider {
-  constructor(private readonly path: string) {}
-
-  async getOApps(): Promise<OAppListDto> {
-    const uri = resolve(__dirname, this.path)
-    const contents = await readFile(uri, 'utf-8')
-
-    return OAppListDto.parse(JSON.parse(contents))
   }
 }
