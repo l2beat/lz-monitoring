@@ -3,6 +3,10 @@ import { Logger } from '@l2beat/backend-tools'
 import { ApiServer } from './api/ApiServer'
 import { Config } from './config'
 import { ApplicationModule } from './modules/ApplicationModule'
+import { createConfigModule } from './modules/ConfigModule'
+import { createDiscoveryModule } from './modules/DiscoveryModule'
+import { createHealthModule } from './modules/HealthModule'
+import { createStatusModule } from './modules/StatusModule'
 import { Database } from './peripherals/database/shared/Database'
 import { handleServerError, reportError } from './tools/ErrorReporter'
 import { createTrackingModule } from './tracking/TrackingModule'
@@ -18,10 +22,10 @@ export class Application {
     const database = new Database(config.database.connection, logger)
 
     const modules: (ApplicationModule | undefined)[] = [
-      // createHealthModule(config),
-      // createDiscoveryModule({ database, logger, config }),
-      // createStatusModule({ database, logger, config }),
-      // createConfigModule({ config }),
+      createHealthModule(config),
+      createDiscoveryModule({ database, logger, config }),
+      createStatusModule({ database, logger, config }),
+      createConfigModule({ config }),
       createTrackingModule({ database, logger, config }),
     ]
 
