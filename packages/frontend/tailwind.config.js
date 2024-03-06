@@ -7,6 +7,8 @@ module.exports = {
       gridTemplateColumns: {
         multisig: '3fr 7fr 4fr 3fr 1fr',
         'multisig-small': '3fr 1fr 3fr 1fr',
+        applications: '4fr 2fr 6fr 2fr 1fr',
+        'applications-small': '3fr 2fr 6fr 2fr 1fr',
         'adapter-params-small': '2fr 1fr 2fr',
         'adapter-params': '2fr 1fr 2fr 7fr',
         'default-uln-configs': '2fr 2fr 3fr 4fr 4fr',
