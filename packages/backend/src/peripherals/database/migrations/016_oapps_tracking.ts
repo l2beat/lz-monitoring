@@ -18,11 +18,18 @@ export async function up(knex: Knex): Promise<void> {
     table.increments('id').primary()
     table.string('protocol_version').notNullable()
     table.string('name').notNullable()
+    table.string('symbol').notNullable()
     table.string('address').notNullable()
     table.integer('source_chain_id').notNullable()
-    table.string('icon_url').notNullable()
+    table.string('icon_url')
 
-    table.unique(['name', 'protocol_version', 'address', 'source_chain_id'])
+    table.unique([
+      'name',
+      'symbol',
+      'protocol_version',
+      'address',
+      'source_chain_id',
+    ])
   })
 
   await knex.schema.createTable('oapp_configuration', (table) => {

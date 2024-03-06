@@ -24,7 +24,7 @@ import { OAppConfigurationIndexer } from './domain/indexers/OAppConfigurationInd
 import { OAppListIndexer } from './domain/indexers/OAppListIndexer'
 import { DiscoveryDefaultConfigurationsProvider } from './domain/providers/DefaultConfigurationsProvider'
 import { BlockchainOAppConfigurationProvider } from './domain/providers/OAppConfigurationProvider'
-import { FileOAppListProvider } from './domain/providers/OAppsListProvider'
+import { HttpOAppListProvider } from './domain/providers/OAppsListProvider'
 import { TrackingController } from './http/TrackingController'
 import { createTrackingRouter } from './http/TrackingRouter'
 
@@ -131,7 +131,11 @@ function createTrackingSubmodule(
 
   const multicall = getMulticall(provider, config.multicall)
 
-  const oAppListProvider = new FileOAppListProvider('./oApps.json')
+  const oAppListProvider = new HttpOAppListProvider(
+    logger,
+    config.listApiUrl,
+    // 'http://localhost:3001/layerzero-oapps',
+  )
 
   const defaultConfigurationsProvider =
     new DiscoveryDefaultConfigurationsProvider(

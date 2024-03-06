@@ -3,6 +3,7 @@ import { ChildIndexer, Indexer } from '@l2beat/uif'
 import { ChainId } from '@lz/libs'
 
 import { OAppRepository } from '../../../peripherals/database/OAppRepository'
+import { ProtocolVersion } from '../const'
 import { OAppListProvider } from '../providers/OAppsListProvider'
 
 export class OAppListIndexer extends ChildIndexer {
@@ -27,7 +28,7 @@ export class OAppListIndexer extends ChildIndexer {
     await this.oAppRepo.addMany(
       oApps.map((oApp) => ({
         ...oApp,
-        protocolVersion: '1',
+        protocolVersion: ProtocolVersion.V1,
         sourceChainId: this.chainId,
       })),
     )

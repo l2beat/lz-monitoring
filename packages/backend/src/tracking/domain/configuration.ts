@@ -9,6 +9,8 @@ const OAppConfiguration = z.object({
   relayer: stringAs(EthereumAddress),
   inboundProofLibraryVersion: z.number(),
   outboundProofType: z.number(),
+  outboundBlockConfirmations: z.number(),
+  inboundBlockConfirmations: z.number(),
 })
 
 type OAppConfiguration = z.infer<typeof OAppConfiguration>

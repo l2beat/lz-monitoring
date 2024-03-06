@@ -8,7 +8,7 @@ import {
 // eslint-disable-next-line import/no-internal-modules
 import { Bytes } from '@l2beat/discovery/dist/utils/Bytes'
 import { ChainId, EndpointID, EthereumAddress } from '@lz/libs'
-import { providers, utils } from 'ethers'
+import { BigNumber, providers, utils } from 'ethers'
 
 import { OAppConfiguration, OAppConfigurations } from '../configuration'
 
@@ -100,6 +100,12 @@ class BlockchainOAppConfigurationProvider implements OAppConfigurationProvider {
       relayer: decoded.relayer,
       inboundProofLibraryVersion: decoded.inboundProofLibraryVersion,
       outboundProofType: decoded.outboundProofType,
+      inboundBlockConfirmations: BigNumber.from(
+        decoded.inboundBlockConfirmations,
+      ).toNumber(),
+      outboundBlockConfirmations: BigNumber.from(
+        decoded.outboundBlockConfirmations,
+      ).toNumber(),
       /* eslint-enable */
     }
 

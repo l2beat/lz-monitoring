@@ -17,6 +17,8 @@ const BaseConfiguration = z.object({
     oracle: branded(z.string(), EthereumAddress),
     inboundProofLibraryVersion: z.number(),
     outboundProofType: z.number(),
+    outboundBlockConfirmations: z.number(),
+    inboundBlockConfirmations: z.number(),
   }),
   isDefault: z.boolean(),
 })
@@ -53,8 +55,9 @@ type ResolvedConfigurationWithAppId = z.infer<
 
 const OAppWithConfigs = z.object({
   name: z.string(),
+  symbol: z.string(),
   address: branded(z.string(), EthereumAddress),
-  iconUrl: z.string(),
+  iconUrl: z.string().nullable(),
   configurations: z.array(ResolvedConfiguration),
 })
 

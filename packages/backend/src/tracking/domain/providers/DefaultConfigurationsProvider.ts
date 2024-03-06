@@ -79,6 +79,8 @@ class DiscoveryDefaultConfigurationsProvider
             relayer: config.relayer,
             inboundProofLibraryVersion: config.inboundProofLib,
             outboundProofType: config.outboundProofType,
+            outboundBlockConfirmations: config.outboundBlockConfirm,
+            inboundBlockConfirmations: config.inboundBlockConfirm,
           },
         ],
       ] as const

@@ -50,6 +50,8 @@ function configFromTemplate(env: Env) {
     return {
       enabled: true,
       config: {
+        // FIXME: change url to list api
+        listApiUrl: env.string(`${chainNamePrefix}_TRACKING_LIST_API_URL`, ''),
         tickIntervalMs: env.integer('TRACKING_TICK_INTERVAL_MS', 60_000_000),
         rpcUrl: env.string(`${chainNamePrefix}_TRACKING_RPC_URL`),
         ulnV2Address: ulnV2Address,

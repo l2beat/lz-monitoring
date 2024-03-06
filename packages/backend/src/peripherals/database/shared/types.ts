@@ -63,9 +63,10 @@ declare module 'knex/types/tables' {
     id: number
     protocol_version: string
     name: string
+    symbol: string
     address: string
     source_chain_id: number
-    icon_url: string
+    icon_url?: string
   }
 
   interface OAppConfigurationRow {

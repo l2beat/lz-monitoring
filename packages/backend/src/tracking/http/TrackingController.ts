@@ -72,8 +72,9 @@ function attachConfigurations(
 
     return {
       name: oApp.name,
+      symbol: oApp.symbol,
       address: oApp.address,
-      iconUrl: oApp.iconUrl,
+      iconUrl: oApp.iconUrl ? oApp.iconUrl : null,
       configurations: configsWithoutId,
     }
   })

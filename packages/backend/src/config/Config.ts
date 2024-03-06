@@ -99,6 +99,7 @@ export type TrackingSubmoduleConfig =
     }
 
 export interface TrackingConfig {
+  listApiUrl: string
   rpcUrl: string
   tickIntervalMs: number
   multicall: MulticallConfig
