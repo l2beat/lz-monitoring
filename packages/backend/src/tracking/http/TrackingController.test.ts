@@ -23,7 +23,7 @@ describe(TrackingController.name, () => {
       const oAppConfigRepo = mockObject<OAppConfigurationRepository>({})
       const oAppDefaultConfigRepo =
         mockObject<OAppDefaultConfigurationRepository>({
-          findBySourceChain: () => Promise.resolve([]),
+          getBySourceChain: () => Promise.resolve([]),
         })
 
       const controller = new TrackingController(
@@ -104,7 +104,7 @@ describe(TrackingController.name, () => {
         ]
 
         const oAppRepo = mockObject<OAppRepository>({
-          findBySourceChain: () => Promise.resolve([oAppA, oAppB]),
+          getBySourceChain: () => Promise.resolve([oAppA, oAppB]),
         })
 
         const oAppConfigRepo = mockObject<OAppConfigurationRepository>({
@@ -112,7 +112,7 @@ describe(TrackingController.name, () => {
         })
         const oAppDefaultConfigRepo =
           mockObject<OAppDefaultConfigurationRepository>({
-            findBySourceChain: (chainId) =>
+            getBySourceChain: (chainId) =>
               Promise.resolve([
                 {
                   sourceChainId: chainId,

@@ -43,7 +43,7 @@ export class OAppRepository extends BaseRepository {
     return ids.map((id) => id.id)
   }
 
-  public async findAll(): Promise<OAppRecord[]> {
+  public async getAll(): Promise<OAppRecord[]> {
     const knex = await this.knex()
 
     const rows = await knex('oapp').select('*')
@@ -51,9 +51,7 @@ export class OAppRepository extends BaseRepository {
     return rows.map(toRecord)
   }
 
-  public async findBySourceChain(
-    sourceChainId: ChainId,
-  ): Promise<OAppRecord[]> {
+  public async getBySourceChain(sourceChainId: ChainId): Promise<OAppRecord[]> {
     const knex = await this.knex()
 
     const rows = await knex('oapp')

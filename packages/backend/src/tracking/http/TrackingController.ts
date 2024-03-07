@@ -31,13 +31,13 @@ class TrackingController {
 
   async getOApps(chainId: ChainId): Promise<OAppsResponse | null> {
     const defaultConfigurations =
-      await this.oAppDefaultConfigRepo.findBySourceChain(chainId)
+      await this.oAppDefaultConfigRepo.getBySourceChain(chainId)
 
     if (defaultConfigurations.length === 0) {
       return null
     }
 
-    const oApps = await this.oAppRepo.findBySourceChain(chainId)
+    const oApps = await this.oAppRepo.getBySourceChain(chainId)
 
     if (oApps.length === 0) {
       return null

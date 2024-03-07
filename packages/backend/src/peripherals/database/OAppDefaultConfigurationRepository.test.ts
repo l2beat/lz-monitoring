@@ -46,7 +46,7 @@ describe(OAppDefaultConfigurationRepository.name, () => {
   })
 
   describe(
-    OAppDefaultConfigurationRepository.prototype.findBySourceChain.name,
+    OAppDefaultConfigurationRepository.prototype.getBySourceChain.name,
     () => {
       it('returns only records with matching source chain', async () => {
         const record1 = mockRecord({
@@ -61,7 +61,7 @@ describe(OAppDefaultConfigurationRepository.name, () => {
 
         await repository.addMany([record1, record2, record3])
 
-        const result = await repository.findBySourceChain(ChainId.ETHEREUM)
+        const result = await repository.getBySourceChain(ChainId.ETHEREUM)
 
         expect(result.length).toEqual(1)
       })

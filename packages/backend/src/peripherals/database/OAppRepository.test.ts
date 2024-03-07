@@ -20,18 +20,18 @@ describe(OAppRepository.name, () => {
 
       await repository.addMany([record1, record2])
 
-      const recordsBeforeMerge = await repository.findAll()
+      const recordsBeforeMerge = await repository.getAll()
 
       await repository.addMany([record1, record2])
 
-      const recordsAfterMerge = await repository.findAll()
+      const recordsAfterMerge = await repository.getAll()
 
       expect(recordsBeforeMerge.length).toEqual(2)
       expect(recordsAfterMerge.length).toEqual(2)
     })
   })
 
-  describe(OAppRepository.prototype.findBySourceChain.name, () => {
+  describe(OAppRepository.prototype.getBySourceChain.name, () => {
     it('returns only records with matching source chain', async () => {
       const record1 = mockRecord({
         id: 1,
@@ -51,7 +51,7 @@ describe(OAppRepository.name, () => {
 
       await repository.addMany([record1, record2, record3])
 
-      const result = await repository.findBySourceChain(ChainId.ETHEREUM)
+      const result = await repository.getBySourceChain(ChainId.ETHEREUM)
 
       expect(result.length).toEqual(1)
     })
