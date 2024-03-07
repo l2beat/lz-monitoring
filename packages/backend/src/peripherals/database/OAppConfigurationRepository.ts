@@ -22,8 +22,10 @@ export class OAppConfigurationRepository extends BaseRepository {
     const rows = records.map(toRow)
     const knex = await this.knex()
 
-    await knex('oapp_configuration').delete()
-    await knex('oapp_configuration').insert(rows)
+    await knex('oapp_configuration')
+      .insert(rows)
+      .onConflict(['oapp_id', 'target_chain_id'])
+      .merge()
 
     return rows.length
   }
