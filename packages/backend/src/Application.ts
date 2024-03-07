@@ -9,6 +9,7 @@ import { createHealthModule } from './modules/HealthModule'
 import { createStatusModule } from './modules/StatusModule'
 import { Database } from './peripherals/database/shared/Database'
 import { handleServerError, reportError } from './tools/ErrorReporter'
+import { createTrackingModule } from './tracking/TrackingModule'
 
 export class Application {
   start: () => Promise<void>
@@ -25,6 +26,7 @@ export class Application {
       createDiscoveryModule({ database, logger, config }),
       createStatusModule({ database, logger, config }),
       createConfigModule({ config }),
+      createTrackingModule({ database, logger, config }),
     ]
 
     const apiServer = new ApiServer(

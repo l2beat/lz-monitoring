@@ -39,6 +39,9 @@ export interface Config {
       readonly linea: DiscoverySubmoduleConfig
     }
   }
+  readonly tracking: {
+    readonly ethereum: TrackingSubmoduleConfig
+  }
 }
 
 export interface ApiConfig {
@@ -83,4 +86,22 @@ export interface EthereumLikeDiscoveryConfig {
   tickIntervalMs: number
   loggerEnabled?: boolean
   unsupportedEtherscanMethods?: EtherscanUnsupportedMethods
+}
+
+export type TrackingSubmoduleConfig =
+  | {
+      enabled: true
+      config: TrackingConfig
+    }
+  | {
+      enabled: false
+      config: null
+    }
+
+export interface TrackingConfig {
+  listApiUrl: string
+  rpcUrl: string
+  tickIntervalMs: number
+  multicall: MulticallConfig
+  ulnV2Address: EthereumAddress
 }

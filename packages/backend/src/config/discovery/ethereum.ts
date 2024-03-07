@@ -14,6 +14,7 @@ import {
 } from '../types'
 
 export {
+  coreAddressesV1,
   ethereumChangelogWhitelist,
   ethereumDiscoveryConfig,
   ethereumEventsToWatch,

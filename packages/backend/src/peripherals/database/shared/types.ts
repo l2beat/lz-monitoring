@@ -59,6 +59,29 @@ declare module 'knex/types/tables' {
     operation: string
   }
 
+  interface OAppRow {
+    id: number
+    protocol_version: string
+    name: string
+    symbol: string
+    address: string
+    source_chain_id: number
+    icon_url?: string
+  }
+
+  interface OAppConfigurationRow {
+    oapp_id: number
+    target_chain_id: number
+    configuration: string
+  }
+
+  interface OAppDefaultConfigurationRow {
+    protocol_version: string
+    source_chain_id: number
+    target_chain_id: number
+    configuration: string
+  }
+
   interface Tables {
     block_numbers: BlockNumberRow
     indexer_states: IndexerStateRow
@@ -66,5 +89,10 @@ declare module 'knex/types/tables' {
     current_discovery: CurrentDiscoveryRow
     provider_cache: ProviderCacheRow
     events: EventRow
+    changelog: ChangelogRow
+    milestones: MilestoneRow
+    oapp: OAppRow
+    oapp_configuration: OAppConfigurationRow
+    oapp_default_configuration: OAppDefaultConfigurationRow
   }
 }

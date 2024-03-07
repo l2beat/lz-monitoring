@@ -137,9 +137,7 @@ export function createDiscoveryModule({
     start: async () => {
       statusLogger.info('Starting discovery module')
 
-      for (const submodule of submodules) {
-        await submodule.start?.()
-      }
+      await Promise.all(submodules.map((submodule) => submodule.start?.()))
 
       statusLogger.info('Main discovery module started')
     },
