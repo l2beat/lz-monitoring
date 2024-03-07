@@ -39,7 +39,7 @@ export function Applications() {
 
       <Layout>
         <div className="mt-10 overflow-x-auto rounded bg-gray-900 px-7 py-5">
-          <div className="grid-cols-applications col-span-5 grid min-w-[800px] rounded bg-gray-700 py-3 text-left text-[13px] font-semibold text-gray-50">
+          <div className="col-span-5 grid min-w-[800px] grid-cols-applications rounded bg-gray-700 py-3 text-left text-[13px] font-semibold text-gray-50">
             <div className="px-6">TOKEN</div>
             <div>SOURCE CHAIN</div>
             <div>ADDRESS</div>
@@ -81,11 +81,11 @@ function OAppRow(props: { oApp: OAppWithConfigs; sourceChain: ChainId }) {
   return (
     <div
       className={cx(
-        'grid-cols-applications-small md:grid-cols-applications col-span-full border-b border-gray-700 py-3 text-xs last:rounded-b last:border-none md:min-w-[800px]',
+        'col-span-full grid-cols-applications-small border-b border-gray-700 py-3 text-xs last:rounded-b last:border-none md:min-w-[800px] md:grid-cols-applications',
         isExpanded ? 'rounded border-none bg-gray-750' : 'bg-gray-800',
       )}
     >
-      <div className="grid-cols-applications-small md:grid-cols-applications grid md:min-w-[800px]">
+      <div className="grid grid-cols-applications-small md:min-w-[800px] md:grid-cols-applications">
         <span className="flex items-center gap-2 px-4 md:px-6">
           {props.oApp.iconUrl && (
             <img
@@ -147,27 +147,25 @@ function CustomConfig(props: {
         {<BlockchainIcon chainId={props.config.targetChainId} />}
       </span>
       <div className="pt-2">
-        {props.config.diffs.map((changedProperty) => (
-          <Row
-            dense
-            label={changedProperty}
-            value={
-              <div className="flex items-center gap-2">
-                {
-                  props.config.configuration[
-                    changedProperty as keyof typeof props.config.configuration
-                  ]
-                }
-                <Tooltip
-                  text="This property differs from the default"
-                  variant="text"
-                >
-                  <WarningIcon className="h-4 w-4 stroke-yellow-100" />
-                </Tooltip>
-              </div>
-            }
-          />
-        ))}
+        {Object.entries(props.config.changedConfiguration).map(
+          ([property, value]) => (
+            <Row
+              dense
+              label={property}
+              value={
+                <div className="flex items-center gap-2">
+                  {value}
+                  <Tooltip
+                    text="This property differs from the default"
+                    variant="text"
+                  >
+                    <WarningIcon className="h-4 w-4 stroke-yellow-100" />
+                  </Tooltip>
+                </div>
+              }
+            />
+          ),
+        )}
       </div>
     </div>
   )
