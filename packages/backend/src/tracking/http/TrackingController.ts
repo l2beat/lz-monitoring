@@ -57,6 +57,11 @@ class TrackingController {
     return {
       sourceChainId: chainId,
       oApps: oAppsWithConfigs,
+
+      defaultConfigurations: defaultConfigurations.map((record) => ({
+        targetChainId: record.targetChainId,
+        configuration: record.configuration,
+      })),
     }
   }
 }
@@ -104,16 +109,26 @@ function resolveConfigurationChanges(
     })
 
     if (diffKeys.length === 0) {
-      return {
-        ...configuration,
+      const result = {
+        oAppId: configuration.oAppId,
+        targetChainId: configuration.targetChainId,
         isDefault: true,
       } as const
+
+      return result
     }
 
     return {
-      ...configuration,
+      oAppId: configuration.oAppId,
+      targetChainId: configuration.targetChainId,
       isDefault: false,
-      diffs: diffKeys,
+      changedConfiguration: diffKeys.reduce<Partial<OAppConfiguration>>(
+        (acc, key) => ({
+          ...acc,
+          [key]: configuration.configuration[key],
+        }),
+        {},
+      ),
     } as const
   })
 }

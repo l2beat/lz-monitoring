@@ -6,7 +6,10 @@ import {
   OAppConfigurationRecord,
   OAppConfigurationRepository,
 } from '../../peripherals/database/OAppConfigurationRepository'
-import { OAppDefaultConfigurationRepository } from '../../peripherals/database/OAppDefaultConfigurationRepository'
+import {
+  OAppDefaultConfigurationRecord,
+  OAppDefaultConfigurationRepository,
+} from '../../peripherals/database/OAppDefaultConfigurationRepository'
 import {
   OAppRecord,
   OAppRepository,
@@ -103,6 +106,27 @@ describe(TrackingController.name, () => {
           },
         ]
 
+        const mockDefaultConfigurations: OAppDefaultConfigurationRecord[] = [
+          {
+            sourceChainId: chainId,
+            targetChainId: ChainId.ETHEREUM,
+            protocolVersion: ProtocolVersion.V1,
+            configuration: defaultConfiguration,
+          },
+          {
+            sourceChainId: chainId,
+            targetChainId: ChainId.OPTIMISM,
+            protocolVersion: ProtocolVersion.V1,
+            configuration: defaultConfiguration,
+          },
+          {
+            sourceChainId: chainId,
+            targetChainId: ChainId.BSC,
+            protocolVersion: ProtocolVersion.V1,
+            configuration: defaultConfiguration,
+          },
+        ]
+
         const oAppRepo = mockObject<OAppRepository>({
           getBySourceChain: () => Promise.resolve([oAppA, oAppB]),
         })
@@ -112,27 +136,7 @@ describe(TrackingController.name, () => {
         })
         const oAppDefaultConfigRepo =
           mockObject<OAppDefaultConfigurationRepository>({
-            getBySourceChain: (chainId) =>
-              Promise.resolve([
-                {
-                  sourceChainId: chainId,
-                  targetChainId: ChainId.ETHEREUM,
-                  protocolVersion: ProtocolVersion.V1,
-                  configuration: defaultConfiguration,
-                },
-                {
-                  sourceChainId: chainId,
-                  targetChainId: ChainId.OPTIMISM,
-                  protocolVersion: ProtocolVersion.V1,
-                  configuration: defaultConfiguration,
-                },
-                {
-                  sourceChainId: chainId,
-                  targetChainId: ChainId.BSC,
-                  protocolVersion: ProtocolVersion.V1,
-                  configuration: defaultConfiguration,
-                },
-              ]),
+            getBySourceChain: () => Promise.resolve(mockDefaultConfigurations),
           })
 
         const controller = new TrackingController(
@@ -155,14 +159,15 @@ describe(TrackingController.name, () => {
             configurations: [
               {
                 targetChainId: ChainId.ETHEREUM,
-                configuration: defaultConfiguration,
                 isDefault: true,
               },
               {
                 targetChainId: ChainId.BSC,
-                configuration: customConfiguration,
+                changedConfiguration: {
+                  relayer: customConfiguration.relayer,
+                  oracle: customConfiguration.oracle,
+                },
                 isDefault: false,
-                diffs: ['relayer', 'oracle'],
               },
             ],
           },
@@ -175,18 +180,25 @@ describe(TrackingController.name, () => {
             configurations: [
               {
                 targetChainId: ChainId.ETHEREUM,
-                configuration: customConfiguration,
+                changedConfiguration: {
+                  oracle: customConfiguration.oracle,
+                  relayer: customConfiguration.relayer,
+                },
                 isDefault: false,
-                diffs: ['relayer', 'oracle'],
               },
               {
                 targetChainId: ChainId.OPTIMISM,
-                configuration: defaultConfiguration,
                 isDefault: true,
               },
             ],
           },
         ])
+        expect(result.defaultConfigurations).toEqual(
+          mockDefaultConfigurations.map((c) => ({
+            targetChainId: c.targetChainId,
+            configuration: c.configuration,
+          })),
+        )
       })
     })
   })

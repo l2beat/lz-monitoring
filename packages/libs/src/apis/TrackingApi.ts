@@ -10,16 +10,18 @@ export {
   ResolvedConfigurationWithAppId,
 }
 
+const OAppConfiguration = z.object({
+  relayer: branded(z.string(), EthereumAddress),
+  oracle: branded(z.string(), EthereumAddress),
+  inboundProofLibraryVersion: z.number(),
+  outboundProofType: z.number(),
+  outboundBlockConfirmations: z.number(),
+  inboundBlockConfirmations: z.number(),
+})
+type OAppConfiguration = z.infer<typeof OAppConfiguration>
+
 const BaseConfiguration = z.object({
   targetChainId: branded(z.number(), ChainId),
-  configuration: z.object({
-    relayer: branded(z.string(), EthereumAddress),
-    oracle: branded(z.string(), EthereumAddress),
-    inboundProofLibraryVersion: z.number(),
-    outboundProofType: z.number(),
-    outboundBlockConfirmations: z.number(),
-    inboundBlockConfirmations: z.number(),
-  }),
   isDefault: z.boolean(),
 })
 type BaseConfiguration = z.infer<typeof BaseConfiguration>
@@ -31,7 +33,7 @@ type DefaultConfiguration = z.infer<typeof DefaultConfiguration>
 
 const ChangedConfiguration = BaseConfiguration.extend({
   isDefault: z.literal(false),
-  diffs: z.array(z.string()), // keyof OAppConfiguration
+  changedConfiguration: OAppConfiguration.partial(),
 })
 type ChangedConfiguration = z.infer<typeof ChangedConfiguration>
 
@@ -66,6 +68,12 @@ type OAppWithConfigs = z.infer<typeof OAppWithConfigs>
 const OAppsResponse = z.object({
   sourceChainId: branded(z.number(), ChainId),
   oApps: z.array(OAppWithConfigs),
+  defaultConfigurations: z.array(
+    z.object({
+      targetChainId: branded(z.number(), ChainId),
+      configuration: OAppConfiguration,
+    }),
+  ),
 })
 
 type OAppsResponse = z.infer<typeof OAppsResponse>
