@@ -16,6 +16,7 @@ import { ApplicationModule } from '../modules/ApplicationModule'
 import { CurrentDiscoveryRepository } from '../peripherals/database/CurrentDiscoveryRepository'
 import { OAppConfigurationRepository } from '../peripherals/database/OAppConfigurationRepository'
 import { OAppDefaultConfigurationRepository } from '../peripherals/database/OAppDefaultConfigurationRepository'
+import { OAppRemoteRepository } from '../peripherals/database/OAppRemoteRepository'
 import { OAppRepository } from '../peripherals/database/OAppRepository'
 import { Database } from '../peripherals/database/shared/Database'
 import { ProtocolVersion } from './domain/const'
@@ -23,8 +24,10 @@ import { ClockIndexer } from './domain/indexers/ClockIndexer'
 import { DefaultConfigurationIndexer } from './domain/indexers/DefaultConfigurationIndexer'
 import { OAppConfigurationIndexer } from './domain/indexers/OAppConfigurationIndexer'
 import { OAppListIndexer } from './domain/indexers/OAppListIndexer'
+import { OAppRemoteIndexer } from './domain/indexers/OAppRemotesIndexer'
 import { DiscoveryDefaultConfigurationsProvider } from './domain/providers/DefaultConfigurationsProvider'
 import { BlockchainOAppConfigurationProvider } from './domain/providers/OAppConfigurationProvider'
+import { BlockchainOAppRemotesProvider } from './domain/providers/OAppRemotesProvider'
 import { HttpOAppListProvider } from './domain/providers/OAppsListProvider'
 import { TrackingController } from './http/TrackingController'
 import { createTrackingRouter } from './http/TrackingRouter'
@@ -45,6 +48,7 @@ interface SubmoduleDependencies {
     oApp: OAppRepository
     oAppConfiguration: OAppConfigurationRepository
     oAppDefaultConfiguration: OAppDefaultConfigurationRepository
+    oAppRemote: OAppRemoteRepository
   }
 }
 
@@ -75,6 +79,11 @@ function createTrackingModule(dependencies: Dependencies): ApplicationModule {
     dependencies.logger,
   )
 
+  const oAppRemoteRepo = new OAppRemoteRepository(
+    dependencies.database,
+    dependencies.logger,
+  )
+
   const controller = new TrackingController(
     oAppRepo,
     oAppConfigurationRepo,
@@ -100,6 +109,7 @@ function createTrackingModule(dependencies: Dependencies): ApplicationModule {
           oApp: oAppRepo,
           oAppConfiguration: oAppConfigurationRepo,
           oAppDefaultConfiguration: oAppDefaultConfigurationRepo,
+          oAppRemote: oAppRemoteRepo,
         },
       },
       chainName,
@@ -155,6 +165,13 @@ function createTrackingSubmodule(
     logger,
   )
 
+  const oAppRemotesProvider = new BlockchainOAppRemotesProvider(
+    provider,
+    multicall,
+    chainId,
+    logger,
+  )
+
   const clockIndexer = new ClockIndexer(logger, config.tickIntervalMs, chainId)
   const oAppListIndexer = new OAppListIndexer(
     logger,
@@ -164,13 +181,23 @@ function createTrackingSubmodule(
     [clockIndexer],
   )
 
+  const remotesIndexer = new OAppRemoteIndexer(
+    logger,
+    chainId,
+    repositories.oApp,
+    repositories.oAppRemote,
+    oAppRemotesProvider,
+    [oAppListIndexer],
+  )
+
   const oAppConfigurationIndexer = new OAppConfigurationIndexer(
     logger,
     chainId,
     oAppConfigProvider,
     repositories.oApp,
+    repositories.oAppRemote,
     repositories.oAppConfiguration,
-    [oAppListIndexer],
+    [remotesIndexer],
   )
 
   const defaultConfigurationIndexer = new DefaultConfigurationIndexer(
@@ -189,6 +216,8 @@ function createTrackingSubmodule(
       await oAppListIndexer.start()
       await oAppConfigurationIndexer.start()
       await defaultConfigurationIndexer.start()
+
+      await remotesIndexer.start()
       statusLogger.info('Tracking submodule started')
     },
   }

@@ -6,6 +6,7 @@ import {
   OAppConfigurationRecord,
   OAppConfigurationRepository,
 } from '../../../peripherals/database/OAppConfigurationRepository'
+import { OAppRemoteRepository } from '../../../peripherals/database/OAppRemoteRepository'
 import { OAppRepository } from '../../../peripherals/database/OAppRepository'
 import { OAppConfigurations } from '../configuration'
 import { OAppConfigurationProvider } from '../providers/OAppConfigurationProvider'
@@ -17,6 +18,7 @@ export class OAppConfigurationIndexer extends ChildIndexer {
     private readonly chainId: ChainId,
     private readonly oAppConfigProvider: OAppConfigurationProvider,
     private readonly oAppRepo: OAppRepository,
+    private readonly oAppRemoteRepo: OAppRemoteRepository,
     private readonly oAppConfigurationRepo: OAppConfigurationRepository,
     parents: Indexer[],
   ) {
@@ -25,17 +27,24 @@ export class OAppConfigurationIndexer extends ChildIndexer {
 
   protected override async update(_from: number, to: number): Promise<number> {
     const oApps = await this.oAppRepo.getBySourceChain(this.chainId)
+    const oAppsRemotes = await this.oAppRemoteRepo.findAll()
 
     const configurationRecords = await Promise.all(
       oApps.map(async (oApp) => {
+        const supportedChains = oAppsRemotes
+          .filter((remote) => remote.oAppId === oApp.id)
+          .map((remote) => remote.targetChainId)
+
         const oAppConfigs = await this.oAppConfigProvider.getConfiguration(
           oApp.address,
+          supportedChains,
         )
 
         return configToRecord(oAppConfigs, oApp.id)
       }),
     )
 
+    await this.oAppConfigurationRepo.deleteAll()
     await this.oAppConfigurationRepo.addMany(configurationRecords.flat())
 
     return to

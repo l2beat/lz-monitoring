@@ -82,6 +82,11 @@ declare module 'knex/types/tables' {
     configuration: string
   }
 
+  interface OAppRemoteRow {
+    oapp_id: number
+    target_chain_id: number
+  }
+
   interface Tables {
     block_numbers: BlockNumberRow
     indexer_states: IndexerStateRow
@@ -94,5 +99,6 @@ declare module 'knex/types/tables' {
     oapp: OAppRow
     oapp_configuration: OAppConfigurationRow
     oapp_default_configuration: OAppDefaultConfigurationRow
+    oapp_remote: OAppRemoteRow
   }
 }

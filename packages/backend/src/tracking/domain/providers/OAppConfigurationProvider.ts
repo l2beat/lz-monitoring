@@ -16,7 +16,10 @@ export { BlockchainOAppConfigurationProvider }
 export type { OAppConfigurationProvider }
 
 interface OAppConfigurationProvider {
-  getConfiguration(address: EthereumAddress): Promise<OAppConfigurations>
+  getConfiguration(
+    address: EthereumAddress,
+    supportedChains: ChainId[],
+  ): Promise<OAppConfigurations>
 }
 
 const iface = new utils.Interface([
@@ -35,10 +38,9 @@ class BlockchainOAppConfigurationProvider implements OAppConfigurationProvider {
   }
   public async getConfiguration(
     address: EthereumAddress,
+    supportedChains: ChainId[],
   ): Promise<OAppConfigurations> {
     const blockNumber = await this.provider.getBlockNumber()
-
-    const supportedChains = ChainId.getAll()
 
     const supportedEids = supportedChains.flatMap(
       (chainId) => EndpointID.encodeV1(chainId) ?? [],
