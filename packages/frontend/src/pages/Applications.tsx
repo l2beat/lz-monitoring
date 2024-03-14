@@ -43,6 +43,7 @@ export function Applications() {
             <div className="px-6">TOKEN</div>
             <div>SOURCE CHAIN</div>
             <div>ADDRESS</div>
+            <div>PATHWAYS</div>
             <div>CONFIG</div>
             <div />
           </div>
@@ -100,12 +101,20 @@ function OAppRow(props: { oApp: OAppWithConfigs; sourceChain: ChainId }) {
           {getPrettyChainName(props.sourceChain)}
           {<BlockchainIcon chainId={props.sourceChain} />}
         </span>
-        <span>
-          <BlockchainAddress address={props.oApp.address} />
+        <span className="flex items-center">
+          <BlockchainAddress alwaysShort address={props.oApp.address} />
         </span>
-        <span>
+        <span className="flex items-center gap-1">
+          {props.oApp.configurations
+            .map((config) => config.targetChainId)
+            .map((chainId) => (
+              <BlockchainIcon chainId={chainId} />
+            ))}
+        </span>
+        <span className="flex items-center">
           {hasDefaultConfig ? <DefaultConfigBadge /> : <CustomConfigBadge />}
         </span>
+
         <button
           className="brightness-100 filter transition-all duration-300 hover:brightness-[120%]"
           onClick={hasDefaultConfig ? forwardToDefaults : toggleExpand}
