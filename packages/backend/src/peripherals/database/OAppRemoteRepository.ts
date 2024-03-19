@@ -35,15 +35,6 @@ export class OAppRemoteRepository extends BaseRepository {
 
     return rows.map(toRecord)
   }
-  public async findByOAppIds(oAppIds: number[]): Promise<OAppRemoteRecord[]> {
-    const knex = await this.knex()
-
-    const rows = await knex('oapp_remote')
-      .select('*')
-      .whereIn('oapp_id', oAppIds)
-
-    return rows.map(toRecord)
-  }
 
   async deleteAll(): Promise<number> {
     const knex = await this.knex()

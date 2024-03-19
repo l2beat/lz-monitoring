@@ -1,13 +1,13 @@
 import { Logger } from '@l2beat/backend-tools'
-import { ChildIndexer, Indexer } from '@l2beat/uif'
+import { Indexer } from '@l2beat/uif'
 import { ChainId } from '@lz/libs'
 
 import { OAppRepository } from '../../../peripherals/database/OAppRepository'
 import { ProtocolVersion } from '../const'
 import { OAppListProvider } from '../providers/OAppsListProvider'
+import { InMemoryIndexer } from './InMemoryIndexer'
 
-export class OAppListIndexer extends ChildIndexer {
-  protected height = 0
+export class OAppListIndexer extends InMemoryIndexer {
   constructor(
     logger: Logger,
     private readonly chainId: ChainId,
@@ -37,18 +37,5 @@ export class OAppListIndexer extends ChildIndexer {
     )
 
     return to
-  }
-
-  public override getSafeHeight(): Promise<number> {
-    return Promise.resolve(this.height)
-  }
-
-  protected override setSafeHeight(height: number): Promise<void> {
-    this.height = height
-    return Promise.resolve()
-  }
-
-  protected override invalidate(targetHeight: number): Promise<number> {
-    return Promise.resolve(targetHeight)
   }
 }

@@ -1,5 +1,5 @@
 import { Logger } from '@l2beat/backend-tools'
-import { ChildIndexer, Indexer } from '@l2beat/uif'
+import { Indexer } from '@l2beat/uif'
 import { ChainId } from '@lz/libs'
 
 import {
@@ -10,9 +10,9 @@ import { OAppRemoteRepository } from '../../../peripherals/database/OAppRemoteRe
 import { OAppRepository } from '../../../peripherals/database/OAppRepository'
 import { OAppConfigurations } from '../configuration'
 import { OAppConfigurationProvider } from '../providers/OAppConfigurationProvider'
+import { InMemoryIndexer } from './InMemoryIndexer'
 
-export class OAppConfigurationIndexer extends ChildIndexer {
-  protected height = 0
+export class OAppConfigurationIndexer extends InMemoryIndexer {
   constructor(
     logger: Logger,
     private readonly chainId: ChainId,
@@ -26,8 +26,10 @@ export class OAppConfigurationIndexer extends ChildIndexer {
   }
 
   protected override async update(_from: number, to: number): Promise<number> {
-    const oApps = await this.oAppRepo.getBySourceChain(this.chainId)
-    const oAppsRemotes = await this.oAppRemoteRepo.findAll()
+    const [oApps, oAppsRemotes] = await Promise.all([
+      this.oAppRepo.getBySourceChain(this.chainId),
+      this.oAppRemoteRepo.findAll(),
+    ])
 
     const configurationRecords = await Promise.all(
       oApps.map(async (oApp) => {
@@ -48,19 +50,6 @@ export class OAppConfigurationIndexer extends ChildIndexer {
     await this.oAppConfigurationRepo.addMany(configurationRecords.flat())
 
     return to
-  }
-
-  public override getSafeHeight(): Promise<number> {
-    return Promise.resolve(this.height)
-  }
-
-  protected override setSafeHeight(height: number): Promise<void> {
-    this.height = height
-    return Promise.resolve()
-  }
-
-  protected override invalidate(targetHeight: number): Promise<number> {
-    return Promise.resolve(targetHeight)
   }
 }
 

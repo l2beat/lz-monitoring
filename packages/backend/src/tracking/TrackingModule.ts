@@ -26,6 +26,8 @@ import { OAppConfigurationIndexer } from './domain/indexers/OAppConfigurationInd
 import { OAppListIndexer } from './domain/indexers/OAppListIndexer'
 import { OAppRemoteIndexer } from './domain/indexers/OAppRemotesIndexer'
 import { DiscoveryDefaultConfigurationsProvider } from './domain/providers/DefaultConfigurationsProvider'
+import { OFTInterfaceResolver } from './domain/providers/interface-resolvers/OFTInterfaceResolver'
+import { StargateInterfaceResolver } from './domain/providers/interface-resolvers/StargateResolver'
 import { BlockchainOAppConfigurationProvider } from './domain/providers/OAppConfigurationProvider'
 import { BlockchainOAppRemotesProvider } from './domain/providers/OAppRemotesProvider'
 import { HttpOAppListProvider } from './domain/providers/OAppsListProvider'
@@ -144,6 +146,9 @@ function createTrackingSubmodule(
 
   const httpClient = new HttpClient()
 
+  const OFTResolver = new OFTInterfaceResolver(multicall)
+  const stargateResolver = new StargateInterfaceResolver(multicall)
+
   const oAppListProvider = new HttpOAppListProvider(
     logger,
     httpClient,
@@ -165,10 +170,15 @@ function createTrackingSubmodule(
     logger,
   )
 
+  const supportedChains = ChainId.getAll()
+  const resolvers = [OFTResolver, stargateResolver]
+
   const oAppRemotesProvider = new BlockchainOAppRemotesProvider(
     provider,
     multicall,
     chainId,
+    supportedChains,
+    resolvers,
     logger,
   )
 

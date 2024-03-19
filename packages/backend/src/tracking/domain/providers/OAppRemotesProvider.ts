@@ -1,14 +1,10 @@
 import { assert, Logger } from '@l2beat/backend-tools'
 import { MulticallClient } from '@l2beat/discovery'
-import {
-  MulticallRequest,
-  MulticallResponse,
-  // eslint-disable-next-line import/no-internal-modules
-} from '@l2beat/discovery/dist/discovery/provider/multicall/types'
 // eslint-disable-next-line import/no-internal-modules
-import { Bytes } from '@l2beat/discovery/dist/utils/Bytes'
 import { ChainId, EndpointID, EthereumAddress } from '@lz/libs'
-import { providers, utils } from 'ethers'
+import { providers } from 'ethers'
+
+import { OAppInterfaceResolver } from './interface-resolvers/resolver'
 
 export { BlockchainOAppRemotesProvider }
 export type { OAppRemotesProvider }
@@ -16,14 +12,6 @@ export type { OAppRemotesProvider }
 interface OAppRemotesProvider {
   getSupportedRemotes(oAppsAddress: EthereumAddress): Promise<ChainId[]>
 }
-
-const oftIface = new utils.Interface([
-  'function trustedRemoteLookup(uint16 _remoteChainId) view returns (bytes)',
-])
-
-const stargateIface = new utils.Interface([
-  'function dstContractLookup(uint16 _remoteChainId) view returns (bytes)',
-])
 
 /**
  * Fetches the supported remotes for an OApp from the blockchain directly.
@@ -36,6 +24,8 @@ class BlockchainOAppRemotesProvider implements OAppRemotesProvider {
     private readonly provider: providers.StaticJsonRpcProvider,
     private readonly multicall: MulticallClient,
     chainId: ChainId,
+    private readonly monitoredChains: ChainId[],
+    private readonly ifaceResolvers: OAppInterfaceResolver[],
     private readonly logger: Logger,
   ) {
     this.logger = this.logger.for(this).tag(ChainId.getName(chainId))
@@ -45,14 +35,12 @@ class BlockchainOAppRemotesProvider implements OAppRemotesProvider {
   ): Promise<ChainId[]> {
     const blockNumber = await this.provider.getBlockNumber()
 
-    const supportedChains = ChainId.getAll()
-
-    const supportedEndpoints = supportedChains.flatMap(
+    const supportedEndpoints = this.monitoredChains.flatMap(
       (chainId) => EndpointID.encodeV1(chainId) ?? [],
     )
 
     assert(
-      supportedEndpoints.length === supportedChains.length,
+      supportedEndpoints.length === this.monitoredChains.length,
       'Cannot translate some chains to EID',
     )
 
@@ -70,12 +58,18 @@ class BlockchainOAppRemotesProvider implements OAppRemotesProvider {
     supportedEndpoints: number[],
     blockNumber: number,
   ): Promise<ChainId[]> {
-    const isOft = await this.checkForOft(oAppAddress, blockNumber)
+    console.log('Looking for resolver')
+    const resolver = await this.findResolver(oAppAddress, blockNumber)
+    console.log('Resolver found')
 
-    const encode = isOft ? encodeOft : encodeStargate
-    const decode = isOft ? decodeOft : decodeStargate
+    assert(
+      resolver,
+      `No interface resolver found for OApp: ${oAppAddress.toString()} at block ${blockNumber}`,
+    )
 
-    const requests = supportedEndpoints.map((eid) => encode(oAppAddress, eid))
+    const requests = supportedEndpoints.map((eid) =>
+      resolver.encode(oAppAddress, eid),
+    )
 
     const result = await this.multicall.multicall(requests, blockNumber)
 
@@ -85,7 +79,7 @@ class BlockchainOAppRemotesProvider implements OAppRemotesProvider {
         .map((eid, i) => ({
           eid,
           // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-          supported: decode(result[i]!),
+          supported: resolver.decode(result[i]!),
         }))
         .filter((x) => x.supported)
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -93,72 +87,16 @@ class BlockchainOAppRemotesProvider implements OAppRemotesProvider {
     )
   }
 
-  private async checkForOft(
-    oApp: EthereumAddress,
+  private async findResolver(
+    oAppAddress: EthereumAddress,
     blockNumber: number,
-  ): Promise<boolean> {
-    const data = oftIface.encodeFunctionData('trustedRemoteLookup', [
-      // Example EID
-      EndpointID.encodeV1(ChainId.ETHEREUM) ?? 0,
-    ])
-
-    const request = {
-      address: oApp,
-      data: Bytes.fromHex(data),
+  ): Promise<OAppInterfaceResolver | null> {
+    for (const ifaceResolver of this.ifaceResolvers) {
+      if (await ifaceResolver.isSupported(oAppAddress, blockNumber)) {
+        return ifaceResolver
+      }
     }
 
-    try {
-      const [result] = await this.multicall.multicall([request], blockNumber)
-
-      return Boolean(result?.success)
-    } catch (error) {
-      return false
-    }
-  }
-}
-
-function decodeStargate(response: MulticallResponse): boolean {
-  const [decoded] = stargateIface.decodeFunctionResult(
-    'dstContractLookup',
-    response.data.toString(),
-  )
-
-  return decoded !== '0x'
-}
-
-function encodeStargate(
-  oAppAddress: EthereumAddress,
-  eid: number,
-): MulticallRequest {
-  {
-    const data = stargateIface.encodeFunctionData('dstContractLookup', [eid])
-
-    return {
-      address: oAppAddress,
-      data: Bytes.fromHex(data),
-    }
-  }
-}
-
-function decodeOft(response: MulticallResponse): boolean {
-  const [decoded] = oftIface.decodeFunctionResult(
-    'trustedRemoteLookup',
-    response.data.toString(),
-  )
-
-  return decoded !== '0x'
-}
-
-function encodeOft(
-  oAppAddress: EthereumAddress,
-  eid: number,
-): MulticallRequest {
-  {
-    const data = oftIface.encodeFunctionData('trustedRemoteLookup', [eid])
-
-    return {
-      address: oAppAddress,
-      data: Bytes.fromHex(data),
-    }
+    return null
   }
 }
