@@ -104,7 +104,7 @@ function OAppRow(props: {
         <span className="flex items-center">
           <BlockchainAddress alwaysShort address={props.oApp.address} />
         </span>
-        <span className="flex items-center gap-1">
+        <span className="flex items-center gap-1.5">
           {props.oApp.configurations
             .map((config) => config.targetChainId)
             .map((chainId) => (
@@ -178,10 +178,10 @@ function CustomConfig(props: {
           previousValue={
             !props.config.isDefault &&
             props.config.changedConfiguration.relayer && (
-            <BlockchainAddress
-              alwaysShort
-              address={defaultForChain.configuration.relayer}
-            />
+              <BlockchainAddress
+                alwaysShort
+                address={defaultForChain.configuration.relayer}
+              />
             )
           }
         />
