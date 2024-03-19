@@ -58,9 +58,7 @@ class BlockchainOAppRemotesProvider implements OAppRemotesProvider {
     supportedEndpoints: number[],
     blockNumber: number,
   ): Promise<ChainId[]> {
-    console.log('Looking for resolver')
     const resolver = await this.findResolver(oAppAddress, blockNumber)
-    console.log('Resolver found')
 
     assert(
       resolver,
