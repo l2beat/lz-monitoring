@@ -3,12 +3,12 @@ import { useEffect, useState } from 'react'
 
 import { hasBeenAborted } from './utils'
 
-interface UseTrackingApiHookOptions {
+export interface UseTrackingApiHookOptions {
   chainId: ChainId
   apiUrl: string
 }
 
-interface TrackingData {
+export interface TrackingData {
   data: OAppsResponse
   chainId: ChainId
 }
