@@ -1,5 +1,5 @@
 import { Logger } from '@l2beat/backend-tools'
-import { ChildIndexer, Indexer } from '@l2beat/uif'
+import { Indexer } from '@l2beat/uif'
 import { ChainId } from '@lz/libs'
 
 import {
@@ -9,9 +9,9 @@ import {
 import { OAppConfigurations } from '../configuration'
 import { ProtocolVersion } from '../const'
 import { DefaultConfigurationsProvider } from '../providers/DefaultConfigurationsProvider'
+import { InMemoryIndexer } from './InMemoryIndexer'
 
-export class DefaultConfigurationIndexer extends ChildIndexer {
-  protected height = 0
+export class DefaultConfigurationIndexer extends InMemoryIndexer {
   constructor(
     logger: Logger,
     private readonly chainId: ChainId,
@@ -39,19 +39,6 @@ export class DefaultConfigurationIndexer extends ChildIndexer {
     await this.defaultConfigurationsRepo.addMany(records)
 
     return to
-  }
-
-  public override getSafeHeight(): Promise<number> {
-    return Promise.resolve(this.height)
-  }
-
-  protected override setSafeHeight(height: number): Promise<void> {
-    this.height = height
-    return Promise.resolve()
-  }
-
-  protected override invalidate(targetHeight: number): Promise<number> {
-    return Promise.resolve(targetHeight)
   }
 }
 

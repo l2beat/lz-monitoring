@@ -40,7 +40,10 @@ describe(BlockchainOAppConfigurationProvider.name, () => {
       Logger.SILENT,
     )
 
-    const result = await provider.getConfiguration(oAppAddress)
+    const result = await provider.getConfiguration(
+      oAppAddress,
+      ChainId.getAll(),
+    )
 
     const keys = Object.keys(result)
 
