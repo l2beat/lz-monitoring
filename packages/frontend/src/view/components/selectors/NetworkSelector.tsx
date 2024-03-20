@@ -47,7 +47,7 @@ export function NetworkSelector(props: Props) {
       >
         Select network
       </span>
-      <div className="scrollbar-h-1.5 mt-0.5 flex items-stretch gap-3 overflow-x-auto py-1 scrollbar scrollbar-track-gray-400 scrollbar-thumb-yellow-100">
+      <div className="scrollbar-h-1.5 mt-0.5 flex items-stretch gap-3 overflow-x-auto py-1 scrollbar scrollbar-thumb-yellow-100">
         {sortedChains.map((chain) => (
           <PillSelector
             key={chain.key}
