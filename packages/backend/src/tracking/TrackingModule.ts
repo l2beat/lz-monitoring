@@ -90,6 +90,7 @@ function createTrackingModule(dependencies: Dependencies): ApplicationModule {
     oAppRepo,
     oAppConfigurationRepo,
     oAppDefaultConfigurationRepo,
+    currDiscoveryRepo,
   )
 
   const router = createTrackingRouter(controller)

@@ -1,11 +1,14 @@
 import { assert } from '@l2beat/backend-tools'
+import { DiscoveryOutput } from '@l2beat/discovery-types'
 import {
+  AddressInfo,
   ChainId,
   OAppsResponse,
   OAppWithConfigs,
   ResolvedConfigurationWithAppId,
 } from '@lz/libs'
 
+import { CurrentDiscoveryRepository } from '../../peripherals/database/CurrentDiscoveryRepository'
 import {
   OAppConfigurationRecord,
   OAppConfigurationRepository,
@@ -27,9 +30,18 @@ class TrackingController {
     private readonly oAppRepo: OAppRepository,
     private readonly oAppConfigurationRepo: OAppConfigurationRepository,
     private readonly oAppDefaultConfigRepo: OAppDefaultConfigurationRepository,
+    private readonly currDiscoveryRepository: CurrentDiscoveryRepository,
   ) {}
 
   async getOApps(chainId: ChainId): Promise<OAppsResponse | null> {
+    const discovery = await this.currDiscoveryRepository.find(chainId)
+
+    if (!discovery) {
+      return null
+    }
+
+    const addressInfo = outputToAddressInfo(discovery.discoveryOutput)
+
     const defaultConfigurations =
       await this.oAppDefaultConfigRepo.getBySourceChain(chainId)
 
@@ -62,10 +74,23 @@ class TrackingController {
         targetChainId: record.targetChainId,
         configuration: record.configuration,
       })),
+
+      addressInfo,
     }
   }
 }
 
+function outputToAddressInfo(output: DiscoveryOutput): AddressInfo[] {
+  const { eoas, contracts } = output
+
+  return contracts
+    .map((contract) => ({
+      address: contract.address,
+      name: contract.name,
+      verified: !contract.unverified,
+    }))
+    .concat(eoas.map((eoa) => ({ address: eoa, name: 'EOA', verified: true })))
+}
 function attachConfigurations(
   oApps: OAppRecord[],
   configurations: ResolvedConfigurationWithAppId[],
