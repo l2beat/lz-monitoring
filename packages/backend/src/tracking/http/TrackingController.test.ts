@@ -1,7 +1,8 @@
 import { assert } from '@l2beat/backend-tools'
 import { ChainId, EthereumAddress } from '@lz/libs'
-import { expect, mockObject } from 'earl'
+import { expect, mockFn, mockObject } from 'earl'
 
+import { CurrentDiscoveryRepository } from '../../peripherals/database/CurrentDiscoveryRepository'
 import {
   OAppConfigurationRecord,
   OAppConfigurationRepository,
@@ -28,11 +29,15 @@ describe(TrackingController.name, () => {
         mockObject<OAppDefaultConfigurationRepository>({
           getBySourceChain: () => Promise.resolve([]),
         })
+      const currDiscoveryRepo = mockObject<CurrentDiscoveryRepository>({
+        find: mockFn().resolvesTo(null),
+      })
 
       const controller = new TrackingController(
         oAppRepo,
         oAppConfigRepo,
         oAppDefaultConfigRepo,
+        currDiscoveryRepo,
       )
       const result = await controller.getOApps(chainId)
 
@@ -127,6 +132,31 @@ describe(TrackingController.name, () => {
           },
         ]
 
+        const mockDiscoveryOutput = {
+          contracts: [
+            {
+              name: 'Oracle',
+              address: EthereumAddress.random(),
+              unverified: false,
+            },
+            {
+              name: 'Relayer',
+              address: EthereumAddress.random(),
+              unverified: true,
+            },
+            {
+              name: 'Endpoint',
+              address: EthereumAddress.random(),
+              unverified: false,
+            },
+          ],
+          eoas: [
+            EthereumAddress.random(),
+            EthereumAddress.random(),
+            EthereumAddress.random(),
+          ],
+        }
+
         const oAppRepo = mockObject<OAppRepository>({
           getBySourceChain: () => Promise.resolve([oAppA, oAppB]),
         })
@@ -138,11 +168,18 @@ describe(TrackingController.name, () => {
           mockObject<OAppDefaultConfigurationRepository>({
             getBySourceChain: () => Promise.resolve(mockDefaultConfigurations),
           })
+        const currDiscoveryRepo = mockObject<CurrentDiscoveryRepository>({
+          find: mockFn().resolvesTo({
+            chainId,
+            discoveryOutput: mockDiscoveryOutput,
+          }),
+        })
 
         const controller = new TrackingController(
           oAppRepo,
           oAppConfigRepo,
           oAppDefaultConfigRepo,
+          currDiscoveryRepo,
         )
 
         const result = await controller.getOApps(chainId)
@@ -199,6 +236,19 @@ describe(TrackingController.name, () => {
             configuration: c.configuration,
           })),
         )
+
+        expect(result.addressInfo).toEqual([
+          ...mockDiscoveryOutput.contracts.map((contract) => ({
+            name: contract.name,
+            address: contract.address,
+            verified: !contract.unverified,
+          })),
+          ...mockDiscoveryOutput.eoas.map((eoa) => ({
+            name: 'EOA',
+            address: eoa,
+            verified: true,
+          })),
+        ])
       })
     })
   })

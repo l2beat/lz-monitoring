@@ -4,6 +4,7 @@ import { ChainId } from '../chainId'
 import { branded, EthereumAddress } from '../utils'
 
 export {
+  AddressInfo,
   OAppsResponse,
   OAppWithConfigs,
   ResolvedConfiguration,
@@ -65,6 +66,13 @@ const OAppWithConfigs = z.object({
 
 type OAppWithConfigs = z.infer<typeof OAppWithConfigs>
 
+const AddressInfo = z.object({
+  address: branded(z.string(), EthereumAddress),
+  name: z.string(),
+  verified: z.boolean(),
+})
+type AddressInfo = z.infer<typeof AddressInfo>
+
 const OAppsResponse = z.object({
   sourceChainId: branded(z.number(), ChainId),
   oApps: z.array(OAppWithConfigs),
@@ -74,6 +82,7 @@ const OAppsResponse = z.object({
       configuration: OAppConfiguration,
     }),
   ),
+  addressInfo: z.array(AddressInfo),
 })
 
 type OAppsResponse = z.infer<typeof OAppsResponse>
