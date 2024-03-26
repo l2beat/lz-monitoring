@@ -1,7 +1,14 @@
-import { getPrettyChainName, OAppsResponse, OAppWithConfigs } from '@lz/libs'
+import {
+  ChainId,
+  getPrettyChainName,
+  OAppsResponse,
+  OAppWithConfigs,
+} from '@lz/libs'
 import cx from 'classnames'
 import { ReactNode, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
+import { LinkIcon } from '../../icons/LinkIcon'
 import { SolidMinusIcon } from '../../icons/MinusIcon'
 import { SolidPlusIcon } from '../../icons/PlusIcon'
 import { SimpleArrowIcon } from '../../icons/SimpleArrowIcon'
@@ -19,6 +26,7 @@ export function OAppConfig(props: {
   config: OAppWithConfigs['configurations'][number]
   defaults: OAppsResponse['defaultConfigurations']
 }) {
+  const navigate = useNavigate()
   const [isExpanded, setIsExpanded] = useState(!props.config.isDefault)
 
   const defaultForChain = props.defaults.find(
@@ -32,6 +40,16 @@ export function OAppConfig(props: {
   function toggleExpand() {
     setIsExpanded(!isExpanded)
   }
+
+  function redirectToDefaults() {
+    navigate(
+      `/?chain=ethereum&remote-chain=${ChainId.getName(
+        props.config.targetChainId,
+      )}&version=V1`,
+    )
+  }
+
+  const { isDefault } = props.config
 
   const remap = createRemapping(props.config, defaultForChain.configuration)
 
@@ -60,9 +78,15 @@ export function OAppConfig(props: {
           <div>
             <button
               className="brightness-100 filter transition-all duration-300 hover:brightness-[120%]"
-              onClick={toggleExpand}
+              onClick={isDefault ? redirectToDefaults : toggleExpand}
             >
-              {isExpanded ? <SolidMinusIcon /> : <SolidPlusIcon />}
+              {isDefault ? (
+                <SolidLinkIcon />
+              ) : isExpanded ? (
+                <SolidMinusIcon />
+              ) : (
+                <SolidPlusIcon />
+              )}
             </button>
           </div>
         </div>
@@ -179,6 +203,14 @@ function SolidArrowRight() {
   return (
     <div className="flex h-4 w-4 items-center justify-center rounded ">
       <SimpleArrowIcon className="fill-white" width={10} height={10} />
+    </div>
+  )
+}
+
+function SolidLinkIcon() {
+  return (
+    <div className="flex h-5 w-5 items-center justify-center rounded bg-yellow-100">
+      <LinkIcon width={14} height={14} />
     </div>
   )
 }
