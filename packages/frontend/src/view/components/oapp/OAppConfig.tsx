@@ -9,6 +9,7 @@ import { BlockchainAddress } from '../BlockchainAddress'
 import { BlockchainIcon } from '../BlockchainIcon'
 import { InfoTooltip } from '../InfoTooltip'
 import { Row } from '../Row'
+import { Tooltip } from '../Tooltip'
 import { CustomConfigBadge, DefaultConfigBadge } from './OAppBadge'
 
 type OAppConfig =
@@ -157,7 +158,12 @@ function ConfigProperty(props: {
       value={
         props.previousValue ? (
           <div className="flex items-center gap-2">
-            <span className="opacity-50 filter">{props.previousValue}</span>
+            <Tooltip
+              variant="text"
+              text="This is the default value that has been changed by the owner of the OApp to the custom one."
+            >
+              <span className="opacity-50 filter">{props.previousValue}</span>
+            </Tooltip>
             <SolidArrowRight />
             {props.currentValue}
           </div>
