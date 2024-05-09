@@ -21,6 +21,8 @@ export class Database {
     this.knex = KnexConstructor({
       client: 'pg',
       pool: {
+        min: 2,
+        max: 100,
         idleTimeoutMillis: 120 * 1000,
       },
       connection,
