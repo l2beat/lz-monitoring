@@ -20,6 +20,9 @@ export class Database {
     this.logger = this.logger.for(this)
     this.knex = KnexConstructor({
       client: 'pg',
+      pool: {
+        idleTimeoutMillis: 120 * 1000,
+      },
       connection,
       migrations: {
         migrationSource: new PolyglotMigrationSource(
