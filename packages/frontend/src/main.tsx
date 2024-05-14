@@ -5,6 +5,7 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 
+import { Applications } from './pages/Applications'
 import { Main } from './pages/Main'
 import { Status } from './pages/Status'
 
@@ -15,6 +16,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
       <Routes>
         <Route path="/" element={<Main />} />
         <Route path="/status" element={<Status />} />
+        <Route path="/applications" element={<Applications />} />
       </Routes>
     </BrowserRouter>
   </React.StrictMode>,
